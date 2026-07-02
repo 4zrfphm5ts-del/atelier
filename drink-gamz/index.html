@@ -1,0 +1,1236 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#0c0420">
+<title>Drink Gamz' 🍻</title>
+<!-- PWA / iPhone : installable sur l'écran d'accueil, plein écran, offline -->
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Drink Gamz'">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" href="favicon-32.png">
+<style>
+  :root{
+    --bg1:#140630; --bg2:#0a0418; --panel:#1b0f36; --panel2:#241247;
+    --ink:#f6f0ff; --mut:#b9a9e0; --line:rgba(255,255,255,.12);
+    --gold:#ffd23f; --neon:#c04bff; --neon2:#4be1ff;
+    /* couleurs par niveau */
+    --enfance:#48e0e6; --soft:#4ade80; --delire:#ffe14d; --chaud:#ff9838; --sexe:#ff4d8d; --trash:#a855f7;
+    --acc:var(--neon);
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
+  html,body{margin:0; height:100%; overscroll-behavior:none}
+  body{
+    font-family:'Poppins', ui-rounded, 'SF Pro Rounded', 'Segoe UI', system-ui, sans-serif;
+    color:var(--ink); background:var(--bg2); overflow:hidden;
+    min-height:100%;
+    -webkit-user-select:none; user-select:none; -webkit-touch-callout:none;
+  }
+  input{-webkit-user-select:text; user-select:text}
+  button,.gcard,.opt,.card,.lvl,.iconbtn,.toggle button,.pchip .x{touch-action:manipulation}
+  /* fond animé */
+  #bg{position:fixed; inset:0; z-index:0; overflow:hidden; background:
+      radial-gradient(120% 90% at 50% -10%, #2a0f5e 0%, #140630 42%, #08030f 100%);}
+  .blob{position:absolute; border-radius:50%; filter:blur(60px); opacity:.55; mix-blend-mode:screen;
+        animation:float 16s ease-in-out infinite}
+  .b1{width:46vmax;height:46vmax; left:-12vmax; top:-10vmax; background:#7a1bff;}
+  .b2{width:40vmax;height:40vmax; right:-14vmax; top:6vmax; background:#ff2e97; animation-delay:-4s}
+  .b3{width:38vmax;height:38vmax; left:18vmax; bottom:-16vmax; background:#18b6ff; animation-delay:-8s}
+  @keyframes float{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(4vmax,3vmax) scale(1.08)}66%{transform:translate(-3vmax,-2vmax) scale(.95)}}
+
+  #app{position:relative; z-index:1; height:100dvh; display:flex; align-items:stretch; justify-content:center; padding:0}
+  .wrap{width:min(560px,100vw); height:100dvh; display:flex; flex-direction:column; position:relative}
+
+  .view{position:absolute; inset:0; display:none; flex-direction:column; padding:calc(14px + env(safe-area-inset-top)) 18px calc(18px + env(safe-area-inset-bottom)); overflow-y:auto; -webkit-overflow-scrolling:touch; overscroll-behavior:contain}
+  .view.on{display:flex; animation:pop .35s cubic-bezier(.2,.9,.3,1.2)}
+  @keyframes pop{from{opacity:0; transform:translateY(14px) scale(.98)}to{opacity:1; transform:none}}
+
+  /* --- éléments communs --- */
+  .brand{font-weight:800; letter-spacing:.5px; line-height:.95;
+    font-size:clamp(34px,10vw,54px); text-align:center;
+    background:linear-gradient(180deg,#fff, #d7b6ff 60%, #a86bff);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    text-shadow:0 0 30px rgba(180,90,255,.35); filter:drop-shadow(0 6px 0 rgba(0,0,0,.25))}
+  .brand em{font-style:normal; color:var(--gold); -webkit-text-fill-color:var(--gold); text-shadow:0 0 24px rgba(255,210,63,.5)}
+  .tag{text-align:center; color:var(--mut); font-size:14px; margin-top:6px}
+  h2.sec{font-size:13px; letter-spacing:2px; text-transform:uppercase; color:var(--mut); margin:22px 4px 10px}
+
+  .btn{cursor:pointer; border:none; font-family:inherit; font-weight:800; color:#1a0a2e;
+    font-size:clamp(16px,4.2vw,20px); padding:16px 22px; border-radius:18px; width:100%;
+    background:linear-gradient(180deg,var(--gold),#f6a900); color:#3a2400;
+    box-shadow:0 8px 0 #b97c00, 0 14px 26px rgba(0,0,0,.4); transition:transform .07s, box-shadow .07s}
+  .btn:active{transform:translateY(6px); box-shadow:0 2px 0 #b97c00, 0 6px 12px rgba(0,0,0,.4)}
+  .btn.sec{background:linear-gradient(180deg,#3a2260,#2a1848); color:#eaddff; box-shadow:0 8px 0 #170a2e,0 14px 26px rgba(0,0,0,.4)}
+  .btn.sec:active{box-shadow:0 2px 0 #170a2e}
+  .btn.ghost{background:transparent; color:var(--mut); box-shadow:none; font-weight:700; font-size:15px}
+  .btn:disabled{opacity:.4; filter:grayscale(.5)}
+
+  /* barre du haut en jeu */
+  .topbar{display:flex; align-items:center; gap:10px; margin-bottom:10px}
+  .iconbtn{flex:0 0 auto; width:44px;height:44px; border-radius:14px; border:1px solid var(--line);
+    background:rgba(255,255,255,.06); color:#fff; font-size:20px; cursor:pointer; display:grid; place-items:center}
+  .iconbtn:active{transform:scale(.92)}
+  .topttl{flex:1; text-align:center; font-weight:800; font-size:17px; letter-spacing:.3px}
+  .topsub{text-align:center; color:var(--mut); font-size:12px; margin-top:-4px; margin-bottom:8px}
+
+  /* --- SETUP --- */
+  .field{display:flex; gap:8px}
+  .field input{flex:1; background:rgba(255,255,255,.07); border:1px solid var(--line); color:#fff;
+    border-radius:14px; padding:14px 16px; font-family:inherit; font-size:16px; outline:none}
+  .field input:focus{border-color:var(--neon)}
+  .field .add{flex:0 0 auto; width:54px; border-radius:14px; padding:0; font-size:26px}
+  .players{display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; min-height:10px}
+  .pchip{background:linear-gradient(180deg,#3a2260,#2a1748); border:1px solid var(--line); border-radius:999px;
+    padding:9px 12px 9px 14px; display:flex; align-items:center; gap:8px; font-weight:700; font-size:15px; animation:pop .25s}
+  .pchip .x{width:22px;height:22px; border-radius:50%; background:rgba(255,255,255,.12); display:grid; place-items:center; font-size:14px; cursor:pointer}
+  .empty{color:var(--mut); font-size:14px; font-style:italic; padding:6px 4px}
+
+  .levels{display:grid; grid-template-columns:1fr; gap:10px}
+  .lvl{display:flex; align-items:center; gap:14px; padding:14px; border-radius:16px; cursor:pointer;
+    border:1px solid var(--line); background:rgba(255,255,255,.04); transition:.15s}
+  .lvl .emo{font-size:26px; width:34px; text-align:center}
+  .lvl .txt{flex:1}
+  .lvl .txt b{display:block; font-size:16px}
+  .lvl .txt span{font-size:12.5px; color:var(--mut)}
+  .lvl .tick{width:28px;height:28px; border-radius:9px; border:2px solid var(--line); display:grid; place-items:center; font-size:18px; color:transparent}
+  .lvl.on{border-color:var(--c); background:color-mix(in srgb, var(--c) 16%, transparent); box-shadow:0 0 0 1px var(--c) inset, 0 8px 24px color-mix(in srgb,var(--c) 25%, transparent)}
+  .lvl.on .tick{border-color:var(--c); background:var(--c); color:#1a0a2e}
+  .lvl.on .txt b{color:var(--c)}
+  .warn18{font-size:11px; color:#ff8fb0; background:rgba(255,60,120,.1); border:1px solid rgba(255,60,120,.3); padding:8px 12px; border-radius:12px; margin-top:10px; text-align:center}
+
+  .toggle{display:flex; gap:8px; background:rgba(255,255,255,.06); border:1px solid var(--line); border-radius:16px; padding:6px}
+  .toggle button{flex:1; border:none; background:transparent; color:var(--mut); font-family:inherit; font-weight:700; font-size:15px; padding:12px; border-radius:11px; cursor:pointer}
+  .toggle button.on{background:linear-gradient(180deg,var(--gold),#f6a900); color:#3a2400; box-shadow:0 4px 12px rgba(0,0,0,.3)}
+
+  /* --- HUB grille de jeux --- */
+  .grid{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+  .gcard{position:relative; border-radius:20px; padding:16px 14px 15px; cursor:pointer; overflow:hidden;
+    border:1px solid var(--line); background:linear-gradient(160deg, var(--panel2), var(--panel));
+    box-shadow:0 10px 26px rgba(0,0,0,.35); transition:transform .1s, box-shadow .1s; min-height:128px;
+    display:flex; flex-direction:column; justify-content:flex-end}
+  .gcard:active{transform:translateY(3px) scale(.98)}
+  .gcard .gemo{font-size:34px; position:absolute; top:12px; left:14px; filter:drop-shadow(0 4px 8px rgba(0,0,0,.4))}
+  .gcard .gname{font-weight:800; font-size:16.5px; line-height:1.05}
+  .gcard .gdesc{font-size:11.5px; color:var(--mut); margin-top:3px; line-height:1.25}
+  .gcard .grare{position:absolute; top:12px; right:10px; font-size:9.5px; font-weight:800; letter-spacing:.4px;
+    background:linear-gradient(180deg,#ff5ea8,#c026d3); color:#fff; padding:4px 7px; border-radius:999px; box-shadow:0 4px 10px rgba(0,0,0,.35)}
+  .gcard::after{content:""; position:absolute; inset:0; background:radial-gradient(80% 60% at 20% 0%, color-mix(in srgb,var(--c) 30%, transparent), transparent 60%); pointer-events:none}
+  .gcard .gname, .gcard .gemo{position:relative; z-index:1}
+
+  /* --- ZONE DE JEU (carte) --- */
+  .stage{flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:14px; padding:6px 2px}
+  .whoturn{font-size:13px; letter-spacing:2px; text-transform:uppercase; color:var(--mut)}
+  .whoname{font-size:clamp(28px,8vw,44px); font-weight:800; line-height:1;
+    background:linear-gradient(180deg,#fff,var(--acc)); -webkit-background-clip:text; background-clip:text; color:transparent}
+  .card{width:100%; border-radius:24px; padding:26px 22px; min-height:230px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px;
+    border:1px solid color-mix(in srgb,var(--acc) 45%, var(--line)); background:linear-gradient(165deg, color-mix(in srgb,var(--acc) 16%, var(--panel)), var(--panel));
+    box-shadow:0 18px 46px rgba(0,0,0,.5), 0 0 0 1px color-mix(in srgb,var(--acc) 30%, transparent) inset; animation:cardin .35s cubic-bezier(.2,.9,.3,1.3)}
+  @keyframes cardin{from{opacity:0; transform:rotateX(18deg) translateY(20px) scale(.94)}to{opacity:1; transform:none}}
+  .card .kicker{font-size:12px; letter-spacing:2px; text-transform:uppercase; color:var(--acc); font-weight:800}
+  .card .big{font-size:clamp(20px,5.6vw,27px); font-weight:700; line-height:1.28}
+  .card .conseq{font-size:15px; font-weight:800; color:var(--gold); background:rgba(255,210,63,.1); border:1px solid rgba(255,210,63,.28); padding:8px 16px; border-radius:999px}
+  .avbtns{display:flex; gap:12px; width:100%}
+  .avbtns .btn{width:auto; flex:1}
+  .avbtns .btn.action{background:linear-gradient(180deg,#ff7ab0,#e0447a); color:#fff; box-shadow:0 8px 0 #9c2452,0 14px 26px rgba(0,0,0,.4)}
+  .avbtns .btn.action:active{box-shadow:0 2px 0 #9c2452}
+  .avbtns .btn.verite{background:linear-gradient(180deg,#5ad2ff,#2e9fe6); color:#04263b; box-shadow:0 8px 0 #1a6597,0 14px 26px rgba(0,0,0,.4)}
+  .avbtns .btn.verite:active{box-shadow:0 2px 0 #1a6597}
+  .bottombtns{display:flex; flex-direction:column; gap:10px; margin-top:8px}
+
+  /* Tu préfères */
+  .vs{display:flex; flex-direction:column; gap:12px; width:100%}
+  .opt{border-radius:20px; padding:20px 18px; cursor:pointer; border:1px solid var(--line); font-weight:700; font-size:17px; line-height:1.25; transition:.12s; position:relative; overflow:hidden}
+  .opt.a{background:linear-gradient(160deg,#3a1560,#2a1046)}
+  .opt.b{background:linear-gradient(160deg,#153a55,#102a40)}
+  .opt:active{transform:scale(.98)}
+  .opt .pct{position:absolute; inset:0 auto 0 0; background:rgba(255,255,255,.14); width:0; transition:width .5s; z-index:0}
+  .opt .lab{position:relative; z-index:1; display:flex; justify-content:space-between; align-items:center; gap:10px}
+  .opt .n{font-size:13px; color:var(--mut)}
+  .vsor{text-align:center; font-weight:800; color:var(--gold); font-size:14px; letter-spacing:2px}
+
+  /* Le Roi - carte à jouer */
+  .playcard{width:150px; height:210px; border-radius:16px; background:#fff; color:#111; position:relative; box-shadow:0 16px 40px rgba(0,0,0,.5); display:flex; align-items:center; justify-content:center; animation:flip .5s}
+  @keyframes flip{from{transform:rotateY(90deg) scale(.9); opacity:0}to{transform:none; opacity:1}}
+  .playcard .rank{font-size:64px; font-weight:800; line-height:1}
+  .playcard.red{color:#d21f3c}
+  .playcard .cnr{position:absolute; font-size:20px; font-weight:800}
+  .playcard .tl{top:8px; left:10px} .playcard .br{bottom:8px; right:10px; transform:rotate(180deg)}
+  .kingcup{font-size:13px; color:var(--mut)}
+  .kingcup b{color:var(--gold)}
+
+  /* Bombe */
+  .bomb{font-size:90px; line-height:1; animation:shake .5s infinite}
+  @keyframes shake{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(4deg)}}
+  .bombtheme{font-size:clamp(22px,6vw,30px); font-weight:800}
+  .timerbar{width:100%; height:10px; border-radius:999px; background:rgba(255,255,255,.12); overflow:hidden}
+  .timerbar i{display:block; height:100%; background:linear-gradient(90deg,#4ade80,#ffd23f,#ff4d4d); width:100%; transition:width .25s linear}
+
+  /* King game reveal */
+  .num{font-size:96px; font-weight:800; color:var(--gold); line-height:1; text-shadow:0 0 40px rgba(255,210,63,.5)}
+  .secretbadge{font-size:13px; color:var(--mut); letter-spacing:2px; text-transform:uppercase}
+
+  .fadein{animation:pop .3s}
+  .center{text-align:center}
+  .mut{color:var(--mut); font-size:13.5px; line-height:1.5}
+  .pill{display:inline-block; font-size:11px; font-weight:800; letter-spacing:.5px; padding:4px 10px; border-radius:999px; background:color-mix(in srgb,var(--acc) 22%, transparent); color:var(--acc); border:1px solid color-mix(in srgb,var(--acc) 45%, transparent)}
+  .spacer{flex:1}
+  .foot{text-align:center; color:var(--mut); font-size:11px; opacity:.7; padding:10px 0 4px}
+
+  /* sheet règles */
+  .sheet{position:fixed; inset:0; z-index:20; background:rgba(4,2,10,.7); backdrop-filter:blur(4px); display:none; align-items:flex-end; justify-content:center}
+  .sheet.on{display:flex; animation:pop .2s}
+  .sheetbox{width:min(560px,100vw); max-height:80vh; overflow-y:auto; background:linear-gradient(180deg,var(--panel2),var(--panel)); border-radius:24px 24px 0 0; padding:20px 20px calc(24px + env(safe-area-inset-bottom)); border-top:1px solid var(--line)}
+  .sheetbox h3{margin:2px 0 4px; font-size:20px}
+  .sheetbox p, .sheetbox li{color:var(--mut); font-size:14px; line-height:1.55}
+  .sheetbox ul{padding-left:18px; margin:8px 0}
+  .grab{width:44px;height:5px; border-radius:999px; background:rgba(255,255,255,.25); margin:0 auto 14px}
+
+  /* ---- Splash d'intro ---- */
+  #splash{position:fixed; inset:0; z-index:60; display:flex; align-items:center; justify-content:center; text-align:center;
+    background:radial-gradient(120% 90% at 50% 18%, #3a1170 0%, #14062f 55%, #08030f 100%); transition:opacity .55s ease, transform .55s ease}
+  #splash.gone{opacity:0; transform:scale(1.08); pointer-events:none}
+  #splash .blob{opacity:.5}
+  .sp-inner{position:relative; z-index:1; display:flex; flex-direction:column; align-items:center; gap:6px; animation:sp-in .7s cubic-bezier(.2,.9,.3,1.3)}
+  .sp-emo{font-size:clamp(70px,22vw,110px); animation:sp-bounce 1.9s ease-in-out infinite; filter:drop-shadow(0 14px 26px rgba(0,0,0,.55))}
+  .sp-logo{font-weight:800; font-size:clamp(42px,14vw,72px); line-height:.92; letter-spacing:1px;
+    background:linear-gradient(180deg,#fff,#d7b6ff 60%,#a86bff); -webkit-background-clip:text; background-clip:text; color:transparent; filter:drop-shadow(0 6px 0 rgba(0,0,0,.25))}
+  .sp-logo em{font-style:normal; color:var(--gold); -webkit-text-fill-color:var(--gold); text-shadow:0 0 26px rgba(255,210,63,.5)}
+  .sp-sub{color:#cbb6f0; letter-spacing:1px; font-size:clamp(13px,3.4vw,16px)}
+  .sp-hint{margin-top:24px; color:#a08cd0; font-size:12px; letter-spacing:2px; text-transform:uppercase; animation:sp-blink 1.4s ease-in-out infinite}
+  @keyframes sp-in{from{opacity:0; transform:translateY(22px) scale(.9)}to{opacity:1; transform:none}}
+  @keyframes sp-bounce{0%,100%{transform:translateY(0) rotate(-7deg)}50%{transform:translateY(-16px) rotate(7deg)}}
+  @keyframes sp-blink{0%,100%{opacity:.35}50%{opacity:1}}
+  /* ---- polish ---- */
+  .gcard{min-height:130px}
+  .brand{letter-spacing:1px}
+  .btn{letter-spacing:.3px}
+  .card{box-shadow:0 20px 50px rgba(0,0,0,.55), 0 0 0 1px color-mix(in srgb,var(--acc) 32%, transparent) inset}
+  .btn:active,.gcard:active,.opt:active,.iconbtn:active,.lvl:active{filter:brightness(1.08)}
+  .wheelwrap{display:flex; justify-content:center; align-items:center; padding:8px 0 4px; width:100%}
+  .wheelwrap canvas{touch-action:manipulation; filter:drop-shadow(0 14px 30px rgba(0,0,0,.5))}
+  .mcqopt{width:100%!important}
+  #confetti{position:fixed; inset:0; z-index:30; pointer-events:none; display:none}
+  #flash{position:fixed; inset:0; z-index:28; background:radial-gradient(circle at 50% 40%, #fff, rgba(255,210,63,.55) 60%, transparent); opacity:0; pointer-events:none; transition:opacity .14s}
+  #flash.on{opacity:.95}
+  .epicttl{font-size:clamp(24px,7vw,38px); font-weight:800; letter-spacing:1px; color:var(--gold); text-shadow:0 0 34px rgba(255,210,63,.7); animation:epicin .4s cubic-bezier(.2,.9,.3,1.4); text-align:center; line-height:1.05}
+  @keyframes epicin{0%{transform:scale(.6) rotate(-4deg); opacity:0}60%{transform:scale(1.12)}100%{transform:none; opacity:1}}
+  .rounds{font-size:12px; letter-spacing:3px; text-transform:uppercase; color:var(--gold); font-weight:800; opacity:.9}
+  .epiccard{border-color:var(--gold)!important; background:linear-gradient(165deg, rgba(255,210,63,.22), var(--panel))!important; box-shadow:0 20px 50px rgba(0,0,0,.55), 0 0 0 1px rgba(255,210,63,.5) inset, 0 0 40px rgba(255,160,20,.25)!important}
+  /* carte hub épique animée */
+  .gcard.hero{grid-column:1 / -1; min-height:96px; background:linear-gradient(120deg,#3a1560,#7a1bff,#ff2e97,#ffb020); background-size:300% 300%; animation:heroflow 6s ease infinite; border-color:rgba(255,255,255,.25)}
+  @keyframes heroflow{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+  .gcard.hero .gname{font-size:20px} .gcard.hero .gdesc{color:#ffe9c7}
+</style>
+</head>
+<body>
+<div id="bg"><span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span></div>
+<canvas id="confetti"></canvas>
+<div id="flash"></div>
+<div id="splash">
+  <span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span>
+  <div class="sp-inner">
+    <div class="sp-emo">🍻</div>
+    <div class="sp-logo">DRINK <em>GAMZ'</em></div>
+    <div class="sp-sub">La machine à soirée</div>
+    <div class="sp-hint">touche pour commencer</div>
+  </div>
+</div>
+
+<div id="app"><div class="wrap">
+
+  <!-- ============ SETUP ============ -->
+  <section class="view" id="v-setup">
+    <div style="height:8px"></div>
+    <div class="brand">DRINK <em>GAMZ'</em></div>
+    <div class="tag">La machine à jeux de soirée 🍻 — 10 jeux, tes règles.</div>
+
+    <h2 class="sec">👥 Les joueurs</h2>
+    <div class="field">
+      <input id="pname" type="text" placeholder="Prénom…" autocomplete="off" maxlength="14">
+      <button class="btn add" id="padd">+</button>
+    </div>
+    <div class="players" id="plist"></div>
+
+    <h2 class="sec">🎚️ Niveaux (choisis ton ambiance)</h2>
+    <div class="levels" id="levels"></div>
+    <div class="warn18" id="warn18" style="display:none">🔞 Niveaux Sexe / Trash activés — réservés aux adultes consentants. Chacun garde le droit de passer sans boire.</div>
+
+    <h2 class="sec">🍸 Conséquences</h2>
+    <div class="toggle" id="modetog">
+      <button data-m="alcool">🍺 Gorgées</button>
+      <button data-m="soft">😈 Gages</button>
+    </div>
+    <div class="mut center" style="margin-top:8px" id="modehint"></div>
+
+    <div class="spacer" style="min-height:16px"></div>
+    <button class="btn" id="go">ENTRER DANS LA SOIRÉE →</button>
+    <button class="btn ghost" id="installBtn" style="margin-top:4px">📲 Ajouter à l'iPhone / Partager</button>
+    <div class="foot">Tout est local, rien n'est envoyé. Buvez avec modération.</div>
+  </section>
+
+  <!-- ============ HUB ============ -->
+  <section class="view" id="v-hub">
+    <div class="topbar">
+      <button class="iconbtn" id="hubback">⚙️</button>
+      <div style="flex:1"><div class="topttl">DRINK GAMZ'</div><div class="topsub" id="hubsub"></div></div>
+      <div style="width:44px"></div>
+    </div>
+    <div class="grid" id="games"></div>
+    <div class="foot">🌍 = jeu rare ou inconnu en Europe · Modifie joueurs/niveaux avec ⚙️</div>
+  </section>
+
+  <!-- ============ PLAY ============ -->
+  <section class="view" id="v-play">
+    <div class="topbar">
+      <button class="iconbtn" id="pback">←</button>
+      <div style="flex:1"><div class="topttl" id="ptitle"></div></div>
+      <button class="iconbtn" id="prules">?</button>
+    </div>
+    <div class="stage" id="stage"></div>
+  </section>
+
+</div></div>
+
+<!-- sheet règles -->
+<div class="sheet" id="sheet"><div class="sheetbox">
+  <div class="grab"></div>
+  <h3 id="sh-title"></h3>
+  <div id="sh-body"></div>
+  <div style="height:12px"></div>
+  <button class="btn sec" id="sh-close">Fermer</button>
+</div></div>
+
+<script>
+"use strict";
+/* ================= ÉTAT ================= */
+const LS = "drinkGamz:v1";
+const state = {
+  players: [],
+  levels: { enfance:false, soft:true, delire:true, chaud:false, sexe:false, trash:false },
+  mode: "alcool", // alcool | soft
+};
+function save(){ try{ localStorage.setItem(LS, JSON.stringify(state)); }catch(e){} }
+function load(){ try{ const s=JSON.parse(localStorage.getItem(LS)); if(s){Object.assign(state,s);} }catch(e){} }
+
+/* ================= HELPERS ================= */
+const $ = s => document.querySelector(s);
+const rnd = n => Math.floor(Math.random()*n);
+const pick = a => a[rnd(a.length)];
+function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){const j=rnd(i+1);[a[i],a[j]]=[a[j],a[i]];} return a; }
+function activeLevels(){ return Object.keys(state.levels).filter(k=>state.levels[k]); }
+const LVLCOLOR = {enfance:"var(--enfance)", soft:"var(--soft)", delire:"var(--delire)", chaud:"var(--chaud)", sexe:"var(--sexe)", trash:"var(--trash)"};
+
+// deck sans répétition
+function makeDeck(items){ let d=shuffle(items); return { next(){ if(!d.length) d=shuffle(items); return d.pop(); } , size:items.length }; }
+// pool = fusion des niveaux actifs pour une section {niveau:[..]}
+function pool(section){
+  let out=[]; const lv=activeLevels();
+  lv.forEach(k=>{ (section[k]||[]).forEach(t=> out.push({t, lvl:k})); });
+  if(!out.length){ (section.soft||[]).forEach(t=>out.push({t,lvl:"soft"})); }
+  return out;
+}
+// rotation joueurs
+let order=[], oi=0;
+function resetOrder(){ order=shuffle(state.players); oi=0; }
+function nextPlayer(){ if(!order.length) resetOrder(); const p=order[oi%order.length]; oi++; return p; }
+function other(p){ const o=state.players.filter(x=>x!==p); return o.length? pick(o): p; }
+
+// conséquence selon le mode
+function sip(n){ n=n||1; return state.mode==="alcool" ? (n+" gorgée"+(n>1?"s":"")+" 🍺") : "un gage 😈 (pioche ci-dessous)"; }
+const GAGES=["10 pompes","imite un animal 30s","parle en chantant 1 tour","fais un compliment à chacun","danse 15s sans musique","accent bizarre jusqu'à ton tour","raconte une blague","fais ta pire grimace en photo","1 min les bras en l'air","prends l'accent québécois 2 min"];
+
+/* son léger (WebAudio) */
+let AC;
+function beep(freq,dur,type,vol){ try{ AC=AC||new (window.AudioContext||window.webkitAudioContext)(); if(AC.state==="suspended"){ AC.resume(); } const o=AC.createOscillator(),g=AC.createGain(); o.type=type||"triangle"; o.frequency.value=freq; g.gain.value=vol||.08; o.connect(g); g.connect(AC.destination); o.start(); g.gain.exponentialRampToValueAtTime(.0001, AC.currentTime+(dur||.12)); o.stop(AC.currentTime+(dur||.12)); }catch(e){} }
+function buzz(ms){ if(navigator.vibrate) navigator.vibrate(ms); }
+function tap(){ beep(560,.06,"square",.05); buzz(8); }
+
+/* garder l'écran allumé pendant le jeu (iOS 16.4+/Android) */
+let wakeLock=null;
+async function keepAwake(){ try{ if("wakeLock" in navigator){ wakeLock=await navigator.wakeLock.request("screen"); wakeLock.addEventListener("release",()=>{wakeLock=null;}); } }catch(e){} }
+document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==="visible" && !wakeLock) keepAwake(); });
+
+/* installer / partager (iPhone : Ajouter à l'écran d'accueil) */
+function openInstall(){
+  const standalone = window.navigator.standalone || (window.matchMedia && matchMedia("(display-mode: standalone)").matches);
+  const onHttp = location.protocol.indexOf("http")===0;
+  let html;
+  if(standalone){ html='<p>✅ C\'est déjà installé sur ton écran d\'accueil. Plein écran, hors-ligne. Bon jeu 🍻</p>'; }
+  else {
+    html='<p><b>Sur iPhone / iPad (Safari)</b></p><ul>'+
+      '<li>Touche le bouton <b>Partager</b> (le carré avec la flèche ⬆️) en bas de Safari.</li>'+
+      '<li>Choisis <b>« Sur l\'écran d\'accueil »</b>, puis <b>Ajouter</b>.</li>'+
+      '<li>L\'icône 🍻 apparaît comme une vraie app : plein écran, sans barre, hors-ligne.</li></ul>'+
+      '<p><b>Sur Android (Chrome)</b> : menu ⋮ → « Ajouter à l\'écran d\'accueil ».</p>';
+    if(!onHttp) html+='<p class="mut">Ouvert depuis un fichier local : pour l\'écran d\'accueil, mieux vaut un lien web. Utilise « Partager » ci-dessous pour t\'envoyer l\'app (AirDrop / message).</p>';
+  }
+  const shareBtn = navigator.share ? '<button class="btn" id="doShare" style="margin-top:10px">📤 Partager</button>' : '';
+  $("#sh-title").textContent="📲 Installer / Partager";
+  $("#sh-body").innerHTML=html+shareBtn;
+  $("#sheet").classList.add("on");
+  const sb=$("#doShare"); if(sb) sb.onclick=async()=>{ try{ await navigator.share({title:"Drink Gamz'", text:"La machine à jeux de soirée 🍻", url:location.href}); }catch(e){} };
+}
+
+/* confetti */
+const cc=$("#confetti"); let cctx, cparts=[], craf;
+function confetti(){ cc.style.display="block"; cctx=cc.getContext("2d"); cc.width=innerWidth; cc.height=innerHeight;
+  cparts=[]; const cols=["#ffd23f","#ff4d8d","#4be1ff","#c04bff","#4ade80"];
+  for(let i=0;i<120;i++) cparts.push({x:Math.random()*cc.width,y:-20-Math.random()*cc.height*.4,r:4+Math.random()*6,c:pick(cols),vy:3+Math.random()*4,vx:-2+Math.random()*4,a:Math.random()*6});
+  cancelAnimationFrame(craf); let t=0;
+  (function run(){ t++; cctx.clearRect(0,0,cc.width,cc.height);
+    cparts.forEach(p=>{ p.y+=p.vy; p.x+=p.vx; p.a+=.2; cctx.save(); cctx.translate(p.x,p.y); cctx.rotate(p.a); cctx.fillStyle=p.c; cctx.fillRect(-p.r/2,-p.r/2,p.r,p.r*.5); cctx.restore(); });
+    if(t<120) craf=requestAnimationFrame(run); else { cc.style.display="none"; }
+  })();
+}
+
+/* flash d'écran (mode épique) */
+function flash(){ const f=$("#flash"); f.classList.add("on"); setTimeout(()=>f.classList.remove("on"),150); }
+
+/* router */
+function show(v){ document.querySelectorAll(".view").forEach(x=>x.classList.remove("on")); $("#v-"+v).classList.add("on"); }
+
+/* ================= CONTENU ================= */
+const DB = {
+ action:{
+  delire:["Parle en yaourt (fausse langue) jusqu'à ton prochain tour.","Fais un discours de 20 secondes pour convaincre le groupe qu'un pigeon dirige le monde.","Invente une danse, donne-lui un nom, tout le monde la refait.","Imite un présentateur météo en pleine catastrophe naturelle.","Rejoue ta scène de film préférée en jouant tous les rôles.","Fais le tour de la pièce en marche arrière en te commentant comme un match de foot.","Chante 'Joyeux anniversaire' version metal hurlé.","Imite un robot qui bugue pendant 20 secondes.","Vends-nous un objet de la table comme au téléshopping.","Fais un ASMR de 15 secondes avec ce que tu trouves autour de toi.","Fais semblant de pleurer de joie en recevant un prix imaginaire.","Parle uniquement en posant des questions jusqu'à ton prochain tour.","Deviens commentateur sportif : décris ce que fait ton voisin en direct, 20 secondes.","Fais semblant d'être un chat coincé sous un meuble.","Invente un mot et son sens, impose-le au groupe pour la soirée.","Fais ta plus belle imitation d'une chèvre qui crie.","Marche comme un mannequin sur un podium jusqu'à ton tour.","Raconte une recette de cuisine comme une scène de thriller."],
+  enfance:["Imite ton dessin animé préféré quand tu avais 8 ans.","Chante un générique de dessin animé, on doit deviner.","Fais ta plus belle grimace de gamin en crise.","Récite une comptine en entier sans te tromper.","Marche et parle comme quand tu étais petit.","Boude comme un enfant de 5 ans pendant 30 secondes.","Danse comme à une boum de CM2.","Mime ton jouet préféré, fais deviner.","Refais le bruit de bouche que tu faisais pour jouer aux voitures.","Imite le prof qui t'a le plus marqué."],
+  soft:["Envoie 'je pense à toi' au 5e contact de ton téléphone.","Fais 10 pompes (ou un gage).","Parle avec un accent choisi par le groupe jusqu'à ton prochain tour.","Imite quelqu'un dans la pièce, on devine qui.","Danse 20 secondes sans musique.","Laisse ton voisin de droite écrire un message avec ton téléphone (à voix haute).","Fais un compliment sincère à chaque personne présente.","Parle en chantant jusqu'à ton prochain tour.","Prends la pose la plus stylée pour une photo.","Fais deviner un film rien qu'en mimant.","Montre la dernière photo de ta galerie.","Fais ton meilleur beatbox pendant 10 secondes.","Fais une imitation de ton patron ou d'un prof.","Laisse la personne en face lire ton dernier message envoyé.","Refais une pub que tu connais par cœur.","Fais deviner 3 emojis en les mimant.","Appelle un ami et chante-lui 10 secondes avant de raccrocher.","Fais une déclaration d'amour à un objet de la pièce.","Fais le pitch de ta propre émission de télé en 15 secondes.","Parle sans bouger les lèvres jusqu'à ton prochain tour.","Prends une photo de groupe la plus dramatique possible.","Improvise un slam de 15 secondes sur la soirée."],
+  chaud:["Fais un slow de 15 secondes avec la personne à ta gauche.","Murmure quelque chose de troublant à l'oreille de quelqu'un.","Refais ta meilleure technique de drague sur la personne en face.","Fais un compliment très sensuel à la personne de ton choix.","Danse le plus sexy possible pendant 15 secondes.","Assieds-toi sur les genoux de quelqu'un jusqu'à ton prochain tour.","Décris ton crush dans la pièce sans le nommer, on devine.","Fais un bisou sur la joue à la personne que tu trouves la plus charmante.","Regarde quelqu'un dans les yeux 20 secondes sans rire."],
+  sexe:["Décris ton meilleur souvenir coquin en 3 mots.","Mime une position, les autres devinent.","Enlève un vêtement (chaussette comptée).","Chuchote un fantasme à l'oreille de la personne à ta droite.","Fais ta meilleure imitation d'un gémissement… en mangeant.","Donne un faux suçon à ton propre bras, façon démo.","Fais une mini lap dance de 10 secondes à la personne de ton choix (si elle accepte)."],
+  trash:["Sens l'aisselle de la personne à ta gauche.","Bois le mélange mystère préparé par le groupe.","Mange une cuillère du condiment choisi par le groupe.","Fais le plus gros rot possible, noté sur 10.","Laisse quelqu'un écrire au feutre un mot sur ton bras.","Garde un glaçon dans la bouche jusqu'à ce qu'il fonde, en parlant normalement.","Échange un vêtement avec la personne à ta droite.","Imite un bruit de pet avec ta bouche pendant 10 secondes."]
+ },
+ verite:{
+  delire:["Si tu étais un légume, lequel et pourquoi ?","Le truc le plus stupide auquel tu as cru trop longtemps ?","Ta théorie du complot préférée ?","Le pire surnom qu'on t'ait donné ?","Quel talent totalement inutile maîtrises-tu ?","Ton pire achat inutile ?","Si tu pouvais bannir un aliment de la Terre, lequel ?","Quel personnage de fiction est ton alter ego ?","La chose la plus bizarre que tu manges et que tu assumes ?","Ton dernier vrai fou rire incontrôlable, c'était quand ?","Quelle est l'appli que tu ouvres 100 fois par jour ?","Quel est le nom de ton futur groupe de rock ?","Quel serait ton super-pouvoir le plus inutile ?","Si ta vie avait un générique, quelle chanson ?","Quel objet du quotidien te met bizarrement en colère ?","Tu es le méchant d'un film : c'est quoi ton plan diabolique ?","Quel emoji te représente le mieux et pourquoi ?"],
+  enfance:["Ton pire souvenir de l'école primaire ?","Ton tout premier amoureux ou amoureuse ?","Quelle bêtise n'a jamais été découverte par tes parents ?","Ton rêve de métier à 6 ans ?","Quel dessin animé te faisait pleurer ?","Ton doudou avait-il un nom ? Lequel ?","La plus grosse crise que tu as faite petit ?","Le mensonge le plus énorme raconté à la maîtresse ?"],
+  soft:["Ton plus gros mensonge à tes parents ?","La photo la plus gênante de ta galerie, elle montre quoi ?","Ton plaisir coupable musical ?","La dernière personne que tu as stalkée sur les réseaux ?","Ta plus grande peur ?","Le truc le plus cher que tu as cassé ?","La chose la plus limite que tu aies faite ?","Combien de temps depuis ta dernière douche, sincèrement ?","Quel est le dernier truc que tu as cherché sur internet ?","Quelle est ta plus grosse honte au collège ?","Quel est ton talent caché ?","Le dernier truc pour lequel tu as pleuré ?","Ta plus grosse dépense complètement inutile ?","Quel est ton pire trait de caractère assumé ?","À quel âge as-tu arrêté de dormir avec une peluche ?","Quel mensonge répètes-tu le plus souvent ?","Quelle est la rumeur la plus folle qu'on ait dite sur toi ?","Le compliment qui te fait le plus plaisir ?","Si tu pouvais lire les pensées de quelqu'un ici, qui ?"],
+  chaud:["Qui embrasserais-tu dans cette pièce ?","Ton plus gros crush célèbre ?","La partie du corps qui t'attire en premier ?","Le message le plus osé que tu aies envoyé ?","As-tu déjà eu un crush sur un ami proche ?","Style de baiser : doux ou sauvage ?","Ta pire técnique de drague qui a (quand même) marché ?"],
+  sexe:["Ton fantasme le plus fou ?","L'endroit le plus insolite où tu l'as fait ?","Ton plus gros tabou, levé ou pas ?","Ton pire moment gênant au lit ?","Ton red flag et ton green flag au lit ?","Team sextos ou team jamais ?","Le truc que tu n'as jamais osé demander ?"],
+  trash:["La chose la plus dégueu que tu aies faite en soirée ?","As-tu déjà vomi sur quelqu'un ?","Le pire endroit où tu as fait tes besoins ?","Ta plus grosse honte en public ?","As-tu déjà remis des habits sales après les avoir sentis ?","Le plus longtemps sans te laver les dents ?"]
+ },
+ jamais:{ // "Je n'ai jamais..."
+  delire:["parlé tout seul à voix haute en public.","fait semblant d'être au téléphone pour éviter quelqu'un.","cherché mon téléphone alors qu'il était dans ma main.","ri nerveusement au pire moment possible.","dansé seul dans ma chambre à fond les ballons.","oublié le prénom de quelqu'un en pleine conversation.","fait semblant de connaître la réponse pour ne pas avoir l'air bête.","salué quelqu'un qui saluait en fait la personne derrière moi.","poussé une porte marquée 'tirer'."],
+  enfance:["séché les cours.","triché à un contrôle.","goûté de la pâte à modeler ou de la colle.","fait semblant d'être malade pour rater l'école.","accusé mon frère/ma sœur d'une bêtise que j'ai faite.","eu un ami imaginaire.","fait pipi au lit après 8 ans."],
+  soft:["menti sur mon âge.","fait semblant de connaître une chanson.","ghosté quelqu'un.","pleuré devant un film Disney.","fait tomber mon téléphone dans les toilettes.","stalké un ex à 3h du matin.","chanté à fond sous la douche.","fait semblant d'avoir lu un livre.","parlé mal de quelqu'un juste après l'avoir quitté.","fait semblant d'aimer un cadeau.","mis un like puis retiré dans la seconde.","dormi devant un film au cinéma.","gardé l'étiquette d'un vêtement pour le rendre après l'avoir porté.","fait semblant de comprendre une consigne au boulot."],
+  chaud:["embrassé quelqu'un le premier soir.","eu un vrai coup de foudre.","flirté pour obtenir un truc gratuit.","envoyé un message osé au mauvais destinataire.","eu un crush sur un prof.","embrassé deux personnes le même jour."],
+  sexe:["fait l'amour dans un lieu public.","eu un plan d'un soir.","fait un truc coquin en voiture.","envoyé un nude.","simulé.","recroisé un ex pour une nuit."],
+  trash:["vomi en soirée.","embrassé quelqu'un dont j'ai oublié le nom.","fait pipi dans une piscine.","réutilisé un verre trouvé par terre en soirée.","été viré d'un bar ou d'une boîte.","roulé une pelle à un inconnu total."]
+ },
+ prefere:{ // {a,b}
+  delire:[{a:"Avoir des mains à la place des pieds",b:"Des pieds à la place des mains"},{a:"Parler toutes les langues du monde",b:"Parler à tous les animaux"},{a:"Éternuer des paillettes",b:"Transpirer du parfum"},{a:"Un narrateur qui commente ta vie en direct",b:"Une musique dramatique qui te suit partout"},{a:"Combattre 1 cheval géant",b:"Combattre 100 canards minuscules"},{a:"Avoir toujours une chanson coincée dans la tête",b:"Ne plus jamais écouter de musique"}],
+  enfance:[{a:"Rester en CP toute ta vie",b:"Sauter direct à la retraite"},{a:"Bonbons à volonté",b:"Jouets à volonté"},{a:"Récré infinie",b:"Grandes vacances infinies"},{a:"Redevenir enfant 1 semaine",b:"Avoir 30 ans pour toujours"}],
+  soft:[{a:"Ne plus jamais utiliser ton téléphone",b:"Ne plus jamais regarder de séries"},{a:"Être toujours 15 min en retard",b:"Être toujours 1h en avance"},{a:"Pouvoir voler",b:"Être invisible"},{a:"Ne manger que sucré",b:"Ne manger que salé"},{a:"Toujours dire la vérité",b:"Mentir à chaque phrase"},{a:"Vivre sans musique",b:"Vivre sans films"}],
+  chaud:[{a:"Un date parfait mais zéro bisou",b:"Un bisou parfait mais zéro date"},{a:"Sortir avec ton crush 1 mois",b:"Rester son ami pour toujours"},{a:"Embrasser la personne à ta gauche",b:"Un câlin de 1 min avec celle de droite"},{a:"Draguer uniquement par SMS",b:"Draguer uniquement en vrai"}],
+  sexe:[{a:"Sexe génial une fois par mois",b:"Sexe moyen tous les jours"},{a:"Que ton ex à vie",b:"Qu'un(e) inconnu(e) à vie"},{a:"Toujours au-dessus",b:"Toujours en dessous"},{a:"Matin",b:"Soir"}],
+  trash:[{a:"Une gorgée du fond de poubelle liquide",b:"3 shots cul sec"},{a:"Ne plus te laver les dents 1 mois",b:"Ne plus te doucher 2 semaines"},{a:"Roter à chaque phrase",b:"Péter à chaque pas"},{a:"Manger un insecte vivant",b:"Boire un shot de vinaigre"}]
+ },
+ susceptible:{ // "Qui est le plus susceptible de..."
+  delire:["parler à un mur en croyant que c'est quelqu'un ?","se perdre dans sa propre ville ?","rire tout seul en repensant à un truc random ?","oublier pourquoi il est entré dans une pièce ?","tomber en marchant sur du plat ?","garder un ticket de caisse inutile pendant 3 ans ?","adopter 12 chats un jour ?"],
+  enfance:["avoir mangé ses crottes de nez en primaire ?","avoir pleuré le premier jour d'école ?","avoir été le chouchou du prof ?","avoir fait pipi au lit le plus tard ?"],
+  soft:["devenir célèbre ?","oublier son propre anniversaire ?","finir en prison pour un truc bête ?","pleurer devant une pub ?","abandonner un jeu en plein milieu parce qu'il perd ?","répondre à un mail du boulot à 2h du mat ?","devenir influenceur du jour au lendemain ?","perdre son téléphone ce soir ?","pleurer de rire en pleine réunion ?","se marier sur un coup de tête à Vegas ?","oublier où il a garé sa voiture ?","adopter un animal sur un coup de tête ?"],
+  chaud:["tomber amoureux en vacances ?","envoyer un texto bourré à son ex ?","avoir un date ce week-end ?","draguer le/la serveur(se) ?"],
+  sexe:["avoir un plan à trois à son actif ?","avoir le plus de matchs sur les apps ?","avoir menti sur son nombre de partenaires ?","envoyer un nude sans qu'on lui demande ?"],
+  trash:["finir la tête dans les toilettes ce soir ?","ramener un inconnu chez lui ?","vomir en premier ?","oublier toute la soirée demain ?"]
+ },
+ // Picolo / Cascade : templates. {J}=joueur, {O}=autre, {N}=nombre, {SIP}=conséquence, {CAT}=catégorie
+ picolo:{
+  delire:[
+   "🤪 {J} parle en langage bébé jusqu'à son prochain tour, sinon {SIP}.",
+   "📢 {J} monte sur une chaise et crie qu'il est le roi du monde (ou {SIP}).",
+   "🐔 Nouvelle règle : dès que quelqu'un dit un prénom, tout le monde fait 'cot cot'. Oubli = 1 gorgée.",
+   "🕺 {J} lance un pas de danse, tout le monde le copie 10 secondes.",
+   "🎬 {J} imite {O} jusqu'à ce que le groupe devine qui c'est.",
+   "🤐 Interdit de rire pendant 1 minute. Le premier qui craque prend {SIP}.",
+   "🧟 {J} bouge au ralenti jusqu'à son prochain tour, chaque geste rapide = 1 gorgée.",
+   "🗣️ {J} et {O} se parlent uniquement en chantant jusqu'au prochain tour.",
+   "🦸 {J} invente son super-pouvoir et en fait une démonstration convaincante (ou {SIP}).",
+   "🐸 Nouvelle règle : avant chaque gorgée, tout le monde dit 'GLOUPS'. Oubli = 1 gorgée bonus.",
+   "🎙️ {J} commente la pièce comme un match de foot pendant 20 secondes.",
+   "🤡 {J} raconte la pire blague qu'il connaît. Si quelqu'un rit, ce quelqu'un prend {SIP}.",
+   "🕴️ Freeze ! À '3' de {J}, tout le monde se fige. Le premier qui bouge prend {SIP}.",
+   "🤖 {J} devient un robot : réponses en 'bip bop' jusqu'à son prochain tour. Mot humain = 1 gorgée.",
+   "🐒 {J} imite 3 animaux à la suite, le groupe doit tous les deviner.",
+   "📣 {J} fait une pub de 15 secondes pour un objet ridicule de la pièce.",
+   "🎨 {J} fige une œuvre d'art vivante, le groupe lui donne un titre.",
+   "🎢 {J} raconte sa journée comme le film le plus dramatique du monde."
+  ],
+  soft:[
+   "{J}, {SIP}. Cul sec si tu es un vrai.",
+   "🌊 CASCADE ! {J} commence à boire, chacun enchaîne dans le sens des aiguilles. Personne ne s'arrête avant celui d'avant.",
+   "{J} choisit quelqu'un qui boit à sa place.",
+   "📜 Nouvelle règle : interdit de dire 'oui' et 'non'. {J} est le gardien. 1 gorgée par erreur.",
+   "👀 {J} et {O} : duel de regards. Le premier qui rit prend {SIP}.",
+   "🥂 Tout le monde lève son verre à {J} ! Santé, chacun boit une gorgée.",
+   "{J} distribue 3 gorgées à qui il veut (max 2 par personne).",
+   "🧠 Catégorie : {CAT}. En commençant par {J}, chacun cite un mot. Le premier qui bloque prend {SIP}.",
+   "👍 {J} devient le Roi du Pouce : quand il pose son pouce sur la table, le dernier à suivre prend {SIP}. Jusqu'à la fin.",
+   "🎤 {J}, fais rire {O} en 10 secondes. Si tu échoues, {SIP}.",
+   "🗿 Silence total pendant 30 secondes. Le premier qui parle ou rit prend {SIP}.",
+   "🤐 {J} est muet jusqu'à son prochain tour. Chaque mot = 1 gorgée.",
+   "✊ Le plus jeune contre le plus vieux : pierre-feuille-ciseaux. Le perdant prend {SIP}.",
+   "🎯 {J} lance le défi de son choix à {O}.",
+   "🫵 À 3, tout le monde pointe le/la plus beau/belle du groupe. Le plus pointé prend {SIP}… de fierté.",
+   "🔤 {J} donne une lettre. Chacun dit un prénom qui commence par cette lettre. Le premier qui sèche prend {SIP}.",
+   "🎵 {J} chante une chanson ; quand il s'arrête net, le groupe complète la parole. Celui qui sèche prend {SIP}.",
+   "📸 {J} sort la 3e photo de sa galerie et l'explique au groupe.",
+   "🔢 On compte à tour de rôle depuis {J}, mais les multiples de 3 deviennent 'PLOUF'. Erreur = {SIP}.",
+   "🎭 {J} dit une vérité et un mensonge sur lui. Le groupe vote ; s'il se fait griller, il prend {SIP}.",
+   "🚫 Nouvelle règle : interdit de dire les prénoms. Gardien : {J}. Erreur = 1 gorgée.",
+   "🤝 {J} choisit un binôme : désormais ces deux-là boivent toujours ensemble.",
+   "📵 {J} pose son téléphone au centre. S'il le touche avant son prochain tour : {SIP}.",
+   "🧩 {J} doit citer 3 {CAT} en 5 secondes. Échec = {SIP}.",
+   "⏱️ Tout le monde ferme les yeux et rouvre à ce qu'il pense être 20 secondes. Le plus loin prend {SIP}.",
+   "🙅 {J} choisit un mot interdit pour toute la partie. Le dire = 1 gorgée à chaque fois.",
+   "📖 Histoire à rallonge : {J} lance une phrase, chacun en ajoute une. Celui qui bloque prend {SIP}.",
+   "🎲 Chi-fou-mi géant : tout le groupe joue contre {J}. Les perdants prennent une gorgée.",
+   "🤳 {J} orchestre le selfie de groupe le plus moche possible.",
+   "👑 {J} est Président jusqu'à son prochain tour : il boit quand il veut et fait boire qui il veut.",
+   "🧠 Mémoire : {J} dit un mot, le suivant répète et en ajoute un, etc. Celui qui oublie prend {SIP}.",
+   "🎯 {J} répartit {N} gorgées dans le groupe comme il veut.",
+   "🐢 Slow motion : tout le monde parle et bouge au ralenti. Le premier qui accélère prend {SIP}.",
+   "🍀 {J} et {O} : celui qui a le moins de batterie sur son téléphone prend {SIP}.",
+   "🎬 {J} rejoue en mime la dernière chose qu'il a regardée, le groupe devine.",
+   "🗳️ Vote : le groupe désigne qui finira le plus bourré ce soir. L'élu prend {SIP}.",
+   "🔁 {J} lance un mot ; à tour de rôle chacun dit un mot associé. Le premier qui hésite prend {SIP}."
+  ],
+  chaud:[
+   "😏 {J} fait un compliment sexy à {O}, sinon {SIP}.",
+   "💃 {J} et {O} : 10 secondes de slow collé, ou vous prenez {SIP} chacun.",
+   "😘 {J} fait un bisou (joue) à la personne qu'il trouve la plus mignonne.",
+   "🔥 {J} décrit son type idéal. Si quelqu'un correspond dans la pièce, ils trinquent.",
+   "😍 {J} chuchote son top 3 des plus charmants à {O}.",
+   "💌 {J} déclare sa flamme (pour de faux) à la personne de son choix, façon film.",
+   "🕯️ {J} et {O} : 20 secondes de regard dans les yeux sans rire. Le premier qui craque prend {SIP}.",
+   "💐 {J} fait 3 compliments à la personne en face : un physique, un sur le caractère, un surprenant.",
+   "🎶 {J} dédie une chanson à quelqu'un et explique pourquoi.",
+   "🤗 {J} lance un câlin de groupe de 10 secondes.",
+   "😳 {J} imite la façon de draguer de {O}. Si c'est ressemblant, {O} prend {SIP}.",
+   "💞 {J} avoue le compliment le plus mignon qu'on lui ait fait."
+  ],
+  sexe:[
+   "🌶️ {J} murmure un fantasme à {O}, ou cul sec.",
+   "💋 {J} et {O} : le/la perdant(e) d'un shifumi enlève un vêtement (ou {SIP}).",
+   "🍑 {J} mime une position, {O} doit deviner. Ratée = {SIP} pour les deux.",
+   "🔥 {J} et {O} décrivent leur pire date ; le groupe désigne la pire, qui prend {SIP}.",
+   "🍒 {J} révèle un red flag et un green flag au lit, ou {SIP}.",
+   "😈 {J} : répondre cash à une question coquine du groupe, ou cul sec.",
+   "🛏️ {J} mime son réveil un lendemain de folie ; le groupe note la performance.",
+   "🌡️ {J} note (avec tact) le charme de la personne à sa droite sur 10.",
+   "👀 {J} et {O} : le premier qui rougit en se fixant prend {SIP}.",
+   "💦 {J} donne un mini-défi coquin (soft) à {O}, sinon les deux prennent {SIP}."
+  ],
+  trash:[
+   "🤢 Le groupe prépare un shot mystère pour {J}.",
+   "👃 {J} sent l'aisselle de {O}. Refus = double {SIP}.",
+   "🥴 {J}, cul sec sinon tu portes une chaussette du groupe sur la tête jusqu'à la fin.",
+   "🧦 {J} sent sa propre chaussette et note l'odeur sur 10.",
+   "🥤 {J} boit une gorgée d'un mélange préparé par {O}.",
+   "🤮 Nouvelle règle : interdit de dire 'boire' ou 'gorgée'. Gardien : {J}. Erreur = 2 gorgées.",
+   "😝 {J} garde un glaçon en bouche en racontant une histoire jusqu'à ce qu'il fonde.",
+   "🩲 {J} échange un accessoire (chaussette, bracelet, casquette) avec {O} jusqu'à la fin.",
+   "🐽 {J} fait le plus gros rot ou le plus long cri ; le groupe note sur 10.",
+   "💀 Le groupe vote pour le plus sale de la soirée ; l'élu prend {SIP}."
+  ]
+ },
+ cats:["marques de voiture","pays d'Europe","boissons alcoolisées","prénoms de filles","prénoms de garçons","animaux","films","chanteurs","insultes gentilles","fruits et légumes","équipes de foot","séries","villes de France","super-héros","marques de fringues","desserts","instruments de musique","métiers","réseaux sociaux","pays d'Afrique"],
+ // Le Roi (Ring of Fire)
+ roi:{
+  "A":["🌊 Cascade","Tu commences à boire, chacun à ta gauche enchaîne. Personne ne lâche avant celui d'avant."],
+  "2":["👉 Toi","Désigne quelqu'un : il prend "],
+  "3":["🫵 Moi","C'est pour toi : "],
+  "4":["🏠 Par terre","Tout le monde touche le sol. Le dernier prend "],
+  "5":["👍 Le Pouce","Tu es le Maître du Pouce. Pose-le discrètement sur la table quand tu veux : le dernier à suivre boit. Jusqu'à la prochaine carte."],
+  "6":["🖐️ Le Ciel","Tout le monde lève la main. Le dernier prend "],
+  "7":["🗣️ Rime","Dis un mot, chacun doit rimer à tour de rôle. Le premier qui bloque prend "],
+  "8":["🤝 Binôme","Choisis un partenaire : il boit à chaque fois que tu bois, jusqu'à la fin."],
+  "9":["🧠 Catégorie","Choisis un thème. Chacun cite un élément. Celui qui sèche prend "],
+  "10":["📜 Règle","Invente une règle qui s'applique à tous jusqu'à la prochaine carte Valet."],
+  "J":["🃏 Question Master","Tant que tu es Question Master, celui qui répond à une de tes questions boit. Jusqu'au prochain Valet."],
+  "Q":["👑 Reine","Toutes les filles prennent "],
+  "K":["🤴 Roi","Verse un peu de ta boisson dans le Verre du Roi au centre. Le 4e Roi tiré boit tout le mélange. 👑"]
+ },
+ // La Bombe (thèmes)
+ bombe:{
+  delire:["super-héros","excuses bidons pour rater le travail","choses qui font peur","jeux vidéo","personnages de dessins animés","trucs qu'on perd tout le temps","marques de céréales","choses molles","memes connus"],
+  enfance:["dessins animés","personnages Disney","matières scolaires","bonbons","jeux de cour de récré"],
+  soft:["marques de voiture","pays du monde","capitales","fruits","animaux sauvages","films cultes","chanteurs français","sports","métiers","séries Netflix","marques de téléphone","langues","choses dans un frigo","personnages Marvel","danses","boissons chaudes"],
+  chaud:["parties du corps","répliques de drague","apps de rencontre","choses qu'on dit à un date"],
+  sexe:["positions du Kama Sutra","surnoms coquins","choses à faire dans une chambre"],
+  trash:["insultes","choses dégueu","trucs qu'on trouve dans une soirée qui dérape","excuses pour rater le boulot après une cuite"]
+ },
+ // King Game (Japon) : ordres. {a}/{b}=numéros, {SIP}=conséquence
+ king:{
+  delire:["Le n°{a} imite un animal, le n°{b} doit deviner.","Le n°{a} et le n°{b} inventent un check secret en 10 secondes.","Le n°{a} fait un compliment complètement absurde au n°{b}.","Le n°{a} raconte sa journée en chantant.","Le n°{a} parle en rimes jusqu'au prochain tour (ou {SIP}).","Le n°{a} imite une célébrité, tout le monde devine."],
+  soft:["Le n°{a} imite le n°{b} pendant 20 secondes.","Le n°{a} et le n°{b} font un bras de fer.","Le n°{a} chante le refrain de son choix.","Le n°{a} fait un compliment au n°{b}.","Le n°{a} prend {SIP}.","Le n°{a} raconte une blague, si personne ne rit il prend {SIP}.","Le n°{a} et le n°{b} échangent de place.","Le n°{a} parle avec un accent jusqu'au prochain tour."],
+  chaud:["Le n°{a} fait un bisou sur la joue au n°{b}.","Le n°{a} fait un slow de 15s avec le n°{b}.","Le n°{a} murmure un compliment sexy au n°{b}.","Le n°{a} s'assoit sur les genoux du n°{b} un tour."],
+  sexe:["Le n°{a} chuchote un fantasme au n°{b}.","Le n°{a} enlève un vêtement (ou {SIP}).","Le n°{a} mime une position, le n°{b} devine.","Le n°{a} fait un faux suçon au bras du n°{b}."],
+  trash:["Le n°{a} sent l'aisselle du n°{b}.","Le n°{a} boit le mélange préparé par le n°{b}.","Le n°{a} imite un rot suivi du n°{b}.","Le n°{a} met une chaussette du n°{b} sur sa tête un tour."]
+ },
+ // Paranoïa : banque de questions "qui...?"
+ paranoia:{
+  delire:["Qui parle le plus pour ne rien dire ?","Qui a le rire le plus contagieux ?","Qui serait le pire colocataire ?","Qui gère le mieux un apéro ?","Qui raconte les meilleures histoires ?","Qui survivrait le moins longtemps dans un film d'horreur ?"],
+  soft:["Qui a le plus de chances de devenir riche ?","Qui raconte le plus de bobards ?","Qui est le/la plus drôle ici ?","Qui ferait le meilleur président ?","Qui craquerait en premier sur une île déserte ?","Qui a le plus de secrets ?","Qui ment le mieux ?","Qui serait le meilleur espion ?","Qui dépenserait tout un héritage en un mois ?"],
+  chaud:["Qui embrasse le mieux, à ton avis ?","Qui est le/la plus sexy ce soir ?","Qui aurait le plus de succès en boîte ?","Avec qui partirais-tu en week-end en amoureux ?"],
+  sexe:["Qui a le plus d'expérience ?","Qui serait le/la plus sauvage au lit ?","Qui envoie le plus de nudes ?","Qui a le crush le plus secret ici ?"],
+  trash:["Qui va le plus se ridiculiser ce soir ?","Qui a l'hygiène la plus douteuse ?","Qui vomira en premier ?","Qui a le passé le plus sale ?"]
+ },
+ // Quiz Culture G : {q, c:[4 choix], a:index bonne réponse, cat, info}
+ quiz:[
+  {q:"Capitale de l'Australie ?",c:["Sydney","Melbourne","Canberra","Perth"],a:2,cat:"Géographie",info:"Canberra, créée pour départager Sydney et Melbourne."},
+  {q:"Qui a peint la Joconde ?",c:["Michel-Ange","Léonard de Vinci","Raphaël","Botticelli"],a:1,cat:"Art"},
+  {q:"Planète la plus proche du Soleil ?",c:["Vénus","Mars","Mercure","Terre"],a:2,cat:"Sciences"},
+  {q:"En quelle année est tombé le mur de Berlin ?",c:["1987","1989","1991","1993"],a:1,cat:"Histoire"},
+  {q:"Combien de joueurs sur le terrain par équipe au foot ?",c:["9","10","11","12"],a:2,cat:"Sport"},
+  {q:"Symbole chimique de l'oxygène ?",c:["Or","O","Os","Og"],a:1,cat:"Sciences"},
+  {q:"Le plus long fleuve du monde ?",c:["Nil","Amazone","Mississippi","Yangtsé"],a:0,cat:"Géographie",info:"Le Nil (~6 650 km) — débat serré avec l'Amazone."},
+  {q:"Qui a écrit Les Misérables ?",c:["Zola","Victor Hugo","Balzac","Flaubert"],a:1,cat:"Littérature"},
+  {q:"Monnaie du Japon ?",c:["Yuan","Won","Yen","Ringgit"],a:2,cat:"Culture"},
+  {q:"Vitesse de la lumière (environ) ?",c:["300 000 km/s","30 000 km/s","3 000 km/s","3 M km/s"],a:0,cat:"Sciences"},
+  {q:"Combien de faces a un dé classique ?",c:["4","6","8","12"],a:1,cat:"Logique"},
+  {q:"Qui a gagné la Coupe du monde 2018 ?",c:["Croatie","France","Allemagne","Brésil"],a:1,cat:"Sport"},
+  {q:"Symbole chimique du fer ?",c:["Fr","Fe","Ir","F"],a:1,cat:"Sciences"},
+  {q:"Plus grand océan du monde ?",c:["Atlantique","Indien","Pacifique","Arctique"],a:2,cat:"Géographie"},
+  {q:"Combien de touches sur un piano ?",c:["76","80","88","96"],a:2,cat:"Musique"},
+  {q:"Qui a théorisé la relativité ?",c:["Newton","Einstein","Bohr","Galilée"],a:1,cat:"Sciences"},
+  {q:"Capitale du Canada ?",c:["Toronto","Vancouver","Ottawa","Montréal"],a:2,cat:"Géographie"},
+  {q:"Le mont le plus haut du monde ?",c:["K2","Mont Blanc","Everest","Kilimandjaro"],a:2,cat:"Géographie"},
+  {q:"Quel organe produit l'insuline ?",c:["Foie","Pancréas","Rein","Estomac"],a:1,cat:"Sciences"},
+  {q:"Qui a peint La Nuit étoilée ?",c:["Monet","Van Gogh","Picasso","Dali"],a:1,cat:"Art"},
+  {q:"Langue la plus parlée (locuteurs natifs) ?",c:["Anglais","Espagnol","Mandarin","Hindi"],a:2,cat:"Culture"},
+  {q:"Combien de fuseaux horaires dans le monde ?",c:["12","18","24","30"],a:2,cat:"Géographie"},
+  {q:"Quel gaz les plantes absorbent-elles ?",c:["Oxygène","Azote","CO2","Hélium"],a:2,cat:"Sciences"},
+  {q:"Capitale de l'Espagne ?",c:["Barcelone","Madrid","Séville","Valence"],a:1,cat:"Géographie"},
+  {q:"En quelle année a coulé le Titanic ?",c:["1905","1912","1918","1923"],a:1,cat:"Histoire"},
+  {q:"Combien de pattes a une araignée ?",c:["6","8","10","12"],a:1,cat:"Sciences"},
+  {q:"Le plus petit pays du monde ?",c:["Monaco","Vatican","Nauru","Malte"],a:1,cat:"Géographie"},
+  {q:"Qui a composé l'Ode à la joie (9e symphonie) ?",c:["Mozart","Beethoven","Bach","Chopin"],a:1,cat:"Musique"},
+  {q:"Combien de couleurs dans un arc-en-ciel (classique) ?",c:["5","6","7","8"],a:2,cat:"Sciences"},
+  {q:"L'os le plus long du corps humain ?",c:["Tibia","Fémur","Humérus","Radius"],a:1,cat:"Sciences"},
+  {q:"Capitale de l'Italie ?",c:["Milan","Rome","Naples","Turin"],a:1,cat:"Géographie"},
+  {q:"L'animal terrestre le plus rapide ?",c:["Lion","Guépard","Antilope","Cheval"],a:1,cat:"Nature"},
+  {q:"Combien de minutes dans une journée ?",c:["1 200","1 440","1 600","2 400"],a:1,cat:"Logique"},
+  {q:"Quelle mer sépare l'Europe de l'Afrique ?",c:["Mer Noire","Méditerranée","Mer Rouge","Baltique"],a:1,cat:"Géographie"},
+  {q:"Combien d'os dans le squelette humain adulte ?",c:["106","206","306","406"],a:1,cat:"Sciences"},
+  {q:"Combien de cartes dans un jeu classique (sans jokers) ?",c:["48","52","54","56"],a:1,cat:"Logique"},
+  {q:"La plus grande planète du système solaire ?",c:["Terre","Saturne","Jupiter","Neptune"],a:2,cat:"Sciences"},
+  {q:"Qui a écrit Roméo et Juliette ?",c:["Molière","Shakespeare","Dante","Hugo"],a:1,cat:"Littérature"},
+  {q:"Symbole chimique de l'or ?",c:["Go","Au","Ag","Or"],a:1,cat:"Sciences"},
+  {q:"Combien de secondes dans une heure ?",c:["360","600","3 600","6 000"],a:2,cat:"Logique"},
+  {q:"Capitale de l'Allemagne ?",c:["Munich","Francfort","Berlin","Hambourg"],a:2,cat:"Géographie"},
+  {q:"Combien de cordes sur une guitare classique ?",c:["4","5","6","7"],a:2,cat:"Musique"},
+  {q:"Quel pays a inventé le thé de l'après-midi (five o'clock tea) ?",c:["Chine","Inde","Royaume-Uni","Japon"],a:2,cat:"Culture"},
+  {q:"Quelle est la capitale de la Belgique ?",c:["Anvers","Bruxelles","Gand","Liège"],a:1,cat:"Géographie"}
+ ],
+ // GeoGuess : {clues:[3 indices], c:[4 pays], a, flag, info}
+ geo:[
+  {clues:["Tour Eiffel","Croissants et baguettes","La Seine"],c:["Italie","France","Belgique","Espagne"],a:1,flag:"🇫🇷"},
+  {clues:["Colisée","Pâtes et pizza","Vespa"],c:["Grèce","Espagne","Italie","Portugal"],a:2,flag:"🇮🇹"},
+  {clues:["Sagrada Família","Flamenco","Tapas"],c:["Espagne","Mexique","Portugal","Italie"],a:0,flag:"🇪🇸"},
+  {clues:["Big Ben","Thé à 17h","On roule à gauche"],c:["Irlande","Royaume-Uni","Australie","USA"],a:1,flag:"🇬🇧"},
+  {clues:["Statue de la Liberté","Times Square","Hot-dogs"],c:["Canada","USA","Royaume-Uni","Mexique"],a:1,flag:"🇺🇸"},
+  {clues:["Sushis","Mont Fuji","Cerisiers en fleurs"],c:["Chine","Corée","Japon","Thaïlande"],a:2,flag:"🇯🇵"},
+  {clues:["Pyramides de Gizeh","Le Nil","Les pharaons"],c:["Maroc","Égypte","Jordanie","Grèce"],a:1,flag:"🇪🇬"},
+  {clues:["Kangourous","Opéra de Sydney","L'Outback"],c:["Nouvelle-Zélande","Afrique du Sud","Australie","Argentine"],a:2,flag:"🇦🇺"},
+  {clues:["Tacos","Sombrero","Jour des morts"],c:["Espagne","Mexique","Pérou","Colombie"],a:1,flag:"🇲🇽"},
+  {clues:["Christ Rédempteur","Carnaval de Rio","Samba"],c:["Argentine","Brésil","Portugal","Mexique"],a:1,flag:"🇧🇷"},
+  {clues:["Tulipes","Moulins à vent","Vélos partout"],c:["Belgique","Danemark","Pays-Bas","Allemagne"],a:2,flag:"🇳🇱"},
+  {clues:["Fjords","Aurores boréales","Saumon"],c:["Norvège","Suisse","Islande","Finlande"],a:0,flag:"🇳🇴"},
+  {clues:["La Grande Muraille","Pandas","Nouvel an lunaire"],c:["Japon","Corée","Chine","Vietnam"],a:2,flag:"🇨🇳"},
+  {clues:["Taj Mahal","Curry","Bollywood"],c:["Pakistan","Inde","Bangladesh","Népal"],a:1,flag:"🇮🇳"},
+  {clues:["Chocolat et fromage","Les Alpes","Montres de luxe"],c:["Autriche","Suisse","France","Italie"],a:1,flag:"🇨🇭"},
+  {clues:["Frites et gaufres","Manneken-Pis","Bières trappistes"],c:["Belgique","Pays-Bas","France","Allemagne"],a:0,flag:"🇧🇪"},
+  {clues:["Machu Picchu","Lamas","Les Andes"],c:["Bolivie","Chili","Pérou","Équateur"],a:2,flag:"🇵🇪"},
+  {clues:["L'Acropole","Îles des Cyclades","Feta et olives"],c:["Italie","Grèce","Turquie","Chypre"],a:1,flag:"🇬🇷"},
+  {clues:["Oktoberfest","Saucisses (Bratwurst)","Berlin"],c:["Autriche","Suisse","Allemagne","Pays-Bas"],a:2,flag:"🇩🇪"},
+  {clues:["Poutine","Sirop d'érable","Les Grands Lacs"],c:["USA","Canada","Suède","Russie"],a:1,flag:"🇨🇦"},
+  {clues:["Le tango","Asado (bœuf grillé)","La Patagonie"],c:["Brésil","Chili","Argentine","Uruguay"],a:2,flag:"🇦🇷"},
+  {clues:["Vodka","La Place Rouge","Le plus grand pays du monde"],c:["Ukraine","Russie","Pologne","Kazakhstan"],a:1,flag:"🇷🇺"},
+  {clues:["Geysers","Volcans","Presque pas d'arbres"],c:["Islande","Norvège","Écosse","Groenland"],a:0,flag:"🇮🇸"},
+  {clues:["Le fado","Le Porto","Azulejos"],c:["Espagne","Portugal","Italie","Brésil"],a:1,flag:"🇵🇹"},
+  {clues:["Safari","Kilimandjaro","Zanzibar"],c:["Kenya","Tanzanie","Afrique du Sud","Ouganda"],a:1,flag:"🇹🇿"},
+  {clues:["Kimchi","K-pop","Séoul"],c:["Japon","Chine","Corée du Sud","Vietnam"],a:2,flag:"🇰🇷"},
+  {clues:["Le café","La forêt amazonienne","Shakira"],c:["Venezuela","Colombie","Pérou","Brésil"],a:1,flag:"🇨🇴"},
+  {clues:["Sauna","Le Père Noël (Laponie)","Nokia"],c:["Suède","Norvège","Finlande","Estonie"],a:2,flag:"🇫🇮"}
+ ],
+ // Rent Guesser : {city, desc, c:[4 loyers], a, info} — loyers ESTIMÉS (indicatifs)
+ rent:[
+  {city:"Paris (11e)",desc:"Studio 20 m², proche métro",c:["650€","900€","1 200€","1 600€"],a:2,info:"~1 100–1 300€/mois. Parmi les plus chers d'Europe."},
+  {city:"Lille",desc:"T2 45 m², centre",c:["500€","750€","1 100€","1 500€"],a:1,info:"~700–800€/mois."},
+  {city:"Londres (Zone 2)",desc:"1 chambre, appart moderne",c:["900€","1 400€","2 000€","2 600€"],a:2,info:"~1 800–2 200€/mois."},
+  {city:"Berlin",desc:"2 pièces 60 m²",c:["600€","1 000€","1 400€","1 900€"],a:1,info:"~1 000–1 300€/mois, en forte hausse."},
+  {city:"New York (Manhattan)",desc:"Studio",c:["1 500€","2 500€","3 500€","4 500€"],a:2,info:"~3 000–3 800$/mois. Brutal."},
+  {city:"Barcelone",desc:"T2 55 m², proche plage",c:["600€","1 000€","1 400€","1 800€"],a:1,info:"~1 100€/mois."},
+  {city:"Le Touquet",desc:"Appart vue mer, 50 m²",c:["700€","1 100€","1 500€","2 200€"],a:2,info:"Station chic → cher, ~1 400€+."},
+  {city:"Bruxelles",desc:"1 chambre 50 m²",c:["500€","800€","1 100€","1 500€"],a:1,info:"~850€/mois."},
+  {city:"Amsterdam",desc:"Studio sur les canaux",c:["800€","1 200€","1 700€","2 300€"],a:2,info:"~1 600–1 800€/mois, marché tendu."},
+  {city:"Tokyo",desc:"1K (petit studio)",c:["500€","800€","1 200€","1 700€"],a:1,info:"~800€/mois."},
+  {city:"Lyon",desc:"T2 50 m²",c:["600€","850€","1 200€","1 600€"],a:1,info:"~800–900€/mois."},
+  {city:"Marseille",desc:"T2 55 m²",c:["500€","750€","1 000€","1 400€"],a:1,info:"~700€/mois."},
+  {city:"Genève",desc:"2 pièces",c:["1 200€","1 800€","2 500€","3 200€"],a:1,info:"~1 900–2 400 CHF, l'une des plus chères."},
+  {city:"Lisbonne",desc:"T1 40 m², centre",c:["500€","800€","1 100€","1 500€"],a:1,info:"~900€/mois, a beaucoup grimpé."},
+  {city:"Dubaï",desc:"Studio moderne",c:["700€","1 200€","1 700€","2 400€"],a:1,info:"~1 200–1 500€/mois."},
+  {city:"Prague",desc:"T2 55 m²",c:["400€","650€","950€","1 300€"],a:1,info:"~700€/mois."},
+  {city:"Milan",desc:"Bilocale 55 m²",c:["600€","950€","1 300€","1 700€"],a:1,info:"~1 100€/mois."},
+  {city:"Bordeaux",desc:"T2 48 m²",c:["550€","800€","1 100€","1 500€"],a:1,info:"~800€/mois."},
+  {city:"San Francisco",desc:"Studio",c:["1 500€","2 300€","3 200€","4 200€"],a:2,info:"~2 800–3 300$/mois."},
+  {city:"Varsovie",desc:"T2 50 m²",c:["350€","600€","900€","1 300€"],a:1,info:"~650€/mois."}
+ ]
+};
+
+/* règles affichées (le '?') */
+const RULES = {
+ av:{t:"Action ou Vérité",b:"Le joueur désigné choisit <b>Action</b> ou <b>Vérité</b>. Refus = conséquence (gorgée ou gage). Chacun garde le droit de passer."},
+ jamais:{t:"Je n'ai jamais",b:"On lit la phrase à voix haute. <b>Tous ceux qui l'ont déjà fait</b> prennent une conséquence. Sincérité obligatoire (ou pas 😏)."},
+ prefere:{t:"Tu préfères",b:"Chacun vote pour A ou B en tapant l'option. On révèle le camp majoritaire — les minoritaires trinquent."},
+ susceptible:{t:"Qui est le plus susceptible de…",b:"À 3, <b>tout le monde pointe</b> la personne qui correspond le mieux. Le plus pointé prend la conséquence."},
+ picolo:{t:"Picolo / Cascade",b:"Le moteur enchaîne défis, mini-jeux et règles qui durent. Laisse-toi porter et applique ce qui s'affiche. Idéal pour lancer une soirée."},
+ roi:{t:"Le Roi (Ring of Fire)",b:"Tire une carte à tour de rôle, applique la règle du chiffre.<ul><li>Certaines règles (Pouce, Binôme, Question Master, Règle) <b>durent dans le temps</b>.</li><li>Chaque <b>Roi</b> : verse dans le Verre du Roi. Le 4e Roi boit tout. 👑</li></ul>"},
+ bombe:{t:"La Bombe 💣",b:"Un thème s'affiche. Cite un élément puis <b>passe vite le téléphone</b>. Celui qui l'a en main quand ça explose a perdu. Chrono aléatoire !"},
+ medusa:{t:"Méduse 🌍 (US)",b:"Peu connu en Europe. Tous têtes baissées. Au signal, chacun relève la tête et <b>fixe quelqu'un</b>. Si deux personnes se regardent dans les yeux : elles crient MÉDUSE et trinquent."},
+ king:{t:"King Game 🌍 (王様ゲーム, Japon)",b:"Chacun regarde son <b>numéro secret</b> (on se passe le téléphone). Le Roi est tiré au sort et donne un ordre à des numéros — <b>personne ne sait qui est qui</b> avant l'exécution. Tension garantie."},
+ paranoia:{t:"Paranoïa 🌍",b:"Le joueur chuchote une question 'qui… ?' à son voisin, qui répond <b>à voix haute un prénom</b> sans dire la question. Le nommé peut prendre une gorgée pour connaître la question posée."},
+ spin:{t:"🎡 La Roue",b:"Pose le téléphone <b>à plat au centre</b>, tout le monde autour. Touche <b>TOURNER</b> : l'aiguille désigne un joueur au hasard, qui reçoit un défi. Le téléphone devient le plateau de jeu — comme une bouteille qui tourne."},
+ quiz:{t:"🧠 Quiz Culture G",b:"Question à 4 choix. Le joueur désigné répond : bonne réponse = gloire, mauvaise = conséquence. On tourne."},
+ geo:{t:"🌍 GeoGuess",b:"3 indices → devine le pays parmi 4. Version <b>hors-ligne à indices</b> (pas de Street View, qui demanderait internet + une clé API). Faux = conséquence."},
+ rent:{t:"🏠 Rent Guesser",b:"Un logement décrit (ville + surface). Devine son <b>loyer mensuel</b> parmi 4 montants. Prix <b>estimés</b>, à titre indicatif. Faux = conséquence."},
+ epic:{t:"⚡ Mode Épique",b:"Le mode qui enchaîne <b>tout</b> : défis, vérités, mini-jeux… et surtout des <b>ÉVÉNEMENTS ÉPIQUES</b> (cascades royales, duels, malédictions, révolutions) qui tombent régulièrement et font monter la soirée d'un cran. Laisse-toi porter et applique ce qui s'affiche. Idéal en fil rouge de la soirée."}
+};
+
+/* liste des jeux (hub) */
+const GAMES=[
+ {id:"epic", emo:"⚡", name:"MODE ÉPIQUE", desc:"Tout s'enchaîne, ça monte crescendo 🔥 — événements légendaires", c:"var(--gold)", min:2, hero:true},
+ {id:"spin", emo:"🎡", name:"La Roue", desc:"Téléphone au centre, l'aiguille désigne un joueur", c:"var(--neon)", min:2},
+ {id:"av", emo:"🎭", name:"Action ou Vérité", desc:"Le classique intemporel", c:"var(--sexe)", min:2},
+ {id:"jamais", emo:"🙈", name:"Je n'ai jamais", desc:"Qui a osé ?", c:"var(--soft)", min:2},
+ {id:"prefere", emo:"⚖️", name:"Tu préfères", desc:"Dilemmes impossibles", c:"var(--chaud)", min:2},
+ {id:"susceptible", emo:"🫵", name:"Le plus susceptible", desc:"On pointe du doigt", c:"var(--neon2)", min:2},
+ {id:"picolo", emo:"🌀", name:"Picolo", desc:"Le moteur à défis", c:"var(--gold)", min:2},
+ {id:"roi", emo:"👑", name:"Le Roi", desc:"Ring of Fire, 52 cartes", c:"var(--sexe)", min:2},
+ {id:"bombe", emo:"💣", name:"La Bombe", desc:"Cite et passe, vite !", c:"var(--chaud)", min:2},
+ {id:"medusa", emo:"👀", name:"Méduse", desc:"Croise pas mon regard", c:"var(--enfance)", min:2, rare:true},
+ {id:"king", emo:"🎴", name:"King Game", desc:"Numéros secrets (Japon)", c:"var(--trash)", min:2, rare:true},
+ {id:"paranoia", emo:"🤫", name:"Paranoïa", desc:"Le secret chuchoté", c:"var(--neon)", min:2, rare:true},
+ {id:"quiz", emo:"🧠", name:"Quiz Culture G", desc:"Teste ta culture générale", c:"var(--neon2)", min:1},
+ {id:"geo", emo:"🌍", name:"GeoGuess", desc:"Devine le pays aux indices", c:"var(--enfance)", min:1, rare:true},
+ {id:"rent", emo:"🏠", name:"Rent Guesser", desc:"Devine le loyer du logement", c:"var(--chaud)", min:1, rare:true}
+];
+
+/* ================= SETUP UI ================= */
+function renderPlayers(){
+  const el=$("#plist"); el.innerHTML="";
+  if(!state.players.length){ el.innerHTML='<div class="empty">Ajoute au moins 2 joueurs pour commencer…</div>'; return; }
+  state.players.forEach((p,i)=>{
+    const c=document.createElement("div"); c.className="pchip";
+    c.innerHTML='<span>'+esc(p)+'</span><span class="x">✕</span>';
+    c.querySelector(".x").onclick=()=>{ state.players.splice(i,1); save(); renderPlayers(); };
+    el.appendChild(c);
+  });
+}
+function esc(s){ return String(s).replace(/[&<>"]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m])); }
+function addPlayer(){
+  const inp=$("#pname"); let v=inp.value.trim();
+  if(!v) return; if(state.players.length>=16) return;
+  if(state.players.some(p=>p.toLowerCase()===v.toLowerCase())){ inp.value=""; return; }
+  state.players.push(v); inp.value=""; save(); renderPlayers(); tap();
+}
+$("#padd").onclick=addPlayer;
+$("#pname").addEventListener("keydown",e=>{ if(e.key==="Enter") addPlayer(); });
+
+const LVLDEF=[
+ {k:"enfance", emo:"🍼", n:"Enfance", d:"Nostalgie, souvenirs, tout public"},
+ {k:"soft", emo:"😎", n:"Soft", d:"Ambiance, léger, tout le monde joue"},
+ {k:"delire", emo:"🤪", n:"Délire", d:"Défis fous, absurdes, marrants — zéro sexe"},
+ {k:"chaud", emo:"🌶️", n:"Chaud", d:"Flirt, drague, un peu épicé"},
+ {k:"sexe", emo:"🍑", n:"Sexe", d:"Adulte, hot — 18+"},
+ {k:"trash", emo:"💀", n:"Trash", d:"Cru, wild, ça part en vrille — 18+"}
+];
+function renderLevels(){
+  const el=$("#levels"); el.innerHTML="";
+  LVLDEF.forEach(L=>{
+    const d=document.createElement("div"); d.className="lvl"+(state.levels[L.k]?" on":"");
+    d.style.setProperty("--c", LVLCOLOR[L.k]);
+    d.innerHTML='<span class="emo">'+L.emo+'</span><span class="txt"><b>'+L.n+'</b><span>'+L.d+'</span></span><span class="tick">✓</span>';
+    d.onclick=()=>{ state.levels[L.k]=!state.levels[L.k]; save(); renderLevels(); tap(); };
+    el.appendChild(d);
+  });
+  $("#warn18").style.display=(state.levels.sexe||state.levels.trash)?"block":"none";
+}
+function renderMode(){
+  document.querySelectorAll("#modetog button").forEach(b=> b.classList.toggle("on", b.dataset.m===state.mode));
+  $("#modehint").textContent = state.mode==="alcool"
+    ? "Les conséquences se paient en gorgées 🍺"
+    : "Zéro alcool : les conséquences deviennent des gages rigolos 😈";
+}
+document.querySelectorAll("#modetog button").forEach(b=> b.onclick=()=>{ state.mode=b.dataset.m; save(); renderMode(); tap(); });
+
+$("#go").onclick=()=>{
+  if(state.players.length<2){ $("#pname").focus(); $("#plist").animate([{transform:"translateX(-6px)"},{transform:"translateX(6px)"},{transform:"none"}],{duration:250}); buzz(60); return; }
+  if(!activeLevels().length){ state.levels.soft=true; save(); renderLevels(); }
+  resetOrder(); keepAwake(); openHub(); confetti(); beep(660,.1); setTimeout(()=>beep(880,.12),90);
+};
+$("#installBtn").onclick=openInstall;
+
+/* ================= HUB ================= */
+function openHub(){
+  show("hub");
+  const lv=activeLevels().map(k=>LVLDEF.find(x=>x.k===k).emo).join(" ");
+  $("#hubsub").textContent=state.players.length+" joueurs · "+lv+" · "+(state.mode==="alcool"?"🍺":"😈");
+  const g=$("#games"); g.innerHTML="";
+  GAMES.forEach(G=>{
+    const d=document.createElement("div"); d.className="gcard"+(G.hero?" hero":""); d.style.setProperty("--c",G.c);
+    d.innerHTML='<div class="gemo">'+G.emo+'</div>'+(G.rare?'<div class="grare">🌍 RARE</div>':'')+'<div class="gname">'+G.name+'</div><div class="gdesc">'+G.desc+'</div>';
+    d.onclick=()=>{ if(state.players.length<G.min){ toastNeed(G.min); return; } startGame(G); };
+    g.appendChild(d);
+  });
+}
+$("#hubback").onclick=()=>{ show("setup"); };
+function toastNeed(n){ const s=$("#hubsub"); const old=s.textContent; s.textContent="Il faut au moins "+n+" joueurs 👥"; s.style.color="#ff8fb0"; buzz(50); setTimeout(()=>{s.textContent=old; s.style.color="";},1500); }
+
+/* ================= MOTEUR DE JEU ================= */
+let cur=null; // jeu courant
+$("#pback").onclick=()=>{ if(cur&&cur.stop) cur.stop(); openHub(); };
+$("#prules").onclick=()=>openSheet(cur&&cur.rulesKey);
+function startGame(G){
+  cur={G, rulesKey:G.id, stop:null};
+  $("#ptitle").textContent=G.emo+" "+G.name;
+  document.documentElement.style.setProperty("--acc", G.c);
+  show("play");
+  resetOrder();
+  CTRL[G.id]();
+}
+const stage=$("#stage");
+function setStage(html){ stage.innerHTML=html; }
+function acc(c){ document.documentElement.style.setProperty("--acc", c); }
+
+/* --- règles sheet --- */
+function openSheet(key){ const R=RULES[key]; if(!R) return; $("#sh-title").textContent=R.t; $("#sh-body").innerHTML="<p>"+R.b+"</p>"; $("#sheet").classList.add("on"); }
+$("#sh-close").onclick=()=>$("#sheet").classList.remove("on");
+$("#sheet").onclick=e=>{ if(e.target.id==="sheet") $("#sheet").classList.remove("on"); };
+
+/* util barre conséquence */
+function conseqHtml(n){ return '<div class="conseq">'+sip(n)+'</div>'; }
+function gagesBtn(){ return state.mode==="soft" ? '<button class="btn sec" id="gageBtn" style="margin-top:4px">🎲 Tirer un gage</button>' : ""; }
+function wireGage(){ const b=$("#gageBtn"); if(b) b.onclick=()=>{ b.textContent="😈 "+pick(GAGES); tap(); }; }
+
+/* ================= CONTRÔLEURS ================= */
+const CTRL={};
+
+/* --- Action ou Vérité --- */
+CTRL.av=function(){
+  const dAct=makeDeck(pool(DB.action)), dVer=makeDeck(pool(DB.verite));
+  function turn(){
+    const J=nextPlayer();
+    setStage(
+      '<div class="whoturn">C\'est au tour de</div><div class="whoname">'+esc(J)+'</div>'+
+      '<div class="card"><div class="kicker">Fais ton choix</div><div class="big">Action ou Vérité ?</div>'+
+      '<div class="avbtns"><button class="btn action" id="bA">🔥 Action</button><button class="btn verite" id="bV">💬 Vérité</button></div></div>'
+    );
+    $("#bA").onclick=()=>reveal("action",dAct.next(),J);
+    $("#bV").onclick=()=>reveal("verite",dVer.next(),J);
+    tap();
+  }
+  function reveal(kind,item,J){
+    if(!item){ item={t:"(active un niveau)",lvl:"soft"}; }
+    acc(LVLCOLOR[item.lvl]);
+    const txt=fillNames(item.t,J);
+    setStage(
+      '<div class="whoturn">'+esc(J)+' a pioché</div>'+
+      '<div class="card"><div class="kicker">'+(kind==="action"?"🔥 Action":"💬 Vérité")+' · '+lvlName(item.lvl)+'</div>'+
+      '<div class="big">'+esc(txt)+'</div>'+
+      (kind==="action"? '<div class="mut">Refus ? → '+sip(2)+'</div>':'')+
+      gagesBtn()+'</div>'+
+      '<div class="bottombtns"><button class="btn" id="nx">Joueur suivant →</button></div>'
+    );
+    wireGage(); $("#nx").onclick=()=>{ acc(cur.G.c); turn(); }; beep(kind==="action"?520:700,.1); buzz(15);
+  }
+  turn();
+};
+
+/* --- générique "phrase adressée" : Je n'ai jamais / Susceptible --- */
+function promptGame(section, opts){
+  const d=makeDeck(pool(section));
+  function turn(){
+    const it=d.next()||{t:"(active un niveau)",lvl:"soft"};
+    acc(LVLCOLOR[it.lvl]);
+    const head = opts.head ? opts.head() : "";
+    setStage(
+      head+
+      '<div class="card"><div class="kicker">'+opts.kicker+' · '+lvlName(it.lvl)+'</div>'+
+      '<div class="big">'+esc(opts.prefix+it.t)+'</div>'+
+      '<div class="mut">'+opts.rule+'</div>'+ gagesBtn()+'</div>'+
+      '<div class="bottombtns"><button class="btn" id="nx">Suivant →</button></div>'
+    );
+    wireGage(); $("#nx").onclick=turn; beep(640,.09); buzz(12);
+  }
+  turn();
+}
+CTRL.jamais=()=>promptGame(DB.jamais,{kicker:"🙈 Je n'ai jamais", prefix:"Je n'ai jamais ", rule:"Tous ceux qui l'ont fait : "+sip(1)});
+CTRL.susceptible=()=>promptGame(DB.susceptible,{kicker:"🫵 Le plus susceptible de", prefix:"Qui est le plus susceptible de… ", rule:"On pointe à 3. Le plus pointé prend "+sip(1)});
+
+/* --- Tu préfères --- */
+CTRL.prefere=function(){
+  const d=makeDeck(pool(DB.prefere));
+  function turn(){
+    const it=d.next(); if(!it){ setStage('<div class="card"><div class="big">Active un niveau 🙂</div></div>'); return; }
+    acc(LVLCOLOR[it.lvl]);
+    const q=it.t; // {a,b,lvl} stocké dans .t ? non -> prefere items are objects; pool wraps text. handle:
+    const A=q.a, B=q.b;
+    setStage(
+      '<div class="whoturn">Tu préfères… · '+lvlName(it.lvl)+'</div>'+
+      '<div class="vs"><div class="opt a" id="oa"><div class="pct" id="pa"></div><div class="lab"><span>'+esc(A)+'</span><span class="n" id="na"></span></div></div>'+
+      '<div class="vsor">— OU —</div>'+
+      '<div class="opt b" id="ob"><div class="pct" id="pb"></div><div class="lab"><span>'+esc(B)+'</span><span class="n" id="nb"></span></div></div></div>'+
+      '<div class="bottombtns"><button class="btn sec" id="nx" disabled>Vote pour révéler</button></div>'
+    );
+    let va=0,vb=0, done=false;
+    const total=()=>Math.max(1,va+vb);
+    $("#oa").onclick=()=>{ if(done)return; va++; refresh(); };
+    $("#ob").onclick=()=>{ if(done)return; vb++; refresh(); };
+    function refresh(){ $("#na").textContent=va; $("#nb").textContent=vb; if(!done){$("#nx").disabled=false; $("#nx").classList.remove("sec"); $("#nx").textContent="Révéler le résultat"; }
+      tap();
+    }
+    $("#nx").onclick=()=>{
+      if(!done){ done=true; const t=va+vb||1; $("#pa").style.width=(va/t*100)+"%"; $("#pb").style.width=(vb/t*100)+"%";
+        const win= va===vb?"Égalité !":(va>vb?"Team A gagne — la minorité trinque !":"Team B gagne — la minorité trinque !");
+        $("#nx").textContent="Suivant →"; beep(760,.12); buzz(20);
+        const w=document.createElement("div"); w.className="mut center fadein"; w.style.marginTop="6px"; w.innerHTML=win+" · "+sip(1)+" pour les minoritaires";
+        stage.querySelector(".vs").after(w);
+      } else turn();
+    };
+  }
+  turn();
+};
+// prefere: pool renvoie {t:obj?} -> adapter: pool met l'item dans .t
+// on override pool result: DB.prefere items sont des objets, donc it.t est l'objet.
+
+/* --- Picolo --- */
+CTRL.picolo=function(){
+  // fusion templates des niveaux actifs
+  let tpl=[]; activeLevels().forEach(k=> (DB.picolo[k]||[]).forEach(t=>tpl.push({t,lvl:k})));
+  if(!tpl.length) DB.picolo.soft.forEach(t=>tpl.push({t,lvl:"soft"}));
+  const d=makeDeck(tpl);
+  function turn(){
+    const it=d.next(); acc(LVLCOLOR[it.lvl]);
+    const J=nextPlayer(), O=other(J), N=2+rnd(4), CAT=pick(DB.cats);
+    let txt=it.t.replace(/{J}/g,J).replace(/{O}/g,O).replace(/{N}/g,N).replace(/{CAT}/g,CAT).replace(/{SIP}/g,sip(N));
+    setStage(
+      '<div class="card"><div class="kicker">🌀 Picolo · '+lvlName(it.lvl)+'</div><div class="big">'+esc(txt)+'</div>'+gagesBtn()+'</div>'+
+      '<div class="bottombtns"><button class="btn" id="nx">Continuer →</button></div>'
+    );
+    wireGage(); $("#nx").onclick=turn; beep(600,.09); buzz(12);
+  }
+  turn();
+};
+
+/* --- Le Roi (Ring of Fire) --- */
+CTRL.roi=function(){
+  const ranks=["A","2","3","4","5","6","7","8","9","10","J","Q","K"];
+  const suits=[["♠","blk"],["♥","red"],["♦","red"],["♣","blk"]];
+  let deck=[]; suits.forEach(s=> ranks.forEach(r=> deck.push({r,s:s[0],col:s[1]}))); deck=shuffle(deck);
+  let kings=0;
+  function draw(){
+    if(!deck.length){ finish(); return; }
+    const c=deck.pop(); const [emo,rule]=DB.roi[c.r];
+    let extra=""; let cons="";
+    if(["2","3","4","6","Q"].includes(c.r)) cons=sip(c.r==="3"?3:c.r==="2"?2:1);
+    if(c.r==="7") cons=sip(1); if(c.r==="9") cons=sip(1);
+    if(c.r==="K"){ kings++; extra='<div class="kingcup">👑 Roi n°<b>'+kings+'</b> / 4 — '+(kings>=4?'<b>tu bois le Verre du Roi !</b>':'verse dans le Verre du Roi')+'</div>'; if(kings>=4) confetti(); }
+    acc(c.col==="red"?"var(--sexe)":"var(--neon2)");
+    setStage(
+      '<div class="playcard '+(c.col==="red"?"red":"")+'"><span class="cnr tl">'+c.r+c.s+'</span><span class="rank">'+c.s+'</span><span class="cnr br">'+c.r+c.s+'</span></div>'+
+      '<div class="card" style="min-height:auto"><div class="kicker">'+emo+'</div><div class="big">'+rule+(cons?" <b style=\'color:var(--gold)\'>"+cons+"</b>":"")+'</div>'+extra+'</div>'+
+      '<div class="bottombtns"><button class="btn" id="nx">Carte suivante ('+deck.length+') →</button></div>'
+    );
+    $("#nx").onclick=draw; beep(c.col==="red"?540:720,.1); buzz(15);
+  }
+  function finish(){ acc(cur.G.c); setStage('<div class="card"><div class="kicker">👑 Terminé</div><div class="big">Le deck est vide !<br>Le Roi a régné 🍻</div></div><div class="bottombtns"><button class="btn" id="nx">Rejouer</button></div>'); $("#nx").onclick=()=>CTRL.roi(); confetti(); }
+  draw();
+};
+
+/* --- La Bombe --- */
+CTRL.bombe=function(){
+  let timer=null, raf=null;
+  cur.stop=()=>{ clearTimeout(timer); cancelAnimationFrame(raf); };
+  let themes=[]; activeLevels().forEach(k=> (DB.bombe[k]||[]).forEach(t=>themes.push(t)));
+  if(!themes.length) themes=DB.bombe.soft.slice();
+  function intro(){
+    cur.stop();
+    setStage('<div class="card"><div class="kicker">💣 La Bombe</div><div class="big">Un thème va s\'afficher. Cite un élément, <b>passe vite le téléphone</b>. Celui qui l\'a en main quand ça explose a perdu !</div></div><div class="bottombtns"><button class="btn" id="go">💥 Allumer la mèche</button></div>');
+    $("#go").onclick=run;
+  }
+  function run(){
+    const theme=pick(themes); const dur=8000+rnd(22000); const t0=Date.now();
+    acc("var(--chaud)");
+    setStage('<div class="whoturn">Thème</div><div class="bombtheme">'+esc(theme)+'</div><div class="bomb">💣</div><div class="timerbar"><i id="tb"></i></div><div class="mut">Cite un élément → passe le téléphone !</div>');
+    let lastBeep=0;
+    (function tick(){
+      const e=Date.now()-t0, left=Math.max(0,dur-e), frac=left/dur;
+      const bar=$("#tb"); if(bar) bar.style.width=(frac*100)+"%";
+      const interval=200+frac*900;
+      if(e-lastBeep>interval){ beep(400+ (1-frac)*500,.05,"square",.05); lastBeep=e; }
+      if(left<=0){ boom(); return; }
+      raf=requestAnimationFrame(tick);
+    })();
+  }
+  function boom(){
+    cur.stop(); acc("var(--sexe)"); buzz([80,40,120,40,200]); beep(120,.5,"sawtooth",.12);
+    setStage('<div class="card"><div class="kicker">💥 BOOOM</div><div style="font-size:80px">🧨</div><div class="big">La bombe a explosé !<br>Celui qui la tenait prend <b style="color:var(--gold)">'+sip(3)+'</b></div>'+gagesBtn()+'</div><div class="bottombtns"><button class="btn" id="again">Nouvelle bombe</button></div>');
+    wireGage(); $("#again").onclick=run; confetti();
+  }
+  intro();
+};
+
+/* --- Méduse (US) --- */
+CTRL.medusa=function(){
+  let raf=null; cur.stop=()=>cancelAnimationFrame(raf);
+  function intro(){ acc("var(--enfance)"); setStage('<div class="card"><div class="kicker">👀 Méduse · 🌍 US</div><div class="big">Tous <b>têtes baissées</b>, yeux fermés. Au signal, relevez la tête et fixez quelqu\'un. Deux regards qui se croisent = <b>MÉDUSE</b> !</div></div><div class="bottombtns"><button class="btn" id="go">Lancer le compte à rebours</button></div>'); $("#go").onclick=count; }
+  function count(){
+    let n=3;
+    function step(){
+      if(n>0){ setStage('<div class="whoturn">Têtes baissées…</div><div class="num">'+n+'</div>'); beep(500,.15); buzz(20); n--; raf=requestAnimationFrame(()=>setTimeout(step,850)); }
+      else { setStage('<div class="whoturn fadein">MAINTENANT</div><div class="num fadein" style="font-size:64px">👀 MÉDUSE !</div><div class="big">Relevez la tête et fixez quelqu\'un.</div>'); beep(900,.3,"square"); buzz([60,40,60]);
+        setTimeout(()=>{ setStage('<div class="card"><div class="kicker">Résultat</div><div class="big">Vous avez croisé un regard ?<br>Les deux crient MÉDUSE et prennent <b style="color:var(--gold)">'+sip(2)+'</b></div>'+gagesBtn()+'</div><div class="bottombtns"><button class="btn" id="again">Rejouer</button></div>'); wireGage(); $("#again").onclick=count; },1400);
+      }
+    }
+    step();
+  }
+  intro();
+};
+
+/* --- King Game (Japon) : numéros secrets --- */
+CTRL.king=function(){
+  function round(){
+    const nums=shuffle(state.players.map((p,i)=>i+1)); // numéro par joueur
+    const seats=state.players.map((p,i)=>({name:p, num:nums[i]}));
+    let idx=0;
+    function revealSeat(){
+      if(idx>=seats.length){ orders(); return; }
+      const s=seats[idx];
+      acc("var(--trash)");
+      setStage('<div class="whoturn">Passe le téléphone à</div><div class="whoname">'+esc(s.name)+'</div><div class="card"><div class="big">Toi seul regardes ton numéro.</div><button class="btn" id="see">👁️ Voir mon numéro</button></div>');
+      $("#see").onclick=()=>{ beep(700,.1); buzz(15);
+        setStage('<div class="secretbadge">'+esc(s.name)+' — numéro secret</div><div class="num">'+s.num+'</div><div class="bottombtns"><button class="btn sec" id="hide">J\'ai vu, cacher & suivant →</button></div>');
+        $("#hide").onclick=()=>{ idx++; revealSeat(); tap(); };
+      };
+    }
+    function orders(){
+      const kingNum=1+rnd(seats.length);
+      let tpl=[]; activeLevels().forEach(k=> (DB.king[k]||[]).forEach(t=>tpl.push(t)));
+      if(!tpl.length) tpl=DB.king.soft.slice();
+      const order=pick(tpl);
+      const others=shuffle(seats.map(s=>s.num).filter(n=>n!==kingNum));
+      const a=others[0]||kingNum, b=others[1]||others[0]||kingNum;
+      const txt=order.replace(/{a}/g,a).replace(/{b}/g,b).replace(/{SIP}/g,sip(2));
+      acc("var(--gold)");
+      setStage('<div class="whoturn">👑 Le Roi est le</div><div class="num">n°'+kingNum+'</div><div class="card"><div class="kicker">🎴 King Game</div><div class="big">'+esc(txt)+'</div><div class="mut">Les numéros concernés se dévoilent et exécutent 😈</div></div><div class="bottombtns"><button class="btn" id="nx">Nouveau tour (re-mélange) →</button></div>');
+      beep(880,.14); buzz([20,30,20]); $("#nx").onclick=round;
+    }
+    revealSeat();
+  }
+  round();
+};
+
+/* --- Paranoïa --- */
+CTRL.paranoia=function(){
+  let bank=[]; activeLevels().forEach(k=> (DB.paranoia[k]||[]).forEach(t=>bank.push({t,lvl:k})));
+  if(!bank.length) bank=DB.paranoia.soft.map(t=>({t,lvl:"soft"}));
+  const d=makeDeck(bank);
+  function turn(){
+    const J=nextPlayer(), O=other(J); const it=d.next(); acc(LVLCOLOR[it.lvl]);
+    setStage(
+      '<div class="whoturn">Chuchoteur → voisin</div><div class="whoname">'+esc(J)+' → '+esc(O)+'</div>'+
+      '<div class="card"><div class="kicker">🤫 Paranoïa · '+lvlName(it.lvl)+'</div>'+
+      '<div class="big">'+esc(J)+' chuchote une question à '+esc(O)+'.<br>'+esc(O)+' répond <b>un prénom à voix haute</b>, sans dire la question.</div>'+
+      '<div class="mut">Idée de question (garde-la secrète) :<br>« '+esc(it.t)+' »</div></div>'+
+      '<div class="bottombtns"><button class="btn" id="nx">Le nommé peut boire pour savoir · Suivant →</button></div>'
+    );
+    $("#nx").onclick=turn; beep(620,.09); buzz(12);
+  }
+  turn();
+};
+
+/* --- QCM générique : Quiz Culture G / GeoGuess / Rent Guesser --- */
+function mcqGame(items, opts){
+  const d=makeDeck(items);
+  function turn(){
+    const J=nextPlayer(); const it=d.next(); const q=opts.build(it); acc(opts.color);
+    const btns=q.choices.map((c,i)=>'<button class="btn sec mcqopt" data-i="'+i+'">'+esc(c)+'</button>').join("");
+    setStage(
+      '<div class="whoturn">'+opts.kicker+'</div><div class="whoname" style="font-size:clamp(20px,5.4vw,30px)">'+esc(J)+', à toi</div>'+
+      '<div class="card" style="min-height:auto"><div class="kicker">'+esc(q.sub||"")+'</div><div class="big">'+q.prompt+'</div></div>'+
+      '<div class="bottombtns" id="mcqbtns">'+btns+'</div>'
+    );
+    let done=false;
+    stage.querySelectorAll(".mcqopt").forEach(b=> b.onclick=()=>{
+      if(done) return; done=true; const i=+b.dataset.i, ok=i===q.ai;
+      stage.querySelectorAll(".mcqopt").forEach((x,xi)=>{ x.disabled=true;
+        if(xi===q.ai){ x.style.background="linear-gradient(180deg,#3ecb6b,#22a552)"; x.style.color="#04240f"; }
+        else if(xi===i){ x.style.background="linear-gradient(180deg,#ff6b6b,#d63b3b)"; x.style.color="#2a0606"; } });
+      const rev='<div class="card fadein" style="margin-top:10px;min-height:auto"><div class="kicker">'+(ok?"✅ Bravo":"❌ Raté")+'</div><div class="big">'+q.reveal+'</div>'+(ok?"":'<div class="conseq">'+sip(2)+'</div>'+gagesBtn())+'</div>';
+      $("#mcqbtns").insertAdjacentHTML("afterend", rev);
+      const nb=document.createElement("div"); nb.className="bottombtns"; nb.innerHTML='<button class="btn" id="nx">Question suivante →</button>'; stage.appendChild(nb);
+      wireGage(); $("#nx").onclick=turn;
+      if(ok){ beep(820,.12); buzz(20); confetti(); } else { beep(200,.22,"sawtooth"); buzz([40,30,60]); }
+    });
+    tap();
+  }
+  turn();
+}
+CTRL.quiz=()=>mcqGame(DB.quiz,{kicker:"🧠 Quiz Culture G", color:"var(--neon2)",
+  build:it=>({prompt:esc(it.q), sub:it.cat||"Culture générale", choices:it.c, ai:it.a,
+    reveal:"La réponse : <b>"+esc(it.c[it.a])+"</b>"+(it.info?"<br><span class='mut'>"+esc(it.info)+"</span>":"")})});
+CTRL.geo=()=>mcqGame(DB.geo,{kicker:"🌍 GeoGuess", color:"var(--enfance)",
+  build:it=>({prompt:"Où suis-je ?<div class='mut' style='margin-top:10px;font-weight:600;font-size:15px'>"+it.clues.map(c=>"• "+esc(c)).join("<br>")+"</div>", sub:"Devine le pays", choices:it.c, ai:it.a,
+    reveal:it.flag+" <b>"+esc(it.c[it.a])+"</b>"+(it.info?"<br><span class='mut'>"+esc(it.info)+"</span>":"")})});
+CTRL.rent=()=>mcqGame(DB.rent,{kicker:"🏠 Rent Guesser", color:"var(--chaud)",
+  build:it=>({prompt:"💶 Quel loyer par mois ?", sub:esc(it.city)+" — "+esc(it.desc), choices:it.c, ai:it.a,
+    reveal:"<b>"+esc(it.c[it.a])+"</b> / mois"+(it.info?"<br><span class='mut'>"+esc(it.info)+"</span>":"")})});
+
+/* --- La Roue : l'aiguille tourne et désigne un joueur (téléphone au centre) --- */
+CTRL.spin=function(){
+  const names=state.players.slice(); const N=names.length, seg=2*Math.PI/N;
+  const colors=["#c04bff","#4be1ff","#ff4d8d","#4ade80","#ff9838","#ffe14d","#48e0e6","#a855f7"];
+  let R=0, spinning=false, raf=null, lastIdx=-1;
+  let dpool=[]; activeLevels().forEach(k=>{ (DB.action[k]||[]).forEach(t=>dpool.push({t,tpl:false,lvl:k})); (DB.picolo[k]||[]).forEach(t=>dpool.push({t,tpl:true,lvl:k})); });
+  if(!dpool.length) DB.action.soft.forEach(t=>dpool.push({t,tpl:false,lvl:"soft"}));
+  const dd=makeDeck(dpool);
+  cur.stop=()=>cancelAnimationFrame(raf);
+  function winnerIdx(){ let x=((-Math.PI/2 - R)%(2*Math.PI)+2*Math.PI)%(2*Math.PI); return Math.floor(x/seg)%N; }
+  function draw(ctx,size){
+    const cx=size/2, cy=size/2, rad=size/2-6; ctx.clearRect(0,0,size,size);
+    for(let i=0;i<N;i++){ const a0=R+i*seg;
+      ctx.beginPath(); ctx.moveTo(cx,cy); ctx.arc(cx,cy,rad,a0,a0+seg); ctx.closePath();
+      ctx.fillStyle=colors[i%colors.length]; ctx.globalAlpha=.92; ctx.fill(); ctx.globalAlpha=1;
+      ctx.strokeStyle="rgba(0,0,0,.28)"; ctx.lineWidth=2; ctx.stroke();
+      const mid=a0+seg/2; ctx.save();
+      ctx.translate(cx+Math.cos(mid)*rad*0.62, cy+Math.sin(mid)*rad*0.62); ctx.rotate(mid+Math.PI/2);
+      ctx.fillStyle="#12061f"; ctx.font="700 "+Math.max(11,Math.min(18,150/N))+"px system-ui,sans-serif"; ctx.textAlign="center"; ctx.textBaseline="middle";
+      let nm=names[i]; if(nm.length>9) nm=nm.slice(0,8)+"…"; ctx.fillText(nm,0,0); ctx.restore(); }
+    ctx.beginPath(); ctx.arc(cx,cy,rad*0.16,0,2*Math.PI); ctx.fillStyle="#1b0f36"; ctx.fill(); ctx.lineWidth=3; ctx.strokeStyle="#ffd23f"; ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx-15,4); ctx.lineTo(cx+15,4); ctx.lineTo(cx,32); ctx.closePath(); ctx.fillStyle="#ffd23f"; ctx.strokeStyle="#12061f"; ctx.lineWidth=2; ctx.fill(); ctx.stroke();
+  }
+  function finish(ctx,size){
+    spinning=false; const i=winnerIdx(), w=names[i], cx=size/2, cy=size/2, rad=size/2-6, a0=R+i*seg;
+    ctx.beginPath(); ctx.moveTo(cx,cy); ctx.arc(cx,cy,rad,a0,a0+seg); ctx.closePath(); ctx.fillStyle="rgba(255,255,255,.4)"; ctx.fill();
+    beep(880,.14); buzz([20,30,60]); confetti();
+    const it=dd.next(); let txt;
+    if(it.tpl){ const O=other(w),Nn=2+rnd(4),CAT=pick(DB.cats); txt=it.t.replace(/{J}/g,w).replace(/{O}/g,O).replace(/{N}/g,Nn).replace(/{CAT}/g,CAT).replace(/{SIP}/g,sip(Nn)); }
+    else txt=fillNames(it.t,w);
+    $("#wres").innerHTML='<span class="pill">👉 '+esc(w)+'</span>';
+    const card=document.createElement("div"); card.className="card fadein"; card.style.marginTop="10px"; card.style.minHeight="auto";
+    card.innerHTML='<div class="kicker">🎯 '+esc(w)+', pour toi · '+lvlName(it.lvl)+'</div><div class="big">'+esc(txt)+'</div>'+gagesBtn();
+    $("#spinbtns").after(card); wireGage();
+  }
+  function spin(ctx,size){
+    if(spinning) return; spinning=true; stage.querySelectorAll(".card").forEach(c=>c.remove()); $("#wres").textContent="…";
+    const dur=3200+rnd(1200), t0=performance.now(), R0=R, target=R + (5+rnd(3))*2*Math.PI + Math.random()*2*Math.PI;
+    (function anim(now){ let p=Math.min(1,(now-t0)/dur); const e=1-Math.pow(1-p,3); R=R0+(target-R0)*e; draw(ctx,size);
+      const wi=winnerIdx(); if(wi!==lastIdx){ lastIdx=wi; beep(680+(1-p)*300,.03,"square",.04); }
+      if(p<1) raf=requestAnimationFrame(anim); else finish(ctx,size); })(t0);
+  }
+  function build(){
+    acc("var(--gold)");
+    setStage('<div class="whoturn">Pose le téléphone au centre 📱 — tout le monde autour</div><div class="wheelwrap"><canvas id="wheel"></canvas></div><div class="bottombtns" id="spinbtns"><button class="btn" id="spin">🎡 TOURNER</button></div><div class="mut" id="wres" style="margin-top:2px">L\'aiguille va désigner un joueur…</div>');
+    const cv=$("#wheel"), box=$(".wheelwrap");
+    const size=Math.max(240, Math.min((box.clientWidth||320), 380));
+    const dpr=Math.min(2, window.devicePixelRatio||1);
+    cv.width=size*dpr; cv.height=size*dpr; cv.style.width=size+"px"; cv.style.height=size+"px";
+    const ctx=cv.getContext("2d"); ctx.scale(dpr,dpr); draw(ctx,size);
+    $("#spin").onclick=()=>spin(ctx,size); cv.onclick=()=>{ if(!spinning) spin(ctx,size); };
+  }
+  build();
+};
+
+/* --- MODE ÉPIQUE --- */
+const EPIC=[
+ "🌊 CASCADE ROYALE — Tout le monde boit sans s'arrêter ! {J} lance la cascade et ferme la marche.",
+ "⚔️ DUEL LÉGENDAIRE — {J} contre {O} : pierre-feuille-ciseaux. Le perdant prend le double : {SIP} x2.",
+ "🔮 MALÉDICTION — {J} doit parler de lui à la 3e personne jusqu'à la fin. Chaque oubli = 1 gorgée.",
+ "🌪️ TEMPÊTE — À 3, tout le monde change de place ! Le dernier assis prend {SIP}.",
+ "🛡️ BÉNÉDICTION — {J} reçoit une immunité et saute sa prochaine conséquence.",
+ "🎁 SACRIFICE — {J} nomme un champion qui boira à sa place pendant 3 manches.",
+ "🔁 RÉVOLUTION — Le sens du jeu s'inverse ! Et {J} prend {SIP} pour fêter ça.",
+ "👑 ROI & SERVITEUR — {O} devient le serviteur de {J} pendant 2 manches (il lui apporte à boire).",
+ "💥 JUGEMENT DERNIER — Votez pour le plus gros loser de la soirée. L'élu prend {SIP} x2.",
+ "🎯 QUITTE OU DOUBLE — {J} : cul sec maintenant, ou distribue le double à deux personnes.",
+ "🕯️ RITUEL — Tout le monde lève son verre à {J}. On trinque, chacun boit une gorgée !",
+ "🎲 CHAOS — {J} invente une règle diabolique qui vaut jusqu'à la fin de la partie.",
+ "🏹 CHASSE — {J} désigne une proie : à chaque fois qu'elle rit, elle prend une gorgée. Jusqu'à la fin.",
+ "🔥 ENFER — Les 3 prochaines manches sont doublées : toutes les conséquences comptent double.",
+ "🧊 STATUE — À 3, tout le monde se fige 10 secondes. Le premier qui bouge prend {SIP}.",
+ "🎰 LOTERIE — {J} tire au sort : soit TOUT le monde boit, soit personne. Suspense…",
+ "🐉 BOSS FINAL — {J} affronte {O} en chi-fou-mi. Le perdant boit {SIP}, le gagnant distribue {SIP}.",
+ "🎤 SCÈNE OUVERTE — {J} fait 15 secondes de spectacle (chant, danse, blague). Public déçu = {J} boit.",
+ "🧨 DOMINO — {J} boit, puis choisit qui boit après lui, qui choisit à son tour… 4 personnes de suite.",
+ "🌙 MINUIT — nouvelle règle : le dernier à lever son verre quand {J} trinque prend une gorgée, jusqu'à la fin."
+];
+CTRL.epic=function(){
+  // fusion de tout le contenu adressable selon les niveaux actifs
+  let normal=[];
+  activeLevels().forEach(k=>{
+    (DB.action[k]||[]).forEach(t=>normal.push({tag:"🔥 Défi", t, who:"J", lvl:k, cons:2}));
+    (DB.verite[k]||[]).forEach(t=>normal.push({tag:"💬 Vérité", t, who:"J", lvl:k}));
+    (DB.jamais[k]||[]).forEach(t=>normal.push({tag:"🙈 Je n'ai jamais", t:"Je n'ai jamais "+t, who:"all", lvl:k, cons:1}));
+    (DB.susceptible[k]||[]).forEach(t=>normal.push({tag:"🫵 Le plus susceptible", t:"Qui est le plus susceptible de… "+t, who:"all", lvl:k, cons:1}));
+    (DB.picolo[k]||[]).forEach(t=>normal.push({tag:"🌀 Mini-jeu", t, who:"tpl", lvl:k}));
+  });
+  if(!normal.length) DB.action.soft.forEach(t=>normal.push({tag:"🔥 Défi", t, who:"J", lvl:"soft", cons:2}));
+  const nd=makeDeck(normal), ed=makeDeck(EPIC);
+  let r=1;
+  function renderNormal(it){
+    if(!it) it={tag:"🔥 Défi", t:"Active un niveau 🙂", who:"all", lvl:"soft"};
+    acc(LVLCOLOR[it.lvl]); const J=nextPlayer(); let txt=it.t, head;
+    if(it.who==="J"){ txt=fillNames(txt,J); head='<div class="rounds">Manche '+r+'</div><div class="whoname">'+esc(J)+'</div>'; }
+    else if(it.who==="tpl"){ const O=other(J),N=2+rnd(4),CAT=pick(DB.cats); txt=txt.replace(/{J}/g,J).replace(/{O}/g,O).replace(/{N}/g,N).replace(/{CAT}/g,CAT).replace(/{SIP}/g,sip(N)); head='<div class="rounds">Manche '+r+'</div>'; }
+    else head='<div class="rounds">Manche '+r+' · tout le monde</div>';
+    const consLine = it.cons? '<div class="mut">'+(it.who==="all"?"Concernés : ":"Refus → ")+sip(it.cons)+'</div>':'';
+    setStage(head+'<div class="card"><div class="kicker">'+it.tag+' · '+lvlName(it.lvl)+'</div><div class="big">'+esc(txt)+'</div>'+consLine+gagesBtn()+'</div><div class="bottombtns"><button class="btn" id="nx">Manche suivante →</button></div>');
+    wireGage(); $("#nx").onclick=step; beep(600,.08); buzz(10);
+  }
+  function renderEpic(){
+    flash(); confetti(); acc("var(--gold)");
+    const J=nextPlayer(),O=other(J),N=2+rnd(4);
+    let txt=ed.next().replace(/{J}/g,J).replace(/{O}/g,O).replace(/{N}/g,N).replace(/{SIP}/g,sip(N));
+    const parts=txt.split(" — "); const ttl=parts.shift(); const rest=parts.join(" — ");
+    setStage('<div class="rounds">⚡ Manche '+r+' ⚡</div><div class="epicttl">ÉVÉNEMENT ÉPIQUE</div><div class="card epiccard" style="min-height:auto"><div class="big" style="color:var(--gold)">'+esc(ttl)+'</div>'+(rest?'<div class="big">'+esc(rest)+'</div>':'')+gagesBtn()+'</div><div class="bottombtns"><button class="btn" id="nx">Continuer l\'épopée →</button></div>');
+    wireGage(); $("#nx").onclick=step; beep(300,.18,"sawtooth",.12); setTimeout(()=>beep(520,.2,"square",.1),130); buzz([40,30,70,30,110]);
+  }
+  function step(){ const epicNow=(r%4===0)||(r>3 && Math.random()<0.12); if(epicNow) renderEpic(); else renderNormal(nd.next()); r++; }
+  // intro
+  acc("var(--gold)");
+  setStage('<div class="epicttl">⚡ MODE ÉPIQUE ⚡</div><div class="card epiccard"><div class="big">Tout s\'enchaîne : défis, vérités, mini-jeux… et des <b style="color:var(--gold)">ÉVÉNEMENTS ÉPIQUES</b> qui tombent régulièrement pour faire monter la soirée.</div><div class="mut">Un tour = une action. Prêts ?</div></div><div class="bottombtns"><button class="btn" id="go">🔥 LANCER L\'ÉPOPÉE</button></div>');
+  $("#go").onclick=()=>{ confetti(); beep(660,.12); setTimeout(()=>beep(880,.14),100); step(); };
+};
+
+/* ============ helpers texte ============ */
+function fillNames(t,J){ return t.replace(/{J}/g,J).replace(/{O}/g,other(J)); }
+function lvlName(k){ const L=LVLDEF.find(x=>x.k===k); return L?L.emo+" "+L.n:k; }
+
+/* ================= INIT ================= */
+load();
+["enfance","soft","delire","chaud","sexe","trash"].forEach(k=>{ if(state.levels[k]===undefined) state.levels[k]=false; });
+renderPlayers(); renderLevels(); renderMode();
+show("setup");
+// reprise directe si déjà configuré
+if(state.players.length>=2 && activeLevels().length){ /* on reste sur setup, l'utilisateur clique Entrer */ }
+window.addEventListener("resize",()=>{ if(cc.style.display==="block"){ cc.width=innerWidth; cc.height=innerHeight; } });
+// service worker (offline) — uniquement en https (site hébergé), inerte en local/file
+if("serviceWorker" in navigator && location.protocol==="https:"){ navigator.serviceWorker.register("sw.js").catch(()=>{}); }
+
+// vibration globale + retour au toucher sur tout élément interactif (Android/desktop ; iOS Safari ne supporte pas l'API Vibration)
+document.addEventListener("pointerdown", e=>{
+  const t=e.target; if(t && t.closest && t.closest("button,.gcard,.opt,.lvl,.pchip .x,.iconbtn,#wheel,#splash,.avbtns .btn,.mcqopt")) buzz(12);
+}, {passive:true});
+
+// intro visuelle : splash animé au lancement (1er toucher = débloque le son iOS)
+(function(){ const sp=$("#splash"); if(!sp) return; let done=false;
+  function go(){ if(done) return; done=true; try{ beep(660,.12); setTimeout(()=>beep(990,.14),95); }catch(e){} buzz(20); confetti(); sp.classList.add("gone"); setTimeout(()=>{ sp.style.display="none"; }, 620); }
+  sp.addEventListener("click", go); sp.addEventListener("touchstart", go, {passive:true});
+  setTimeout(go, 2800);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>L'Enseigne — L'atelier web des commerces, bars & artisans</title>
+<meta name="description" content="Sites vitrines, menus QR, fiche Google, coups de main logistiques : L'Enseigne fabrique les outils simples qui font venir vos clients. Livrés en jours, sans abonnement, à vous pour de bon. Lille · Côte d'Opale.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23FAF5EC'/%3E%3Cline x1='8' y1='12' x2='56' y2='12' stroke='%2326221C' stroke-width='5' stroke-linecap='round'/%3E%3Cline x1='20' y1='14' x2='20' y2='22' stroke='%2326221C' stroke-width='3'/%3E%3Cline x1='44' y1='14' x2='44' y2='22' stroke='%2326221C' stroke-width='3'/%3E%3Crect x='12' y='22' width='40' height='30' rx='6' fill='%23C1502E'/%3E%3Crect x='22' y='29' width='4' height='16' fill='%23FFF9F0'/%3E%3Crect x='22' y='29' width='16' height='4' fill='%23FFF9F0'/%3E%3Crect x='22' y='35' width='12' height='4' fill='%23FFF9F0'/%3E%3Crect x='22' y='41' width='16' height='4' fill='%23FFF9F0'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,900;1,9..144,400&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --papier:#FAF5EC;
+  --creme:#FFF9F0;
+  --encre:#26221C;
+  --terra:#C1502E;
+  --terra-deep:#9E3E1F;
+  --mut:#6E6459;
+  --ligne:rgba(38,34,28,.14);
+  --ease:cubic-bezier(.22,.8,.24,1);
+  --fs-h1:clamp(2.2rem,6vw,4.4rem);
+  --fs-h2:clamp(1.7rem,3.8vw,2.7rem);
+  --pad:clamp(1.25rem,4vw,4rem);
+  --maxw:1140px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:5.2rem}
+body{
+  font-family:'Work Sans',system-ui,sans-serif;background:var(--papier);color:var(--encre);
+  line-height:1.65;font-size:clamp(1rem,1.1vw,1.1rem);-webkit-font-smoothing:antialiased;overflow-x:hidden;
+}
+::selection{background:var(--terra);color:var(--creme)}
+h1,h2,h3{font-family:'Fraunces',serif;line-height:1.12;font-weight:900;letter-spacing:-.01em}
+a{color:inherit}
+img,svg{display:block}
+.wrap{max-width:var(--maxw);margin:0 auto;padding-left:var(--pad);padding-right:var(--pad)}
+.pad-y{padding-top:clamp(3.5rem,8vw,6.5rem);padding-bottom:clamp(3.5rem,8vw,6.5rem)}
+.kicker{
+  font-size:.74rem;letter-spacing:.24em;text-transform:uppercase;font-weight:600;
+  color:var(--terra);display:inline-flex;align-items:center;gap:.7em;margin-bottom:1.2rem;
+}
+.kicker::before{content:"";width:2.4em;height:2px;background:currentColor;border-radius:2px}
+.h2{font-size:var(--fs-h2);max-width:18em}
+.lead{color:var(--mut);max-width:42em;margin-top:1rem}
+.skip{position:absolute;left:-999px;top:0;background:var(--terra);color:var(--creme);padding:.6em 1em;z-index:200;font-weight:600}
+.skip:focus{left:0}
+:focus-visible{outline:2.5px solid var(--terra);outline-offset:3px;border-radius:2px}
+
+/* rayures de store (bandeau) */
+.awning{
+  height:18px;
+  background:repeating-linear-gradient(90deg,var(--terra) 0 34px,var(--creme) 34px 68px);
+  border-top:2px solid var(--encre);border-bottom:2px solid var(--encre);
+}
+.awning.scallop{position:relative}
+.awning.scallop::after{
+  content:"";position:absolute;left:0;right:0;top:100%;height:12px;
+  background-image:radial-gradient(circle at 17px -3px, var(--terra) 14px, transparent 15px);
+  background-size:68px 12px;background-position:0 0;
+}
+.awning.scallop::before{
+  content:"";position:absolute;left:34px;right:0;top:100%;height:12px;
+  background-image:radial-gradient(circle at 17px -3px, var(--creme) 14px, transparent 15px);
+  background-size:68px 12px;background-position:0 0;
+}
+
+/* reveal */
+.rv{opacity:0;transform:translateY(30px);transition:opacity .85s var(--ease),transform .85s var(--ease);will-change:opacity,transform}
+.rv.in{opacity:1;transform:none}
+.rv2{transition-delay:.12s}.rv3{transition-delay:.24s}.rv4{transition-delay:.36s}
+
+/* bandeau défilant */
+.ticker{
+  background:var(--terra);color:var(--creme);overflow:hidden;padding:.6rem 0;
+  border-top:2px solid var(--encre);border-bottom:2px solid var(--encre);
+}
+.ticker .track{display:flex;width:max-content;animation:tick 30s linear infinite}
+.ticker:hover .track{animation-play-state:paused}
+.ticker span{
+  font-family:'Fraunces',serif;font-style:italic;font-weight:600;font-size:1.05rem;
+  letter-spacing:.02em;white-space:nowrap;
+}
+@keyframes tick{to{transform:translateX(-50%)}}
+
+/* ===== NAV ===== */
+nav{position:fixed;inset:0 0 auto 0;z-index:100;transition:background .35s var(--ease),box-shadow .35s var(--ease),transform .45s var(--ease)}
+nav.scrolled{background:rgba(250,245,236,.92);backdrop-filter:blur(10px);box-shadow:0 1px 0 var(--ligne)}
+nav.masquee{transform:translateY(-100%)}
+.progress{position:fixed;top:0;left:0;height:3px;width:100%;background:var(--terra);z-index:120;transform:scaleX(0);transform-origin:left}
+.nav-in{max-width:1280px;margin:0 auto;padding:.8rem var(--pad);display:flex;align-items:center;gap:clamp(.9rem,1.8vw,1.6rem)}
+.brand{display:flex;align-items:center;gap:.65rem;text-decoration:none;flex:none}
+.brand .mark{width:40px;height:40px;flex:none}
+.brand .wm{font-family:'Fraunces',serif;font-weight:900;font-size:1.15rem;line-height:1;white-space:nowrap}
+.brand small{display:block;font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--mut);font-weight:600;margin-top:.2em;white-space:nowrap}
+.nav-links{display:flex;gap:clamp(.85rem,1.5vw,1.4rem);margin-left:auto;list-style:none;align-items:center;flex-wrap:nowrap}
+.nav-links a{
+  text-decoration:none;font-size:.92rem;font-weight:500;opacity:.85;white-space:nowrap;
+  position:relative;padding:.3em 0;transition:opacity .2s,color .2s;
+}
+.nav-links a::after{
+  content:"";position:absolute;left:0;right:0;bottom:0;height:2px;background:var(--terra);
+  border-radius:2px;transform:scaleX(0);transform-origin:left;transition:transform .3s var(--ease);
+}
+.nav-links a:hover,.nav-links a.active{opacity:1;color:var(--terra)}
+.nav-links a:hover::after,.nav-links a.active::after{transform:scaleX(1)}
+.cta,.btn{
+  display:inline-flex;align-items:center;gap:.5em;background:var(--terra);color:var(--creme);
+  text-decoration:none;font-weight:600;font-size:.95rem;padding:.7em 1.4em;border-radius:12px;
+  border:2px solid var(--encre);box-shadow:3px 3px 0 var(--encre);white-space:nowrap;
+  transition:transform .25s var(--ease),box-shadow .25s var(--ease);
+}
+.cta:hover,.btn:hover{transform:translate(-2px,-2px);box-shadow:5px 5px 0 var(--encre)}
+.cta:active,.btn:active{transform:translate(1px,1px);box-shadow:2px 2px 0 var(--encre)}
+.btn-ghost{background:var(--creme);color:var(--encre)}
+.nav-cta{flex:none}
+.burger{display:none;margin-left:auto;background:none;border:0;cursor:pointer;padding:.5rem;z-index:110}
+.burger span{display:block;width:24px;height:2.5px;background:var(--encre);margin:5px 0;border-radius:2px;transition:.3s var(--ease)}
+.burger[aria-expanded="true"] span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.burger[aria-expanded="true"] span:nth-child(2){opacity:0}
+.burger[aria-expanded="true"] span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+@media(max-width:1180px){
+  .nav-links{
+    position:fixed;inset:0;background:var(--papier);flex-direction:column;justify-content:center;gap:1.6rem;
+    opacity:0;pointer-events:none;transition:opacity .35s var(--ease);margin:0;
+  }
+  .nav-links.open{opacity:1;pointer-events:auto}
+  .nav-links li{opacity:0;transform:translateY(16px);transition:opacity .45s var(--ease),transform .45s var(--ease)}
+  .nav-links.open li{opacity:1;transform:none}
+  .nav-links.open li:nth-child(1){transition-delay:.06s}
+  .nav-links.open li:nth-child(2){transition-delay:.11s}
+  .nav-links.open li:nth-child(3){transition-delay:.16s}
+  .nav-links.open li:nth-child(4){transition-delay:.21s}
+  .nav-links.open li:nth-child(5){transition-delay:.26s}
+  .nav-links.open li:nth-child(6){transition-delay:.31s}
+  .nav-links a{font-size:1.35rem;font-family:'Fraunces',serif;font-weight:600}
+  .nav-links a::after{display:none}
+  .burger{display:block}
+  .nav-cta{display:none}
+}
+
+/* ===== HERO ===== */
+.hero{padding-top:8.5rem;padding-bottom:4.5rem;position:relative;overflow:hidden}
+.hero .wrap{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:3rem;align-items:center}
+.hero h1{font-size:var(--fs-h1)}
+.hero h1 em{font-style:italic;font-weight:400;color:var(--terra)}
+.hero .sub{color:var(--mut);max-width:32em;margin:1.4rem 0 2rem}
+.hero-ctas{display:flex;gap:1rem;flex-wrap:wrap}
+.hero-note{margin-top:1.2rem;font-size:.82rem;color:var(--mut);letter-spacing:.04em}
+.hero-visual{position:relative;display:flex;justify-content:center}
+.hero-visual svg{width:min(340px,80%);height:auto}
+@media(max-width:880px){.hero .wrap{grid-template-columns:1fr}.hero-visual{order:-1}.hero-visual svg{width:200px}}
+
+/* ===== BANDEAU CONFIANCE ===== */
+.trust{border-top:2px solid var(--encre);border-bottom:2px solid var(--encre);background:var(--creme)}
+.trust .wrap{display:grid;grid-template-columns:repeat(4,1fr)}
+.trust .item{padding:1.6rem 1.2rem;border-left:1.5px solid var(--ligne);text-align:center}
+.trust .item:first-child{border-left:0}
+.trust b{font-family:'Fraunces',serif;font-weight:900;font-size:1.25rem;display:block;color:var(--terra-deep)}
+.trust span{font-size:.82rem;color:var(--mut)}
+@media(max-width:720px){
+  .trust .wrap{grid-template-columns:1fr 1fr}
+  .trust .item:nth-child(3){border-left:0}
+  .trust .item{border-top:1.5px solid var(--ligne)}
+  .trust .item:nth-child(-n+2){border-top:0}
+}
+
+/* ===== SERVICES ===== */
+.svc{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.2rem;margin-top:2.8rem}
+.svc-card{
+  background:var(--creme);border:2px solid var(--encre);border-radius:16px;padding:1.7rem 1.5rem;
+  box-shadow:4px 4px 0 var(--encre);transition:transform .3s var(--ease),box-shadow .3s var(--ease);
+  display:flex;flex-direction:column;gap:.7rem;
+}
+.svc-card:hover{transform:translate(-3px,-3px);box-shadow:7px 7px 0 var(--encre)}
+.svc-card .ic{width:40px;height:40px;color:var(--terra)}
+.svc-card h3{font-size:1.2rem;font-weight:600}
+.svc-card p{font-size:.93rem;color:var(--mut)}
+.svc-card .ex{font-size:.8rem;color:var(--terra-deep);font-weight:600}
+
+/* ===== PROCESS ===== */
+.process{background:var(--encre);color:var(--papier)}
+.process .kicker{color:var(--terra)}
+.process .lead{color:rgba(250,245,236,.65)}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:2rem;margin-top:3rem}
+.step h3{font-size:1.25rem;margin:.8rem 0 .5rem;font-weight:600}
+.step p{font-size:.93rem;color:rgba(250,245,236,.68)}
+.step .n{
+  font-family:'Fraunces',serif;font-weight:900;font-size:2.6rem;color:var(--terra);
+  display:inline-block;border-bottom:3px solid var(--terra);line-height:1.15;
+}
+@media(max-width:760px){.steps{grid-template-columns:1fr}}
+
+/* ===== EXEMPLES ===== */
+.works{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem;margin-top:2.8rem}
+.work{
+  background:var(--creme);border:2px solid var(--encre);border-radius:16px;overflow:hidden;
+  box-shadow:4px 4px 0 var(--encre);display:flex;flex-direction:column;
+  transition:transform .3s var(--ease),box-shadow .3s var(--ease);
+}
+.work:hover{transform:translate(-3px,-3px);box-shadow:7px 7px 0 var(--encre)}
+.work .frame{position:relative;height:210px;overflow:hidden;border-bottom:2px solid var(--encre);background:#fff}
+.work .frame iframe{width:1280px;height:1400px;border:0;transform:scale(.24);transform-origin:top left;pointer-events:none}
+.work .frame a{position:absolute;inset:0;display:block}
+.work .frame .open{
+  position:absolute;bottom:10px;right:10px;background:var(--encre);color:var(--papier);
+  font-size:.75rem;font-weight:600;padding:.45em 1em;border-radius:8px;
+}
+.work .body{padding:1.2rem 1.3rem 1.4rem;display:flex;flex-direction:column;gap:.4rem;flex:1}
+.work .tag{font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;font-weight:600;color:var(--terra-deep)}
+.work h3{font-size:1.15rem;font-weight:600}
+.work p{font-size:.88rem;color:var(--mut);flex:1}
+@media(max-width:880px){.works{grid-template-columns:1fr;max-width:480px}}
+
+/* ===== POURQUOI ===== */
+.why{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:1.6rem 2rem;margin-top:2.6rem}
+.why .point{border-top:3px solid var(--terra);padding-top:1rem}
+.why h3{font-size:1.05rem;font-weight:600;margin-bottom:.4rem}
+.why p{font-size:.9rem;color:var(--mut)}
+
+/* ===== TARIFS / CTA ===== */
+.devis{background:var(--terra);color:var(--creme);border-top:2px solid var(--encre);border-bottom:2px solid var(--encre)}
+.devis .kicker{color:var(--creme);opacity:.85}
+.devis h2{font-size:var(--fs-h2);max-width:16em}
+.devis .lead{color:rgba(255,249,240,.85)}
+.devis .btn{background:var(--creme);color:var(--encre)}
+.devis-row{display:flex;gap:1.5rem;align-items:center;flex-wrap:wrap;margin-top:2rem}
+.devis .mail{font-weight:600;color:var(--creme);text-decoration:underline;text-underline-offset:4px}
+.devis .note{margin-top:1.2rem;font-size:.85rem;color:rgba(255,249,240,.8)}
+
+/* ===== FOOTER ===== */
+footer{padding:2.8rem 0;background:var(--encre);color:rgba(250,245,236,.75)}
+footer .wrap{display:flex;justify-content:space-between;gap:1.5rem;flex-wrap:wrap;align-items:center;font-size:.85rem}
+footer a{color:var(--papier)}
+footer .elan{opacity:.75}
+footer .elan a{text-decoration:none;border-bottom:1px solid var(--terra)}
+
+/* ===== REDUCED MOTION ===== */
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .rv{opacity:1;transform:none;transition:none}
+  .svc-card:hover,.work:hover,.cta:hover,.btn:hover{transform:none}
+  .swing{animation:none !important}
+  .ticker .track{animation:none}
+  nav.masquee{transform:none}
+}
+/* balancement du panneau */
+.swing{transform-origin:32px 12px;animation:swing 5.5s ease-in-out infinite}
+@keyframes swing{0%,100%{transform:rotate(-2.4deg)}50%{transform:rotate(2.4deg)}}
+.work .frame img{width:100%;height:100%;object-fit:cover;object-position:top center;display:block}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Aller au contenu</a>
+<div class="progress" id="progress" aria-hidden="true"></div>
+
+<nav id="nav" aria-label="Navigation principale">
+  <div class="nav-in">
+    <a class="brand" href="#top" aria-label="L'Enseigne — accueil">
+      <svg class="mark" viewBox="0 0 64 64" aria-hidden="true">
+        <line x1="8" y1="12" x2="56" y2="12" stroke="#26221C" stroke-width="5" stroke-linecap="round"/>
+        <g class="swing">
+          <line x1="20" y1="14" x2="20" y2="22" stroke="#26221C" stroke-width="3"/>
+          <line x1="44" y1="14" x2="44" y2="22" stroke="#26221C" stroke-width="3"/>
+          <rect x="12" y="22" width="40" height="30" rx="6" fill="#C1502E"/>
+          <rect x="22" y="29" width="4" height="16" fill="#FFF9F0"/>
+          <rect x="22" y="29" width="16" height="4" fill="#FFF9F0"/>
+          <rect x="22" y="35" width="12" height="4" fill="#FFF9F0"/>
+          <rect x="22" y="41" width="16" height="4" fill="#FFF9F0"/>
+        </g>
+      </svg>
+      <span>
+        <span class="wm">L'Enseigne</span>
+        <small>l'atelier web des commerces</small>
+      </span>
+    </a>
+    <ul class="nav-links" id="navlinks">
+      <li><a href="#services">Ce qu'on fait</a></li>
+      <li><a href="#methode">Comment ça marche</a></li>
+      <li><a href="#exemples">Exemples</a></li>
+      <li><a href="#pourquoi">Pourquoi nous</a></li>
+      <li><a href="#tarifs">Tarifs</a></li>
+      <li><a href="tel:+33610126850" style="font-weight:600;white-space:nowrap">06 10 12 68 50</a></li>
+    </ul>
+    <a class="cta nav-cta" href="mailto:benjamin.fieve@gmail.com?subject=Devis%20L%27Enseigne">Demander un devis</a>
+    <button class="burger" id="burger" aria-expanded="false" aria-controls="navlinks" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<main id="main">
+<!-- ===== HERO ===== -->
+<section class="hero" id="top">
+  <div class="wrap">
+    <div>
+      <p class="kicker rv">Lille · Côte d'Opale · et alentours</p>
+      <h1 class="rv rv2">Votre commerce mérite une belle enseigne. <em>Aussi en ligne.</em></h1>
+      <p class="sub rv rv3">Sites vitrines, menus QR, fiche Google, coups de main du quotidien : on fabrique les outils simples qui font venir — et revenir — vos clients. Livrés en quelques jours, sans abonnement forcé, et à vous pour de bon.</p>
+      <div class="hero-ctas rv rv4">
+        <a class="cta" href="mailto:benjamin.fieve@gmail.com?subject=Devis%20L%27Enseigne&amp;body=Bonjour%2C%0A%0AMon%20commerce%20%3A%20%0ACe%20qu%27il%20me%20faut%20%3A%20%0A%0AMerci%20!">Demander un devis — gratuit</a>
+        <a class="btn btn-ghost" href="#exemples">Voir des exemples</a>
+      </div>
+      <p class="hero-note rv rv4">Bars · restaurants · artisans · boutiques · PME — petits travaux bienvenus. Ou un coup de fil : <a href="tel:+33610126850" style="font-weight:600">06 10 12 68 50</a>.</p>
+    </div>
+    <div class="hero-visual rv rv3" aria-hidden="true">
+      <svg viewBox="0 0 200 200">
+        <line x1="20" y1="34" x2="180" y2="34" stroke="#26221C" stroke-width="9" stroke-linecap="round"/>
+        <g class="swing" style="transform-origin:100px 34px">
+          <line x1="55" y1="38" x2="55" y2="62" stroke="#26221C" stroke-width="6"/>
+          <line x1="145" y1="38" x2="145" y2="62" stroke="#26221C" stroke-width="6"/>
+          <rect x="28" y="62" width="144" height="100" rx="14" fill="#C1502E" stroke="#26221C" stroke-width="5"/>
+          <rect x="58" y="86" width="10" height="52" fill="#FFF9F0"/>
+          <rect x="58" y="86" width="52" height="10" fill="#FFF9F0"/>
+          <rect x="58" y="107" width="40" height="10" fill="#FFF9F0"/>
+          <rect x="58" y="128" width="52" height="10" fill="#FFF9F0"/>
+          <circle cx="136" cy="112" r="9" fill="#FFF9F0"/>
+        </g>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<div class="awning scallop" aria-hidden="true"></div>
+
+<!-- ===== BANDEAU CONFIANCE ===== -->
+<section class="trust" aria-label="Ce qui nous distingue">
+  <div class="wrap">
+    <div class="item rv"><b>En jours</b><span>pas en mois — devis sous 24 h</span></div>
+    <div class="item rv rv2"><b>Sans abonnement</b><span>le site vous appartient, point</span></div>
+    <div class="item rv rv3"><b>Zéro jargon</b><span>on parle boutique, pas tech</span></div>
+    <div class="item rv rv4"><b>On se déplace</b><span>un café au comptoir suffit</span></div>
+  </div>
+</section>
+
+<!-- ===== SERVICES ===== -->
+<section class="pad-y" id="services">
+  <div class="wrap">
+    <p class="kicker rv">Ce qu'on fait</p>
+    <h2 class="h2 rv rv2">Les outils qui servent vraiment, sans superflu.</h2>
+    <div class="svc">
+      <article class="svc-card rv">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="14" rx="2"/><path d="M2 9h20M8 21h8M12 18v3"/></svg>
+        <h3>Site vitrine</h3>
+        <p>Une page belle et rapide : votre histoire, vos horaires, votre carte, l'itinéraire. Ouvrable partout, même sans bon wifi.</p>
+        <span class="ex">Ex. : brasserie, salon, cabinet, boutique</span>
+      </article>
+      <article class="svc-card rv rv2">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 3h13l3 4-3 4H4z"/><path d="M4 3v18M4 11v4"/><path d="M9 6.5h5M9 8.5h3" stroke-width="1.4"/></svg>
+        <h3>Menu &amp; carte</h3>
+        <p>Menu QR élégant, carte imprimable assortie, mise à jour en un message. Fini le PDF illisible sur téléphone.</p>
+        <span class="ex">Ex. : carte du soir, ardoise du midi, carte des vins</span>
+      </article>
+      <article class="svc-card rv rv3">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-5.3-7-11a7 7 0 0 1 14 0c0 5.7-7 11-7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>
+        <h3>Fiche Google &amp; Maps</h3>
+        <p>Horaires justes, belles photos, réponses aux avis : la fiche qui décide un client à pousser votre porte.</p>
+        <span class="ex">Le premier réflexe de vos clients, soigné</span>
+      </article>
+      <article class="svc-card rv">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>
+        <h3>Réservations &amp; contact</h3>
+        <p>Bouton d'appel, itinéraire, formulaire simple, lien WhatsApp : le client vous joint en deux gestes.</p>
+        <span class="ex">Moins d'appels manqués, plus de tables pleines</span>
+      </article>
+      <article class="svc-card rv rv2">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a4.5 4.5 0 0 0-6.4 6.4l-4.6 4.6a1.5 1.5 0 0 0 2 2.2l4.8-4.4a4.5 4.5 0 0 0 6.4-6.4l-2.4 2.4-2.4-.4-.4-2.4z"/></svg>
+        <h3>Coups de main du quotidien</h3>
+        <p>Affiches, étiquettes, planning d'équipe, documents propres, petites automatisations : dites-nous ce qui vous prend du temps.</p>
+        <span class="ex">Support logistique à la demande</span>
+      </article>
+      <article class="svc-card rv rv3">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a7.9 7.9 0 0 0 .1-6l-2.1.6a6 6 0 0 0-1.6-1.6l.6-2.1a7.9 7.9 0 0 0-6 .1l.7 2a6 6 0 0 0-1.7 1.7l-2-.7a7.9 7.9 0 0 0-.1 6l2.1-.6a6 6 0 0 0 1.6 1.6l-.6 2.1a7.9 7.9 0 0 0 6-.1l-.7-2a6 6 0 0 0 1.7-1.7z"/></svg>
+        <h3>Retouches &amp; suivi</h3>
+        <p>Un prix qui change, une photo à remplacer, une nouveauté à annoncer : on retouche vite, sans facturer une usine à gaz.</p>
+        <span class="ex">Petits contrats bienvenus, vraiment</span>
+      </article>
+    </div>
+  </div>
+</section>
+
+<div class="ticker" aria-hidden="true">
+  <div class="track">
+    <span>Sites vitrines&nbsp;·&nbsp;Menus QR&nbsp;·&nbsp;Fiche Google&nbsp;·&nbsp;Réservations&nbsp;·&nbsp;Cartes imprimables&nbsp;·&nbsp;Affiches&nbsp;·&nbsp;Retouches express&nbsp;·&nbsp;Coups de main du quotidien&nbsp;·&nbsp;</span>
+    <span>Sites vitrines&nbsp;·&nbsp;Menus QR&nbsp;·&nbsp;Fiche Google&nbsp;·&nbsp;Réservations&nbsp;·&nbsp;Cartes imprimables&nbsp;·&nbsp;Affiches&nbsp;·&nbsp;Retouches express&nbsp;·&nbsp;Coups de main du quotidien&nbsp;·&nbsp;</span>
+  </div>
+</div>
+
+<!-- ===== PROCESS ===== -->
+<section class="process pad-y" id="methode">
+  <div class="wrap">
+    <p class="kicker rv">Comment ça marche</p>
+    <h2 class="h2 rv rv2">Simple comme bonjour.</h2>
+    <div class="steps">
+      <div class="step rv"><span class="n">1</span><h3>On passe vous voir</h3><p>Autour d'un café au comptoir, vous nous racontez votre commerce et ce qui vous manque. C'est gratuit et sans engagement.</p></div>
+      <div class="step rv rv2"><span class="n">2</span><h3>On fabrique en quelques jours</h3><p>Vous voyez le résultat avant de payer quoi que ce soit. On ajuste ensemble jusqu'à ce que ce soit vous, tout craché.</p></div>
+      <div class="step rv rv3"><span class="n">3</span><h3>C'est à vous, pour de bon</h3><p>Pas d'abonnement obligatoire, pas de prise d'otage : les fichiers vous appartiennent. On reste joignables pour les retouches.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== EXEMPLES ===== -->
+<section class="pad-y" id="exemples">
+  <div class="wrap">
+    <p class="kicker rv">Sorti de l'atelier</p>
+    <h2 class="h2 rv rv2">Jugez sur pièce.</h2>
+    <p class="lead rv rv3">Trois exemples fabriqués par l'atelier — la version complète, qui se clique, se montre en démonstration : appelez, on vous l'envoie.</p>
+    <div class="works">
+      <article class="work rv">
+        <div class="frame">
+          <img src="img/apercu-le-saint-jean.jpg" alt="Aperçu — Le Saint Jean" loading="lazy">
+        </div>
+        <div class="body">
+          <span class="tag">Proposition de refonte</span>
+          <h3>Bar · brasserie — Le Touquet</h3>
+          <p>Identité conservée, vraies photos, vraie carte 2026 : une refonte qui respecte la maison.</p>
+        </div>
+      </article>
+      <article class="work rv rv2">
+        <div class="frame">
+          <img src="img/apercu-le-matisse.jpg" alt="Aperçu — Le Matisse" loading="lazy">
+        </div>
+        <div class="body">
+          <span class="tag">Démonstration</span>
+          <h3>Brasserie de bord de mer</h3>
+          <p>Une direction artistique complète inspirée du nom du lieu — maquette de démonstration.</p>
+        </div>
+      </article>
+      <article class="work rv rv3">
+        <div class="frame">
+          <img src="img/apercu-dada-cafeteria.jpg" alt="Aperçu — DADA" loading="lazy">
+        </div>
+        <div class="body">
+          <span class="tag">Café · cantine</span>
+          <h3>Cafétéria de quartier</h3>
+          <p>Site de poche pour un café : la carte, l'ambiance, l'adresse — rien de plus, rien de moins.</p>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ===== POURQUOI ===== -->
+<section class="pad-y" id="pourquoi" style="background:var(--creme);border-top:2px solid var(--encre)">
+  <div class="wrap">
+    <p class="kicker rv">Pourquoi l'atelier</p>
+    <h2 class="h2 rv rv2">L'artisanat, appliqué au web.</h2>
+    <div class="why">
+      <div class="point rv"><h3>Fait main, fait vite</h3><p>Pas de template acheté, pas d'usine à sites : chaque page est dessinée pour vous, et livrée en jours.</p></div>
+      <div class="point rv rv2"><h3>Des prix d'artisan</h3><p>Un devis clair sous 24 h, un prix fixé avant de commencer, et pas de ligne mystère sur la facture.</p></div>
+      <div class="point rv rv3"><h3>Vous êtes propriétaire</h3><p>Vos fichiers, votre nom de domaine, vos photos : tout vous appartient. Vous restez libre, toujours.</p></div>
+      <div class="point rv rv4"><h3>Du sérieux derrière</h3><p>L'atelier s'appuie sur ÉLAN, studio data &amp; growth qui travaille pour des fonds d'investissement et des scale-ups. Le même soin, format bistrot.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== TARIFS ===== -->
+<section class="pad-y" id="tarifs">
+  <div class="wrap">
+    <p class="kicker rv">Tarifs</p>
+    <h2 class="h2 rv rv2">Des prix d'artisan, annoncés d'avance.</h2>
+    <p class="lead rv rv3">Chaque devis est fixé avant de commencer — pas de surprise sur la facture. Les « à partir de » couvrent les cas simples ; on ajuste ensemble selon votre besoin.</p>
+    <div class="svc" style="grid-template-columns:repeat(auto-fill,minmax(240px,1fr))">
+      <article class="svc-card rv">
+        <h3>Site vitrine</h3>
+        <p>Une page complète, rapide, à votre image — livrée en quelques jours.</p>
+        <span class="ex" style="font-size:1.3rem;font-family:'Fraunces',serif;font-weight:900">à partir de 690&nbsp;€</span>
+      </article>
+      <article class="svc-card rv rv2">
+        <h3>Menu QR + carte</h3>
+        <p>Menu élégant sur téléphone + carte imprimable assortie.</p>
+        <span class="ex" style="font-size:1.3rem;font-family:'Fraunces',serif;font-weight:900">à partir de 290&nbsp;€</span>
+      </article>
+      <article class="svc-card rv rv3">
+        <h3>Fiche Google</h3>
+        <p>Horaires, photos, description : la fiche remise au propre.</p>
+        <span class="ex" style="font-size:1.3rem;font-family:'Fraunces',serif;font-weight:900">190&nbsp;€</span>
+      </article>
+      <article class="svc-card rv rv4">
+        <h3>Retouches &amp; coups de main</h3>
+        <p>Modifications, affiches, documents, logistique — à la demande.</p>
+        <span class="ex" style="font-size:1.3rem;font-family:'Fraunces',serif;font-weight:900">60&nbsp;€ / heure</span>
+      </article>
+    </div>
+    <p class="lead rv" style="margin-top:2rem"><strong>Le pack complet</strong> — site + menu QR + fiche Google : <strong style="color:var(--terra-deep)">à partir de 990&nbsp;€</strong>. Le plus choisi pour bien démarrer.</p>
+  </div>
+</section>
+
+<!-- ===== DEVIS ===== -->
+<section class="devis pad-y" id="devis">
+  <div class="wrap">
+    <p class="kicker rv">Parlons-en</p>
+    <h2 class="rv rv2">Dites-nous ce qui vous ferait gagner du temps.</h2>
+    <p class="lead rv rv3">Un site, un menu, une fiche Google, un coup de main ponctuel — envoyez trois lignes, on répond sous 24 h avec un devis simple. Gratuit, sans engagement, sans jargon.</p>
+    <div class="devis-row rv rv3">
+      <a class="btn" href="tel:+33610126850">📞 06 10 12 68 50</a>
+      <a class="btn" href="mailto:benjamin.fieve@gmail.com?subject=Devis%20L%27Enseigne&amp;body=Bonjour%2C%0A%0AMon%20commerce%20%3A%20%0ACe%20qu%27il%20me%20faut%20%3A%20%0A%0AMerci%20!">Demander un devis — gratuit</a>
+      <a class="mail" href="mailto:benjamin.fieve@gmail.com">benjamin.fieve@gmail.com</a>
+    </div>
+    <p class="note rv rv4">On se déplace : Lille, Le Touquet &amp; alentours. Réponse sous 24 h ouvrées.</p>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 L'Enseigne — l'atelier web des commerces.</span>
+    <span class="elan">Un atelier du studio ÉLAN · <a href="tel:+33610126850">06 10 12 68 50</a> · <a href="mailto:benjamin.fieve@gmail.com">Contact</a></span>
+  </div>
+</footer>
+
+<script>
+const nav=document.getElementById('nav'),progress=document.getElementById('progress');
+const burger=document.getElementById('burger'),links=document.getElementById('navlinks');
+const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
+const heroVisual=document.querySelector('.hero-visual');
+
+/* menu mobile */
+burger.addEventListener('click',()=>{
+  const open=links.classList.toggle('open');
+  burger.setAttribute('aria-expanded',open);
+  document.body.style.overflow=open?'hidden':'';
+  if(open)nav.classList.remove('masquee');
+});
+links.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{
+  links.classList.remove('open');burger.setAttribute('aria-expanded','false');document.body.style.overflow='';
+}));
+
+/* scroll unifié : fond nav, barre de progression, nav escamotable, parallax */
+let lastY=scrollY,raf=false;
+function onScroll(){
+  const y=scrollY;
+  nav.classList.toggle('scrolled',y>30);
+  const max=document.documentElement.scrollHeight-innerHeight;
+  progress.style.transform='scaleX('+(max>0?y/max:0)+')';
+  if(!reduce){
+    nav.classList.toggle('masquee',y>lastY+2&&y>280&&!links.classList.contains('open'));
+    if(heroVisual&&innerWidth>880&&y<innerHeight)heroVisual.style.transform='translateY('+y*.1+'px)';
+  }
+  lastY=y;raf=false;
+}
+addEventListener('scroll',()=>{if(!raf){raf=true;requestAnimationFrame(onScroll)}},{passive:true});
+onScroll();
+
+/* reveal au scroll */
+const io=new IntersectionObserver(es=>es.forEach(e=>{
+  if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}
+}),{threshold:.12,rootMargin:'0px 0px -40px 0px'});
+document.querySelectorAll('.rv').forEach(el=>io.observe(el));
+
+/* scrollspy : souligne l'onglet de la section visible */
+const spy={};
+links.querySelectorAll('a[href^="#"]').forEach(a=>spy[a.hash.slice(1)]=a);
+const spyIO=new IntersectionObserver(es=>es.forEach(e=>{
+  const a=spy[e.target.id];
+  if(a&&e.isIntersecting){
+    links.querySelectorAll('a.active').forEach(x=>x.classList.remove('active'));
+    a.classList.add('active');
+  }
+}),{rootMargin:'-35% 0px -55% 0px'});
+Object.keys(spy).forEach(id=>{const s=document.getElementById(id);if(s)spyIO.observe(s)});
+</script>
+</body>
+</html>

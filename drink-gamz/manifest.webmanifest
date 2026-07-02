@@ -1,0 +1,17 @@
+{
+  "name": "Drink Gamz'",
+  "short_name": "Drink Gamz'",
+  "description": "La machine à jeux de soirée : 10 jeux + Mode Épique, niveaux réglables, mode gorgées ou gages.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0a0418",
+  "theme_color": "#0c0420",
+  "lang": "fr",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

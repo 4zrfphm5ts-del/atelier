@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Au Soleil — terrasses ensoleillées</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+<style>
+  :root{
+    --bg:#0f1419; --panel:#171f29; --panel2:#1d2733; --line:#26313d;
+    --ink:#f4efe6; --muted:#9aa7b4;
+    --sun:#ffc233; --partial:#e08a3c; --shade:#5b6b7a; --night:#3a4654;
+    --ok:#46c46a; --accent:#ffc233;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%}
+  body{font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:var(--bg); color:var(--ink); overflow:hidden}
+  header{padding:11px 18px; border-bottom:1px solid var(--line); display:flex; flex-wrap:wrap;
+    align-items:center; gap:11px 20px; background:linear-gradient(180deg,#1a232e,#141b24)}
+  .brand{display:flex; align-items:center; gap:10px; min-width:120px}
+  .brand b{font-size:19px} .brand .sun-dot{width:13px;height:13px;border-radius:50%;background:var(--sun);box-shadow:0 0 14px var(--sun)}
+  .tabs{display:flex; gap:6px; background:#0e141b; border:1px solid var(--line); border-radius:10px; padding:4px}
+  .tab{background:transparent; border:none; color:var(--muted); padding:6px 13px; border-radius:7px; font:inherit; cursor:pointer}
+  .tab.active{background:var(--sun); color:#1a1206; font-weight:600}
+  .controls{display:flex; flex-wrap:wrap; align-items:center; gap:8px 14px; flex:1}
+  .ctl{display:flex; align-items:center; gap:8px}
+  .ctl label{color:var(--muted); font-size:12px; text-transform:uppercase; letter-spacing:.6px}
+  input[type=date]{background:var(--panel); color:var(--ink); border:1px solid var(--line); border-radius:8px; padding:6px 8px; font:inherit}
+  input[type=range]{width:190px; accent-color:var(--sun)}
+  .clock{font-variant-numeric:tabular-nums; font-weight:600; min-width:56px; text-align:center;
+    background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:4px 8px}
+  button.primary{background:var(--sun); color:#1a1206; border:1px solid var(--sun); border-radius:8px; padding:7px 12px; font:inherit; font-weight:600; cursor:pointer}
+  main{display:flex; height:calc(100% - 60px)}
+  #map{flex:1; height:100%; background:#0b0f14}
+  aside{width:374px; max-width:46vw; height:100%; overflow:auto; border-left:1px solid var(--line); background:var(--panel)}
+  .filters{padding:11px 14px; border-bottom:1px solid var(--line); position:sticky; top:0; background:var(--panel); z-index:5}
+  .chips{display:flex; flex-wrap:wrap; gap:6px}
+  .chip{background:var(--panel2); border:1px solid var(--line); color:var(--muted); border-radius:20px;
+    padding:5px 11px; font-size:12.5px; cursor:pointer}
+  .chip.on{background:var(--sun); color:#1a1206; border-color:var(--sun); font-weight:600}
+  .chip.tog.on{background:#243; color:#bdf3c8; border-color:#2e6b3f}
+  .sun-readout{padding:10px 14px; color:var(--muted); font-size:13px; border-bottom:1px solid var(--line)}
+  .sun-readout b{color:var(--ink)}
+  .count{padding:9px 14px 2px; font-size:12px; text-transform:uppercase; letter-spacing:.7px; color:var(--muted)}
+  .card{padding:10px 14px; border-bottom:1px solid var(--line); cursor:pointer; display:flex; gap:10px; align-items:flex-start}
+  .card:hover{background:var(--panel2)}
+  .pip{width:11px;height:11px;border-radius:50%;margin-top:5px;flex:none}
+  .pip.sun{background:var(--sun);box-shadow:0 0 9px var(--sun)} .pip.partial{background:var(--partial)}
+  .pip.shade{background:var(--shade)} .pip.night{background:var(--night)}
+  .nm{font-weight:600; display:flex; align-items:center; gap:7px; flex-wrap:wrap}
+  .chiptype{font-size:10px; text-transform:uppercase; letter-spacing:.5px; color:var(--muted); border:1px solid var(--line); border-radius:20px; padding:1px 7px}
+  .st{font-size:12.5px; margin-top:1px}
+  .st.sun{color:var(--sun)} .st.partial{color:var(--partial)} .st.shade{color:var(--muted)} .st.night{color:var(--muted)}
+  .meta{color:var(--muted); font-size:11.5px; margin-top:2px}
+  .open{color:var(--ok); font-weight:600} .closed{color:#c96}
+  .links{margin-top:6px; display:flex; gap:7px; flex-wrap:wrap}
+  .links a{font-size:11.5px; color:var(--accent); text-decoration:none; border:1px solid var(--line); border-radius:7px; padding:3px 8px}
+  .links a:hover{border-color:var(--accent); background:var(--panel2)}
+  .more{padding:12px 14px; color:var(--muted); font-size:12px}
+  .legend{position:absolute; z-index:500; left:12px; bottom:12px; background:rgba(20,27,36,.92);
+    border:1px solid var(--line); border-radius:10px; padding:9px 12px; font-size:12px; display:flex; flex-direction:column; gap:5px}
+  .legend .row{display:flex; align-items:center; gap:8px}
+  .footnote{padding:12px 14px; color:var(--muted); font-size:11px; line-height:1.45}
+  .footnote code{background:#0e141b; padding:1px 5px; border-radius:5px}
+  .leaflet-popup-content{font:inherit; min-width:180px}
+  .pop b{font-size:14px} .pop .s{font-weight:600} .pop .row{margin-top:4px; font-size:12.5px}
+  .pop a{color:#0a64c2; text-decoration:none}
+  .leaflet-tooltip.t-soleil{background:#2a2310;border-color:var(--sun);color:#ffe9ad}
+  .home-pin{transform:translate(-50%,-130%); white-space:nowrap; background:#2f6bff; color:#fff;
+    font-weight:600; font-size:12px; padding:3px 9px; border-radius:20px; border:2px solid #fff; box-shadow:0 2px 9px rgba(0,0,0,.45)}
+  @media (max-width:780px){
+    main{flex-direction:column} aside{width:100%; max-width:none; height:46%; border-left:none; border-top:1px solid var(--line)} #map{height:54%}
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="brand"><span class="sun-dot"></span><b>Au Soleil</b></div>
+  <div class="tabs" id="tabs"></div>
+  <div class="controls">
+    <div class="ctl"><label>Date</label><input type="date" id="date"></div>
+    <div class="ctl"><label>Heure</label><input type="range" id="time" min="300" max="1380" step="15" value="900"><span class="clock" id="clock">15:00</span></div>
+    <button class="primary" id="now">Maintenant</button>
+  </div>
+</header>
+<main>
+  <div id="map">
+    <div class="legend">
+      <div class="row"><span class="pip sun"></span> Plein soleil</div>
+      <div class="row"><span class="pip partial"></span> Soleil rasant / bientôt</div>
+      <div class="row"><span class="pip shade"></span> À l'ombre</div>
+      <div class="row"><span class="pip night"></span> Soleil couché</div>
+    </div>
+  </div>
+  <aside>
+    <div class="filters">
+      <div class="chips" id="typechips"></div>
+      <div class="chips" style="margin-top:7px">
+        <span class="chip tog" id="t-sun">☀️ Au soleil</span>
+        <span class="chip tog" id="t-open">🕒 Ouvert</span>
+      </div>
+    </div>
+    <div class="sun-readout" id="readout"></div>
+    <div class="count" id="count"></div>
+    <div id="list"></div>
+    <div class="footnote">
+      Lieux, types, horaires &amp; sites : <b>© OpenStreetMap</b> (réels, parfois incomplets).
+      Ensoleillement = calcul solaire exact (SunCalc) × orientation estimée d'après la rue la
+      plus proche + obstruction selon la voie → <b>indicatif, à confirmer sur place</b>.
+      Régénérer la donnée : <code>tools/fetch_osm.py</code>.
+    </div>
+  </aside>
+</main>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script src="data.js"></script>
+<script>
+/* ---------- SunCalc (getPosition only, MIT, inline) ---------- */
+var SunCalc=(function(){
+  var PI=Math.PI, rad=PI/180, dayMs=864e5, J1970=2440588, J2000=2451545, e=rad*23.4397;
+  function toDays(d){return d.valueOf()/dayMs-0.5+J1970-J2000;}
+  function ra(l,b){return Math.atan2(Math.sin(l)*Math.cos(e)-Math.tan(b)*Math.sin(e),Math.cos(l));}
+  function dec(l,b){return Math.asin(Math.sin(b)*Math.cos(e)+Math.cos(b)*Math.sin(e)*Math.sin(l));}
+  function side(d,lw){return rad*(280.16+360.9856235*d)-lw;}
+  function M(d){return rad*(357.5291+0.98560028*d);}
+  function L(m){return m+rad*(1.9148*Math.sin(m)+0.02*Math.sin(2*m)+0.0003*Math.sin(3*m))+rad*102.9372+PI;}
+  return {getPosition:function(date,lat,lng){
+    var lw=rad*-lng, phi=rad*lat, d=toDays(date), l=L(M(d)), de=dec(l,0), H=side(d,lw)-ra(l,0);
+    return {azimuth:Math.atan2(Math.sin(H),Math.cos(H)*Math.sin(phi)-Math.tan(de)*Math.cos(phi)),
+            altitude:Math.asin(Math.sin(phi)*Math.sin(de)+Math.cos(phi)*Math.cos(de)*Math.cos(H))};
+  }};
+})();
+
+var CITIES=window.CITIES||{};
+
+/* ---------- Ensoleillement ---------- */
+function angDiff(a,b){var d=Math.abs(a-b)%360; return d>180?360-d:d;}
+function deg(r){return r*180/Math.PI;}
+function sunBearing(date,lat,lng){var az=SunCalc.getPosition(date,lat,lng).azimuth; return (deg(az)+180+360)%360;}
+function status(t,date){
+  var p=SunCalc.getPosition(date,t.lat,t.lng), alt=deg(p.altitude);
+  if(alt<=-0.5) return "night";
+  var diff=angDiff(sunBearing(date,t.lat,t.lng),t.facing), onSide=diff<95;
+  if(onSide && alt>t.horizon) return "sun";
+  if(onSide && alt>t.horizon-8 && alt>2) return "partial";
+  return "shade";
+}
+var LABEL={sun:"Plein soleil",partial:"Soleil rasant",shade:"À l'ombre",night:"Soleil couché"};
+function nextSun(t,date){
+  if(status(t,date)==="sun") return null;
+  for(var m=15;m<=330;m+=15){
+    var d=new Date(date.getTime()+m*60000);
+    if(status(t,d)==="sun"){var h=Math.floor(m/60),mn=m%60; return (h?h+"h":"")+(mn||!h?mn+"min":"");}
+  }
+  return null;
+}
+
+/* ---------- Horaires OSM : ouvert maintenant ? ---------- */
+var ORD={Mo:0,Tu:1,We:2,Th:3,Fr:4,Sa:5,Su:6}, O2J=[1,2,3,4,5,6,0];
+function ordOfJs(js){return O2J.indexOf(js);}
+function dayset(part){var s={};
+  part.split(',').forEach(function(tok){tok=tok.trim();
+    var m=tok.match(/^(Mo|Tu|We|Th|Fr|Sa|Su)-(Mo|Tu|We|Th|Fr|Sa|Su)$/);
+    if(m){var i=ORD[m[1]],b=ORD[m[2]];for(;;){s[i]=1;if(i===b)break;i=(i+1)%7;}}
+    else if(ORD.hasOwnProperty(tok)) s[ORD[tok]]=1;});
+  return s;}
+function parseRanges(str){var rs=[],re=/(\d{1,2}):(\d{2})-(\d{1,2}):(\d{2})/g,m;
+  while((m=re.exec(str))) rs.push([+m[1]*60+ +m[2], +m[3]*60+ +m[4]]); return rs;}
+function osmOpen(spec,date){
+  if(!spec) return null;
+  if(/24\/7/.test(spec)) return true;
+  spec=spec.replace(/PH[^;]*/gi,'');
+  var rules=spec.split(';'), jsDay=date.getDay(), t=date.getHours()*60+date.getMinutes(), any=false;
+  for(var i=0;i<rules.length;i++){
+    var rule=rules[i].trim(); if(!rule||/^(off|closed)$/i.test(rule)) continue;
+    var mm=rule.match(/^((?:Mo|Tu|We|Th|Fr|Sa|Su)(?:[-,](?:Mo|Tu|We|Th|Fr|Sa|Su))*)\s+(.*)$/);
+    var ds=null, timePart=rule;
+    if(mm){ds=dayset(mm[1]); timePart=mm[2];}
+    var ranges=parseRanges(timePart); if(!ranges.length) continue; any=true;
+    var todayOk = ds? ds[ordOfJs(jsDay)] : true;
+    if(todayOk){for(var r=0;r<ranges.length;r++){var s=ranges[r][0],e=ranges[r][1];
+      if(e>s){if(t>=s&&t<e)return true;} else {if(t>=s)return true;}}}
+    var prevOk = ds? ds[ordOfJs((jsDay+6)%7)] : true;
+    if(prevOk){for(var r2=0;r2<ranges.length;r2++){var s2=ranges[r2][0],e2=ranges[r2][1];
+      if(e2<=s2 && t<e2) return true;}}
+  }
+  return any? false : null;
+}
+
+/* ---------- Carte ---------- */
+var map=L.map("map",{zoomControl:true,preferCanvas:true});
+L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"&copy; OpenStreetMap"}).addTo(map);
+var COL={sun:"#ffc233",partial:"#e08a3c",shade:"#5b6b7a",night:"#3a4654"};
+var layer=L.layerGroup().addTo(map);
+var current=null, filterType="all", sunOnly=false, openOnly=false;
+
+/* ---------- DOM ---------- */
+var dateEl=document.getElementById("date"), timeEl=document.getElementById("time"),
+    clockEl=document.getElementById("clock"), readoutEl=document.getElementById("readout"),
+    listEl=document.getElementById("list"), tabsEl=document.getElementById("tabs"),
+    countEl=document.getElementById("count"), typeChipsEl=document.getElementById("typechips");
+
+Object.keys(CITIES).forEach(function(key){
+  var b=document.createElement("button"); b.className="tab"; b.textContent=CITIES[key].label; b.dataset.key=key;
+  b.onclick=function(){loadCity(key);}; tabsEl.appendChild(b);
+});
+
+var TYPES=[["all","Tous"],["café","☕ Café"],["bar","🍺 Bar"],["resto","🍽️ Resto"],["pub","🍻 Pub"]];
+TYPES.forEach(function(p){var c=document.createElement("span");c.className="chip"+(p[0]==="all"?" on":"");
+  c.textContent=p[1]; c.dataset.t=p[0];
+  c.onclick=function(){filterType=p[0];[].forEach.call(typeChipsEl.children,function(x){x.classList.toggle("on",x.dataset.t===p[0]);});render();};
+  typeChipsEl.appendChild(c);});
+document.getElementById("t-sun").onclick=function(){sunOnly=!sunOnly;this.classList.toggle("on",sunOnly);render();};
+document.getElementById("t-open").onclick=function(){openOnly=!openOnly;this.classList.toggle("on",openOnly);render();};
+
+function typeMatch(t){if(filterType==="all")return true;
+  if(filterType==="pub")return t.type==="pub"||t.type==="biergarten"; return t.type===filterType;}
+function currentDate(){var d=new Date(dateEl.value+"T00:00:00"); d.setMinutes(+timeEl.value); return d;}
+function fmt(mins){var h=Math.floor(mins/60),m=mins%60; return (h<10?"0":"")+h+":"+(m<10?"0":"")+m;}
+function gmapUrl(t){return "https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(t.n+" "+(current?current.label:""));}
+function openBadge(t,date){var o=osmOpen(t.h,date); if(o===null)return"";
+  return o?'<span class="open">● ouvert</span>':'<span class="closed">● fermé</span>';}
+
+function loadCity(key){
+  current=CITIES[key];
+  [].forEach.call(tabsEl.children,function(b){b.classList.toggle("active",b.dataset.key===key);});
+  layer.clearLayers();
+  current.terraces.forEach(function(t){
+    t._m=L.circleMarker([t.lat,t.lng],{radius:8,weight:2,color:"#10161d",fillColor:COL.shade,fillOpacity:1});
+    t._m.bindTooltip(t.n,{direction:"top",offset:[0,-4]});
+    t._m.on("click",function(){map.setView([t.lat,t.lng],18,{animate:true});});
+    t._on=false;
+  });
+  if(current.home){
+    L.marker(current.home.pos,{zIndexOffset:1000,
+      icon:L.divIcon({className:"home-wrap",iconSize:[0,0],html:'<div class="home-pin">📍 '+current.home.label+'</div>'})}).addTo(layer);
+  }
+  map.setView(current.center,current.zoom);
+  render();
+}
+
+function render(){
+  if(!current) return;
+  var date=currentDate(); clockEl.textContent=fmt(+timeEl.value);
+  var c=current.center, p=SunCalc.getPosition(date,c[0],c[1]), alt=deg(p.altitude), br=sunBearing(date,c[0],c[1]);
+  var dir=["N","NE","E","SE","S","SO","O","NO"][Math.round(br/45)%8];
+  readoutEl.innerHTML = alt>0
+    ? "Soleil&nbsp;: <b>"+alt.toFixed(0)+"°</b> au-dessus de l'horizon, direction <b>"+dir+"</b>."
+    : "<b>Soleil couché</b> à cette heure.";
+
+  var shown=[];
+  current.terraces.forEach(function(t){
+    var s=status(t,date);
+    var keep=typeMatch(t) && (!sunOnly||s==="sun") && (!openOnly||osmOpen(t.h,date)===true);
+    if(keep){
+      t._m.setStyle({fillColor:COL[s],radius:s==="sun"?9:7,fillOpacity:1});
+      t._m.setTooltipContent(t.n+" — "+LABEL[s]);
+      var ob=openBadge(t,date), oh=t.h?'<div class="row">🕒 '+t.h+'</div>':'';
+      t._m.bindPopup('<div class="pop"><b>'+t.n+'</b> <span class="chiptype">'+t.type+'</span>'
+        +'<div class="row s" style="color:'+COL[s]+'">'+LABEL[s]+'</div>'
+        +(ob?'<div class="row">'+ob+'</div>':'')+oh
+        +'<div class="row"><a href="'+gmapUrl(t)+'" target="_blank" rel="noopener">Google Maps ↗</a>'
+        +(t.w?' &middot; <a href="'+t.w+'" target="_blank" rel="noopener">Site ↗</a>':'')+'</div></div>');
+      if(!t._on){layer.addLayer(t._m);t._on=true;}
+      shown.push({t:t,s:s});
+    } else if(t._on){layer.removeLayer(t._m);t._on=false;}
+  });
+
+  var order={sun:0,partial:1,shade:2,night:3};
+  shown.sort(function(a,b){return order[a.s]-order[b.s] || a.t.horizon-b.t.horizon || a.t.n.localeCompare(b.t.n);});
+  var sunN=shown.filter(function(x){return x.s==="sun";}).length;
+  countEl.textContent=shown.length+" lieux · "+sunN+" au soleil";
+
+  var cap=shown.slice(0,70);
+  listEl.innerHTML=cap.map(function(r){
+    var t=r.t, next=r.s==="sun"?null:nextSun(t,date);
+    var sun = r.s==="sun"?"au soleil maintenant":next?"soleil dans ~"+next:(r.s==="night"?"—":"pas de soleil d'ici 5h");
+    var ob=openBadge(t,date);
+    var links='<a href="'+gmapUrl(t)+'" target="_blank" rel="noopener" onclick="event.stopPropagation()">Google Maps ↗</a>'
+      +(t.w?'<a href="'+t.w+'" target="_blank" rel="noopener" onclick="event.stopPropagation()">Site web ↗</a>':'');
+    return '<div class="card" data-lat="'+t.lat+'" data-lng="'+t.lng+'">'
+      +'<span class="pip '+r.s+'"></span><div style="min-width:0">'
+      +'<div class="nm">'+t.n+' <span class="chiptype">'+t.type+'</span></div>'
+      +'<div class="st '+r.s+'">'+LABEL[r.s]+' · <span style="color:var(--muted)">'+sun+'</span></div>'
+      +(t.h?'<div class="meta">'+(ob?ob+' · ':'')+t.h+'</div>':(ob?'<div class="meta">'+ob+'</div>':''))
+      +'<div class="links">'+links+'</div></div></div>';
+  }).join("") + (shown.length>cap.length?'<div class="more">+ '+(shown.length-cap.length)+' autres terrasses sur la carte…</div>':"");
+
+  [].forEach.call(listEl.querySelectorAll(".card"),function(el){
+    el.onclick=function(){var lat=+el.dataset.lat,lng=+el.dataset.lng;
+      map.setView([lat,lng],18,{animate:true});
+      var t=current.terraces.filter(function(x){return x.lat===lat&&x.lng===lng;})[0];
+      if(t&&t._on) t._m.openPopup();};
+  });
+}
+
+function setNow(){var now=new Date();
+  dateEl.value=now.toISOString().slice(0,10);
+  timeEl.value=Math.round((now.getHours()*60+now.getMinutes())/15)*15; render();}
+
+dateEl.onchange=render; timeEl.oninput=render;
+document.getElementById("now").onclick=setNow;
+
+if(!Object.keys(CITIES).length){
+  listEl.innerHTML='<div class="more">Donnée absente : lance <code>python3 tools/fetch_osm.py</code> pour générer <code>data.js</code>.</div>';
+}else{
+  var n0=new Date(); dateEl.value=n0.toISOString().slice(0,10);
+  timeEl.value=Math.round((n0.getHours()*60+n0.getMinutes())/15)*15;
+  loadCity(Object.keys(CITIES)[0]);
+}
+</script>
+</body>
+</html>
