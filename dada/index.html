@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta name="robots" content="noindex, nofollow">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DADA — Café vivant à Lille · Cantine de quartier bien secouée</title>
+  <meta name="description" content="DADA, café vivant au cœur de Lille (169 rue Pierre Mauroy). On y mange, on y vit, on y crée. Produits frais, locaux et bio, faits maison, brunch du samedi, ateliers créatifs et privatisation pour vos événements.">
+  <meta property="og:title" content="DADA — Café vivant à Lille">
+  <meta property="og:description" content="On y mange, on y vit, on y crée. Brunch du samedi, cuisine maison, ateliers et privatisation.">
+  <meta property="og:type" content="restaurant">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,400;0,500;0,700;0,900;1,900&family=Antonio:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+
+  <!-- ================= NAV ================= -->
+  <header class="nav" id="top">
+    <a href="#top" class="nav__logo" aria-label="DADA — accueil">
+      <img src="assets/logo-dada-wordmark.png" alt="DADA" class="nav__logo-img">
+    </a>
+    <nav class="nav__links" aria-label="Navigation principale">
+      <a href="#lieu">Le lieu</a>
+      <a href="#brunch">Le brunch</a>
+      <a href="#carte">La carte</a>
+      <a href="#ateliers">Ateliers</a>
+      <a href="#evenements">Privatisation</a>
+      <a href="#infos">Infos</a>
+    </nav>
+    <a href="#reserver" class="btn btn--nav">Réserver</a>
+    <button class="nav__burger" id="burger" aria-label="Menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </header>
+
+  <!-- ================= HERO ================= -->
+  <section class="hero grid-bg">
+    <div class="hero__inner">
+      <p class="hero__kicker">Café · Cafétéria · After-work — au cœur de Lille</p>
+      <h1 class="hero__logo"><img src="assets/logo-dada.png" alt="DADA — café vivant à Lille"></h1>
+      <p class="hero__tagline">On y <strong class="c-bleu">VIT</strong>, on y <strong class="c-rouge">MANGE</strong>, on y <strong class="c-rouge">CRÉE.</strong></p>
+      <p class="hero__sub">Une cantine de quartier bien secouée. Produits frais, locaux et bio, faits maison, et un petit vent de liberté — du lundi au samedi, 169 rue Pierre Mauroy.</p>
+      <div class="hero__cta">
+        <a href="#brunch" class="btn btn--primary">⭐ Le brunch du samedi</a>
+        <a href="#carte" class="btn btn--ghost">Voir la carte</a>
+      </div>
+    </div>
+    <div class="hero__swatches" aria-hidden="true">
+      <span style="background:var(--rouge)"></span>
+      <span style="background:var(--bleu)"></span>
+      <span style="background:var(--jaune)"></span>
+      <span style="background:var(--vert)"></span>
+      <span style="background:var(--bleu-clair)"></span>
+      <span style="background:var(--rose)"></span>
+    </div>
+  </section>
+
+  <!-- ================= BRUNCH HERO ================= -->
+  <section class="brunch" id="brunch">
+    <div class="brunch__inner">
+      <div class="brunch__text">
+        <span class="badge badge--jaune">Nouveau</span>
+        <h2 class="display display--white">LE BRUNCH<br>DADA</h2>
+        <p class="brunch__when">Tous les samedis · 11h – 14h30</p>
+        <p class="brunch__desc">
+          Le rendez-vous du week-end : pains grillés au levain, œufs comme on les aime,
+          pancakes maison et boisson artisanale, et le café qu'il vous faut.
+          Sucré, salé, végé, végan, sans gluten — il y en a pour tout le monde.
+          On s'installe, on partage, on prend le temps.
+        </p>
+        <ul class="brunch__list">
+          <li>Pains grillés &amp; tartines généreuses</li>
+          <li>Œufs &amp; petits plats du moment</li>
+          <li>Douceurs maison de la semaine</li>
+          <li>Boisson chaude + boisson maison</li>
+        </ul>
+        <div class="brunch__cta">
+          <a href="#reserver" class="btn btn--jaune">Réserver ma table</a>
+          <span class="brunch__note">Places limitées — réservation conseillée</span>
+        </div>
+      </div>
+      <div class="brunch__visual">
+        <div class="brunch__gallery">
+          <img src="assets/brunch-table.jpg" alt="Table de brunch DADA : plats du jour, kombucha et douceurs maison" class="bg-main" loading="lazy">
+          <img src="assets/brunch-toast.jpg" alt="Tartine d'avocat sur quinoa — brunch DADA" loading="lazy">
+          <img src="assets/brunch-dessert.jpg" alt="Cheesecake caramel maison" loading="lazy">
+        </div>
+        <div class="brunch__stamp">
+          <span>Croûte<br>que<br>croûte</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= LE LIEU ================= -->
+  <section class="lieu grid-bg" id="lieu">
+    <div class="section-head">
+      <span class="section-label">Le lieu</span>
+      <h2 class="display">DADA, c'est quoi&nbsp;?</h2>
+      <p class="section-intro">
+        Un café <strong>vivant</strong>, ouvert de 9h à 19h en plein cœur de Lille.
+        Un lieu de vie et de bouche, à la fois café du matin, cantine du midi,
+        pause goûter et after-work — un lieu vivant et animé, entre concerts et animations.
+        Une esthétique libre, un brin absurde, toujours joyeuse, clin d'œil au mouvement Dada,
+        qui prône la liberté de création.
+      </p>
+    </div>
+
+    <div class="qualites">
+      <article class="qualite">
+        <div class="qualite__ico">🥕</div>
+        <h3>Ses produits frais, cuisinés &amp; bio</h3>
+        <p>Fournisseurs locaux triés sur le volet, produits de saison et bio autant que possible. C'est sans chichis, et on mange bon.</p>
+      </article>
+      <article class="qualite">
+        <div class="qualite__ico">👯</div>
+        <h3>Sa convivialité</h3>
+        <p>Une chaleur humaine, un cadre accueillant, une terrasse ensoleillée l'après-midi. On vient, on revient.</p>
+      </article>
+      <article class="qualite">
+        <div class="qualite__ico">⭐</div>
+        <h3>Sa fantaisie</h3>
+        <p>Déco arty, mise en avant d'artistes locaux, cadavres exquis et ateliers. Un café qui nourrit le corps et l'imaginaire.</p>
+      </article>
+    </div>
+
+    <div class="soeurs">
+      <div class="soeurs__photo">
+        <figure class="soeurs__figure">
+          <img src="assets/equipe.jpg" alt="Carole et Marie, les deux sœurs de DADA, derrière le bar du café à Lille" loading="lazy">
+          <figcaption>Carole &amp; Marie, les deux sœurs de DADA.</figcaption>
+        </figure>
+      </div>
+      <div class="soeurs__text">
+        <span class="section-label">Dada, c'est qui&nbsp;?</span>
+        <h3 class="display display--sm">Deux sœurs complices</h3>
+        <p>
+          <strong>Carole</strong>, l'aînée, ancienne travailleuse sociale — créative, enthousiaste, le sens du contact inné.
+          <strong>Marie</strong>, la cadette, formée en gestion avec une expérience en restauration — méthodique, déterminée, le palais fin et exigeant.
+        </p>
+        <p>
+          À leurs côtés&nbsp;: <strong>Malika</strong>, cheffe aux pâtisseries incroyables et à la cuisine maison
+          (inspirations thaï, italienne, coréenne, française), et <strong>Julie</strong>, serveuse de confiance
+          qui suit le projet depuis les premiers jours.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= LA CARTE ================= -->
+  <section class="carte" id="carte">
+    <div class="section-head">
+      <span class="section-label section-label--light">La carte</span>
+      <h2 class="display display--white">Sans chichis, on mange bon</h2>
+      <p class="section-intro section-intro--light">Trois exigences&nbsp;: <strong>simple</strong>, <strong>de qualité</strong>, <strong>savoureux</strong>. À consommer sur place ou à emporter.</p>
+    </div>
+
+    <div class="tabs" role="tablist">
+      <button class="tab is-active" data-tab="midi" role="tab">Le midi</button>
+      <button class="tab" data-tab="grignotages" role="tab">À toute heure</button>
+      <button class="tab" data-tab="chaud" role="tab">Boissons chaudes</button>
+      <button class="tab" data-tab="froid" role="tab">Boissons froides</button>
+      <button class="tab" data-tab="alacool" role="tab">À l'alacool</button>
+    </div>
+
+    <!-- LE MIDI -->
+    <div class="tab-panel is-active" data-panel="midi">
+      <div class="menu-grid">
+        <div class="menu-col">
+          <h3 class="menu-col__title">Le self du midi</h3>
+          <p class="menu-col__note">DADA se transforme en self : trois plats à la carte chaque semaine, dans l'assiette sur place ou en bocal à emporter. Pour tous les régimes : carné, végé, végan, sans gluten.</p>
+          <ul class="menu-list">
+            <li><span>Plat du jour + accompagnement</span><b>14 – 16€</b></li>
+            <li><span>Le plat en version sandwich</span></li>
+            <li><span>Possibilité de formule</span></li>
+            <li class="menu-list__sub"><span>Boisson en supplément</span></li>
+          </ul>
+        </div>
+        <div class="menu-col">
+          <h3 class="menu-col__title">Les formules</h3>
+          <ul class="menu-list">
+            <li><span>Formule midi (plat + grignotage ou dessert)</span></li>
+            <li><span>Formule enfant</span></li>
+          </ul>
+          <h4 class="menu-subhead">Petit-déjeuner &amp; goûter</h4>
+          <ul class="menu-list">
+            <li><span>Formule petit-déjeuner (9h–11h)</span></li>
+            <li><span>Formule goûter (15h–18h)</span></li>
+            <li><span>À grignoter à toute heure — salades &amp; sandwiches</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- GRIGNOTAGES -->
+    <div class="tab-panel" data-panel="grignotages">
+      <div class="menu-grid">
+        <div class="menu-col">
+          <h3 class="menu-col__title">À grignoter</h3>
+          <ul class="menu-list">
+            <li><span>Salade (petite)</span><b>5,9€</b></li>
+            <li><span>Gaspacho, soupe ou jus de fruits &amp; légumes</span><b></b></li>
+            <li><span>Sandwich jambon-fromage du Nord (petit)</span><b>8,5€</b></li>
+            <li><span>Sandwich jambon-fromage du Nord (big)</span><b>10,5€</b></li>
+          </ul>
+        </div>
+        <div class="menu-col">
+          <h3 class="menu-col__title">Pains grillés</h3>
+          <ul class="menu-list menu-list--compact">
+            <li><span>Pâte à tartiner</span></li>
+            <li><span>Brie &amp; cranberries</span></li>
+            <li><span>Cheddar grillé</span></li>
+            <li><span>Œufs &amp; pousses d'épinards</span></li>
+            <li><span>Sardines</span></li>
+            <li><span>Houmous de cacahuètes</span></li>
+          </ul>
+          <h4 class="menu-subhead">Chaussons &amp; douceurs</h4>
+          <ul class="menu-list menu-list--compact">
+            <li><span>Chausson pomme de terre-fromage</span></li>
+            <li><span>Chausson pommes-vanille</span></li>
+            <li><span>Douceur de la semaine (ex. mousse choco vegane, gâteau au pavot)</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOISSONS CHAUDES -->
+    <div class="tab-panel" data-panel="chaud">
+      <div class="menu-grid">
+        <div class="menu-col">
+          <h3 class="menu-col__title">Café</h3>
+          <ul class="menu-list">
+            <li><span>Expresso</span><b>2€</b></li>
+            <li><span>Allongé</span><b>2€</b></li>
+            <li><span>Chicorée</span><b>2€</b></li>
+            <li><span>Double expresso</span><b>3,5€</b></li>
+            <li><span>Americano</span><b>4€</b></li>
+          </ul>
+          <h4 class="menu-subhead">Café au lait</h4>
+          <ul class="menu-list">
+            <li><span>Café crème · Cappuccino</span><b>3,5€</b></li>
+            <li><span>⭐ MUM (chicorée-vanille-avoine) · Flat white</span><b>4€</b></li>
+            <li><span>Latte</span><b>4,5€</b></li>
+            <li><span>Latte vanille / noisette / pistache / caramel</span><b>5,5€</b></li>
+            <li><span>⭐ Dadahuète (café-vanille-lait-cacahuète)</span><b>6€</b></li>
+          </ul>
+        </div>
+        <div class="menu-col">
+          <h3 class="menu-col__title">Sans caféine</h3>
+          <ul class="menu-list">
+            <li><span>Thé « de la pagode » bio (5 thés)</span><b>3,5€</b></li>
+            <li><span>Infusion Yogi tea bio</span><b>3,5€</b></li>
+            <li><span>Chocolat chaud</span><b>5€</b></li>
+            <li><span>Chaï latte</span><b>5€</b></li>
+            <li><span>⭐ Golden latte (lait d'amande)</span><b>6€</b></li>
+            <li><span>⭐ Boisson du mois</span><b>6,5€</b></li>
+          </ul>
+          <p class="menu-col__note">⭐ Nos boissons signature maison. Suppléments : déca/chicorée &amp; lait d'avoine offerts · lait d'amande 0,5€ · chantilly 1€ · sirop Bacanha 1€.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOISSONS FROIDES -->
+    <div class="tab-panel" data-panel="froid">
+      <div class="menu-grid">
+        <div class="menu-col">
+          <h3 class="menu-col__title">Fraîcheurs</h3>
+          <ul class="menu-list">
+            <li><span>Sirop à l'eau</span><b>2€</b></li>
+            <li><span>Diabolo</span><b>3€</b></li>
+            <li><span>Eau plate / gazeuse — 50cl</span><b>2,5€</b></li>
+            <li><span>Eau — 1L</span><b>4€</b></li>
+            <li><span>Jus Pajottenlander — 20cl</span><b>3,5€</b></li>
+            <li><span>Thé glacé · Cold brew · Ginger beer</span><b>3,5€</b></li>
+            <li><span>Frappé (café-lait froid-sirop)</span><b>5€</b></li>
+          </ul>
+        </div>
+        <div class="menu-col">
+          <h3 class="menu-col__title">Boissons artisanales · 33cl</h3>
+          <ul class="menu-list">
+            <li><span>Cola au pif bio</span><b>4,5€</b></li>
+            <li><span>Craft soda Mona (citron jaune &amp; vert)</span><b>4,5€</b></li>
+            <li><span>Kombucha (gingembre / citron-menthe-piment)</span><b>4,5€</b></li>
+            <li><span>Orangeade bio Uma</span><b>4,5€</b></li>
+            <li><span>Pet'nat blanc (pétillant sans alcool)</span><b>6€</b></li>
+          </ul>
+          <p class="menu-col__note">Sélection artisanale &amp; bio — la liste évolue au fil des arrivages.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ALACOOL -->
+    <div class="tab-panel" data-panel="alacool">
+      <div class="menu-grid menu-grid--three">
+        <div class="menu-col">
+          <h3 class="menu-col__title">Bières pression</h3>
+          <ul class="menu-list">
+            <li><span>Les Québécoises — pils, Thiriez 5,5°</span><b>3€ / 6€</b></li>
+            <li><span>Dalva — double IPA, Thiriez 8,5°</span><b>4€ / 8€</b></li>
+            <li><span>PinPon — blonde saison, Tandem 7°</span><b>4€ / 8€</b></li>
+          </ul>
+          <p class="menu-col__note">Tarifs 25cl / 50cl.</p>
+          <h4 class="menu-subhead">Bouteilles</h4>
+          <ul class="menu-list menu-list--compact">
+            <li><span>Cidre Fils de Pomme 5,5°</span><b>5,5€</b></li>
+            <li><span>Même pas mal (sans alcool) 0,5°</span><b>5,5€</b></li>
+            <li><span>La petite princesse 2,9°</span><b>5,5€</b></li>
+            <li><span>Winter Pepper (3 poivres) 7,5°</span><b>5,5€</b></li>
+            <li><span>Grisette (sans gluten) 5,5°</span><b>4€</b></li>
+            <li><span>Pet'Nat blanc UMA (sans alcool)</span><b>6€</b></li>
+          </ul>
+        </div>
+        <div class="menu-col">
+          <h3 class="menu-col__title">Vins <em>bio</em></h3>
+          <ul class="menu-list">
+            <li><span>Au verre / bouteille</span><b>5–7€ / 25€+</b></li>
+            <li class="menu-list__sub"><span>Rouge : Côte du Rhône Grenache / St-Nicolas-de-Bourgueil</span></li>
+            <li class="menu-list__sub"><span>Blanc : Sauvignon / Viognier</span></li>
+            <li><span>Vin nature pétillant (bouteille)</span><b>28€</b></li>
+            <li><span>Vin orange nature — gewurztraminer</span><b>35€</b></li>
+          </ul>
+        </div>
+        <div class="menu-col">
+          <h3 class="menu-col__title">Cocktails</h3>
+          <ul class="menu-list">
+            <li><span>Bloody Mary · Moscow Mule · Gin Tonic</span><b>8,5€</b></li>
+            <li><span>Madeleine · Espresso Martini</span><b>9€</b></li>
+          </ul>
+          <h4 class="menu-subhead">Spiritueux</h4>
+          <ul class="menu-list menu-list--compact">
+            <li><span>Génépi 40° · Ricard 45°</span><b>8,5€</b></li>
+            <li><span>Whisky 40° · Shooters (Gin/Vodka Loos, Tequila)</span><b>9€</b></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="carte-gallery">
+      <figure><img src="assets/plat-couscous.jpg" alt="Couscous-tagine de poulet, plat du jour DADA" loading="lazy"></figure>
+      <figure><img src="assets/plat-bourguignon.jpg" alt="Bœuf mijoté façon bourguignon, légumes du marché" loading="lazy"></figure>
+      <figure><img src="assets/plat-curry.jpg" alt="Curry de légumes de saison" loading="lazy"></figure>
+      <figure><img src="assets/plat-chou-fleur.jpg" alt="Chou-fleur rôti, brocoli et pommes de terre épicées" loading="lazy"></figure>
+    </div>
+
+    <p class="carte__foot">Carte indicative, susceptible d'évoluer au fil des saisons et des envies. 🐎</p>
+  </section>
+
+  <!-- ================= ATELIERS ================= -->
+  <section class="ateliers grid-bg" id="ateliers">
+    <div class="section-head">
+      <span class="section-label">Ateliers &amp; vie du lieu</span>
+      <h2 class="display">On y crée, aussi</h2>
+      <p class="section-intro">Une à deux fois par semaine, DADA ouvre ses ateliers — pour les petits et les grands. Un espace de rencontre, de partage et d'ouverture, où l'on dessine, on assemble des cadavres exquis, on bricole. Et le soir venu, l'ambiance change : place aux concerts et aux soirées.</p>
+    </div>
+    <div class="cards">
+      <article class="card card--rose">
+        <h3>Ateliers créatifs</h3>
+        <p>Dessin, collage, DIY… 1 à 2 fois par semaine, pour adultes et enfants. Suivez l'agenda sur Instagram.</p>
+      </article>
+      <article class="card card--bleuclair">
+        <h3>Galerie &amp; expos</h3>
+        <p>Une petite galerie qui met en lumière les artistes locaux — dont ceux qui ont habillé les murs du lieu. Les murs changent, le lieu vit.</p>
+      </article>
+      <article class="card card--jaune">
+        <h3>Concerts &amp; soirées</h3>
+        <p>Le soir, l'ambiance change : concerts, lives, after-work et soirées. DADA se prolonge, souvent jusque tard.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- ================= PRIVATISATION / EVENEMENTS ================= -->
+  <section class="evenements" id="evenements">
+    <div class="evenements__inner">
+      <div class="evenements__text">
+        <span class="section-label section-label--light">Privatisation</span>
+        <h2 class="display display--white">Votre événement,<br>version DADA</h2>
+        <p>
+          Séminaire d'équipe, soirée privée, anniversaire, lancement, after-work,
+          atelier d'entreprise… On privatise le lieu (ou une partie) et on imagine
+          ensemble la formule qui vous ressemble : cuisine maison sous forme de buffet
+          (ou une formule sur mesure), boissons et ambiance arty.
+        </p>
+        <ul class="evenements__list">
+          <li><strong>Séminaires &amp; team-building</strong> — journée ou demi-journée, café-déjeuner inclus</li>
+          <li><strong>Soirées privées</strong> — cocktails, en-cas à partager, bar à bières &amp; vins nature</li>
+          <li><strong>Anniversaires &amp; brunchs de groupe</strong> — sur place, faits maison</li>
+          <li><strong>Ateliers créatifs sur mesure</strong> — pour souder vos équipes autrement</li>
+        </ul>
+        <p class="evenements__cap">Buffet ou formule sur mesure — capacité, formules et devis&nbsp;: dites-nous tout via le formulaire ci-contre.</p>
+      </div>
+
+      <!-- FORM -->
+      <div class="evenements__form" id="reserver">
+        <form id="resa-form" class="resa" novalidate>
+          <h3 class="resa__title">Demande de réservation / privatisation</h3>
+
+          <div class="resa__row">
+            <label>Nom &amp; prénom
+              <input type="text" name="nom" required placeholder="Camille Durand">
+            </label>
+          </div>
+          <div class="resa__grid">
+            <label>Email
+              <input type="email" name="email" required placeholder="vous@email.com">
+            </label>
+            <label>Téléphone
+              <input type="tel" name="tel" placeholder="06 00 00 00 00">
+            </label>
+          </div>
+          <div class="resa__grid">
+            <label>Votre demande
+              <select name="type" required>
+                <option value="">Choisir…</option>
+                <optgroup label="Brunch">
+                  <option>Brunch du samedi</option>
+                </optgroup>
+                <optgroup label="Privatisation (buffet ou sur mesure)">
+                  <option>Soirée privée</option>
+                  <option>Séminaire / team-building</option>
+                  <option>Anniversaire</option>
+                  <option>Atelier d'entreprise</option>
+                  <option>After-work</option>
+                  <option>Autre privatisation</option>
+                </optgroup>
+              </select>
+            </label>
+            <label>Nombre de personnes <small>(max 50)</small>
+              <input type="number" name="pax" min="1" max="50" placeholder="20">
+            </label>
+          </div>
+          <div class="resa__grid">
+            <label>Date souhaitée
+              <input type="date" name="date">
+            </label>
+            <label>Créneau
+              <select name="creneau">
+                <option value="">Choisir…</option>
+                <option>Brunch du samedi (11h – 14h30)</option>
+                <option>Soirée (à partir de 19h)</option>
+                <option>Autre — à préciser</option>
+              </select>
+            </label>
+          </div>
+          <p class="resa__hint">Les privatisations se font surtout en soirée. Le brunch, c'est le samedi (11h – 14h30).</p>
+          <div class="resa__row">
+            <label>Votre message
+              <textarea name="message" rows="3" placeholder="Dites-nous tout : occasion, envies, budget, besoins particuliers…"></textarea>
+            </label>
+          </div>
+          <button type="submit" class="btn btn--primary btn--block">Envoyer ma demande</button>
+          <p class="resa__hint">À l'envoi, votre messagerie s'ouvre avec la demande pré-remplie. Vous pouvez aussi écrire en direct ou passer par Instagram.</p>
+          <p class="resa__direct">
+            <a href="#" data-resa-mail>✉️ Écrire directement</a>
+            <a href="https://www.instagram.com/dadacafeteria/" target="_blank" rel="noopener">📷 @dadacafeteria</a>
+          </p>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= INFOS PRATIQUES ================= -->
+  <section class="infos grid-bg" id="infos">
+    <div class="section-head">
+      <span class="section-label">Infos pratiques</span>
+      <h2 class="display">Venir chez DADA</h2>
+    </div>
+    <div class="infos__grid">
+      <div class="infos__col">
+        <h3>📍 Adresse</h3>
+        <p>169 rue Pierre Mauroy<br>59800 Lille</p>
+        <p class="infos__small">En plein cœur de Lille, à deux pas de la Grand-Place et de la gare.</p>
+
+        <h3>🕒 Horaires</h3>
+        <ul class="hours">
+          <li><span>Lundi – Vendredi</span><b>9h – 19h</b></li>
+          <li><span>Samedi (brunch)</span><b>11h – 14h30</b></li>
+          <li><span>Dimanche</span><b>Fermé</b></li>
+        </ul>
+        <p class="infos__small"><strong>Ouvert aussi le soir</strong> — souvent les jeudis &amp; vendredis, jusque tard (concerts, soirées, privatisations). Suivez l'agenda sur Instagram.</p>
+
+        <h3>📷 Suivre DADA</h3>
+        <p><a href="https://www.instagram.com/dadacafeteria/" target="_blank" rel="noopener">@dadacafeteria</a></p>
+      </div>
+      <div class="infos__map">
+        <iframe
+          title="Carte — DADA, 169 rue Pierre Mauroy, Lille"
+          src="https://www.google.com/maps?q=169+rue+Pierre+Mauroy,+59800+Lille&output=embed"
+          loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= FOOTER ================= -->
+  <footer class="footer">
+    <div class="footer__inner">
+      <img src="assets/logo-dada-wordmark.png" alt="DADA" class="footer__logo-img">
+      <p class="footer__tag">Cantine de quartier bien secouée — Tout est dada&nbsp;!</p>
+      <div class="footer__links">
+        <a href="#brunch">Le brunch</a>
+        <a href="#carte">La carte</a>
+        <a href="#evenements">Privatisation</a>
+        <a href="https://www.instagram.com/dadacafeteria/" target="_blank" rel="noopener">Instagram</a>
+      </div>
+      <p class="footer__legal">
+        DADA Cafeteria · SAS au capital de 10 000€ · SIREN 989 615 075 · 169 rue Pierre Mauroy, 59800 Lille<br>
+        © 2025 Marie &amp; Carole Fiévé — Tous droits réservés.
+      </p>
+    </div>
+  </footer>
+
+  <script src="assets/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,338 @@
+/* =========================================================
+   DADA Cafétéria — charte graphique
+   Couleurs (COULEURS V3) · Polices : Rubik (principale),
+   Antonio (secondaire), Inter (soutien)
+   ========================================================= */
+
+:root{
+  --rouge:#DF3221;      /* rouge ketchup  */
+  --jaune:#F5D600;      /* jaune d'oeuf   */
+  --vert:#2D6548;       /* vert cornichon */
+  --bleu-clair:#87AFCE; /* bleu glaçon    */
+  --bleu:#2F4088;       /* bleu franc     */
+  --rose:#ECB1C5;       /* rose chewing gum */
+  --noir:#282020;       /* trou noir      */
+  --blanc:#F0EBEB;      /* blanc lait     */
+
+  --maxw:1180px;
+  --r:16px;
+  --shadow:0 10px 30px rgba(40,32,32,.10);
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:84px}
+body{
+  font-family:'Inter',system-ui,sans-serif;
+  color:var(--noir);
+  background:var(--blanc);
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:inherit}
+img{max-width:100%;display:block}
+
+/* ---------- Fond quadrillé signature ---------- */
+.grid-bg{
+  background-color:var(--blanc);
+  background-image:
+    linear-gradient(rgba(47,64,136,.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(47,64,136,.07) 1px, transparent 1px);
+  background-size:46px 46px;
+}
+
+/* ---------- Wordmark DADA ---------- */
+.wordmark{
+  font-family:'Rubik',sans-serif;
+  font-weight:900;
+  font-style:italic;
+  color:var(--rouge);
+  letter-spacing:.5px;
+  line-height:.9;
+  text-shadow:3px 3px 0 var(--bleu);
+}
+.wordmark--xl{ font-size:clamp(4.5rem,16vw,11rem); text-shadow:6px 6px 0 var(--bleu); }
+.wordmark--sm{ font-size:1.7rem; text-shadow:2px 2px 0 var(--bleu); }
+.wordmark--light{ color:var(--blanc); text-shadow:2px 2px 0 var(--rouge); }
+
+/* ---------- Typo display (Antonio) ---------- */
+.display{
+  font-family:'Antonio',sans-serif;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:1px;
+  line-height:1;
+  color:var(--bleu);
+  font-size:clamp(2.2rem,5vw,3.6rem);
+}
+.display--white{ color:var(--blanc); }
+.display--sm{ font-size:clamp(1.8rem,4vw,2.6rem); }
+.c-rouge{color:var(--rouge)}
+.c-bleu{color:var(--bleu)}
+
+/* ---------- Boutons ---------- */
+.btn{
+  display:inline-block;
+  font-family:'Rubik',sans-serif;
+  font-weight:700;
+  font-size:1rem;
+  text-decoration:none;
+  padding:.85rem 1.5rem;
+  border:none;
+  border-radius:999px;
+  cursor:pointer;
+  transition:transform .15s ease, box-shadow .15s ease;
+}
+.btn:hover{ transform:translateY(-2px) rotate(-1.5deg); }
+.btn--primary{ background:var(--rouge); color:#fff; box-shadow:3px 3px 0 var(--bleu); }
+.btn--jaune{ background:var(--jaune); color:var(--noir); box-shadow:3px 3px 0 var(--bleu); }
+.btn--ghost{ background:transparent; color:var(--bleu); border:2.5px solid var(--bleu); }
+.btn--nav{ background:var(--rouge); color:#fff; padding:.55rem 1.2rem; font-size:.95rem; }
+.btn--block{ width:100%; text-align:center; }
+
+/* =========================================================
+   NAV
+   ========================================================= */
+.nav{
+  position:sticky;top:0;z-index:50;
+  display:flex;align-items:center;gap:1.5rem;
+  padding:.7rem clamp(1rem,4vw,2.5rem);
+  background:rgba(240,235,235,.92);
+  backdrop-filter:blur(8px);
+  border-bottom:3px solid var(--bleu);
+}
+.nav__logo{ text-decoration:none; flex-shrink:0; display:flex; align-items:center; }
+.nav__logo-img{ height:38px; width:auto; }
+.nav__links{ display:flex; gap:1.4rem; margin-left:auto; flex-wrap:wrap; }
+.nav__links a{
+  font-family:'Rubik',sans-serif;font-weight:500;
+  text-decoration:none;font-size:.98rem;
+  padding:.2rem 0;border-bottom:2px solid transparent;
+  transition:border-color .15s, color .15s;
+}
+.nav__links a:hover{ color:var(--rouge); border-color:var(--rouge); }
+.nav .btn--nav{ flex-shrink:0; }
+.nav__burger{ display:none; flex-direction:column; gap:5px; background:none; border:none; cursor:pointer; padding:.4rem; }
+.nav__burger span{ width:26px;height:3px;background:var(--bleu);border-radius:2px;transition:.2s; }
+
+/* =========================================================
+   HERO
+   ========================================================= */
+.hero{
+  position:relative;overflow:hidden;
+  text-align:center;
+  padding:clamp(3rem,9vw,6.5rem) 1.5rem clamp(3.5rem,8vw,5.5rem);
+}
+.hero__inner{ position:relative;z-index:1;max-width:860px;margin:0 auto; }
+.hero__logo{ margin:.4rem auto .6rem; }
+.hero__logo img{ width:clamp(280px,55vw,560px);height:auto;margin:0 auto;filter:drop-shadow(0 8px 18px rgba(40,32,32,.18)); }
+.hero__kicker{
+  font-family:'Rubik',sans-serif;font-weight:700;text-transform:uppercase;
+  letter-spacing:2px;font-size:.8rem;color:var(--bleu);margin-bottom:.6rem;
+}
+.hero__tagline{
+  font-family:'Antonio',sans-serif;font-weight:700;text-transform:uppercase;
+  font-size:clamp(1.4rem,4vw,2.4rem);letter-spacing:1px;margin:.8rem 0 .4rem;
+  color:var(--bleu);
+}
+.hero__sub{ max-width:620px;margin:.4rem auto 1.8rem;font-size:1.08rem; }
+.hero__cta{ display:flex;gap:1rem;justify-content:center;flex-wrap:wrap; }
+.hero__swatches{ display:flex;justify-content:center;gap:0;margin-top:3rem; }
+.hero__swatches span{ width:clamp(34px,7vw,58px);height:clamp(34px,7vw,58px);display:block; }
+
+/* =========================================================
+   BRUNCH
+   ========================================================= */
+.brunch{ background:var(--bleu); color:var(--blanc); padding:clamp(3rem,7vw,5.5rem) clamp(1rem,4vw,2.5rem); }
+.brunch__inner{ max-width:var(--maxw);margin:0 auto;display:grid;grid-template-columns:1.1fr .9fr;gap:clamp(2rem,5vw,4rem);align-items:center; }
+.badge{ display:inline-block;font-family:'Rubik';font-weight:700;text-transform:uppercase;letter-spacing:1px;font-size:.72rem;padding:.3rem .8rem;border-radius:999px;margin-bottom:1rem; }
+.badge--jaune{ background:var(--jaune);color:var(--noir); }
+.brunch__when{ font-family:'Rubik';font-weight:700;color:var(--jaune);font-size:1.15rem;margin:.6rem 0 1rem; }
+.brunch__desc{ font-size:1.05rem;margin-bottom:1.3rem;opacity:.95; }
+.brunch__list{ list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:.4rem 1.2rem;margin-bottom:1.8rem; }
+.brunch__list li{ position:relative;padding-left:1.4rem;font-weight:500; }
+.brunch__list li::before{ content:"🐎";position:absolute;left:0;font-size:.85rem; }
+.brunch__cta{ display:flex;align-items:center;gap:1rem;flex-wrap:wrap; }
+.brunch__note{ font-size:.85rem;opacity:.8; }
+.brunch__visual{ position:relative; }
+.brunch__stamp{
+  position:absolute;bottom:-22px;left:-22px;
+  width:120px;height:120px;border-radius:50%;
+  background:var(--rouge);color:#fff;
+  display:grid;place-items:center;text-align:center;
+  font-family:'Rubik';font-weight:900;font-style:italic;text-transform:uppercase;
+  font-size:1.05rem;line-height:1;transform:rotate(-12deg);
+  border:4px solid var(--blanc);box-shadow:var(--shadow);
+}
+
+/* ---------- Emplacements photo ---------- */
+.photo-slot{
+  border-radius:var(--r);
+  background:
+    repeating-linear-gradient(45deg, rgba(245,214,0,.25) 0 14px, rgba(245,214,0,.4) 14px 28px);
+  border:3px dashed var(--jaune);
+  min-height:260px;
+  display:grid;place-items:center;
+  color:var(--bleu);font-family:'Rubik';font-weight:700;
+}
+.brunch .photo-slot{ background:repeating-linear-gradient(45deg, rgba(255,255,255,.10) 0 14px, rgba(255,255,255,.18) 14px 28px); border-color:var(--jaune); color:var(--jaune); }
+.photo-slot--tall{ min-height:360px; }
+
+/* ---------- Galerie brunch ---------- */
+.brunch__gallery{ display:grid; grid-template-columns:1fr 1fr; gap:.7rem; }
+.brunch__gallery img{ width:100%; height:100%; object-fit:cover; border-radius:14px; box-shadow:var(--shadow); }
+.brunch__gallery .bg-main{ grid-column:1 / -1; aspect-ratio:16/10; }
+.brunch__gallery img:not(.bg-main){ aspect-ratio:1/1; }
+
+/* ---------- Photo des sœurs / équipe ---------- */
+.soeurs__figure{ margin:0; }
+.soeurs__figure img{ width:100%; border-radius:var(--r); box-shadow:var(--shadow); }
+.soeurs__figure figcaption{ font-family:'Rubik';font-weight:500;font-size:.85rem;color:var(--bleu);margin-top:.7rem;text-align:center; }
+
+/* ---------- Galerie de la carte ---------- */
+.carte-gallery{ max-width:var(--maxw); margin:2.5rem auto 0; display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; }
+.carte-gallery figure{ margin:0; }
+.carte-gallery img{ width:100%; aspect-ratio:1/1; object-fit:cover; border-radius:var(--r); border:3px solid var(--blanc); box-shadow:var(--shadow); }
+
+/* =========================================================
+   SECTIONS génériques
+   ========================================================= */
+section{ padding:clamp(3rem,7vw,5.5rem) clamp(1rem,4vw,2.5rem); }
+.section-head{ max-width:760px;margin:0 auto clamp(2rem,4vw,3rem);text-align:center; }
+.section-label{
+  display:inline-block;font-family:'Rubik';font-weight:700;text-transform:uppercase;
+  letter-spacing:2px;font-size:.78rem;color:var(--rouge);margin-bottom:.6rem;
+}
+.section-label--light{ color:var(--jaune); }
+.section-intro{ font-size:1.08rem;margin-top:.8rem; }
+.section-intro--light{ color:var(--blanc);opacity:.95; }
+
+/* ---------- Le lieu ---------- */
+.qualites{ max-width:var(--maxw);margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem; }
+.qualite{ background:#fff;border-radius:var(--r);padding:2rem 1.6rem;text-align:center;box-shadow:var(--shadow);border-bottom:5px solid var(--rouge); }
+.qualite:nth-child(2){ border-color:var(--bleu); }
+.qualite:nth-child(3){ border-color:var(--jaune); }
+.qualite__ico{ font-size:2.6rem;margin-bottom:.6rem; }
+.qualite h3{ font-family:'Rubik';font-weight:700;color:var(--bleu);margin-bottom:.5rem;font-size:1.2rem; }
+
+.soeurs{ max-width:var(--maxw);margin:clamp(2.5rem,5vw,4rem) auto 0;display:grid;grid-template-columns:.9fr 1.1fr;gap:clamp(2rem,4vw,3.5rem);align-items:center; }
+.soeurs__text p{ margin-bottom:1rem; }
+.soeurs__text .section-label{ margin-bottom:.3rem; }
+.soeurs__text .display{ margin-bottom:1rem; }
+blockquote{
+  border-left:5px solid var(--rouge);padding:.6rem 0 .6rem 1.2rem;
+  font-style:italic;font-size:1.1rem;color:var(--bleu);
+}
+
+/* ---------- La carte ---------- */
+.carte{ background:var(--rouge);color:var(--blanc); }
+.tabs{ max-width:var(--maxw);margin:0 auto 2rem;display:flex;gap:.6rem;flex-wrap:wrap;justify-content:center; }
+.tab{
+  font-family:'Rubik';font-weight:700;font-size:.95rem;
+  background:transparent;color:var(--blanc);
+  border:2.5px solid var(--blanc);border-radius:999px;
+  padding:.5rem 1.2rem;cursor:pointer;transition:.15s;
+}
+.tab:hover{ transform:translateY(-2px); }
+.tab.is-active{ background:var(--jaune);color:var(--noir);border-color:var(--jaune); }
+.tab-panel{ display:none;max-width:var(--maxw);margin:0 auto;animation:fade .3s ease; }
+.tab-panel.is-active{ display:block; }
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.menu-grid{ display:grid;grid-template-columns:1fr 1fr;gap:1.5rem; }
+.menu-grid--three{ grid-template-columns:repeat(3,1fr); }
+.menu-col{ background:var(--blanc);color:var(--noir);border-radius:var(--r);padding:1.8rem 1.6rem; }
+.menu-col__title{ font-family:'Antonio';font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--rouge);font-size:1.5rem;margin-bottom:.8rem; }
+.menu-col__title em{ font-style:italic;color:var(--vert);font-size:1rem; }
+.menu-col__note{ font-size:.88rem;color:#6b5d5d;margin-top:.8rem; }
+.menu-subhead{ font-family:'Rubik';font-weight:700;color:var(--bleu);margin:1.1rem 0 .4rem;font-size:1rem; }
+.menu-list{ list-style:none; }
+.menu-list li{ display:flex;justify-content:space-between;gap:1rem;padding:.38rem 0;border-bottom:1px dotted rgba(40,32,32,.18);font-size:.96rem; }
+.menu-list li:last-child{ border-bottom:none; }
+.menu-list li b{ font-family:'Rubik';font-weight:700;color:var(--rouge);white-space:nowrap; }
+.menu-list__sub{ font-size:.85rem;color:#6b5d5d; }
+.menu-list__sub b{ color:#6b5d5d; }
+.menu-list--compact li{ padding:.28rem 0; }
+.carte__foot{ text-align:center;max-width:var(--maxw);margin:2rem auto 0;font-size:.9rem;opacity:.9; }
+
+/* ---------- Ateliers ---------- */
+.cards{ max-width:var(--maxw);margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem; }
+.card{ border-radius:var(--r);padding:2rem 1.7rem;box-shadow:var(--shadow); }
+.card h3{ font-family:'Rubik';font-weight:700;font-size:1.3rem;color:var(--bleu);margin-bottom:.6rem; }
+.card--rose{ background:var(--rose); }
+.card--bleuclair{ background:var(--bleu-clair); }
+.card--jaune{ background:var(--jaune); }
+
+/* ---------- Privatisation / événements ---------- */
+.evenements{ background:var(--vert);color:var(--blanc); }
+.evenements__inner{ max-width:var(--maxw);margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:clamp(2rem,4vw,3.5rem);align-items:start; }
+.evenements__text p{ margin-bottom:1rem;opacity:.96; }
+.evenements__text .display{ margin:.4rem 0 1rem; }
+.evenements__list{ list-style:none;margin-bottom:1rem; }
+.evenements__list li{ padding:.5rem 0;border-bottom:1px solid rgba(240,235,235,.25); }
+.evenements__list strong{ color:var(--jaune); }
+.evenements__cap{ font-size:.92rem;opacity:.85; }
+
+/* form */
+.resa{ background:var(--blanc);color:var(--noir);border-radius:var(--r);padding:clamp(1.5rem,3vw,2.2rem);box-shadow:var(--shadow); }
+.resa__title{ font-family:'Antonio';font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--rouge);font-size:1.45rem;margin-bottom:1.2rem;line-height:1.05; }
+.resa label{ display:block;font-family:'Rubik';font-weight:500;font-size:.9rem;color:var(--bleu);margin-bottom:.9rem; }
+.resa input,.resa select,.resa textarea{
+  width:100%;margin-top:.3rem;padding:.65rem .8rem;
+  font-family:'Inter',sans-serif;font-size:.98rem;color:var(--noir);
+  border:2px solid rgba(47,64,136,.25);border-radius:10px;background:#fff;
+  transition:border-color .15s;
+}
+.resa input:focus,.resa select:focus,.resa textarea:focus{ outline:none;border-color:var(--rouge); }
+.resa textarea{ resize:vertical; }
+.resa__grid{ display:grid;grid-template-columns:1fr 1fr;gap:0 1rem; }
+.resa .btn--block{ margin-top:.4rem; }
+.resa__hint{ font-size:.82rem;color:#6b5d5d;margin-top:.8rem;text-align:center; }
+.resa__direct{ display:flex;gap:1.2rem;justify-content:center;margin-top:.8rem;font-family:'Rubik';font-weight:500;font-size:.9rem; }
+.resa__direct a{ color:var(--rouge);text-decoration:none; }
+.resa__direct a:hover{ text-decoration:underline; }
+.resa input.invalid,.resa select.invalid{ border-color:var(--rouge);background:#fff4f3; }
+
+/* ---------- Infos ---------- */
+.infos__grid{ max-width:var(--maxw);margin:0 auto;display:grid;grid-template-columns:.8fr 1.2fr;gap:clamp(2rem,4vw,3rem);align-items:stretch; }
+.infos__col h3{ font-family:'Rubik';font-weight:700;color:var(--rouge);margin:1.4rem 0 .4rem;font-size:1.15rem; }
+.infos__col h3:first-child{ margin-top:0; }
+.infos__col a{ color:var(--bleu);font-weight:600; }
+.infos__small{ font-size:.88rem;color:#6b5d5d; }
+.hours{ list-style:none; }
+.hours li{ display:flex;justify-content:space-between;gap:1rem;padding:.3rem 0;border-bottom:1px dotted rgba(40,32,32,.18);max-width:340px; }
+.hours li b{ font-family:'Rubik';font-weight:700;color:var(--bleu); }
+.infos__map{ border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow);min-height:340px; }
+.infos__map iframe{ width:100%;height:100%;min-height:340px;border:0; }
+
+/* ---------- Footer ---------- */
+.footer{ background:var(--noir);color:var(--blanc);padding:3rem 1.5rem 2.5rem;text-align:center; }
+.footer__inner{ max-width:var(--maxw);margin:0 auto; }
+.footer__logo-img{ height:46px;width:auto;margin:0 auto; }
+.footer__tag{ font-family:'Rubik';font-weight:500;margin:.8rem 0 1.2rem;color:var(--jaune); }
+.footer__links{ display:flex;gap:1.4rem;justify-content:center;flex-wrap:wrap;margin-bottom:1.5rem; }
+.footer__links a{ color:var(--blanc);text-decoration:none;font-family:'Rubik';font-weight:500;font-size:.95rem; }
+.footer__links a:hover{ color:var(--jaune); }
+.footer__legal{ font-size:.78rem;opacity:.6;line-height:1.7; }
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+@media (max-width:900px){
+  .brunch__inner,.soeurs,.evenements__inner,.infos__grid{ grid-template-columns:1fr; }
+  .menu-grid,.menu-grid--three,.qualites,.cards{ grid-template-columns:1fr; }
+  .brunch__stamp{ width:96px;height:96px;font-size:.9rem;left:auto;right:-10px;bottom:-16px; }
+  .soeurs__photo{ order:2; }
+  .carte-gallery{ grid-template-columns:1fr 1fr; }
+}
+@media (max-width:760px){
+  .nav__links,.nav .btn--nav{ display:none; }
+  .nav__burger{ display:flex;margin-left:auto; }
+  .nav.is-open .nav__links{
+    display:flex;flex-direction:column;gap:.6rem;
+    position:absolute;top:100%;left:0;right:0;
+    background:var(--blanc);padding:1.2rem 1.5rem;border-bottom:3px solid var(--bleu);
+  }
+  .nav.is-open .btn--nav{ display:block;margin:1rem 1.5rem 0; }
+  .hero__swatches{ margin-top:2rem; }
+  .brunch__list{ grid-template-columns:1fr; }
+  .resa__grid{ grid-template-columns:1fr; }
+}
