@@ -3,8 +3,22 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>L'Enseigne — L'atelier web des commerces, bars & artisans</title>
-<meta name="description" content="Sites vitrines, menus QR, fiche Google, coups de main logistiques : L'Enseigne fabrique les outils simples qui font venir vos clients. Livrés en jours, sans abonnement, à vous pour de bon. Lille · Côte d'Opale.">
+<title>Création de site internet pour commerces, bars & artisans — Lille, Lens, Côte d'Opale | L'Enseigne</title>
+<meta name="description" content="Site vitrine à partir de 690 €, menu QR, fiche Google : L'Enseigne fabrique les outils simples qui font venir vos clients. Sans abonnement, livré en quelques jours, le site vous appartient. Lille · Lens · Arras · Côte d'Opale. Devis gratuit sous 24 h.">
+<link rel="canonical" href="https://4zrfphm5ts-del.github.io/atelier/enseigne/">
+<meta name="theme-color" content="#FAF5EC">
+<meta name="geo.region" content="FR-HDF">
+<meta name="geo.placename" content="Lille, Lens, Côte d'Opale">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:site_name" content="L'Enseigne">
+<meta property="og:title" content="L'Enseigne — création de site internet pour commerces, bars & artisans">
+<meta property="og:description" content="Site vitrine dès 690 €, menu QR, fiche Google. Sans abonnement, livré en quelques jours, à vous pour de bon. Lille · Lens · Côte d'Opale.">
+<meta property="og:url" content="https://4zrfphm5ts-del.github.io/atelier/enseigne/">
+<meta property="og:image" content="https://4zrfphm5ts-del.github.io/atelier/enseigne/img/og-enseigne.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23FAF5EC'/%3E%3Cline x1='8' y1='12' x2='56' y2='12' stroke='%2326221C' stroke-width='5' stroke-linecap='round'/%3E%3Cline x1='20' y1='14' x2='20' y2='22' stroke='%2326221C' stroke-width='3'/%3E%3Cline x1='44' y1='14' x2='44' y2='22' stroke='%2326221C' stroke-width='3'/%3E%3Crect x='12' y='22' width='40' height='30' rx='6' fill='%23C1502E'/%3E%3Crect x='22' y='29' width='4' height='16' fill='%23FFF9F0'/%3E%3Crect x='22' y='29' width='16' height='4' fill='%23FFF9F0'/%3E%3Crect x='22' y='35' width='12' height='4' fill='%23FFF9F0'/%3E%3Crect x='22' y='41' width='16' height='4' fill='%23FFF9F0'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -235,6 +249,32 @@ footer a{color:var(--papier)}
 footer .elan{opacity:.75}
 footer .elan a{text-decoration:none;border-bottom:1px solid var(--terra)}
 
+/* ===== STATS ===== */
+.stats{background:var(--creme);border-top:2px solid var(--encre);border-bottom:2px solid var(--encre)}
+.stats .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:2.4rem}
+.stats .stat{border-left:3px solid var(--terra);padding-left:1.2rem}
+.stats .stat b{font-family:'Fraunces',serif;font-weight:900;font-size:clamp(2.2rem,4.5vw,3.2rem);color:var(--terra-deep);display:block;line-height:1.05}
+.stats .stat span{font-size:.92rem;color:var(--mut)}
+.stats .src{margin-top:1.6rem;font-size:.75rem;color:var(--mut);opacity:.8}
+@media(max-width:760px){.stats .grid{grid-template-columns:1fr}}
+
+/* ===== FAQ ===== */
+.faq{max-width:800px;margin-top:2.6rem}
+.faq details{background:var(--creme);border:2px solid var(--encre);border-radius:14px;box-shadow:3px 3px 0 var(--encre);margin-bottom:.9rem;overflow:hidden}
+.faq summary{cursor:pointer;list-style:none;padding:1.05rem 1.3rem;font-weight:600;font-size:1.02rem;display:flex;justify-content:space-between;align-items:center;gap:1rem}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";font-family:'Fraunces',serif;font-weight:900;font-size:1.4rem;color:var(--terra);flex:none;transition:transform .3s var(--ease)}
+.faq details[open] summary::after{transform:rotate(45deg)}
+.faq .a{padding:0 1.3rem 1.15rem;font-size:.93rem;color:var(--mut)}
+.faq .a a{color:var(--terra-deep);font-weight:600}
+
+/* ===== ZONES ===== */
+.zones{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:1.8rem}
+.zones li{list-style:none;background:var(--creme);border:2px solid var(--encre);border-radius:999px;padding:.35em 1em;font-size:.88rem;font-weight:500}
+
+/* bouton WhatsApp */
+.btn-wa{background:#1FAF5E;color:#fff}
+
 /* ===== REDUCED MOTION ===== */
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
@@ -249,6 +289,69 @@ footer .elan a{text-decoration:none;border-bottom:1px solid var(--terra)}
 @keyframes swing{0%,100%{transform:rotate(-2.4deg)}50%{transform:rotate(2.4deg)}}
 .work .frame img{width:100%;height:100%;object-fit:cover;object-position:top center;display:block}
 </style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ProfessionalService",
+  "name": "L'Enseigne — l'atelier web des commerces",
+  "description": "Création de sites vitrines, menus QR, fiches Google et petits services numériques pour commerces, bars, restaurants et artisans. Sans abonnement : le site vous appartient.",
+  "url": "https://4zrfphm5ts-del.github.io/atelier/enseigne/",
+  "telephone": "+33610126850",
+  "email": "benjamin.fieve@gmail.com",
+  "priceRange": "€€",
+  "image": "https://4zrfphm5ts-del.github.io/atelier/enseigne/img/og-enseigne.jpg",
+  "founder": {"@type": "Person", "name": "Benjamin Fievé"},
+  "knowsLanguage": "fr",
+  "areaServed": [
+    {"@type": "City", "name": "Lille"},
+    {"@type": "City", "name": "Lens"},
+    {"@type": "City", "name": "Liévin"},
+    {"@type": "City", "name": "Arras"},
+    {"@type": "City", "name": "Béthune"},
+    {"@type": "City", "name": "Douai"},
+    {"@type": "City", "name": "Le Touquet-Paris-Plage"},
+    {"@type": "City", "name": "Berck"},
+    {"@type": "City", "name": "Boulogne-sur-Mer"},
+    {"@type": "City", "name": "Montreuil-sur-Mer"}
+  ],
+  "makesOffer": [
+    {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Site vitrine"},
+     "priceSpecification": {"@type": "PriceSpecification", "minPrice": 690, "priceCurrency": "EUR"}},
+    {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Menu QR + carte imprimable"},
+     "priceSpecification": {"@type": "PriceSpecification", "minPrice": 290, "priceCurrency": "EUR"}},
+    {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Fiche Google & Maps"},
+     "priceSpecification": {"@type": "PriceSpecification", "price": 190, "priceCurrency": "EUR"}},
+    {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Retouches & coups de main"},
+     "priceSpecification": {"@type": "UnitPriceSpecification", "price": 60, "priceCurrency": "EUR", "unitText": "heure"}},
+    {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Pack complet — site + menu QR + fiche Google"},
+     "priceSpecification": {"@type": "PriceSpecification", "minPrice": 990, "priceCurrency": "EUR"}}
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {"@type": "Question", "name": "Combien coûte un site internet pour un commerce ?",
+     "acceptedAnswer": {"@type": "Answer", "text": "Chez L'Enseigne, un site vitrine complet démarre à 690 €, prix fixé avant de commencer, sans abonnement. À titre de comparaison, le marché français facture en général 1 500 à 5 000 € en agence, souvent avec un abonnement mensuel en plus."}},
+    {"@type": "Question", "name": "Combien de temps faut-il pour créer mon site ?",
+     "acceptedAnswer": {"@type": "Answer", "text": "Quelques jours, pas des mois. Et vous voyez le résultat avant de payer quoi que ce soit : on ajuste ensemble jusqu'à ce que ce soit vous, tout craché."}},
+    {"@type": "Question", "name": "Y a-t-il un abonnement obligatoire ?",
+     "acceptedAnswer": {"@type": "Answer", "text": "Non. Le site vous appartient : fichiers, textes, photos, nom de domaine. Si vous préférez qu'on s'occupe de tout (hébergement, domaine, petites retouches), l'option tranquillité est à 29 €/mois, résiliable quand vous voulez."}},
+    {"@type": "Question", "name": "J'ai déjà un site mais il est vieux ou il bugue, vous pouvez le refaire ?",
+     "acceptedAnswer": {"@type": "Answer", "text": "Oui, c'est même une de nos spécialités : on garde ce qui marche (votre nom, vos photos, votre carte), on refait le reste au propre. Devis gratuit sous 24 h."}},
+    {"@type": "Question", "name": "Je n'y connais rien en informatique, c'est un problème ?",
+     "acceptedAnswer": {"@type": "Answer", "text": "Aucun. C'est le principe de l'atelier : un café au comptoir, vous nous racontez votre commerce, on s'occupe du reste. Zéro jargon, et vous validez chaque étape."}},
+    {"@type": "Question", "name": "Existe-t-il des aides pour financer la digitalisation de mon commerce ?",
+     "acceptedAnswer": {"@type": "Answer", "text": "Oui. La région Hauts-de-France propose des dispositifs comme l'INAC (jusqu'à 40 % d'un projet numérique pris en charge, sous conditions). On regarde ensemble si votre projet y a droit, avec votre CCI ou CMA."}},
+    {"@type": "Question", "name": "À quoi sert une fiche Google si j'ai déjà un site ?",
+     "acceptedAnswer": {"@type": "Answer", "text": "87 % des clients cherchent un commerce ou un artisan sur Google, et 81 % lisent les avis avant de se déplacer. Une fiche complète (horaires justes, photos, réponses aux avis) reçoit jusqu'à 7 fois plus de clics qu'une fiche vide."}},
+    {"@type": "Question", "name": "Dans quelles villes intervenez-vous ?",
+     "acceptedAnswer": {"@type": "Answer", "text": "Lille et sa métropole, Lens, Liévin, Arras, Béthune, Douai, et la Côte d'Opale (Le Touquet, Berck, Boulogne-sur-Mer, Montreuil). On se déplace — un café au comptoir suffit."}}
+  ]
+}
+</script>
 </head>
 <body>
 <a class="skip" href="#main">Aller au contenu</a>
@@ -301,7 +404,7 @@ footer .elan a{text-decoration:none;border-bottom:1px solid var(--terra)}
         <a class="cta" href="mailto:benjamin.fieve@gmail.com?subject=Devis%20L%27Enseigne&amp;body=Bonjour%2C%0A%0AMon%20commerce%20%3A%20%0ACe%20qu%27il%20me%20faut%20%3A%20%0A%0AMerci%20!">Demander un devis — gratuit</a>
         <a class="btn btn-ghost" href="#exemples">Voir des exemples</a>
       </div>
-      <p class="hero-note rv rv4">Bars · restaurants · artisans · boutiques · PME — petits travaux bienvenus. Ou un coup de fil : <a href="tel:+33610126850" style="font-weight:600">06 10 12 68 50</a>.</p>
+      <p class="hero-note rv rv4">Bars · restaurants · artisans · boutiques · PME — petits travaux bienvenus. Un coup de fil : <a href="tel:+33610126850" style="font-weight:600">06 10 12 68 50</a> · ou <a href="https://wa.me/33610126850?text=Bonjour%2C%20j%27aimerais%20un%20devis%20L%27Enseigne." target="_blank" rel="noopener" style="font-weight:600">WhatsApp</a>.</p>
     </div>
     <div class="hero-visual rv rv3" aria-hidden="true">
       <svg viewBox="0 0 200 200">
@@ -454,6 +557,20 @@ footer .elan a{text-decoration:none;border-bottom:1px solid var(--terra)}
   </div>
 </section>
 
+<!-- ===== STATS ===== -->
+<section class="stats pad-y" id="chiffres">
+  <div class="wrap">
+    <p class="kicker rv">Pourquoi maintenant</p>
+    <h2 class="h2 rv rv2">Vos clients vous cherchent déjà en ligne.</h2>
+    <div class="grid">
+      <div class="stat rv"><b>87&nbsp;%</b><span>des clients passent par Google pour trouver un commerce ou un artisan près de chez eux</span></div>
+      <div class="stat rv rv2"><b>81&nbsp;%</b><span>lisent les avis en ligne avant de pousser une porte — une fiche soignée fait la différence</span></div>
+      <div class="stat rv rv3"><b>35&nbsp;%</b><span>des petites entreprises françaises n'ont toujours pas de site : ceux qui en ont un prennent l'avance</span></div>
+    </div>
+    <p class="src rv">Sources : Baromètre France Num 2025 (gouvernement) · études référencement local 2025.</p>
+  </div>
+</section>
+
 <!-- ===== TARIFS ===== -->
 <section class="pad-y" id="tarifs">
   <div class="wrap">
@@ -481,8 +598,61 @@ footer .elan a{text-decoration:none;border-bottom:1px solid var(--terra)}
         <p>Modifications, affiches, documents, logistique — à la demande.</p>
         <span class="ex" style="font-size:1.3rem;font-family:'Fraunces',serif;font-weight:900">60&nbsp;€ / heure</span>
       </article>
+      <article class="svc-card rv">
+        <h3>Option tranquillité</h3>
+        <p>Hébergement, nom de domaine, retouches courantes : on s'occupe de tout. Sans engagement — vous restez propriétaire.</p>
+        <span class="ex" style="font-size:1.3rem;font-family:'Fraunces',serif;font-weight:900">29&nbsp;€ / mois</span>
+      </article>
     </div>
     <p class="lead rv" style="margin-top:2rem"><strong>Le pack complet</strong> — site + menu QR + fiche Google : <strong style="color:var(--terra-deep)">à partir de 990&nbsp;€</strong>. Le plus choisi pour bien démarrer.</p>
+    <p class="lead rv" style="margin-top:.8rem;font-size:.92rem">💡 Bon à savoir : la région Hauts-de-France aide les commerçants et artisans à se digitaliser (jusqu'à <strong>40&nbsp;% du projet pris en charge</strong>, sous conditions — dispositif INAC). On regarde ensemble si vous y avez droit.</p>
+  </div>
+</section>
+
+<!-- ===== FAQ ===== -->
+<section class="pad-y" id="faq" style="background:var(--creme);border-top:2px solid var(--encre)">
+  <div class="wrap">
+    <p class="kicker rv">Questions fréquentes</p>
+    <h2 class="h2 rv rv2">Ce qu'on nous demande au comptoir.</h2>
+    <div class="faq rv rv3">
+      <details>
+        <summary>Combien coûte un site internet pour un commerce&nbsp;?</summary>
+        <div class="a">Chez nous, un site vitrine complet démarre à <strong>690&nbsp;€</strong>, prix fixé avant de commencer, sans abonnement. À titre de comparaison, le marché facture en général 1&nbsp;500 à 5&nbsp;000&nbsp;€ en agence — souvent avec un abonnement mensuel en plus.</div>
+      </details>
+      <details>
+        <summary>Combien de temps faut-il pour créer mon site&nbsp;?</summary>
+        <div class="a">Quelques jours, pas des mois. Et vous voyez le résultat <strong>avant de payer quoi que ce soit</strong> : on ajuste ensemble jusqu'à ce que ce soit vous, tout craché.</div>
+      </details>
+      <details>
+        <summary>Y a-t-il un abonnement obligatoire&nbsp;?</summary>
+        <div class="a">Non. Le site vous appartient : fichiers, textes, photos, nom de domaine. Si vous préférez qu'on s'occupe de tout (hébergement, domaine, retouches courantes), l'option tranquillité est à 29&nbsp;€/mois, résiliable quand vous voulez.</div>
+      </details>
+      <details>
+        <summary>J'ai déjà un site mais il est vieux ou il bugue, vous pouvez le refaire&nbsp;?</summary>
+        <div class="a">Oui, c'est même une de nos spécialités : on garde ce qui marche (votre nom, vos photos, votre carte), on refait le reste au propre. Devis gratuit sous 24&nbsp;h.</div>
+      </details>
+      <details>
+        <summary>Je n'y connais rien en informatique, c'est un problème&nbsp;?</summary>
+        <div class="a">Aucun. C'est le principe de l'atelier : un café au comptoir, vous nous racontez votre commerce, on s'occupe du reste. Zéro jargon, et vous validez chaque étape.</div>
+      </details>
+      <details>
+        <summary>Existe-t-il des aides pour financer la digitalisation de mon commerce&nbsp;?</summary>
+        <div class="a">Oui. La région Hauts-de-France propose des dispositifs comme l'<strong>INAC</strong> (jusqu'à 40&nbsp;% d'un projet numérique pris en charge, sous conditions). On regarde ensemble si votre projet y a droit, avec votre CCI ou CMA.</div>
+      </details>
+      <details>
+        <summary>À quoi sert une fiche Google si j'ai déjà un site&nbsp;?</summary>
+        <div class="a">87&nbsp;% des clients cherchent un commerce ou un artisan sur Google, et 81&nbsp;% lisent les avis avant de se déplacer. Une fiche complète — horaires justes, photos, réponses aux avis — reçoit jusqu'à 7&nbsp;fois plus de clics qu'une fiche vide.</div>
+      </details>
+      <details>
+        <summary>Dans quelles villes intervenez-vous&nbsp;?</summary>
+        <div class="a">Lille et sa métropole, le bassin minier et l'Artois, et toute la Côte d'Opale. On se déplace — un café au comptoir suffit.</div>
+      </details>
+    </div>
+    <h3 style="margin-top:2.6rem;font-size:1.05rem;font-weight:600" class="rv">Où on travaille</h3>
+    <ul class="zones rv rv2" aria-label="Villes où L'Enseigne intervient">
+      <li>Lille</li><li>Lens</li><li>Liévin</li><li>Arras</li><li>Béthune</li><li>Douai</li>
+      <li>Le Touquet</li><li>Berck</li><li>Boulogne-sur-Mer</li><li>Montreuil-sur-Mer</li><li>… et alentours</li>
+    </ul>
   </div>
 </section>
 
@@ -494,17 +664,18 @@ footer .elan a{text-decoration:none;border-bottom:1px solid var(--terra)}
     <p class="lead rv rv3">Un site, un menu, une fiche Google, un coup de main ponctuel — envoyez trois lignes, on répond sous 24 h avec un devis simple. Gratuit, sans engagement, sans jargon.</p>
     <div class="devis-row rv rv3">
       <a class="btn" href="tel:+33610126850">📞 06 10 12 68 50</a>
+      <a class="btn btn-wa" href="https://wa.me/33610126850?text=Bonjour%2C%20je%20suis%20commer%C3%A7ant%20et%20j%27aimerais%20un%20devis%20L%27Enseigne." target="_blank" rel="noopener">💬 WhatsApp</a>
       <a class="btn" href="mailto:benjamin.fieve@gmail.com?subject=Devis%20L%27Enseigne&amp;body=Bonjour%2C%0A%0AMon%20commerce%20%3A%20%0ACe%20qu%27il%20me%20faut%20%3A%20%0A%0AMerci%20!">Demander un devis — gratuit</a>
       <a class="mail" href="mailto:benjamin.fieve@gmail.com">benjamin.fieve@gmail.com</a>
     </div>
-    <p class="note rv rv4">On se déplace : Lille, Le Touquet &amp; alentours. Réponse sous 24 h ouvrées.</p>
+    <p class="note rv rv4">On se déplace : Lille, Lens, Arras, Le Touquet &amp; alentours. Réponse sous 24 h ouvrées.</p>
   </div>
 </section>
 </main>
 
 <footer>
   <div class="wrap">
-    <span>© 2026 L'Enseigne — l'atelier web des commerces.</span>
+    <span>© 2026 L'Enseigne — l'atelier web des commerces. <a href="mentions-legales.html" style="opacity:.8">Mentions légales</a></span>
     <span class="elan">Un atelier du studio ÉLAN · <a href="tel:+33610126850">06 10 12 68 50</a> · <a href="mailto:benjamin.fieve@gmail.com">Contact</a></span>
   </div>
 </footer>
