@@ -1,0 +1,940 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<style>*,*::before,*::after{box-sizing:border-box}body{margin:0}</style>
+<title>Plan de l'atelier</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900&family=Work+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+
+<style>
+/* ============================================================
+   Plan de l'atelier — feuille de plan
+   Palette et polices reprises du système existant de L'Enseigne
+   (papier / encre / terre cuite / Fraunces + Work Sans).
+   Encodage : terre cuite = dans le dépôt, en ligne.
+               bleu de plan + trait tireté = hors dépôt (poste
+               local, services tiers).
+   ============================================================ */
+
+:root{
+  --papier:#FAF5EC;
+  --feuille:#FFF9F0;
+  --encre:#26221C;
+  --terra:#C1502E;
+  --terra-pale:rgba(193,80,46,.10);
+  --plan:#35576F;
+  --plan-pale:rgba(53,87,111,.09);
+  --mut:#6E6459;
+  --ligne:rgba(38,34,28,.16);
+  --ligne-fine:rgba(38,34,28,.09);
+  --grille:rgba(38,34,28,.045);
+
+  --pad:clamp(1.15rem,3.5vw,3rem);
+  --maxw:1120px;
+  --fs-titre:clamp(2.1rem,5.4vw,3.5rem);
+  --fs-plaque:clamp(1.25rem,2.6vw,1.7rem);
+}
+
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --papier:#191510;
+    --feuille:#221D16;
+    --encre:#F3EDE1;
+    --terra:#E27B54;
+    --terra-pale:rgba(226,123,84,.13);
+    --plan:#87B0CC;
+    --plan-pale:rgba(135,176,204,.11);
+    --mut:#A2968A;
+    --ligne:rgba(243,237,225,.18);
+    --ligne-fine:rgba(243,237,225,.10);
+    --grille:rgba(243,237,225,.05);
+  }
+}
+:root[data-theme="dark"]{
+  --papier:#191510;
+  --feuille:#221D16;
+  --encre:#F3EDE1;
+  --terra:#E27B54;
+  --terra-pale:rgba(226,123,84,.13);
+  --plan:#87B0CC;
+  --plan-pale:rgba(135,176,204,.11);
+  --mut:#A2968A;
+  --ligne:rgba(243,237,225,.18);
+  --ligne-fine:rgba(243,237,225,.10);
+  --grille:rgba(243,237,225,.05);
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  background:var(--papier);
+  background-image:
+    linear-gradient(var(--grille) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grille) 1px, transparent 1px);
+  background-size:28px 28px;
+  color:var(--encre);
+  font-family:'Work Sans',system-ui,-apple-system,sans-serif;
+  font-size:16px;
+  line-height:1.62;
+  -webkit-font-smoothing:antialiased;
+}
+
+.sheet{
+  max-width:var(--maxw);
+  margin:0 auto;
+  padding:var(--pad) var(--pad) 5rem;
+  display:flex;
+  flex-direction:column;
+  gap:3.4rem;
+}
+
+/* ---------- cartouche ---------- */
+
+.cartouche{
+  border:1.5px solid var(--encre);
+  background:var(--feuille);
+  position:relative;
+}
+.cartouche__haut{
+  padding:clamp(1.3rem,3.2vw,2.4rem);
+  border-bottom:1px solid var(--ligne);
+  display:flex;
+  flex-direction:column;
+  gap:.5rem;
+}
+.eyebrow{
+  font-family:'IBM Plex Mono',ui-monospace,monospace;
+  font-size:.7rem;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--mut);
+  margin:0;
+}
+h1{
+  font-family:'Fraunces',Georgia,serif;
+  font-weight:900;
+  font-size:var(--fs-titre);
+  line-height:1.02;
+  letter-spacing:-.015em;
+  margin:0;
+  text-wrap:balance;
+}
+.chapeau{
+  margin:.35rem 0 0;
+  max-width:62ch;
+  color:var(--mut);
+  font-size:1.02rem;
+}
+.cartouche__grille{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(196px,1fr));
+  margin:0;
+  overflow:hidden;
+}
+.champ{
+  padding:.8rem clamp(1.3rem,3.2vw,2.4rem);
+  border-right:1px solid var(--ligne-fine);
+  border-bottom:1px solid var(--ligne-fine);
+  margin:0 -1px -1px 0;
+}
+.champ dt{
+  font-family:'IBM Plex Mono',ui-monospace,monospace;
+  font-size:.66rem;
+  letter-spacing:.13em;
+  text-transform:uppercase;
+  color:var(--mut);
+  margin:0 0 .2rem;
+}
+.champ dd{
+  margin:0;
+  font-family:'IBM Plex Mono',ui-monospace,monospace;
+  font-size:.86rem;
+  font-variant-numeric:tabular-nums;
+  word-break:break-word;
+}
+
+/* ---------- plaques (sections) ---------- */
+
+.plaque{
+  display:flex;
+  flex-direction:column;
+  gap:1.3rem;
+}
+.plaque__tete{
+  display:flex;
+  align-items:baseline;
+  gap:.9rem;
+  border-bottom:1.5px solid var(--encre);
+  padding-bottom:.55rem;
+}
+.plaque__num{
+  font-family:'IBM Plex Mono',ui-monospace,monospace;
+  font-size:.72rem;
+  letter-spacing:.12em;
+  color:var(--terra);
+  font-weight:600;
+  white-space:nowrap;
+}
+.plaque__tete h2{
+  font-family:'Fraunces',Georgia,serif;
+  font-weight:600;
+  font-size:var(--fs-plaque);
+  line-height:1.15;
+  margin:0;
+  letter-spacing:-.01em;
+  text-wrap:balance;
+}
+.plaque > p{margin:0;max-width:68ch;color:var(--mut)}
+.plaque > p strong{color:var(--encre);font-weight:600}
+
+/* ---------- figures ---------- */
+
+figure{margin:0}
+.figbox{
+  border:1px solid var(--ligne);
+  background:var(--feuille);
+  padding:clamp(.7rem,2vw,1.4rem);
+  overflow-x:auto;
+}
+.figbox svg{display:block;min-width:660px;width:100%;height:auto}
+.figbox .pl{stroke:var(--plan)}
+.figbox .plf{fill:var(--plan)}
+.figbox .tr{stroke:var(--terra)}
+.figbox .trf{fill:var(--terra)}
+figcaption{
+  margin-top:.75rem;
+  font-size:.85rem;
+  color:var(--mut);
+  max-width:74ch;
+}
+.legende{
+  display:flex;
+  flex-wrap:wrap;
+  gap:.4rem 1.4rem;
+  font-family:'IBM Plex Mono',ui-monospace,monospace;
+  font-size:.72rem;
+  color:var(--mut);
+  margin-top:.6rem;
+}
+.legende span{display:flex;align-items:center;gap:.45rem}
+.swatch{display:inline-block;width:22px;height:0;border-top:2px solid var(--terra)}
+.swatch--plan{border-top:2px dashed var(--plan)}
+
+/* ---------- arborescence ---------- */
+
+.arbo{
+  display:grid;
+  gap:1.1rem;
+  grid-template-columns:repeat(auto-fit,minmax(330px,1fr));
+  align-items:start;
+}
+.bloc{
+  border:1px solid var(--ligne);
+  background:var(--feuille);
+  display:flex;
+  flex-direction:column;
+}
+.bloc--hors{border-style:dashed;border-color:var(--plan);background:var(--plan-pale)}
+.bloc__tete{
+  padding:.7rem 1rem;
+  border-bottom:1px solid var(--ligne-fine);
+  display:flex;
+  justify-content:space-between;
+  align-items:baseline;
+  gap:1rem;
+}
+.bloc--hors .bloc__tete{border-bottom-color:rgba(53,87,111,.25)}
+.bloc__tete b{
+  font-family:'IBM Plex Mono',ui-monospace,monospace;
+  font-size:.76rem;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  font-weight:600;
+}
+.bloc--hors .bloc__tete b{color:var(--plan)}
+.bloc__tete em{
+  font-style:normal;
+  font-family:'IBM Plex Mono',ui-monospace,monospace;
+  font-size:.7rem;
+  color:var(--mut);
+  font-variant-numeric:tabular-nums;
+  white-space:nowrap;
+}
+pre.tree{
+  margin:0;
+  padding:1rem;
+  overflow-x:auto;
+  font-family:'IBM Plex Mono',ui-monospace,monospace;
+  font-size:.775rem;
+  line-height:1.72;
+  font-variant-numeric:tabular-nums;
+  white-space:pre;
+}
+pre.tree .d{color:var(--terra);font-weight:600}
+pre.tree .p{color:var(--plan);font-weight:600}
+pre.tree .n{color:var(--mut)}
+pre.tree .g{color:var(--mut);opacity:.65}
+.bloc__note{
+  padding:.75rem 1rem;
+  border-top:1px solid var(--ligne-fine);
+  font-size:.82rem;
+  color:var(--mut);
+}
+.bloc--hors .bloc__note{border-top-color:rgba(53,87,111,.25)}
+
+/* ---------- fiches apps ---------- */
+
+.fiches{display:flex;flex-direction:column;gap:0;border-top:1px solid var(--ligne)}
+.fiche{
+  border-bottom:1px solid var(--ligne);
+  padding:1.5rem 0;
+  display:grid;
+  gap:1rem 2rem;
+  grid-template-columns:minmax(0,1fr);
+}
+@media (min-width:820px){
+  .fiche{grid-template-columns:minmax(210px,.9fr) minmax(0,2fr)}
+}
+.fiche__id{display:flex;flex-direction:column;gap:.4rem}
+.fiche__mark{
+  display:flex;align-items:center;gap:.6rem;
+}
+.fiche__mark .glyphe{
+  width:34px;height:34px;flex:none;
+  display:grid;place-items:center;
+  border:1px solid var(--ligne);
+  background:var(--papier);
+  font-size:1.05rem;
+}
+.fiche__mark h3{
+  font-family:'Fraunces',Georgia,serif;
+  font-weight:600;font-size:1.18rem;margin:0;line-height:1.1;
+}
+.chemin{
+  font-family:'IBM Plex Mono',ui-monospace,monospace;
+  font-size:.78rem;color:var(--terra);font-weight:500;
+}
+.etat{
+  font-family:'IBM Plex Mono',ui-monospace,monospace;
+  font-size:.68rem;letter-spacing:.09em;text-transform:uppercase;
+  display:inline-flex;align-items:center;gap:.4rem;
+  color:var(--mut);
+}
+.etat::before{content:"";width:7px;height:7px;background:var(--terra)}
+.etat--prive::before{background:transparent;border:1px solid var(--plan)}
+.etat--prive{color:var(--plan)}
+.fiche__corps{display:flex;flex-direction:column;gap:.85rem}
+.fiche__corps > p{margin:0;max-width:66ch}
+.specs{
+  margin:0;
+  display:grid;
+  gap:.1rem .9rem;
+  grid-template-columns:minmax(96px,auto) minmax(0,1fr);
+  font-size:.86rem;
+}
+.specs dt{
+  font-family:'IBM Plex Mono',ui-monospace,monospace;
+  font-size:.68rem;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--mut);padding-top:.28rem;
+}
+.specs dd{margin:0;padding-top:.06rem}
+.specs code,.inline-code{
+  font-family:'IBM Plex Mono',ui-monospace,monospace;
+  font-size:.82em;
+  background:var(--terra-pale);
+  padding:.06em .34em;
+}
+.puces{display:flex;flex-wrap:wrap;gap:.35rem}
+.puce{
+  font-family:'IBM Plex Mono',ui-monospace,monospace;
+  font-size:.71rem;
+  border:1px solid var(--ligne);
+  padding:.16rem .48rem;
+  color:var(--mut);
+  white-space:nowrap;
+}
+.puce--fort{border-color:var(--terra);color:var(--terra)}
+
+/* ---------- chronologie ---------- */
+
+.chrono{
+  display:grid;
+  grid-template-columns:auto auto minmax(0,1fr);
+  gap:0 1.1rem;
+  font-size:.9rem;
+}
+.chrono > *{
+  padding:.62rem 0;
+  border-top:1px solid var(--ligne-fine);
+}
+.chrono > .c-date,.chrono > .c-sha{
+  font-family:'IBM Plex Mono',ui-monospace,monospace;
+  font-size:.76rem;
+  font-variant-numeric:tabular-nums;
+  color:var(--mut);
+  white-space:nowrap;
+}
+.chrono > .c-sha{color:var(--terra)}
+.chrono > .c-txt{max-width:66ch}
+.chrono > .c-date:first-child,
+.chrono .premiere{border-top:none}
+
+/* ---------- points ouverts ---------- */
+
+.ouverts{
+  display:grid;
+  gap:1px;
+  background:var(--ligne);
+  border:1px solid var(--ligne);
+  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+}
+.ouvert{
+  background:var(--feuille);
+  padding:1.05rem 1.1rem;
+  display:flex;flex-direction:column;gap:.32rem;
+}
+.ouvert b{
+  font-family:'IBM Plex Mono',ui-monospace,monospace;
+  font-size:.74rem;letter-spacing:.06em;
+  color:var(--terra);font-weight:600;
+}
+.ouvert span{font-size:.88rem;color:var(--mut)}
+
+/* ---------- pied ---------- */
+
+.pied{
+  border-top:1.5px solid var(--encre);
+  padding-top:1rem;
+  font-family:'IBM Plex Mono',ui-monospace,monospace;
+  font-size:.72rem;
+  color:var(--mut);
+  display:flex;flex-wrap:wrap;gap:.4rem 1.6rem;
+  justify-content:space-between;
+}
+
+a{color:var(--terra);text-decoration:underline;text-underline-offset:.18em;text-decoration-thickness:1px}
+a:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--terra);outline-offset:3px}
+
+@media (prefers-reduced-motion:no-preference){
+  .plaque{animation:monte .5s cubic-bezier(.22,.8,.24,1) both}
+  @keyframes monte{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+}
+</style>
+
+</head>
+<body>
+<div class="sheet">
+
+  <!-- ══════════════ CARTOUCHE ══════════════ -->
+  <header class="cartouche">
+    <div class="cartouche__haut">
+      <p class="eyebrow">Studio BFievé · relevé du 19 août 2026</p>
+      <h1>Plan de l'atelier</h1>
+      <p class="chapeau">Tout ce qui a été fabriqué : les sources sur le poste, la chaîne qui les transforme, le dépôt publié, et les cinq sites qui tournent en ligne.</p>
+    </div>
+    <dl class="cartouche__grille">
+      <div class="champ"><dt>Dépôt</dt><dd>4zrfphm5ts-del/atelier</dd></div>
+      <div class="champ"><dt>Branche</dt><dd>main</dd></div>
+      <div class="champ"><dt>Dernier commit</dt><dd>0829d3c</dd></div>
+      <div class="champ"><dt>Chantier</dt><dd>8 commits · 02 → 07-07-2026</dd></div>
+      <div class="champ"><dt>Fichiers suivis</dt><dd>32 · 2,31 Mo</dd></div>
+      <div class="champ"><dt>Code écrit</dt><dd>4 236 lignes</dd></div>
+      <div class="champ"><dt>Hébergement</dt><dd>GitHub Pages</dd></div>
+      <div class="champ"><dt>Sites en ligne</dt><dd>5, dont 1 non listé</dd></div>
+    </dl>
+  </header>
+
+  <!-- ══════════════ PLAQUE 1 — LA CHAÎNE ══════════════ -->
+  <section class="plaque">
+    <div class="plaque__tete">
+      <span class="plaque__num">PL. 1</span>
+      <h2>La chaîne de fabrication</h2>
+    </div>
+    <p>Deux scripts font le travail : <strong>fetch_osm.py</strong> va chercher les terrasses chez OpenStreetMap, <strong>build_public.py</strong> assemble chaque app en un seul fichier HTML autonome. Le dépôt ne contient que le résultat — jamais les sources.</p>
+
+    <figure>
+      <div class="figbox">
+        <svg viewBox="0 0 980 716" role="img" aria-label="Schéma de la chaîne : les sources locales et OpenStreetMap alimentent deux scripts, qui produisent les fichiers du dépôt atelier, servis par GitHub Pages ; quatre apps sont référencées, DADA reste en lien direct.">
+          <defs>
+            <marker id="fl" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+            </marker>
+            <marker id="flp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0 0 L10 5 L0 10 z" class="plf" fill="#35576F"/>
+            </marker>
+          </defs>
+
+          <g font-family="IBM Plex Mono, ui-monospace, monospace" fill="currentColor">
+
+            <!-- ÉTAGE 1 : ENTRÉES -->
+            <text x="40" y="30" font-size="11" letter-spacing="1.6" opacity=".6">① ENTRÉES</text>
+            <rect x="40" y="44" width="280" height="64" fill="none" class="pl" stroke="#35576F" stroke-width="1.4" stroke-dasharray="5 4"/>
+            <text x="56" y="70" font-size="12.5" class="plf" fill="#35576F" font-weight="600">OpenStreetMap · Overpass</text>
+            <text x="56" y="90" font-size="11" opacity=".65">données terrasses (ODbL)</text>
+
+            <rect x="360" y="44" width="580" height="64" fill="none" class="pl" stroke="#35576F" stroke-width="1.4" stroke-dasharray="5 4"/>
+            <text x="376" y="70" font-size="12.5" class="plf" fill="#35576F" font-weight="600">Atelier local — VS Code</text>
+            <text x="376" y="90" font-size="11" opacity=".65">sources des apps · photos, logos et textes des clients</text>
+
+            <!-- ÉTAGE 2 : FABRICATION -->
+            <text x="40" y="166" font-size="11" letter-spacing="1.6" opacity=".6">② FABRICATION</text>
+            <rect x="40" y="180" width="280" height="64" fill="none" class="pl" stroke="#35576F" stroke-width="1.4" stroke-dasharray="5 4"/>
+            <text x="56" y="206" font-size="12.5" class="plf" fill="#35576F" font-weight="600">tools/fetch_osm.py</text>
+            <text x="56" y="226" font-size="11" opacity=".65">interroge, filtre, oriente</text>
+
+            <rect x="360" y="180" width="300" height="64" fill="none" class="pl" stroke="#35576F" stroke-width="1.4" stroke-dasharray="5 4"/>
+            <text x="376" y="206" font-size="12.5" class="plf" fill="#35576F" font-weight="600">public-web/build_public.py</text>
+            <text x="376" y="226" font-size="11" opacity=".65">CSS + JS inlinés dans un seul HTML</text>
+
+            <rect x="700" y="180" width="240" height="64" fill="none" class="pl" stroke="#35576F" stroke-width="1.4" stroke-dasharray="5 4"/>
+            <text x="716" y="206" font-size="12.5" class="plf" fill="#35576F" font-weight="600">édition directe</text>
+            <text x="716" y="226" font-size="11" opacity=".65">DADA, SEO, mentions légales</text>
+
+            <!-- flèches 1 → 2 : la ligne est coupée là où passe son étiquette -->
+            <g class="pl" stroke="#35576F" stroke-width="1.4">
+              <line x1="180" y1="108" x2="180" y2="130"/><line x1="180" y1="156" x2="180" y2="176" marker-end="url(#flp)"/>
+              <line x1="500" y1="108" x2="500" y2="130"/><line x1="500" y1="156" x2="500" y2="176" marker-end="url(#flp)"/>
+              <line x1="820" y1="108" x2="820" y2="130"/><line x1="820" y1="156" x2="820" y2="176" marker-end="url(#flp)"/>
+            </g>
+            <g font-size="10.5" text-anchor="middle" class="plf" fill="#35576F">
+              <text x="180" y="147">requête Overpass</text>
+              <text x="500" y="147">assemble et inline</text>
+              <text x="820" y="147">à la main</text>
+            </g>
+
+            <!-- ÉTAGE 3 : DÉPÔT -->
+            <text x="40" y="302" font-size="11" letter-spacing="1.6" opacity=".6">③ DÉPÔT</text>
+            <rect x="40" y="316" width="900" height="132" fill="none" class="tr" stroke="#C1502E" stroke-width="1.8"/>
+            <text x="60" y="344" font-size="13" font-weight="600" class="trf" fill="#C1502E">4zrfphm5ts-del/atelier · branche main</text>
+            <text x="60" y="364" font-size="11" opacity=".65">32 fichiers · 2,31 Mo · 8 commits</text>
+
+            <g font-size="11">
+              <rect x="60" y="382" width="128" height="24" fill="none" stroke="currentColor" stroke-opacity=".28"/>
+              <text x="124" y="398" text-anchor="middle">enseigne/</text>
+              <rect x="200" y="382" width="128" height="24" fill="none" stroke="currentColor" stroke-opacity=".28"/>
+              <text x="264" y="398" text-anchor="middle">au-soleil/</text>
+              <rect x="340" y="382" width="128" height="24" fill="none" stroke="currentColor" stroke-opacity=".28"/>
+              <text x="404" y="398" text-anchor="middle">drink-gamz/</text>
+              <rect x="480" y="382" width="160" height="24" fill="none" stroke="currentColor" stroke-opacity=".28"/>
+              <text x="560" y="398" text-anchor="middle">piou-piou-express/</text>
+              <rect x="652" y="382" width="128" height="24" fill="none" stroke="currentColor" stroke-opacity=".28"/>
+              <text x="716" y="398" text-anchor="middle">dada/</text>
+
+              <rect x="60" y="414" width="128" height="24" fill="none" stroke="currentColor" stroke-opacity=".18"/>
+              <text x="124" y="430" text-anchor="middle" opacity=".7">index.html</text>
+              <rect x="200" y="414" width="128" height="24" fill="none" stroke="currentColor" stroke-opacity=".18"/>
+              <text x="264" y="430" text-anchor="middle" opacity=".7">sitemap.xml</text>
+              <rect x="340" y="414" width="128" height="24" fill="none" stroke="currentColor" stroke-opacity=".18"/>
+              <text x="404" y="430" text-anchor="middle" opacity=".7">.nojekyll</text>
+            </g>
+
+            <!-- flèches 2 → 3 -->
+            <g stroke="currentColor" stroke-width="1.4">
+              <line x1="180" y1="244" x2="180" y2="266"/><line x1="180" y1="292" x2="180" y2="312" marker-end="url(#fl)"/>
+              <line x1="500" y1="244" x2="500" y2="266"/><line x1="500" y1="292" x2="500" y2="312" marker-end="url(#fl)"/>
+              <line x1="820" y1="244" x2="820" y2="266"/><line x1="820" y1="292" x2="820" y2="312" marker-end="url(#fl)"/>
+            </g>
+            <g font-size="10.5" text-anchor="middle">
+              <text x="180" y="283">écrit au-soleil/data.js</text>
+              <text x="500" y="283">1 HTML autonome / app</text>
+              <text x="820" y="283">git commit</text>
+            </g>
+
+            <!-- ÉTAGE 4 : MISE EN LIGNE -->
+            <text x="40" y="506" font-size="11" letter-spacing="1.6" opacity=".6">④ EN LIGNE</text>
+            <rect x="40" y="520" width="900" height="64" fill="none" class="tr" stroke="#C1502E" stroke-width="1.8"/>
+            <text x="60" y="546" font-size="12.5" font-weight="600" class="trf" fill="#C1502E">GitHub Pages</text>
+            <text x="60" y="566" font-size="11" opacity=".65">.nojekyll : les fichiers sont servis tels quels · https://4zrfphm5ts-del.github.io/atelier/</text>
+            <g stroke="currentColor" stroke-width="1.4">
+              <line x1="490" y1="448" x2="490" y2="470"/><line x1="490" y1="496" x2="490" y2="516" marker-end="url(#fl)"/>
+            </g>
+            <text x="490" y="487" font-size="10.5" text-anchor="middle">git push origin main</text>
+
+            <!-- ÉTAGE 5 : DEUX RÉGIMES -->
+            <rect x="40" y="632" width="560" height="72" fill="none" class="tr" stroke="#C1502E" stroke-width="1.4"/>
+            <text x="56" y="656" font-size="12" font-weight="600" class="trf" fill="#C1502E">Référencé</text>
+            <text x="56" y="675" font-size="10.5" opacity=".65">listé sur la page d'accueil + sitemap.xml</text>
+            <text x="56" y="693" font-size="11">enseigne · au-soleil · drink-gamz · piou-piou-express</text>
+
+            <rect x="640" y="632" width="300" height="72" fill="none" class="pl" stroke="#35576F" stroke-width="1.4" stroke-dasharray="5 4"/>
+            <text x="656" y="656" font-size="12" font-weight="600" class="plf" fill="#35576F">Lien direct</text>
+            <text x="656" y="675" font-size="10.5" opacity=".65">noindex · absent de l'accueil et du sitemap</text>
+            <text x="656" y="693" font-size="11">dada</text>
+
+            <line x1="320" y1="584" x2="320" y2="628" stroke="currentColor" stroke-width="1.4" marker-end="url(#fl)"/>
+            <line x1="790" y1="584" x2="790" y2="628" class="pl" stroke="#35576F" stroke-width="1.4" marker-end="url(#flp)"/>
+          </g>
+        </svg>
+      </div>
+      <figcaption>Le trajet d'une modification, du poste jusqu'au visiteur. Les deux étages du haut n'existent que sur la machine : si le disque lâche, seules les sorties survivent.</figcaption>
+      <div class="legende">
+        <span><i class="swatch"></i> dans le dépôt, en ligne</span>
+        <span><i class="swatch swatch--plan"></i> hors dépôt — poste local ou service tiers</span>
+      </div>
+    </figure>
+  </section>
+
+  <!-- ══════════════ PLAQUE 2 — ARBORESCENCE ══════════════ -->
+  <section class="plaque">
+    <div class="plaque__tete">
+      <span class="plaque__num">PL. 2</span>
+      <h2>L'arborescence, fichier par fichier</h2>
+    </div>
+    <p>À droite, les 32 fichiers réellement versionnés, avec leur poids. À gauche, ce qui les fabrique et qui <strong>n'est pas dans le dépôt</strong> — reconstitué à partir des traces laissées dans les fichiers générés.</p>
+
+    <div class="arbo">
+
+      <div class="bloc bloc--hors">
+        <div class="bloc__tete"><b>Sources · poste local</b><em>non versionné</em></div>
+<pre class="tree"><span class="p">atelier/</span> <span class="g">(dossier de travail VS Code)</span>
+├── <span class="p">tools/</span>
+│   └── fetch_osm.py    <span class="n">→ data.js</span>
+├── <span class="p">public-web/</span>
+│   └── build_public.py <span class="n">→ le dépôt</span>
+├── <span class="p">sources des apps</span>    <span class="n">avant inlining</span>
+└── <span class="p">médias clients</span>      <span class="n">photos, logos</span>
+</pre>
+        <div class="bloc__note">Deux traces le prouvent : l'en-tête de <span class="inline-code">data.js</span> (« Généré par tools/fetch_osm.py »), le message du commit initial (« généré par public-web/build_public.py ») et le message d'erreur d'Au Soleil qui invite à lancer <span class="inline-code">python3 tools/fetch_osm.py</span>. Le reste de ce bloc est déduit, pas observé.</div>
+      </div>
+
+      <div class="bloc">
+        <div class="bloc__tete"><b>Sorties · dépôt publié</b><em>32 fichiers · 2,31 Mo</em></div>
+<pre class="tree"><span class="d">atelier/</span>
+├── index.html            <span class="n">4 K</span>   <span class="g">landing, 4 apps</span>
+├── sitemap.xml           <span class="n">4 K</span>   <span class="g">5 URL</span>
+├── .nojekyll             <span class="n">0</span>     <span class="g">sert tel quel</span>
+│
+├── <span class="d">enseigne/</span>                   <span class="g">312 K</span>
+│   ├── index.html        <span class="n">48 K</span>  <span class="g">735 l.</span>
+│   ├── mentions-legales.html <span class="n">8 K</span>
+│   └── <span class="d">img/</span>
+│       ├── og-enseigne.jpg        <span class="n">100 K</span>
+│       ├── apercu-dada-cafeteria.jpg <span class="n">48 K</span>
+│       ├── apercu-le-matisse.jpg  <span class="n">48 K</span>
+│       └── apercu-le-saint-jean.jpg <span class="n">52 K</span>
+│
+├── <span class="d">au-soleil/</span>                  <span class="g">56 K</span>
+│   ├── index.html        <span class="n">20 K</span>  <span class="g">322 l.</span>
+│   └── data.js           <span class="n">32 K</span>  <span class="g">209 terrasses</span>
+│
+├── <span class="d">drink-gamz/</span>                 <span class="g">356 K</span>
+│   ├── index.html        <span class="n">100 K</span> <span class="g">1 237 l.</span>
+│   ├── manifest.webmanifest <span class="n">4 K</span>
+│   ├── sw.js             <span class="n">4 K</span>   <span class="g">cache v3</span>
+│   ├── icon-512.png      <span class="n">164 K</span>
+│   ├── icon-192.png      <span class="n">40 K</span>
+│   ├── icon-180.png      <span class="n">36 K</span>
+│   └── favicon-32.png    <span class="n">4 K</span>
+│
+├── <span class="d">piou-piou-express/</span>          <span class="g">44 K</span>
+│   └── index.html        <span class="n">40 K</span>  <span class="g">872 l.</span>
+│
+└── <span class="d">dada/</span>                       <span class="g">1,6 M</span>
+    ├── index.html        <span class="n">28 K</span>  <span class="g">515 l.</span>
+    └── <span class="d">assets/</span>
+        ├── styles.css    <span class="n">20 K</span>  <span class="g">334 l.</span>
+        ├── main.js       <span class="n">4 K</span>   <span class="g">89 l.</span>
+        ├── equipe.jpg    <span class="n">336 K</span>
+        ├── logo-dada.png <span class="n">176 K</span>
+        ├── logo-dada-wordmark.png <span class="n">68 K</span>
+        ├── plat-curry.jpg <span class="n">160 K</span>
+        ├── plat-couscous.jpg <span class="n">156 K</span>
+        ├── plat-chou-fleur.jpg <span class="n">144 K</span>
+        ├── plat-bourguignon.jpg <span class="n">108 K</span>
+        ├── brunch-toast.jpg <span class="n">136 K</span>
+        ├── brunch-table.jpg <span class="n">120 K</span>
+        └── brunch-dessert.jpg <span class="n">104 K</span>
+</pre>
+        <div class="bloc__note">Les médias de DADA pèsent 1,5 Mo — 68 % du dépôt à eux seuls, pour un seul des cinq sites.</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════════ PLAQUE 3 — LES CINQ SITES ══════════════ -->
+  <section class="plaque">
+    <div class="plaque__tete">
+      <span class="plaque__num">PL. 3</span>
+      <h2>Les cinq sites</h2>
+    </div>
+    <p>Un site commercial, trois apps du studio, un site livré à un client. Chacun tient dans son dossier et ne dépend d'aucun des autres.</p>
+
+    <div class="fiches">
+
+      <article class="fiche">
+        <div class="fiche__id">
+          <div class="fiche__mark"><span class="glyphe" aria-hidden="true">🪧</span><h3>L'Enseigne</h3></div>
+          <span class="chemin">/enseigne/</span>
+          <span class="etat">en ligne · priorité 1.0</span>
+        </div>
+        <div class="fiche__corps">
+          <p>La vitrine commerciale du studio : création de sites pour commerces, bars et artisans des Hauts-de-France. C'est la page qui doit ramener des clients, donc la seule travaillée à fond côté référencement.</p>
+          <dl class="specs">
+            <dt>Fichiers</dt><dd>index.html (735 l.) · mentions-legales.html (69 l.) · 4 images</dd>
+            <dt>Sections</dt><dd>hero · services · méthode · exemples · pourquoi · chiffres · tarifs · FAQ · devis</dd>
+            <dt>Tarifs</dt><dd>site 690 € · menu QR 290 € · fiche Google 190 € · retouches 60 €/h · option 29 €/mois · pack 990 €</dd>
+            <dt>Balisage</dt><dd>JSON-LD ProfessionalService, FAQPage (8 questions), 5 Service/Offer, 10 villes</dd>
+            <dt>Contact</dt><dd>mailto + tél. + WhatsApp — aucun formulaire, aucun serveur</dd>
+            <dt>Zones</dt><dd>Lille · Lens · Liévin · Arras · Béthune · Douai · Le Touquet · Berck · Boulogne · Montreuil</dd>
+          </dl>
+          <div class="puces">
+            <span class="puce puce--fort">Google Fonts</span>
+            <span class="puce">Fraunces + Work Sans</span>
+            <span class="puce">HTML/CSS statique</span>
+            <span class="puce">3 aperçus de démo</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="fiche">
+        <div class="fiche__id">
+          <div class="fiche__mark"><span class="glyphe" aria-hidden="true">☀️</span><h3>Au Soleil</h3></div>
+          <span class="chemin">/au-soleil/</span>
+          <span class="etat">en ligne</span>
+        </div>
+        <div class="fiche__corps">
+          <p>La carte des terrasses qui prennent le soleil <em>maintenant</em>. Le calcul se fait dans le navigateur : position du soleil à l'instant T, croisée avec l'orientation de la façade et la hauteur de l'horizon relevées pour chaque terrasse.</p>
+          <dl class="specs">
+            <dt>Données</dt><dd>209 terrasses — Lille 178, Le Touquet 31 · 88 restos, 67 bars, 47 cafés, 7 pubs</dd>
+            <dt>Champs</dt><dd><code>n</code> nom · <code>lat/lng</code> · <code>facing</code> orientation · <code>horizon</code> hauteur · <code>type</code> · <code>h</code> horaires OSM · <code>w</code> site</dd>
+            <dt>Source</dt><dd>OpenStreetMap (ODbL), régénérable par <code>tools/fetch_osm.py</code></dd>
+            <dt>Sortie</dt><dd>4 états par terrasse : soleil · partiel · ombre · nuit, plus l'heure du prochain changement</dd>
+            <dt>Runtime</dt><dd>Leaflet 1.9.4 depuis unpkg + tuiles OpenStreetMap</dd>
+          </dl>
+          <div class="puces">
+            <span class="puce puce--fort">2 services externes</span>
+            <span class="puce">data.js généré</span>
+            <span class="puce">322 lignes</span>
+            <span class="puce">aucune police web</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="fiche">
+        <div class="fiche__id">
+          <div class="fiche__mark"><span class="glyphe" aria-hidden="true">🍻</span><h3>Drink Gamz'</h3></div>
+          <span class="chemin">/drink-gamz/</span>
+          <span class="etat">en ligne · PWA</span>
+        </div>
+        <div class="fiche__corps">
+          <p>La machine à jeux de soirée, sur un seul téléphone. Le plus gros fichier de l'atelier, et le seul installable sur l'écran d'accueil.</p>
+          <dl class="specs">
+            <dt>Jeux</dt><dd>15 — Mode Épique, La Roue, Action ou Vérité, Je n'ai jamais, Tu préfères, Le plus susceptible, Picolo, Le Roi, La Bombe, Méduse, King Game, Paranoïa, Quiz Culture G, GeoGuess, Rent Guesser</dd>
+            <dt>Niveaux</dt><dd>🍼 Enfance · 😎 Soft · 🤪 Délire · 🌶️ Chaud · 🍑 Sexe 18+ · 💀 Trash 18+</dd>
+            <dt>Sanctions</dt><dd>deux modes au choix : gorgées ou gages</dd>
+            <dt>Hors ligne</dt><dd>service worker, cache <code>drinkgamz-v3</code>, repli sur index.html</dd>
+            <dt>Poids</dt><dd>1 237 lignes dans un fichier de 100 K + 4 icônes (244 K)</dd>
+          </dl>
+          <div class="puces">
+            <span class="puce puce--fort">0 dépendance réseau</span>
+            <span class="puce">manifest + sw.js</span>
+            <span class="puce">écran de veille bloqué</span>
+            <span class="puce">portrait, plein écran</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="fiche">
+        <div class="fiche__id">
+          <div class="fiche__mark"><span class="glyphe" aria-hidden="true">🐦</span><h3>Piou Piou Express</h3></div>
+          <span class="chemin">/piou-piou-express/</span>
+          <span class="etat">en ligne</span>
+        </div>
+        <div class="fiche__corps">
+          <p>Un jeu d'arcade en canvas : deux poussins, des graines à ramasser, des trains à éviter. Deux joueurs sur le même clavier, ou solo contre l'ordinateur.</p>
+          <dl class="specs">
+            <dt>Modes</dt><dd>2 joueurs · solo contre l'ordi · échange des manettes en cours de partie</dd>
+            <dt>Format</dt><dd>match en manches, compte à rebours, écran d'entre-deux, confettis de fin</dd>
+            <dt>Moteur</dt><dd>canvas 960×600 redimensionné, boucle de rendu maison — ~45 fonctions (draw*, spawnTrain, cpuThink…)</dd>
+            <dt>Poids</dt><dd>872 lignes, 40 K, un seul fichier</dd>
+          </dl>
+          <div class="puces">
+            <span class="puce puce--fort">0 dépendance réseau</span>
+            <span class="puce">tout est dans la page</span>
+            <span class="puce">pas de service worker</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="fiche">
+        <div class="fiche__id">
+          <div class="fiche__mark"><span class="glyphe" aria-hidden="true">☕</span><h3>DADA</h3></div>
+          <span class="chemin">/dada/</span>
+          <span class="etat etat--prive">lien direct · noindex</span>
+        </div>
+        <div class="fiche__corps">
+          <p>Le seul site livré à un client : le café-cafétéria-bar DADA, 169 rue Pierre Mauroy à Lille. Volontairement tenu hors de la page d'accueil et du sitemap — il se donne par son lien, pas par Google.</p>
+          <dl class="specs">
+            <dt>Sections</dt><dd>le lieu · la carte (4 onglets : cafétéria, chaud, froid, alcool) · le brunch · ateliers · privatisation &amp; événements · infos</dd>
+            <dt>Réservation</dt><dd>formulaire validé côté client, puis <code>mailto:</code> pré-rempli — aucun serveur</dd>
+            <dt>Balisage</dt><dd>JSON-LD CafeOrCoffeeShop : adresse, horaires, Instagram @dadacafeteria</dd>
+            <dt>Fichiers</dt><dd>index.html (515 l.) + styles.css (334 l.) + main.js (89 l.) + 10 médias (1,5 Mo)</dd>
+            <dt>Polices</dt><dd>Rubik, Antonio, Inter — Google Fonts</dd>
+          </dl>
+          <div class="puces">
+            <span class="puce puce--fort">1 service externe</span>
+            <span class="puce">hors sitemap</span>
+            <span class="puce">robots: noindex, nofollow</span>
+            <span class="puce">68 % du poids du dépôt</span>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ══════════════ PLAQUE 4 — RUNTIME ══════════════ -->
+  <section class="plaque">
+    <div class="plaque__tete">
+      <span class="plaque__num">PL. 4</span>
+      <h2>Ce que le navigateur va chercher ailleurs</h2>
+    </div>
+    <p>Aucun site n'a de serveur ni de base de données : tout tourne dans le navigateur. Reste ce qui est chargé depuis l'extérieur — et donc ce qui casse quand un tiers tombe.</p>
+
+    <figure>
+      <div class="figbox">
+        <svg viewBox="0 0 980 420" role="img" aria-label="Schéma des dépendances au chargement : L'Enseigne et DADA appellent Google Fonts, Au Soleil appelle unpkg et les tuiles OpenStreetMap, Drink Gamz et Piou Piou n'appellent rien.">
+          <defs>
+            <marker id="fl2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0 0 L10 5 L0 10 z" class="plf" fill="#35576F"/>
+            </marker>
+          </defs>
+          <g font-family="IBM Plex Mono, ui-monospace, monospace" fill="currentColor">
+
+            <text x="20" y="28" font-size="11" letter-spacing="1.6" opacity=".6">LES CINQ PAGES</text>
+
+            <rect x="20" y="44" width="172" height="72" fill="none" class="tr" stroke="#C1502E" stroke-width="1.5"/>
+            <text x="106" y="70" font-size="12.5" text-anchor="middle" font-weight="600">L'Enseigne</text>
+            <text x="106" y="90" font-size="10" text-anchor="middle" opacity=".6">1 service externe</text>
+            <text x="106" y="106" font-size="10" text-anchor="middle" opacity=".6">2 pages HTML</text>
+
+            <rect x="212" y="44" width="172" height="72" fill="none" class="tr" stroke="#C1502E" stroke-width="1.5"/>
+            <text x="298" y="70" font-size="12.5" text-anchor="middle" font-weight="600">DADA</text>
+            <text x="298" y="90" font-size="10" text-anchor="middle" opacity=".6">1 service externe</text>
+            <text x="298" y="106" font-size="10" text-anchor="middle" opacity=".6">+ 10 médias locaux</text>
+
+            <rect x="404" y="44" width="172" height="72" fill="none" class="tr" stroke="#C1502E" stroke-width="1.5"/>
+            <text x="490" y="70" font-size="12.5" text-anchor="middle" font-weight="600">Au Soleil</text>
+            <text x="490" y="90" font-size="10" text-anchor="middle" opacity=".6">2 services externes</text>
+            <text x="490" y="106" font-size="10" text-anchor="middle" opacity=".6">+ data.js local</text>
+
+            <rect x="596" y="44" width="172" height="72" fill="none" class="tr" stroke="#C1502E" stroke-width="1.5"/>
+            <text x="682" y="70" font-size="12.5" text-anchor="middle" font-weight="600">Drink Gamz'</text>
+            <text x="682" y="90" font-size="10" text-anchor="middle" opacity=".6">0 · marche hors ligne</text>
+            <text x="682" y="106" font-size="10" text-anchor="middle" opacity=".6">service worker</text>
+
+            <rect x="788" y="44" width="172" height="72" fill="none" class="tr" stroke="#C1502E" stroke-width="1.5"/>
+            <text x="874" y="70" font-size="12.5" text-anchor="middle" font-weight="600">Piou Piou</text>
+            <text x="874" y="90" font-size="10" text-anchor="middle" opacity=".6">0 · tout est dans la page</text>
+            <text x="874" y="106" font-size="10" text-anchor="middle" opacity=".6">1 seul fichier</text>
+
+            <!-- flèches -->
+            <g fill="none" class="pl" stroke="#35576F" stroke-width="1.4" marker-end="url(#fl2)">
+              <path d="M106 116 L106 190 L200 190 L200 292"/>
+              <path d="M298 116 L298 224 L236 224 L236 292"/>
+              <path d="M450 116 L450 172 L546 172 L546 292"/>
+              <path d="M556 116 L556 236 L822 236 L822 292"/>
+            </g>
+
+            <g font-size="10" class="plf" fill="#35576F">
+              <text x="116" y="184">Fraunces · Work Sans</text>
+              <text x="306" y="218">Rubik · Antonio · Inter</text>
+              <text x="444" y="166" text-anchor="end">carte JS + CSS</text>
+              <text x="690" y="230" text-anchor="middle">tuiles de carte</text>
+            </g>
+
+            <!-- services -->
+            <text x="20" y="278" font-size="11" letter-spacing="1.6" opacity=".6">SERVICES TIERS</text>
+            <rect x="20" y="296" width="384" height="72" fill="none" class="pl" stroke="#35576F" stroke-width="1.4" stroke-dasharray="5 4"/>
+            <text x="40" y="322" font-size="12.5" class="plf" fill="#35576F" font-weight="600">fonts.googleapis.com + gstatic</text>
+            <text x="40" y="342" font-size="10.5" opacity=".65">si indisponible : la mise en page tient,</text>
+            <text x="40" y="358" font-size="10.5" opacity=".65">les polices retombent sur celles du système</text>
+
+            <rect x="440" y="296" width="212" height="72" fill="none" class="pl" stroke="#35576F" stroke-width="1.4" stroke-dasharray="5 4"/>
+            <text x="460" y="322" font-size="12.5" class="plf" fill="#35576F" font-weight="600">unpkg.com</text>
+            <text x="460" y="342" font-size="10.5" opacity=".65">Leaflet 1.9.4 (JS + CSS)</text>
+            <text x="460" y="358" font-size="10.5" opacity=".65">si indisponible : pas de carte</text>
+
+            <rect x="688" y="296" width="272" height="72" fill="none" class="pl" stroke="#35576F" stroke-width="1.4" stroke-dasharray="5 4"/>
+            <text x="708" y="322" font-size="12.5" class="plf" fill="#35576F" font-weight="600">tile.openstreetmap.org</text>
+            <text x="708" y="342" font-size="10.5" opacity=".65">fond de carte</text>
+            <text x="708" y="358" font-size="10.5" opacity=".65">si indisponible : carte vide, points OK</text>
+
+            <text x="20" y="400" font-size="10.5" opacity=".6">Aucun serveur, aucune base : les formulaires de L'Enseigne et de DADA ouvrent simplement le logiciel de mail du visiteur.</text>
+          </g>
+        </svg>
+      </div>
+      <figcaption>Deux sites sur cinq fonctionnent totalement sans réseau après le premier chargement. Au Soleil est le plus exposé : sans unpkg, la carte ne s'affiche pas du tout.</figcaption>
+    </figure>
+  </section>
+
+  <!-- ══════════════ PLAQUE 5 — CHRONOLOGIE ══════════════ -->
+  <section class="plaque">
+    <div class="plaque__tete">
+      <span class="plaque__num">PL. 5</span>
+      <h2>Six jours de chantier</h2>
+    </div>
+    <p>Tout le dépôt tient en huit commits, du 2 au 7 juillet 2026. Le premier livre les quatre apps d'un coup ; les suivants ouvrent DADA, puis durcissent le référencement de L'Enseigne.</p>
+
+    <div class="chrono">
+      <span class="c-date premiere">02-07</span><span class="c-sha premiere">2417d69</span><span class="c-txt premiere">Ateliers en ligne — les 4 apps + L'Enseigne, générés par <span class="inline-code">public-web/build_public.py</span>. 16 fichiers, 3 041 lignes.</span>
+      <span class="c-date">03-07</span><span class="c-sha">e56f458</span><span class="c-txt">DADA mis en ligne : 13 fichiers, 943 lignes. URL directe, noindex, hors landing.</span>
+      <span class="c-date">03-07</span><span class="c-sha">fad14fe</span><span class="c-txt">DADA — photo de l'équipe redressée (EXIF) et recadrée : 544 K → 336 K.</span>
+      <span class="c-date">06-07</span><span class="c-sha">f8811ef</span><span class="c-txt">L'Enseigne v2 — SEO complet, FAQ, chiffres, zones, option 29 €/mois, WhatsApp, mentions légales.</span>
+      <span class="c-date">06-07</span><span class="c-sha">a2f3b28</span><span class="c-txt">Mentions légales — identité complète : EI micro BFIEVE Consulting, adresse, TVA.</span>
+      <span class="c-date">06-07</span><span class="c-sha">6f96f08</span><span class="c-txt">Mentions légales — SIREN et SIRET renseignés, page terminée.</span>
+      <span class="c-date">07-07</span><span class="c-sha">a5c5435</span><span class="c-txt">DADA — carte à jour et refonte selon retours : ordre carte/brunch, bar, horaires, équipe.</span>
+      <span class="c-date">07-07</span><span class="c-sha">0829d3c</span><span class="c-txt">SEO et partage — favicon, image OG, canonical, JSON-LD pour DADA ; métas ajoutées aux trois apps.</span>
+    </div>
+  </section>
+
+  <!-- ══════════════ PLAQUE 6 — POINTS OUVERTS ══════════════ -->
+  <section class="plaque">
+    <div class="plaque__tete">
+      <span class="plaque__num">PL. 6</span>
+      <h2>Points ouverts</h2>
+    </div>
+    <p>Relevés en lisant les fichiers du dépôt — rien ici n'est cassé, ce sont des bouts qui pendent.</p>
+
+    <div class="ouverts">
+      <div class="ouvert">
+        <b>Les scripts ne sont nulle part</b>
+        <span><span class="inline-code">build_public.py</span> et <span class="inline-code">fetch_osm.py</span> n'existent que sur le poste. Le dépôt ne peut pas être reconstruit à partir de lui-même.</span>
+      </div>
+      <div class="ouvert">
+        <b>L'email de DADA est un placeholder</b>
+        <span><span class="inline-code">RESA_EMAIL = "contact@dadacafeteria.fr"</span> — le commentaire du code dit encore « à remplacer par l'email réel ». Toutes les réservations partent là.</span>
+      </div>
+      <div class="ouvert">
+        <b>Deux polices déclarées, jamais chargées</b>
+        <span>Drink Gamz' demande Poppins et Piou Piou demande Baloo 2, sans jamais les inclure : les deux tournent en police système.</span>
+      </div>
+      <div class="ouvert">
+        <b>Au Soleil dépend d'un CDN</b>
+        <span>Leaflet vient d'unpkg. Un fichier de 150 K copié dans <span class="inline-code">au-soleil/</span> supprimerait la dépendance.</span>
+      </div>
+      <div class="ouvert">
+        <b>Le sitemap est figé</b>
+        <span>Les 5 URL portent toutes <span class="inline-code">lastmod 2026-07-07</span>, y compris celles qui n'ont pas bougé depuis le 2 juillet.</span>
+      </div>
+      <div class="ouvert">
+        <b>1,5 Mo de photos non optimisées</b>
+        <span>Les médias de DADA sont en JPEG et PNG pleine taille — <span class="inline-code">equipe.jpg</span> à 336 K, <span class="inline-code">logo-dada.png</span> à 176 K. Pas de WebP, pas de vignettes.</span>
+      </div>
+    </div>
+  </section>
+
+  <footer class="pied">
+    <span>Relevé établi le 19-08-2026 sur la branche main · commit 0829d3c</span>
+    <span>Studio BFievé — atelier</span>
+  </footer>
+
+</div>
+
+</body>
+</html>
