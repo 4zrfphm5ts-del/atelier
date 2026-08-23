@@ -681,6 +681,15 @@ footer .elan a{text-decoration:none;border-bottom:1px solid var(--terra)}
 </footer>
 
 <script>
+/* 61 blocs de contenu sont en opacity:0 et n'apparaissent que révélés par
+   IntersectionObserver, plus bas dans ce script. Si l'observateur manque ou
+   qu'une erreur survient avant d'y arriver, la page reste vide — le visiteur
+   croit que le site ne s'ouvre pas. Ce filet est donc armé en premier. */
+function toutReveler(){
+  try{ document.querySelectorAll('.rv').forEach(el=>el.classList.add('in')); }catch(e){}
+}
+addEventListener('error', toutReveler);
+
 const nav=document.getElementById('nav'),progress=document.getElementById('progress');
 const burger=document.getElementById('burger'),links=document.getElementById('navlinks');
 const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
@@ -714,10 +723,14 @@ addEventListener('scroll',()=>{if(!raf){raf=true;requestAnimationFrame(onScroll)
 onScroll();
 
 /* reveal au scroll */
-const io=new IntersectionObserver(es=>es.forEach(e=>{
-  if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}
-}),{threshold:.12,rootMargin:'0px 0px -40px 0px'});
-document.querySelectorAll('.rv').forEach(el=>io.observe(el));
+if('IntersectionObserver' in window){
+  const io=new IntersectionObserver(es=>es.forEach(e=>{
+    if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}
+  }),{threshold:.12,rootMargin:'0px 0px -40px 0px'});
+  document.querySelectorAll('.rv').forEach(el=>io.observe(el));
+} else {
+  toutReveler();   // pas d'observateur : on montre tout, sans l'animation
+}
 
 /* scrollspy : souligne l'onglet de la section visible */
 const spy={};
