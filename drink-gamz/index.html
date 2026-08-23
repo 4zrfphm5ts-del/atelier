@@ -43,8 +43,10 @@
   .b3{width:38vmax;height:38vmax; left:18vmax; bottom:-16vmax; background:#18b6ff; animation-delay:-8s}
   @keyframes float{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(4vmax,3vmax) scale(1.08)}66%{transform:translate(-3vmax,-2vmax) scale(.95)}}
 
-  #app{position:relative; z-index:1; height:100dvh; display:flex; align-items:stretch; justify-content:center; padding:0}
-  .wrap{width:min(560px,100vw); height:100dvh; display:flex; flex-direction:column; position:relative}
+  /* 100vh d'abord : dvh n'existe qu'à partir de Safari iOS 15.4, et sans repli
+     la hauteur vaut zéro — écran noir. Les navigateurs récents gardent dvh. */
+  #app{position:relative; z-index:1; height:100vh; height:100dvh; display:flex; align-items:stretch; justify-content:center; padding:0}
+  .wrap{width:min(560px,100vw); height:100vh; height:100dvh; min-height:100%; display:flex; flex-direction:column; position:relative}
 
   .view{position:absolute; inset:0; display:none; flex-direction:column; padding:calc(14px + env(safe-area-inset-top)) 18px calc(18px + env(safe-area-inset-bottom)); overflow-y:auto; -webkit-overflow-scrolling:touch; overscroll-behavior:contain}
   .view.on{display:flex; animation:pop .35s cubic-bezier(.2,.9,.3,1.2)}
@@ -309,13 +311,29 @@
 "use strict";
 /* ================= ÉTAT ================= */
 const LS = "drinkGamz:v1";
+const NIVEAUX = ["enfance","soft","delire","chaud","sexe","trash"];
 const state = {
   players: [],
   levels: { enfance:false, soft:true, delire:true, chaud:false, sexe:false, trash:false },
   mode: "alcool", // alcool | soft
 };
 function save(){ try{ localStorage.setItem(LS, JSON.stringify(state)); }catch(e){} }
-function load(){ try{ const s=JSON.parse(localStorage.getItem(LS)); if(s){Object.assign(state,s);} }catch(e){} }
+
+/* Une sauvegarde d'une version antérieure — ou simplement abîmée — ne doit
+   jamais empêcher l'app de démarrer. Object.assign injectait n'importe quelle
+   forme dans state : un state.levels à null, et tout le démarrage mourait, à
+   chaque lancement, parce que la mauvaise sauvegarde restait dans localStorage.
+   On ne reprend donc que ce qui a la bonne forme ; le reste garde sa valeur. */
+function load(){
+  let s = null;
+  try{ s = JSON.parse(localStorage.getItem(LS)); }catch(e){ return; }
+  if(!s || typeof s !== "object" || Array.isArray(s)) return;
+  if(Array.isArray(s.players))
+    state.players = s.players.filter(p => typeof p === "string" && p.trim()).slice(0, 24);
+  if(s.levels && typeof s.levels === "object")
+    NIVEAUX.forEach(k => { if(typeof s.levels[k] === "boolean") state.levels[k] = s.levels[k]; });
+  if(s.mode === "alcool" || s.mode === "soft") state.mode = s.mode;
+}
 
 /* ================= HELPERS ================= */
 const $ = s => document.querySelector(s);
@@ -777,7 +795,7 @@ $("#installBtn").onclick=openInstall;
 /* ================= HUB ================= */
 function openHub(){
   show("hub");
-  const lv=activeLevels().map(k=>LVLDEF.find(x=>x.k===k).emo).join(" ");
+  const lv=activeLevels().map(k=>{ const L=LVLDEF.find(x=>x.k===k); return L?L.emo:"•"; }).join(" ");
   $("#hubsub").textContent=state.players.length+" joueurs · "+lv+" · "+(state.mode==="alcool"?"🍺":"😈");
   const g=$("#games"); g.innerHTML="";
   GAMES.forEach(G=>{
@@ -1211,10 +1229,44 @@ function fillNames(t,J){ return t.replace(/{J}/g,J).replace(/{O}/g,other(J)); }
 function lvlName(k){ const L=LVLDEF.find(x=>x.k===k); return L?L.emo+" "+L.n:k; }
 
 /* ================= INIT ================= */
+
+/* Le splash couvre tout l'écran. Il est armé AVANT le démarrage : si quoi que
+   ce soit échoue ensuite, il se retire quand même au lieu de rester collé —
+   c'est ce voile opaque que l'utilisateur voyait comme « l'app est morte ». */
+const degageSplash = (function(){
+  const sp=$("#splash"); if(!sp) return function(){};
+  let done=false;
+  function go(){ if(done) return; done=true;
+    try{ beep(660,.12); setTimeout(()=>beep(990,.14),95); buzz(20); confetti(); }catch(e){}
+    sp.classList.add("gone"); setTimeout(()=>{ sp.style.display="none"; }, 620);
+  }
+  sp.addEventListener("click", go); sp.addEventListener("touchstart", go, {passive:true});
+  setTimeout(go, 2800);
+  return go;
+})();
+
+/* Dernier recours : une erreur imprévue ne doit pas laisser l'écran voilé. */
+addEventListener("error", () => { try{ degageSplash(); }catch(e){} });
+
+function demarrer(){
+  NIVEAUX.forEach(k=>{ if(typeof state.levels[k] !== "boolean") state.levels[k]=false; });
+  renderPlayers(); renderLevels(); renderMode();
+  show("setup");
+}
+
 load();
-["enfance","soft","delire","chaud","sexe","trash"].forEach(k=>{ if(state.levels[k]===undefined) state.levels[k]=false; });
-renderPlayers(); renderLevels(); renderMode();
-show("setup");
+try{
+  demarrer();
+}catch(e){
+  // Le démarrage a échoué malgré tout : on jette la sauvegarde et on repart
+  // d'une app vierge plutôt que de laisser l'utilisateur devant un écran mort.
+  try{ localStorage.removeItem(LS); }catch(_){}
+  state.players = [];
+  state.levels = { enfance:false, soft:true, delire:true, chaud:false, sexe:false, trash:false };
+  state.mode = "alcool";
+  try{ demarrer(); }catch(_){}
+  try{ degageSplash(); }catch(_){}
+}
 // reprise directe si déjà configuré
 if(state.players.length>=2 && activeLevels().length){ /* on reste sur setup, l'utilisateur clique Entrer */ }
 window.addEventListener("resize",()=>{ if(cc.style.display==="block"){ cc.width=innerWidth; cc.height=innerHeight; } });
@@ -1226,12 +1278,6 @@ document.addEventListener("pointerdown", e=>{
   const t=e.target; if(t && t.closest && t.closest("button,.gcard,.opt,.lvl,.pchip .x,.iconbtn,#wheel,#splash,.avbtns .btn,.mcqopt")) buzz(12);
 }, {passive:true});
 
-// intro visuelle : splash animé au lancement (1er toucher = débloque le son iOS)
-(function(){ const sp=$("#splash"); if(!sp) return; let done=false;
-  function go(){ if(done) return; done=true; try{ beep(660,.12); setTimeout(()=>beep(990,.14),95); }catch(e){} buzz(20); confetti(); sp.classList.add("gone"); setTimeout(()=>{ sp.style.display="none"; }, 620); }
-  sp.addEventListener("click", go); sp.addEventListener("touchstart", go, {passive:true});
-  setTimeout(go, 2800);
-})();
 </script>
 </body>
 </html>

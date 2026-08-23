@@ -21,11 +21,25 @@
     color:var(--ink); display:flex; align-items:center; justify-content:center;
     min-height:100%; padding:14px; overflow:hidden;
   }
+  /* Largeur ET hauteur calculées, plutôt que la hauteur déduite d'aspect-ratio :
+     sans aspect-ratio (iOS < 15) le plateau s'effondrait à zéro pixel et le jeu
+     n'était plus qu'une page bleue vide. Les deux min() se correspondent
+     exactement, le rapport 960/600 est donc conservé dans les deux cas. */
   #stage{
-    position:relative; width:min(96vw, calc((100vh - 28px) * 1.6));
+    position:relative;
+    width:min(96vw, calc((100vh - 28px) * 1.6));
+    height:min(60vw, calc(100vh - 28px));
     aspect-ratio:960/600; border-radius:22px; overflow:hidden;
     box-shadow:0 24px 60px rgba(20,50,90,.45), inset 0 0 0 4px rgba(255,255,255,.6);
     background:#bfeaff;
+  }
+  /* dvh exclut les barres de Safari : sur iPhone, 100vh débordait de l'écran et
+     le haut et le bas du jeu étaient rognés. Ignoré par les iOS plus anciens. */
+  @supports (height:100dvh){
+    #stage{
+      width:min(96vw, calc((100dvh - 28px) * 1.6));
+      height:min(60vw, calc(100dvh - 28px));
+    }
   }
   canvas{position:absolute; inset:0; width:100%; height:100%; display:block; touch-action:none}
 
