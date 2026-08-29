@@ -149,9 +149,10 @@ En cas d'erreur réseau, chaque requête est retentée quatre fois (2 s, 4 s, 8 
 python3 sante.py autotest
 ```
 
-34 vérifications sur des exports synthétiques : dédoublonnage, minuit, fuseaux,
+38 vérifications sur des exports synthétiques : dédoublonnage, minuit, fuseaux,
 unités régionales, stades de sommeil, anciens formats, corrélations, saisies
-manuelles, DTD démesurée, export tronqué, lecture en flux depuis le zip.
+manuelles, DTD démesurée ou malformée, export tronqué, en-tête absent, lecture
+en flux depuis le zip.
 
 L'outil a par ailleurs été soumis à 500 exports volontairement malformés
 (dates impossibles, valeurs `NaN`, attributs manquants, corrélations imbriquées) :
@@ -220,6 +221,12 @@ comptés, jamais additionnés.
 
 **Unités.** Miles, pieds, livres, degrés Fahrenheit et kilojoules sont convertis.
 L'unité dépend des réglages régionaux et peut changer au fil de l'historique.
+
+**La DTD.** Apple place en tête d'`export.xml` une déclaration `<!DOCTYPE>` de
+plusieurs milliers de lignes qui ne sert à rien ici. L'outil la retire à la
+volée. Effet de bord heureux : les exports d'iOS 16.0 et 16.1, dont la DTD
+était elle-même malformée — déclaration non fermée, `>` en trop — et que
+beaucoup de parseurs refusent, passent sans encombre.
 
 **Les corrélations.** Apple écrit deux fois les mesures groupées — une tension
 artérielle, un repas — une fois dans le `<Correlation>` et une fois au premier

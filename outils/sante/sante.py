@@ -916,16 +916,28 @@ def analyser(chemin, agregateur, avec_seances=True, silencieux=False):
             elif el.tag == "ExportDate":
                 agregateur.export_date = el.attrib.get("value")
     except ET.ParseError as e:
-        # Export tronque ou corrompu, typiquement un transfert interrompu.
-        # Mieux vaut rendre les jours deja lus que rien du tout.
-        agregateur.anomalies["fichier_tronque"] = 1
-        agregateur.erreur_lecture = str(e)
+        # Export tronque ou mal forme. Mieux vaut rendre les jours deja lus que
+        # rien du tout.
+        message = str(e)
+        agregateur.anomalies["lecture_interrompue"] = 1
+        agregateur.erreur_lecture = message
         if not silencieux:
+            if "duplicate attribute" in message:
+                # Bug connu de l'exporteur d'iOS 16.0/16.1 : un endDate ecrit
+                # sous le nom startDate dans <WorkoutStatistics>, ce qui donne
+                # deux attributs de meme nom et un XML invalide.
+                explication = (
+                    "  Le fichier contient un attribut ecrit deux fois : c'est un\n"
+                    "  defaut connu de l'exporteur d'iOS 16.0 et 16.1. Refaire\n"
+                    "  l'export depuis un iPhone a jour produit un fichier sain.\n")
+            else:
+                explication = (
+                    "  Le fichier s'interrompt avant la fin : transfert incomplet,\n"
+                    "  ou copie depuis iCloud non terminee.\n")
             sys.stderr.write(
-                "\n  Attention : le fichier s'interrompt avant la fin (%s).\n"
-                "  Les %s enregistrements deja lus sont conserves ; relance\n"
-                "  l'export depuis l'iPhone pour recuperer la suite.\n"
-                % (e, f"{agregateur.lus:,}".replace(",", " ")))
+                "\n  Attention : lecture interrompue (%s).\n%s"
+                "  Les %s enregistrements deja lus sont conserves.\n"
+                % (message, explication, f"{agregateur.lus:,}".replace(",", " ")))
     finally:
         flux.close()
     if not silencieux:
@@ -1530,7 +1542,7 @@ def cmd_autotest(args):
     analyser(chemin, agregateur, silencieux=True)
     partiel = agregateur.finaliser()
     verifier("export tronque : les jours deja lus sont conserves",
-             len(partiel) >= 1 and agregateur.anomalies.get("fichier_tronque") == 1,
+             len(partiel) >= 1 and agregateur.anomalies.get("lecture_interrompue") == 1,
              (len(partiel), dict(agregateur.anomalies)))
 
     # Regressions trouvees par fuzzing sur des exports malformes.
@@ -1609,6 +1621,31 @@ def cmd_autotest(args):
     verifier("anneaux en kJ convertis en kcal",
              abs(jours["2024-03-15"]["anneaux"]["energie_active_kcal"] - 500.0) < 0.5,
              jours["2024-03-15"]["anneaux"])
+
+    # Bug d'Apple : les exports d'iOS 16.0/16.1 embarquent une DTD malformee
+    # (declaration non fermee, « > » en trop). La neutraliser en bloc, plutot
+    # que de la faire analyser, rend l'outil insensible a ce defaut.
+    dtd_cassee = ('<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE HealthData [\n'
+                  '<!ELEMENT ICD10 EMPTY\n'
+                  '<!ATTLIST VisionPrescription > device CDATA #IMPLIED>>\n'
+                  '<!ELEMENT HealthData (ExportDate, Me, (Record)*)>\n]>\n'
+                  '<HealthData locale="fr_FR">\n'
+                  + _rec(Q + "StepCount", 777, "2024-03-15 08:00:00 +0100",
+                         "2024-03-15 09:00:00 +0100")
+                  + '</HealthData>\n')
+    jours, _ = _agreger_texte(dtd_cassee)
+    verifier("DTD malformee d'iOS 16 absorbee",
+             jours.get("2024-03-15", {}).get("pas") == 777, list(jours))
+
+    # Ni ExportDate ni Me ne sont garantis presents, malgre la DTD.
+    jours, agregateur = _agreger_texte(
+        '<?xml version="1.0" encoding="UTF-8"?>\n<HealthData locale="fr_FR">\n'
+        + _rec(Q + "StepCount", 55, "2024-03-15 08:00:00 +0100",
+               "2024-03-15 09:00:00 +0100")
+        + '</HealthData>\n')
+    verifier("fichier sans ExportDate ni Me",
+             jours.get("2024-03-15", {}).get("pas") == 55
+             and agregateur.export_date is None, list(jours))
 
     print()
     print("Mise en forme pour l'API")
