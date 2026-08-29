@@ -22,6 +22,7 @@ import csv
 import datetime as dt
 import io
 import json
+import math
 import os
 import re
 import sys
@@ -106,6 +107,9 @@ STADES_ENDORMI = ("endormi", "leger", "profond", "rem")
 # ce qui reproduit l'affichage « nuit du ... » de l'app Sante.
 HEURE_BASCULE_NUIT = 18
 
+# Au-dela, un intervalle est considere comme aberrant plutot que reparti.
+SPAN_MAX_JOURS = 31
+
 # --------------------------------------------------------------------------
 # Utilitaires
 # --------------------------------------------------------------------------
@@ -155,10 +159,16 @@ def arrondir(valeur, decimales):
 
 
 def nombre(txt):
+    """Convertit en flottant, en rejetant NaN et l'infini.
+
+    Un « NaN » ou un « 1e309 » glisse sans bruit jusqu'au JSON de sortie, ou il
+    produit un document que la plupart des analyseurs refusent. On l'arrete ici.
+    """
     try:
-        return float(txt)
+        v = float(txt)
     except (TypeError, ValueError):
         return None
+    return v if math.isfinite(v) else None
 
 
 # --------------------------------------------------------------------------
@@ -213,15 +223,27 @@ class FiltreDTD(io.RawIOBase):
     def readable(self):
         return True
 
+    PLAFOND_ENTETE = 16 * 1024 * 1024
+
     def _lire_entete(self):
-        # La DTD tient tres largement dans les premiers 512 Ko.
-        debut = self._source.read(512 * 1024)
+        debut = self._source.read(256 * 1024)
         i = debut.find(b"<!DOCTYPE")
         if i == -1:
             self._tampon = debut
             return
+        # La DTD d'Apple fait quelques dizaines de kilo-octets, mais rien ne le
+        # garantit : on continue de lire jusqu'a en trouver la fin plutot que de
+        # parier sur une taille de tampon.
         j = debut.find(b"]>", i)
+        while j == -1 and len(debut) < self.PLAFOND_ENTETE:
+            morceau = self._source.read(256 * 1024)
+            if not morceau:
+                break
+            recherche = max(i, len(debut) - 1)
+            debut += morceau
+            j = debut.find(b"]>", recherche)
         if j == -1:
+            # DOCTYPE sans sous-ensemble interne : <!DOCTYPE HealthData>
             k = debut.find(b">", i)
             self._tampon = debut if k == -1 else debut[:i] + debut[k + 1:]
             return
@@ -351,11 +373,22 @@ def decouper_par_jour(debut, fin, valeur):
     if fin is None or fin <= debut:
         yield (debut.strftime("%Y-%m-%d"), debut, debut, valeur)
         return
+    # Une date corrompue peut produire un intervalle de plusieurs siecles : le
+    # decoupage jour par jour tournerait alors des millions de fois. Au-dela
+    # d'un mois, l'enregistrement n'est de toute facon plus credible, on le
+    # rattache en bloc a son jour de debut.
+    if (fin - debut).days > SPAN_MAX_JOURS:
+        yield (debut.strftime("%Y-%m-%d"), debut, debut, valeur)
+        return
     total = (fin - debut).total_seconds()
     curseur = debut
     while curseur < fin:
-        minuit = (curseur.replace(hour=0, minute=0, second=0, microsecond=0)
-                  + dt.timedelta(days=1))
+        try:
+            minuit = (curseur.replace(hour=0, minute=0, second=0, microsecond=0)
+                      + dt.timedelta(days=1))
+        except (OverflowError, ValueError):
+            yield (curseur.strftime("%Y-%m-%d"), curseur, fin, valeur)
+            return
         borne = fin if fin < minuit else minuit
         part = (borne - curseur).total_seconds() / total
         yield (curseur.strftime("%Y-%m-%d"), curseur, borne, valeur * part)
@@ -462,6 +495,7 @@ class Agregateur:
         self.unites_vues = defaultdict(set)
         self.lus = 0
         self.retenus = 0
+        self.erreur_lecture = None
         self.anomalies = defaultdict(int)
 
     # -- filtres ----------------------------------------------------------
@@ -533,12 +567,21 @@ class Agregateur:
             if fin is not None and fin.utcoffset() != debut.utcoffset():
                 fin = fin.astimezone(debut.tzinfo)
             rang = rang_source(nom, device, self.priorite)
-            for j, d, f, v in decouper_par_jour(debut, fin, valeur):
+            try:
+                morceaux = list(decouper_par_jour(debut, fin, valeur))
+            except (OverflowError, ValueError, OSError):
+                self.anomalies["intervalle_aberrant"] += 1
+                return
+            for j, d, f, v in morceaux:
                 if not self._dans_periode(j):
                     continue
                 if self.dedup:
-                    self.sommes[(j, metrique.cle)].append(
-                        (rang, d.timestamp(), f.timestamp(), v))
+                    try:
+                        bornes = (d.timestamp(), f.timestamp())
+                    except (OverflowError, ValueError, OSError):
+                        self.anomalies["date_hors_limites"] += 1
+                        continue
+                    self.sommes[(j, metrique.cle)].append((rang, bornes[0], bornes[1], v))
                 else:
                     self.sommes_directes[(j, metrique.cle)] += v
         elif metrique.mode == "moyenne":
@@ -587,12 +630,20 @@ class Agregateur:
         if debut is None or fin is None or fin < debut:
             self.anomalies["sommeil_dates_invalides"] += 1
             return
-        nuit = debut.date()
-        if debut.hour >= HEURE_BASCULE_NUIT:
-            nuit = nuit + dt.timedelta(days=1)
+        try:
+            nuit = debut.date()
+            if debut.hour >= HEURE_BASCULE_NUIT:
+                nuit = nuit + dt.timedelta(days=1)
+            bornes = (debut.timestamp(), fin.timestamp())
+        except (OverflowError, ValueError, OSError):
+            self.anomalies["date_hors_limites"] += 1
+            return
+        if (fin - debut).days > 2:
+            self.anomalies["nuit_invraisemblable"] += 1
+            return
         decalage = int((debut.utcoffset() or dt.timedelta()).total_seconds())
         self.sommeil[nuit.strftime("%Y-%m-%d")].append(
-            (stade, debut.timestamp(), fin.timestamp(), decalage))
+            (stade, bornes[0], bornes[1], decalage))
 
     def ingerer_anneaux(self, el):
         a = el.attrib
@@ -730,6 +781,7 @@ class Agregateur:
             "nb_jours": len(jours),
             "sources": dict(principales),
             "anomalies": dict(self.anomalies),
+            "erreur_lecture": self.erreur_lecture,
         }
 
 
@@ -744,6 +796,8 @@ def analyser(chemin, agregateur, avec_seances=True, silencieux=False):
             sys.stderr.write("\r  %s enregistrements lus..." % f"{n:,}".replace(",", " "))
             sys.stderr.flush()
 
+    import xml.etree.ElementTree as ET
+
     try:
         for el in elements(flux, balises, progression):
             if el.tag == "Record":
@@ -754,6 +808,17 @@ def analyser(chemin, agregateur, avec_seances=True, silencieux=False):
                 agregateur.ingerer_seance(el)
             elif el.tag == "ExportDate":
                 agregateur.export_date = el.attrib.get("value")
+    except ET.ParseError as e:
+        # Export tronque ou corrompu, typiquement un transfert interrompu.
+        # Mieux vaut rendre les jours deja lus que rien du tout.
+        agregateur.anomalies["fichier_tronque"] = 1
+        agregateur.erreur_lecture = str(e)
+        if not silencieux:
+            sys.stderr.write(
+                "\n  Attention : le fichier s'interrompt avant la fin (%s).\n"
+                "  Les %s enregistrements deja lus sont conserves ; relance\n"
+                "  l'export depuis l'iPhone pour recuperer la suite.\n"
+                % (e, f"{agregateur.lus:,}".replace(",", " ")))
     finally:
         flux.close()
     if not silencieux:
@@ -1065,6 +1130,11 @@ def _agreger_texte(xml, **kwargs):
     return {j["date"]: j for j in agregateur.finaliser()}, agregateur
 
 
+def _chrono():
+    import time
+    return time.monotonic()
+
+
 def cmd_autotest(args):
     echecs = []
     faits = []
@@ -1246,6 +1316,71 @@ def cmd_autotest(args):
              resultat["2024-03-15"]["pas"] == 4242, resultat)
     verifier("date d'export relevee",
              agregateur.export_date == "2026-08-29 09:00:00 +0200", agregateur.export_date)
+
+    # DTD demesuree : elle doit etre retiree quelle que soit sa taille.
+    grosse_dtd = ('<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE HealthData [\n'
+                  + '<!-- %s -->\n' % ("x" * 90) * 8000
+                  + '<!ELEMENT HealthData (ExportDate, Me, (Record)*)>\n]>\n'
+                  + '<HealthData locale="fr_FR">\n <ExportDate value="2026-01-01 00:00:00 +0100"/>\n'
+                  + ' <Me/>\n'
+                  + _rec(Q + "StepCount", 321, "2024-03-15 08:00:00 +0100",
+                         "2024-03-15 09:00:00 +0100")
+                  + '</HealthData>\n')
+    jours, _ = _agreger_texte(grosse_dtd)
+    verifier("DTD de 700 Ko neutralisee sans casse",
+             jours.get("2024-03-15", {}).get("pas") == 321, list(jours))
+
+    # DOCTYPE sans sous-ensemble interne.
+    sans_sous_ensemble = ('<?xml version="1.0" encoding="UTF-8"?>\n'
+                          '<!DOCTYPE HealthData>\n<HealthData locale="fr_FR">\n'
+                          + _rec(Q + "StepCount", 123, "2024-03-15 08:00:00 +0100",
+                                 "2024-03-15 09:00:00 +0100")
+                          + '</HealthData>\n')
+    jours, _ = _agreger_texte(sans_sous_ensemble)
+    verifier("DOCTYPE sans sous-ensemble interne",
+             jours.get("2024-03-15", {}).get("pas") == 123, list(jours))
+
+    # Export tronque : on garde ce qui a ete lu au lieu de tout perdre.
+    complet = _construire(
+        "".join(_rec(Q + "StepCount", 10, "2024-03-1%d 08:00:00 +0100" % (d % 10),
+                     "2024-03-1%d 09:00:00 +0100" % (d % 10)) for d in range(1, 10)))
+    tronque = complet[:len(complet) - 260]
+    dossier = tempfile.mkdtemp()
+    chemin = os.path.join(dossier, "export.xml")
+    with open(chemin, "w", encoding="utf-8") as f:
+        f.write(tronque)
+    agregateur = Agregateur()
+    analyser(chemin, agregateur, silencieux=True)
+    partiel = agregateur.finaliser()
+    verifier("export tronque : les jours deja lus sont conserves",
+             len(partiel) >= 1 and agregateur.anomalies.get("fichier_tronque") == 1,
+             (len(partiel), dict(agregateur.anomalies)))
+
+    # Regressions trouvees par fuzzing sur des exports malformes.
+    jours, agregateur = _agreger_texte(_construire(
+        _rec(Q + "DistanceWalkingRunning", "NaN", "2024-03-15 08:00:00 +0100",
+             "2024-03-15 09:00:00 +0100", unit="mi")
+        + _rec(Q + "StepCount", "1e309", "2024-03-15 08:00:00 +0100",
+               "2024-03-15 09:00:00 +0100")
+        + _rec(Q + "StepCount", 250, "2024-03-15 10:00:00 +0100",
+               "2024-03-15 11:00:00 +0100")))
+    serialisable = True
+    try:
+        json.dumps(jours, allow_nan=False)
+    except ValueError:
+        serialisable = False
+    verifier("NaN et infini rejetes, JSON toujours valide",
+             serialisable and jours["2024-03-15"]["pas"] == 250
+             and "distance_km" not in jours["2024-03-15"], jours.get("2024-03-15"))
+
+    debut_chrono = _chrono()
+    jours, agregateur = _agreger_texte(_construire(
+        _rec(Q + "StepCount", 400, "2024-03-15 08:00:00 +0100",
+             "9999-12-31 23:00:00 +0100")))
+    verifier("intervalle aberrant borne au lieu de boucler",
+             _chrono() - debut_chrono < 2.0
+             and jours.get("2024-03-15", {}).get("pas") == 400,
+             (round(_chrono() - debut_chrono, 2), list(jours)))
 
     print()
     print("%d verifications passees, %d en echec." % (len(faits), len(echecs)))
