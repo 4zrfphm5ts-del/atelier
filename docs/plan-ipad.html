@@ -485,6 +485,25 @@ td.mono-col{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.8rem;f
 }
 .guide__ref{display:flex; flex-direction:column; gap:1rem}
 .guide__ref .blocs{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+
+/* ---------- encart Mac ---------- */
+.mac{
+  padding:clamp(1rem,2.6vw,1.4rem) clamp(1.3rem,3.2vw,2.4rem);
+  border-top:1px solid var(--ligne);
+  background:var(--plan-pale);
+  display:flex; flex-direction:column; gap:.45rem;
+}
+.mac__eti{
+  font-family:'IBM Plex Mono',ui-monospace,monospace;
+  font-size:.66rem; letter-spacing:.13em; text-transform:uppercase;
+  color:var(--plan); font-weight:600;
+}
+.mac h3{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:1.05rem;margin:0}
+.mac p{margin:0;font-size:.9rem;color:var(--mut);max-width:72ch}
+.mac p strong{color:var(--encre);font-weight:600}
+.mac ul{margin:.15rem 0 0;padding-left:1.1rem;font-size:.9rem;color:var(--mut);max-width:72ch}
+.mac li{margin:.28rem 0}
+.mac li strong{color:var(--encre);font-weight:600}
 </style>
 </head>
 <body>
@@ -523,6 +542,26 @@ td.mono-col{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.8rem;f
     <p><b>Ouvre cette page sur un autre écran</b> — un ordinateur, ton téléphone. Tu vas passer
       l'heure qui vient à réorganiser l'iPad : si le plan est dessus, tu en sors à chaque étape.
       L'avancement est gardé par appareil, alors coche du côté où tu lis.</p>
+  </div>
+  <div class="mac">
+    <span class="mac__eti">Si tu as un Mac à côté</span>
+    <h3>Trois étapes se font mieux depuis le Mac — et arrivent seules sur l'iPad</h3>
+    <p>Rien à installer, rien à effacer : ces trois-là passent par la <strong>synchronisation
+      iCloud</strong>. Fais-les au clavier avant de commencer, tu gagnes la moitié du temps sur les
+      étapes les plus pénibles au doigt.</p>
+    <ul>
+      <li><strong>Les sept raccourcis (étape 12, la plus longue).</strong> L'app Raccourcis existe
+        sur macOS et se synchronise par iCloud. Construis-les sur le Mac — glisser des actions à la
+        souris sur un grand écran n'a rien à voir avec le faire au doigt — ils apparaîtront sur
+        l'iPad tout seuls. Vérifie juste que Raccourcis est coché dans les réglages iCloud des deux
+        appareils.</li>
+      <li><strong>Les remplacements de texte (étape 14).</strong> <em>Réglages Système › Clavier ›
+        Saisie de texte › Remplacement de texte</em> : saisis tes abréviations là-bas, elles
+        arrivent sur l'iPad.</li>
+      <li><strong>La définition des modes de concentration (étape 10).</strong> Nom, autorisations
+        et filtres se synchronisent. En revanche le rattachement aux <em>pages d'accueil</em> est
+        propre à l'iPad : ça, tu le feras dessus, et ça prend deux minutes.</li>
+    </ul>
   </div>
 </header>
 

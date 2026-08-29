@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>PayloadDisplayName</key>
+  <string>Plan de montage iPad — disposition d'ecran d'accueil</string>
+  <key>PayloadDescription</key>
+  <string>Place les apps, dossiers et Dock des trois pages du plan. NE GERE PAS les widgets, le Centre de controle, les modes de concentration ni les raccourcis. Exige un iPad supervise. Verrouille la disposition : l'utilisateur ne peut plus deplacer d'icone tant que le profil est installe.</string>
+  <key>PayloadIdentifier</key>
+  <string>fr.bfieve.atelier.planipad</string>
+  <key>PayloadOrganization</key>
+  <string>Studio BFieve — atelier</string>
+  <key>PayloadType</key>
+  <string>Configuration</string>
+  <key>PayloadUUID</key>
+  <string>6F1A2C34-8B07-4D51-9E2A-0C7D5B31A8E1</string>
+  <key>PayloadVersion</key>
+  <integer>1</integer>
+  <key>PayloadRemovalDisallowed</key>
+  <false/>
+  <key>PayloadContent</key>
+  <array>
+    <dict>
+      <key>PayloadDisplayName</key>
+      <string>Disposition de l'ecran d'accueil</string>
+      <key>PayloadIdentifier</key>
+      <string>fr.bfieve.atelier.planipad.homescreen</string>
+      <key>PayloadType</key>
+      <string>com.apple.homescreenlayout</string>
+      <key>PayloadUUID</key>
+      <string>B4E90D77-25C6-4A18-BB3F-71A4E6C09D52</string>
+      <key>PayloadVersion</key>
+      <integer>1</integer>
+
+      <!-- ================= DOCK : six apps, jamais plus ================= -->
+      <key>Dock</key>
+      <array>
+        <dict><key>Type</key><string>Application</string><key>BundleID</key><string>com.apple.mobilesafari</string></dict>
+        <dict><key>Type</key><string>Application</string><key>BundleID</key><string>com.apple.mobilemail</string></dict>
+        <dict><key>Type</key><string>Application</string><key>BundleID</key><string>com.apple.MobileSMS</string></dict>
+        <dict><key>Type</key><string>Application</string><key>BundleID</key><string>com.apple.mobilecal</string></dict>
+        <dict><key>Type</key><string>Application</string><key>BundleID</key><string>com.apple.mobilenotes</string></dict>
+        <dict><key>Type</key><string>Application</string><key>BundleID</key><string>com.apple.DocumentsApp</string></dict>
+      </array>
+
+      <key>Pages</key>
+      <array>
+
+        <!-- ================= PAGE 1 — POSTE =================
+             ATTENTION : ce payload ne sait PAS laisser d'emplacements vides.
+             Les icones se rangent dans l'ordre, de gauche a droite. Les
+             marges volontaires du plan ne sont donc pas reproductibles ici.
+             Les widgets Calendrier et Rappels du plan ne le sont pas non plus. -->
+        <array>
+          <!-- REMPLACE par ta messagerie d'equipe (Slack : com.tinyspeck.chatlyio ;
+               Teams : com.microsoft.skype.teams) -->
+          <dict><key>Type</key><string>Application</string><key>BundleID</key><string>com.tinyspeck.chatlyio</string></dict>
+          <!-- REMPLACE par ta visio (Zoom : us.zoom.videomeetings ;
+               Google Meet : com.google.Meet) -->
+          <dict><key>Type</key><string>Application</string><key>BundleID</key><string>us.zoom.videomeetings</string></dict>
+          <dict><key>Type</key><string>Application</string><key>BundleID</key><string>com.apple.MobileAddressBook</string></dict>
+          <dict><key>Type</key><string>Application</string><key>BundleID</key><string>com.apple.facetime</string></dict>
+          <dict><key>Type</key><string>Application</string><key>BundleID</key><string>com.apple.reminders</string></dict>
+          <dict><key>Type</key><string>Application</string><key>BundleID</key><string>com.apple.news</string></dict>
+          <dict><key>Type</key><string>Application</string><key>BundleID</key><string>com.apple.Preferences</string></dict>
+        </array>
+
+        <!-- ================= PAGE 2 — ATELIER ================= -->
+        <array>
+          <dict><key>Type</key><string>Application</string><key>BundleID</key><string>com.apple.Pages</string></dict>
+          <dict><key>Type</key><string>Application</string><key>BundleID</key><string>com.apple.Numbers</string></dict>
+          <dict><key>Type</key><string>Application</string><key>BundleID</key><string>com.apple.Keynote</string></dict>
+          <!-- REMPLACE par ton lecteur/annotateur PDF si tu en as un
+               (PDF Expert : com.readdle.PDFExpert-iOS) -->
+          <dict><key>Type</key><string>Application</string><key>BundleID</key><string>com.readdle.PDFExpert-iOS</string></dict>
+          <!-- REMPLACE par ton app de notes longues (Notion : notion.id ;
+               Craft : com.lukilabs.lukiapp) -->
+          <dict><key>Type</key><string>Application</string><key>BundleID</key><string>notion.id</string></dict>
+          <dict><key>Type</key><string>Application</string><key>BundleID</key><string>com.apple.freeform</string></dict>
+          <dict><key>Type</key><string>Application</string><key>BundleID</key><string>com.apple.VoiceMemos</string></dict>
+          <dict><key>Type</key><string>Application</string><key>BundleID</key><string>com.apple.Translate</string></dict>
+          <dict><key>Type</key><string>Application</string><key>BundleID</key><string>com.apple.calculator</string></dict>
+          <dict><key>Type</key><string>Application</string><key>BundleID</key><string>com.apple.camera</string></dict>
+        </array>
+
+        <!-- ================= PAGE 3 — PERSO ================= -->
+        <array>
+          <dict><key>Type</key><string>Application</string><key>BundleID</key><string>com.apple.Music</string></dict>
+          <dict><key>Type</key><string>Application</string><key>BundleID</key><string>com.apple.podcasts</string></dict>
+          <dict><key>Type</key><string>Application</string><key>BundleID</key><string>com.apple.tv</string></dict>
+          <dict><key>Type</key><string>Application</string><key>BundleID</key><string>com.apple.iBooks</string></dict>
+          <dict>
+            <key>Type</key><string>Folder</string>
+            <key>DisplayName</key><string>Jeux</string>
+            <key>Pages</key>
+            <array>
+              <array>
+                <!-- REMPLACE par tes jeux -->
+                <dict><key>Type</key><string>Application</string><key>BundleID</key><string>com.apple.stocks</string></dict>
+              </array>
+            </array>
+          </dict>
+          <!-- REMPLACE par ton app bancaire -->
+          <dict><key>Type</key><string>Application</string><key>BundleID</key><string>com.apple.Passbook</string></dict>
+          <!-- REMPLACE par ton app de transports (SNCF, RATP...) -->
+          <dict><key>Type</key><string>Application</string><key>BundleID</key><string>com.apple.Maps</string></dict>
+          <dict><key>Type</key><string>Application</string><key>BundleID</key><string>com.apple.Health</string></dict>
+          <dict>
+            <key>Type</key><string>Folder</string>
+            <key>DisplayName</key><string>Voyage</string>
+            <key>Pages</key>
+            <array>
+              <array>
+                <dict><key>Type</key><string>Application</string><key>BundleID</key><string>com.apple.weather</string></dict>
+                <!-- AJOUTE compagnies, hotels, cartes hors ligne... -->
+              </array>
+            </array>
+          </dict>
+          <dict>
+            <key>Type</key><string>Folder</string>
+            <key>DisplayName</key><string>Admin</string>
+            <key>Pages</key>
+            <array>
+              <array>
+                <dict><key>Type</key><string>Application</string><key>BundleID</key><string>com.apple.AppStore</string></dict>
+                <!-- AJOUTE impots, assurance, operateur, La Poste... -->
+              </array>
+            </array>
+          </dict>
+        </array>
+
+      </array>
+    </dict>
+  </array>
+</dict>
+</plist>
