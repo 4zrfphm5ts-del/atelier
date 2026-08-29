@@ -456,6 +456,23 @@ td.mono-col{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.8rem;f
 .invite__b:hover{background:var(--terra-pale)}
 .invite__b:focus-visible{outline:2px solid var(--terra);outline-offset:2px}
 .invite__b.ok{border-color:var(--olive); color:var(--olive)}
+
+/* ---------- appel à l'action du cartouche ---------- */
+.demarrer{
+  display:flex; flex-wrap:wrap; align-items:center; gap:.9rem 1.1rem;
+  padding:clamp(1rem,2.6vw,1.4rem) clamp(1.3rem,3.2vw,2.4rem);
+  border-top:1px solid var(--ligne);
+  background:var(--terra-pale);
+}
+.demarrer__b{
+  font:inherit; font-size:1.02rem; font-weight:600;
+  color:var(--papier); background:var(--terra); border:1px solid var(--terra);
+  padding:.72rem 1.5rem; cursor:pointer; white-space:nowrap;
+}
+.demarrer__b:hover{opacity:.9}
+.demarrer__b:focus-visible{outline:2px solid var(--encre); outline-offset:2px}
+.demarrer p{margin:0; font-size:.9rem; color:var(--mut); max-width:52ch}
+.demarrer p b{color:var(--encre); font-weight:600}
 </style>
 </head>
 <body>
@@ -482,11 +499,16 @@ td.mono-col{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.8rem;f
   <dl class="cartouche__grille">
     <div class="champ"><dt>Appareil</dt><dd>iPad Pro · M4 / M5</dd></div>
     <div class="champ"><dt>Profil</dt><dd>Travail · bureautique</dd></div>
-    <div class="champ"><dt>Parti pris</dt><dd>Réorganisation complète</dd></div>
     <div class="champ"><dt>Durée</dt><dd>≈ 1 h 30, sécable</dd></div>
     <div class="champ"><dt>Réversible</dt><dd>Oui, via sauvegarde</dd></div>
     <div class="champ"><dt>Version visée</dt><dd>iPadOS 26.6.x</dd></div>
   </dl>
+  <div class="demarrer">
+    <button class="demarrer__b" id="lancer2" type="button">Commencer</button>
+    <p>Une seule instruction à l'écran à la fois, avec le schéma quand il en faut un, et un bouton
+      <b>« c'est fait »</b>. Ça reprend tout seul où tu t'es arrêté. Si tu préfères lire le plan en
+      entier, il est juste en dessous.</p>
+  </div>
 </header>
 
 <section class="plaque" id="doctrine">
@@ -686,7 +708,7 @@ td.mono-col{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.8rem;f
 
   <div class="liste">
     <div class="pas"><input type="checkbox" id="d1"><p class="pas__txt"><strong>Vide le Dock entièrement</strong> — fais glisser chaque icône vers le haut, dans la grille.</p></div>
-    <div class="pas"><input type="checkbox" id="d2"><p class="pas__txt"><strong>Coupe les suggestions du Dock.</strong></p><p class="pas__sous"><span class="chemin">Réglages › Écran d'accueil et bibliothèque d'apps</span> → désactive <em>Afficher les apps suggérées et récentes dans le Dock</em>. Si tu ne l'y trouves pas, regarde dans <span class="chemin">Réglages › Multitâche et gestes</span> : iPadOS 26 a scindé l'ancien panneau en deux et l'option a pu suivre le multitâche. C'est le réglage le plus rentable de toute la page : il rend les positions du Dock <b>fixes</b>, donc visables au doigt sans regarder, et te rend deux à trois emplacements.</p></div>
+    <div class="pas"><input type="checkbox" id="d2"><p class="pas__txt"><strong>Coupe les suggestions du Dock.</strong></p><p class="pas__sous"><span class="chemin">Réglages › Écran d'accueil et bibliothèque d'apps</span> → sous l'en-tête <em>Dock</em>, désactive <em>Afficher les apps suggérées et récentes</em>. Si tu ne l'y trouves pas, regarde dans <span class="chemin">Réglages › Multitâche et gestes</span> : iPadOS 26 a scindé l'ancien panneau en deux et l'option a pu suivre le multitâche. C'est le réglage le plus rentable de toute la page : il rend les positions du Dock <b>fixes</b>, donc visables au doigt sans regarder, et te rend deux à trois emplacements.</p></div>
     <div class="pas"><input type="checkbox" id="d3"><p class="pas__txt"><strong>Place les six, de gauche à droite</strong> : Safari, Mail, Messages, Calendrier, Notes, Fichiers.</p><p class="pas__sous">Remplace par ton équivalent si tu n'utilises pas l'app Apple (Outlook au lieu de Mail, Chrome au lieu de Safari) — mais garde le rôle et la position.</p></div>
   </div>
 </section>
@@ -841,7 +863,7 @@ td.mono-col{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.8rem;f
   <div class="liste">
     <div class="pas"><input type="checkbox" id="v1"><p class="pas__txt"><strong>Les nouvelles apps vont en Bibliothèque, pas sur l'écran d'accueil.</strong></p><p class="pas__sous"><span class="chemin">Réglages › Écran d'accueil et bibliothèque d'apps › Apps nouvellement téléchargées</span> → <b>Bibliothèque d'apps uniquement</b>. C'est <em>le</em> réglage qui fait tenir le plan : sans lui, chaque installation vient boucher un de tes espaces vides.</p></div>
     <div class="pas"><input type="checkbox" id="v2"><p class="pas__txt"><strong>Active les pastilles dans la Bibliothèque d'apps</strong> — elles sont masquées par défaut.</p><p class="pas__sous">Même panneau, section <em>Pastilles de notification</em> → active <b>Afficher dans la bibliothèque d'apps</b>. Puisque la majorité de tes apps vivent désormais là, sans ça elles ne signalent plus rien du tout.</p></div>
-    <div class="pas"><input type="checkbox" id="v3"><p class="pas__txt"><strong>Coupe les suggestions du Dock</strong> (si ce n'est pas déjà fait à l'étape 04).</p><p class="pas__sous">Même panneau → <em>Afficher les apps suggérées et récentes dans le Dock</em>, désactivé. Tu récupères deux à trois emplacements fixes et le bord droit du Dock arrête de bouger.</p></div>
+    <div class="pas"><input type="checkbox" id="v3"><p class="pas__txt"><strong>Coupe les suggestions du Dock</strong> (si ce n'est pas déjà fait à l'étape 04).</p><p class="pas__sous">Même panneau, sous l'en-tête <em>Dock</em> → <em>Afficher les apps suggérées et récentes</em>, désactivé. Tu récupères deux à trois emplacements fixes et le bord droit du Dock arrête de bouger.</p></div>
     <div class="pas"><input type="checkbox" id="v4"><p class="pas__txt"><strong>Masque le champ de recherche</strong> au-dessus du Dock.</p><p class="pas__sous">Même panneau, section <em>Recherche</em> → désactive <b>Afficher sur l'écran d'accueil</b>. Les points de pagination reprennent sa place, et Spotlight reste accessible par balayage vers le bas depuis le milieu de l'écran — ou par ⌘ + Espace au clavier.</p></div>
     <div class="pas"><input type="checkbox" id="v5"><p class="pas__txt"><strong>Coupe les suggestions dans la recherche.</strong></p><p class="pas__sous"><span class="chemin">Réglages › Recherche</span> : désactive <em>Afficher les recherches récentes</em> et <em>Afficher le contenu associé</em>, puis descends dans la liste des apps pour retirer celles qui n'ont rien à faire dans tes résultats. Les suggestions app par app se règlent en plus dans <span class="chemin">Réglages › Apple Intelligence et Siri › Apps</span>.</p></div>
     <div class="pas"><input type="checkbox" id="v6"><p class="pas__txt"><strong>Décide du bouton Bibliothèque dans le Dock.</strong></p><p class="pas__sous">Toujours dans le même panneau : <em>Afficher la bibliothèque d'apps dans le Dock</em>. Garde-le — c'est une exclusivité iPad, et avec un Dock à six apps tu as la place. Il t'évite de balayer jusqu'à la dernière page.</p></div>
@@ -889,7 +911,7 @@ td.mono-col{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.8rem;f
       <h3>La poignée en bas à droite</h3>
       <p>Un petit arc de cercle au coin inférieur droit de chaque commande. Les bascules simples
         n'ont que trois tailles : <b>1</b> emplacement (rond, icône seule), <b>2</b> (ovale, avec
-        le libellé), <b>4</b> (carré 2×2, avec le libellé <em>et</em> l'état).</p>
+        le libellé), <b>4</b> (carré 2×2, avec le libellé <em>et</em> l'état). Les commandes riches, elles, montent bien plus haut — et les agrandir <em>ajoute du contenu</em> : Écoute en cours passe de la pochette seule aux commandes de lecture et au volume.</p>
     </div>
     <div class="bloc">
       <span class="bloc__eti">Supprimer une page</span>
@@ -998,13 +1020,13 @@ td.mono-col{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.8rem;f
   </div>
 
   <div class="liste">
-    <div class="pas"><input type="checkbox" id="f1"><p class="pas__txt"><strong>Crée les trois modes.</strong></p><p class="pas__sous"><span class="chemin">Réglages › Concentration</span> → <b>+</b> en haut à droite → un modèle (Travail, Personnel…) ou <em>Personnalisé</em>, puis un nom, une couleur et une icône. « Travail » et « Personnel » existent peut-être déjà : réutilise-les plutôt que d'en créer des doubles. Plafond, si jamais : 10 modes personnalisés.</p></div>
+    <div class="pas"><input type="checkbox" id="f1"><p class="pas__txt"><strong>Crée les trois modes.</strong></p><p class="pas__sous"><span class="chemin">Réglages › Concentration</span> → <b>+</b> en haut à droite → un modèle (Travail, Personnel…) ou <em>Personnalisé</em>, puis un nom, une couleur et une icône. « Travail » et « Personnel » existent peut-être déjà : réutilise-les plutôt que d'en créer des doubles. Plafond : <b>10 modes au total</b>, ceux d'Apple compris — arrivé à dix, le bouton + devient inactif.</p></div>
     <div class="pas"><input type="checkbox" id="f2"><p class="pas__txt"><strong>Lie chaque mode à sa page</strong> — c'est le geste central de l'étape.</p><p class="pas__sous"><span class="chemin">Réglages › Concentration › [le mode] › Personnaliser les écrans</span> → touche l'aperçu <em>Écran d'accueil</em> → active <b>Pages personnalisées</b> → coche la ou les pages voulues → <em>OK</em>. Tu peux en cocher plusieurs : ce n'est pas « une page par mode ». Les pages non cochées disparaissent tant que le mode tourne et reviennent dès qu'il s'arrête — rien n'est supprimé.</p></div>
-    <div class="pas"><input type="checkbox" id="f3"><p class="pas__txt"><strong>Règle les autorisations en partant de zéro.</strong></p><p class="pas__sous">Pour chaque mode, commence par n'autoriser <em>personne</em> et <em>aucune app</em>, puis rajoute le strict nécessaire. L'inverse — partir de tout et retirer — ne converge jamais. Pour Atelier : Rappels et Calendrier, point. (Limite : 30 personnes ou apps par mode.)</p></div>
-    <div class="pas"><input type="checkbox" id="f4"><p class="pas__txt"><strong>Ajoute les filtres</strong>, la partie que presque personne n'utilise.</p><p class="pas__sous">Dans la fiche du mode, tout en bas : <em>Filtres de concentration › Ajouter un filtre</em>. Côté Apple, exactement quatre apps les gèrent : <b>Calendrier</b> (quels agendas), <b>Mail</b> (quels comptes), <b>Messages</b> (limité aux personnes autorisées) et <b>Safari</b> (un profil ou un groupe d'onglets). Le mode Travail cesse alors de t'<em>afficher</em> tes mails perso, il ne fait pas que les taire. S'y ajoutent trois filtres système — Mode sombre, Mode économie d'énergie, Mode Silence — et ceux des apps tierces compatibles. À noter : <b>Actualités n'a pas de filtre</b>, contrairement à ce qu'on lit souvent.</p></div>
+    <div class="pas"><input type="checkbox" id="f3"><p class="pas__txt"><strong>Règle les autorisations en partant de zéro.</strong></p><p class="pas__sous">Pour chaque mode, commence par n'autoriser <em>personne</em> et <em>aucune app</em>, puis rajoute le strict nécessaire. L'inverse — partir de tout et retirer — ne converge jamais. Pour Atelier : Rappels et Calendrier, point.</p></div>
+    <div class="pas"><input type="checkbox" id="f4"><p class="pas__txt"><strong>Ajoute les filtres</strong>, la partie que presque personne n'utilise.</p><p class="pas__sous">Dans la fiche du mode, tout en bas : <em>Filtres de concentration › Ajouter un filtre</em>. Côté Apple, exactement quatre apps les gèrent : <b>Calendrier</b> (quels agendas), <b>Mail</b> (quels comptes), <b>Messages</b> (limité aux personnes autorisées) et <b>Safari</b> (un profil ou un groupe d'onglets). Le mode Travail cesse alors de t'<em>afficher</em> tes mails perso, il ne fait pas que les taire. S'y ajoutent deux filtres système — <b>Apparence</b> (qui force le mode clair ou sombre) et <b>Mode économie d'énergie</b> — plus ceux des apps tierces compatibles. À noter : <b>Actualités n'a pas de filtre</b>, contrairement à ce qu'on lit souvent.</p></div>
     <div class="pas"><input type="checkbox" id="f5"><p class="pas__txt"><strong>Rends la page dédiée visuellement calme.</strong></p><p class="pas__sous">Dans <em>Options</em>, à l'intérieur du mode : <b>Masquer les pastilles de notification</b> supprime les points rouges pendant que le mode tourne, et <b>Assombrir l'écran verrouillé</b> baisse l'écran d'accueil et de verrouillage. Deux réglages minuscules qui font énormément pour la sensation de calme.</p></div>
     <div class="pas"><input type="checkbox" id="f6"><p class="pas__txt"><strong>Programme les activations automatiques.</strong></p><p class="pas__sous">Dans la fiche du mode : <em>Ajouter un programme</em> → <b>Heure</b> (plage + jours), <b>Lieu</b> (arrivée/départ d'une adresse) ou <b>App</b> (à l'ouverture). Horaire pour Travail et Perso, ouverture d'app pour Atelier. Un mode qu'il faut penser à activer ne s'active jamais. L'<em>Activation intelligente</em> est un interrupteur à part, qui s'ajoute aux programmes sans les remplacer.</p></div>
-    <div class="pas"><input type="checkbox" id="f7"><p class="pas__txt"><strong>Décide du partage entre appareils.</strong></p><p class="pas__sous">L'interrupteur est en bas de <span class="chemin">Réglages › Concentration</span> : il propage le mode à ton iPhone et ton Mac. Très pratique — sauf si tu veux être concentré sur l'iPad tout en restant joignable sur le téléphone. À toi ; l'important est de le choisir, pas de le subir.</p></div>
+    <div class="pas"><input type="checkbox" id="f7"><p class="pas__txt"><strong>Décide du partage entre appareils.</strong></p><p class="pas__sous">L'interrupteur est en bas de <span class="chemin">Réglages › Concentration</span> : il propage <b>l'activation</b> du mode à ton iPhone et ton Mac — activer Travail ici l'active là-bas. Il ne copie pas les modes eux-mêmes : ça, c'est la synchronisation iCloud des réglages. Très pratique — sauf si tu veux être concentré sur l'iPad tout en restant joignable sur le téléphone. À toi ; l'important est de le choisir, pas de le subir.</p></div>
   </div>
 
   <div class="avis">
@@ -1240,7 +1262,7 @@ td.mono-col{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.8rem;f
       <code>Globe + A</code> le Dock · <code>Globe + ⇧ + A</code> la Bibliothèque d'apps ·
       <code>Globe + H</code> l'écran d'accueil · <code>Globe + Q</code> une note rapide.
       Et <b>maintiens Globe</b> pour afficher la liste complète.</p></div>
-    <div class="pas"><input type="checkbox" id="x3"><p class="pas__txt"><strong>Règle l'Apple Pencil</strong> — et sache ce que le tien sait faire.</p><p class="pas__sous"><span class="chemin">Réglages › Apple Pencil</span>. Le <em>Toucher deux fois</em> n'existe que sur l'Apple Pencil 2 et le Pencil Pro ; le modèle USB-C n'a ni double-tap, ni pincement, ni pression, ni haptique — aucun réglage ne compense, c'est matériel. Deux gestes valent le détour : au Pencil, <b>balayage depuis le coin inférieur droit</b> = note rapide, <b>coin inférieur gauche</b> = capture d'écran. Ne cherche pas de curseur de sensibilité à la pression : il n'y en a pas au niveau système, ça se règle app par app.</p></div>
+    <div class="pas"><input type="checkbox" id="x3"><p class="pas__txt"><strong>Règle l'Apple Pencil</strong> — et sache ce que le tien sait faire.</p><p class="pas__sous"><span class="chemin">Réglages › Apple Pencil</span>. Le <em>Toucher deux fois</em> n'existe que sur l'Apple Pencil 2 et le Pencil Pro ; le modèle USB-C n'a ni double-tap, ni pincement, ni pression, ni haptique — aucun réglage ne compense, c'est matériel. Deux gestes valent le détour, réglables ici sous <em>Balayage du coin gauche</em> et <em>Balayage du coin droit</em> : au Pencil, <b>coin inférieur droit</b> = note rapide, <b>coin inférieur gauche</b> = capture d'écran. (Les mêmes balayages au doigt se règlent, eux, dans <span class="chemin">Réglages › Multitâche et gestes</span>.) Ne cherche pas de curseur de sensibilité à la pression : il n'y en a pas au niveau système, ça se règle app par app.</p></div>
     <div class="pas"><input type="checkbox" id="x11"><p class="pas__txt"><strong>Allume le rapport de confidentialité maintenant</strong> — tu le liras dans une semaine.</p><p class="pas__sous"><span class="chemin">Réglages › Confidentialité et sécurité › Rapport de confidentialité des apps</span>. Il est <b>éteint par défaut</b> et n'enregistre rien tant qu'on ne l'active pas. Ensuite il tient 7 jours glissants et se lit dans les deux sens : <em>par app</em> (ce qu'elle a touché) et <em>par domaine</em> (quelles apps causent à doubleclick.net). C'est le seul outil qui te donne des faits plutôt que des impressions — d'où l'intérêt de l'allumer aujourd'hui.</p></div>
     <div class="pas"><input type="checkbox" id="x12"><p class="pas__txt"><strong>Reprends la localisation app par app</strong>, puis descends jusqu'aux services système.</p><p class="pas__sous"><span class="chemin">Réglages › Confidentialité et sécurité › Service de localisation</span>. Quatre niveaux ; seul <em>Toujours</em> mérite ta méfiance. Et sous le choix de niveau, un interrupteur <b>séparé</b> : <em>Position exacte</em> — désactivé, l'app reçoit une zone approximative au lieu de tes coordonnées, ce qui suffit à la météo et aux boutiques. Puis descends <b>tout en bas</b>, après toutes les apps, jusqu'à <em>Services système</em> : coupe <em>Publicité basée sur la position</em>, et vide <em>Zones importantes</em> (un historique chiffré de tes lieux, actif par défaut).</p></div>
     <div class="pas"><input type="checkbox" id="x13"><p class="pas__txt"><strong>Active le mouchard gratuit</strong> pendant une semaine.</p><p class="pas__sous">Toujours dans <em>Services système</em>, tout en bas : <b>Icône dans la barre d'état</b>. Une fois activé, la flèche de localisation s'affiche <em>chaque fois</em> qu'un service système lit ta position. En une semaine tu sauras exactement qui te suit — et tu couperas en connaissance de cause au lieu de deviner. Tu pourras le désactiver ensuite.</p></div>
@@ -1674,8 +1696,10 @@ td.mono-col{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.8rem;f
     else if (ev.key === 'ArrowLeft' && i > 0){ i--; afficher(); }
   });
 
-  var lancer = document.getElementById('lancer');
-  if (lancer) lancer.addEventListener('click', ouvrir);
+  ['lancer','lancer2'].forEach(function(id){
+    var b = document.getElementById(id);
+    if (b) b.addEventListener('click', ouvrir);
+  });
 })();
 </script>
 <script>
