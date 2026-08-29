@@ -1,0 +1,166 @@
+# Reprise de l'historique Apple Santé — sans Mac
+
+`sante.py` transforme l'export de l'app Santé en **un instantané par jour**,
+prêt à être poussé vers NOCTURNE. Fichier unique, bibliothèque standard
+uniquement : il tourne dans un terminal comme dans a-Shell sur iPhone/iPad.
+Rien à installer.
+
+Les données ne quittent jamais la machine où tourne le script, sauf au moment
+explicite de la commande `pousse`.
+
+---
+
+## 1. Sortir les données de l'iPhone
+
+App **Santé** → ta photo de profil en haut à droite → tout en bas →
+**Exporter toutes les données santé** → confirmer.
+
+L'iPhone travaille quelques minutes, puis propose une feuille de partage :
+**Enregistrer dans Fichiers**. Tu obtiens `export.zip`.
+
+Ça marche aussi depuis l'iPad en iPadOS 17 ou plus récent, les données Santé
+étant synchronisées par iCloud.
+
+## 2. Regarder ce qu'il y a dedans
+
+```sh
+python3 sante.py inspecte export.zip
+```
+
+Affiche la période couverte, le nombre d'enregistrements, **le nom exact de
+chaque source** (il dépend de la langue et du nom donné à la montre), le
+matériel identifié, et la liste des types de mesures avec leurs unités. Les
+types précédés de `:` sont exploités, ceux précédés de `.` sont ignorés.
+
+À faire en premier : c'est ce qui dit quoi demander à l'étape suivante.
+
+## 3. Agréger en instantanés quotidiens
+
+```sh
+python3 sante.py agrege export.zip -o jours.json --csv jours.csv
+```
+
+| Option | Effet |
+| --- | --- |
+| `--source montre` | ne garder que l'Apple Watch (identifiée par son matériel, pas par son nom) |
+| `--priorite montre` | en cas de recouvrement, la montre l'emporte sur l'iPhone (défaut) |
+| `--depuis` / `--jusqu-a` | limiter la période, en `AAAA-MM-JJ` |
+| `--sans-dedup` | somme brute, mémoire minimale — à réserver au cas où l'on filtre déjà sur une seule source |
+| `--lisible` | JSON indenté |
+
+**Si la mémoire manque** (typiquement sur iPhone avec dix ans d'historique) :
+traiter année par année, `--depuis 2023-01-01 --jusqu-a 2023-12-31`, puis pousser
+chaque fichier séparément.
+
+Ordres de grandeur mesurés : un export de 210 Mo / 583 000 enregistrements
+(≈ 3 ans de port quotidien) est traité en 13 secondes avec 73 Mo de mémoire, et
+produit 600 Ko de JSON.
+
+## 4. Pousser vers NOCTURNE
+
+Toujours commencer par un essai à blanc, qui n'envoie rien et montre exactement
+le corps de la requête :
+
+```sh
+python3 sante.py pousse jours.json --url https://.../health --essai
+```
+
+Puis, pour de vrai :
+
+```sh
+export NOCTURNE_JETON='...'
+python3 sante.py pousse jours.json \
+    --url https://.../health \
+    --jeton-env NOCTURNE_JETON \
+    --etat envoyes.json
+```
+
+| Option | Effet |
+| --- | --- |
+| `--forme jour` \| `lot` | une requête par jour, ou par paquets de `--taille-lot` |
+| `--enveloppe health` | encapsule le corps : `{"health": {...}}` |
+| `--champ-date jour` | renomme la clé `date` si l'API en attend une autre |
+| `--entete "X-Truc: valeur"` | en-tête HTTP supplémentaire, répétable |
+| `--etat envoyes.json` | mémorise les jours envoyés : relancer reprend où ça s'était arrêté |
+
+Le jeton se passe par variable d'environnement, jamais en argument ni dans un
+fichier : il n'a rien à faire dans un dépôt ni dans l'historique du shell.
+
+En cas d'erreur réseau, chaque requête est retentée quatre fois (2 s, 4 s, 8 s,
+16 s). Une erreur 4xx est définitive et arrête le traitement du lot.
+
+## 5. Vérifier l'outil
+
+```sh
+python3 sante.py autotest
+```
+
+24 vérifications sur des exports synthétiques : dédoublonnage, minuit, fuseaux,
+unités, stades de sommeil, anciens formats, lecture en flux depuis le zip.
+
+---
+
+## Ce que contient un instantané
+
+```json
+{
+  "date": "2024-05-15",
+  "pas": 8640,
+  "distance_km": 6.312,
+  "energie_active_kcal": 440.8,
+  "energie_repos_kcal": 1652.0,
+  "exercice_min": 42,
+  "fc_moy": 100.4, "fc_min": 48.0, "fc_max": 150.0, "fc_n": 288,
+  "fc_repos": 54.0,
+  "fc_marche": 96.2,
+  "vfc_ms_moy": 42.1,
+  "spo2_moy": 97.1,
+  "respiration_moy": 14.2,
+  "vo2max": 41.2,
+  "temp_poignet_moy": 36.8,
+  "sommeil": {
+    "total_min": 455, "leger_min": 280, "profond_min": 80, "rem_min": 95,
+    "eveil_min": 12, "au_lit_min": 480,
+    "debut": "23:10", "fin": "06:57",
+    "efficacite_pct": 97.4, "reveils": 1
+  },
+  "anneaux": { "energie_active_kcal": 496.0, "exercice_min": 26, "debout_h": 7 },
+  "seances": [ { "type": "Running", "duree_min": 31.5 } ]
+}
+```
+
+Une clé absente signifie « pas de mesure ce jour-là » — jamais zéro. Le document
+complet porte en plus un bloc `meta` : période, volumétrie, sources rencontrées,
+anomalies.
+
+---
+
+## Les décisions qui comptent
+
+**Double comptage.** `export.xml` contient les enregistrements bruts de toutes
+les sources, non dédoublonnés — contrairement à ce que l'app Santé affiche.
+Sommer naïvement les pas quand l'iPhone est dans la poche et la montre au
+poignet donne un total gonflé de près du double. L'outil traite les sources par
+priorité et ne compte chaque enregistrement que sur la portion de temps
+qu'aucune source plus prioritaire n'a déjà couverte, au prorata de sa durée.
+
+**Minuit.** Un enregistrement de 23h50 à 00h10 est réparti entre les deux jours
+au prorata de la durée, pas attribué en bloc au jour de début.
+
+**Fuseaux.** Apple écrit l'heure *locale du lieu de la mesure*, suivie de son
+décalage. Le jour calendaire est donc lu directement dans la chaîne, sans aucun
+calcul : les données enregistrées en voyage tombent sur le bon jour, et les
+changements d'heure ne posent pas de problème. Les heures de coucher et de lever
+sont réaffichées dans le fuseau où la nuit a été vécue.
+
+**Les nuits.** Une nuit commencée après 18h est rattachée au **jour du réveil**,
+comme dans l'app Santé. Les segments qui se chevauchent — la montre en écrit
+beaucoup, et une app tierce peut écrire les siens — sont unis avant d'être
+comptés, jamais additionnés.
+
+**Unités.** Miles, pieds, livres, degrés Fahrenheit et kilojoules sont convertis.
+L'unité dépend des réglages régionaux et peut changer au fil de l'historique.
+
+**Les anneaux.** Les `ActivitySummary` d'Apple sont conservés tels quels, à côté
+des valeurs ré-agrégées. Les deux ne coïncident pas toujours : c'est normal, et
+utile pour se contrôler.
