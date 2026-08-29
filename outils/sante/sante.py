@@ -1155,22 +1155,75 @@ def _charger_jours(chemin):
     return document.get("jours", []), document.get("meta", {})
 
 
+class _RefuserRedirection(object):
+    """Empeche urllib de rejouer la requete ailleurs.
+
+    Par defaut, urllib suit les redirections en rejouant tous les en-tetes,
+    jeton d'authentification compris. Un serveur mal configure — ou hostile —
+    pourrait ainsi faire partir le jeton et les donnees de sante vers un autre
+    hote. On coupe court : une redirection est une erreur, pas un detour.
+    """
+
+    def __init__(self):
+        import urllib.error
+        import urllib.request
+
+        class Handler(urllib.request.HTTPRedirectHandler):
+            def redirect_request(self, req, fp, code, msg, headers, newurl):
+                raise urllib.error.HTTPError(
+                    req.full_url, code,
+                    "redirection refusee vers %s : verifie l'URL de l'API "
+                    "et donne l'adresse finale" % newurl,
+                    headers, fp)
+
+        self.opener = urllib.request.build_opener(Handler)
+
+
+_OUVREUR = None
+
+
+def verifier_url(url, autoriser_http=False):
+    """Refuse d'envoyer des donnees medicales en clair."""
+    import urllib.parse
+
+    parties = urllib.parse.urlparse(url)
+    if parties.scheme == "https":
+        return
+    local = parties.hostname in ("localhost", "127.0.0.1", "::1")
+    if parties.scheme == "http" and (local or autoriser_http):
+        return
+    if parties.scheme != "http":
+        raise SystemExit("URL invalide : %s (attendu https://...)" % url)
+    raise SystemExit(
+        "Refus d'envoyer des donnees de sante en clair sur http://.\n"
+        "Utilise https://, ou --autoriser-http si tu sais ce que tu fais\n"
+        "(par exemple un serveur de test sur ton propre reseau).")
+
+
 def _envoyer(url, corps, entetes, essai, timeout=30):
+    global _OUVREUR
     import urllib.error
-    import urllib.request
 
     donnees = json.dumps(corps, ensure_ascii=False).encode("utf-8")
     if essai:
         return 200, "(essai) %d octets non envoyes" % len(donnees)
+    if _OUVREUR is None:
+        _OUVREUR = _RefuserRedirection().opener
+    import urllib.request
     requete = urllib.request.Request(url, data=donnees, method="POST")
     requete.add_header("Content-Type", "application/json")
     for cle, valeur in entetes.items():
         requete.add_header(cle, valeur)
     try:
-        with urllib.request.urlopen(requete, timeout=timeout) as reponse:
+        with _OUVREUR.open(requete, timeout=timeout) as reponse:
             return reponse.status, (reponse.read(400) or b"").decode("utf-8", "replace")
     except urllib.error.HTTPError as e:
-        return e.code, (e.read(400) or b"").decode("utf-8", "replace")
+        corps_erreur = b""
+        try:
+            corps_erreur = e.read(400) or b""
+        except Exception:
+            pass
+        return e.code, corps_erreur.decode("utf-8", "replace") or str(e.reason)
     except Exception as e:                      # reseau coupe, DNS, TLS...
         return 0, str(e)
 
@@ -1293,6 +1346,9 @@ def cmd_pousse(args):
             tranche = jours[i:i + taille]
             lots.append(preparer([dict(j) for j in tranche]))
 
+    if not args.essai:
+        verifier_url(args.url, args.autoriser_http)
+
     print("%d jours -> %d requete(s) vers %s%s"
           % (len(jours), len(lots), args.url, "  [ESSAI]" if args.essai else ""))
     if args.essai:
@@ -1332,8 +1388,15 @@ def cmd_pousse(args):
             print("  %d/%d" % (i, len(lots)))
 
     if args.etat:
-        with open(args.etat, "w", encoding="utf-8") as f:
+        # Ecriture atomique : une interruption au mauvais moment laisserait
+        # sinon un fichier tronque, et un fichier d'etat tronque fait soit
+        # tout re-envoyer, soit croire a tort que des jours sont partis.
+        provisoire = args.etat + ".tmp"
+        with open(provisoire, "w", encoding="utf-8") as f:
             json.dump({"envoyes": sorted(set(envoyes))}, f)
+            f.flush()
+            os.fsync(f.fileno())
+        os.replace(provisoire, args.etat)
         print("Etat enregistre dans %s (reprise possible)" % args.etat)
     print("Termine : %d requete(s) en echec." % echecs)
     return 1 if echecs else 0
@@ -1808,6 +1871,128 @@ def cmd_autotest(args):
              appliquer_profil(instantane, None) == instantane, "")
 
     print()
+    print("Envoi reseau")
+
+    recus = []
+
+    def _serveur():
+        """Petit serveur local qui accepte, redirige ou refuse selon le chemin."""
+        import http.server
+
+        class Poignee(http.server.BaseHTTPRequestHandler):
+            def do_POST(self):
+                taille = int(self.headers.get("Content-Length") or 0)
+                corps = self.rfile.read(taille)
+                if self.path == "/redirige":
+                    self.send_response(302)
+                    self.send_header("Location", "http://ailleurs.invalide/collecte")
+                    self.end_headers()
+                    return
+                recus.append({
+                    "chemin": self.path,
+                    "corps": json.loads(corps.decode("utf-8")),
+                    "auth": self.headers.get("Authorization"),
+                })
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json")
+                self.end_headers()
+                self.wfile.write(b'{"ok":true}')
+
+            def log_message(self, *a):
+                pass
+
+        return http.server.HTTPServer(("127.0.0.1", 0), Poignee)
+
+    import contextlib
+
+    def _sans_bruit(*args_ligne):
+        """Execute une commande en avalant son affichage, pour un test lisible."""
+        tampon = io.StringIO()
+        with contextlib.redirect_stdout(tampon):
+            code = main(list(args_ligne))
+        return code
+
+    serveur = None
+    try:
+        serveur = _serveur()
+    except Exception as e:
+        print("  (ignore : impossible d'ouvrir un serveur local — %s)" % e)
+
+    if serveur is not None:
+        import threading
+        fil = threading.Thread(target=serveur.serve_forever, daemon=True)
+        fil.start()
+        base = "http://127.0.0.1:%d" % serveur.server_address[1]
+
+        dossier = tempfile.mkdtemp()
+        chemin_jours = os.path.join(dossier, "jours.json")
+        with open(chemin_jours, "w", encoding="utf-8") as f:
+            json.dump({"meta": {}, "jours": [
+                {"date": "2024-03-15", "pas": 8640},
+                {"date": "2024-03-16", "pas": 7100},
+                {"date": "2024-03-17", "pas": 9300},
+            ]}, f)
+        chemin_etat = os.path.join(dossier, "etat.json")
+
+        os.environ["JETON_TEST"] = "secret-de-test"
+        code = _sans_bruit("pousse", chemin_jours, "--url", base + "/health",
+                           "--jeton-env", "JETON_TEST", "--etat", chemin_etat)
+        verifier("trois jours envoyes et acceptes",
+                 code == 0 and len(recus) == 3
+                 and [r["corps"]["date"] for r in recus] == ["2024-03-15", "2024-03-16", "2024-03-17"],
+                 [r["corps"] for r in recus])
+        verifier("jeton transmis depuis la variable d'environnement",
+                 all(r["auth"] == "Bearer secret-de-test" for r in recus),
+                 [r["auth"] for r in recus])
+
+        with open(chemin_etat, encoding="utf-8") as f:
+            etat = json.load(f)
+        verifier("fichier de reprise complet et sans residu temporaire",
+                 etat["envoyes"] == ["2024-03-15", "2024-03-16", "2024-03-17"]
+                 and not os.path.exists(chemin_etat + ".tmp"), etat)
+
+        avant = len(recus)
+        _sans_bruit("pousse", chemin_jours, "--url", base + "/health", "--etat", chemin_etat)
+        verifier("relance : rien n'est renvoye deux fois",
+                 len(recus) == avant, len(recus) - avant)
+
+        # Envoi par lots : verifier l'arithmetique des tranches.
+        recus.clear()
+        code = _sans_bruit("pousse", chemin_jours, "--url", base + "/lot",
+                           "--forme", "lot", "--taille-lot", "2",
+                           "--etat", os.path.join(dossier, "etat2.json"))
+        with open(os.path.join(dossier, "etat2.json"), encoding="utf-8") as f:
+            etat2 = json.load(f)
+        verifier("envoi par lots : 2 requetes, 3 jours marques",
+                 len(recus) == 2 and len(recus[0]["corps"]) == 2
+                 and len(recus[1]["corps"]) == 1 and len(etat2["envoyes"]) == 3,
+                 (len(recus), etat2.get("envoyes")))
+
+        # Une redirection ne doit pas rejouer la requete ailleurs.
+        recus.clear()
+        code = _sans_bruit("pousse", chemin_jours, "--url", base + "/redirige")
+        verifier("redirection refusee, jeton non rejoue ailleurs",
+                 code == 1 and not recus, (code, recus))
+
+        serveur.shutdown()
+
+    # http:// non local refuse d'office.
+    refus = ""
+    try:
+        verifier_url("http://exemple.test/health")
+    except SystemExit as e:
+        refus = str(e)
+    verifier("http:// distant refuse pour des donnees de sante",
+             "en clair" in refus, refus[:80])
+    ok_https = True
+    try:
+        verifier_url("https://exemple.test/health")
+        verifier_url("http://127.0.0.1:8000/health")
+    except SystemExit:
+        ok_https = False
+    verifier("https et boucle locale acceptes", ok_https, "")
+
+    print()
     print("%d verifications passees, %d en echec." % (len(faits), len(echecs)))
     return 1 if echecs else 0
 
@@ -1872,6 +2057,8 @@ def construire_parseur():
     q.add_argument("--jusqu-a", dest="jusqu_a")
     q.add_argument("--etat", help="fichier de reprise : les jours deja envoyes sont sautes")
     q.add_argument("--profil", help="fichier JSON decrivant la forme attendue par l'API")
+    q.add_argument("--autoriser-http", dest="autoriser_http", action="store_true",
+                   help="autorise une URL http:// non chiffree (deconseille)")
     q.add_argument("--essai", action="store_true",
                    help="n'envoie rien, affiche la requete qui serait faite")
     q.set_defaults(fonction=cmd_pousse)

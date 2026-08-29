@@ -140,6 +140,17 @@ résultat avec `--essai` avant d'envoyer quoi que ce soit.
 Le jeton se passe par variable d'environnement, jamais en argument ni dans un
 fichier : il n'a rien à faire dans un dépôt ni dans l'historique du shell.
 
+Trois garde-fous sur le seul chemin où des données médicales quittent la machine :
+
+- **`http://` refusé** pour tout hôte qui n'est pas la boucle locale. `https://`
+  ou rien — `--autoriser-http` existe pour un serveur de test chez soi.
+- **Redirections refusées.** Par défaut, urllib rejoue la requête à la nouvelle
+  adresse avec tous les en-têtes, jeton compris. Une redirection est traitée ici
+  comme une erreur, pas comme un détour.
+- **Fichier de reprise écrit de façon atomique**, pour qu'une interruption ne
+  laisse jamais un état tronqué — lequel ferait soit tout renvoyer, soit croire
+  à tort que des jours sont partis.
+
 En cas d'erreur réseau, chaque requête est retentée quatre fois (2 s, 4 s, 8 s,
 16 s). Une erreur 4xx est définitive et arrête le traitement du lot.
 
@@ -149,10 +160,11 @@ En cas d'erreur réseau, chaque requête est retentée quatre fois (2 s, 4 s, 8 
 python3 sante.py autotest
 ```
 
-43 vérifications sur des exports synthétiques : dédoublonnage, minuit, fuseaux,
+51 vérifications sur des exports synthétiques : dédoublonnage, minuit, fuseaux,
 unités régionales, stades de sommeil, anciens formats, corrélations, saisies
 manuelles, DTD démesurée ou malformée, export tronqué, en-tête absent, lecture
-en flux depuis le zip.
+en flux depuis le zip — et un envoi réseau réel contre un serveur local
+(transmission, jeton, reprise, lots, refus de redirection).
 
 Il a aussi été confronté à un véritable export Apple « HealthKit Export
 Version 12 », dont la DTD est réellement corrompue et que tous les analyseurs
