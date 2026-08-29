@@ -91,6 +91,11 @@ METRIQUES = {
 }
 
 SOMMEIL = C + "SleepAnalysis"
+
+
+def metrique_cumulative(type_):
+    m = METRIQUES.get(type_)
+    return m is not None and m.mode == "somme"
 HEURE_DEBOUT = C + "AppleStandHour"
 
 # Mesures qu'Apple ecrit en fraction 0-1 bien qu'elles portent unit="%".
@@ -111,6 +116,11 @@ STADES_ENDORMI = ("endormi", "leger", "profond", "rem")
 # Une nuit qui commence apres cette heure locale est rattachee au jour suivant,
 # ce qui reproduit l'affichage « nuit du ... » de l'app Sante.
 HEURE_BASCULE_NUIT = 18
+
+# Deux periodes de sommeil separees par plus de ce delai sont deux episodes
+# distincts : une nuit et une sieste de l'apres-midi ne doivent pas etre
+# fondues dans le meme instantane.
+SEUIL_SESSION_S = 3 * 3600
 
 # Au-dela, un intervalle est considere comme aberrant plutot que reparti.
 SPAN_MAX_JOURS = 31
@@ -454,11 +464,11 @@ def rang_source(source_nom, device, priorite):
     if priorite == "montre":
         if est_montre(source_nom, device):
             return 0
-        return 2 if est_telephone(source_nom, device) else 1
+        return 1 if est_telephone(source_nom, device) else 2
     if priorite == "telephone":
         if est_telephone(source_nom, device):
             return 0
-        return 2 if est_montre(source_nom, device) else 1
+        return 1 if est_montre(source_nom, device) else 2
     return 1
 
 
@@ -516,7 +526,10 @@ def decouper_par_jour(debut, fin, valeur):
             minuit = (curseur.replace(hour=0, minute=0, second=0, microsecond=0)
                       + dt.timedelta(days=1))
         except (OverflowError, ValueError):
-            yield (curseur.strftime("%Y-%m-%d"), curseur, fin, valeur)
+            # Ne rendre que la part restante : les jours precedents ont deja
+            # ete rendus, tout re-attribuer gonflerait le total.
+            reste = (fin - curseur).total_seconds() / total
+            yield (curseur.strftime("%Y-%m-%d"), curseur, fin, valeur * reste)
             return
         borne = fin if fin < minuit else minuit
         part = (borne - curseur).total_seconds() / total
@@ -541,6 +554,17 @@ def fusionner(intervalles):
 
 def duree_union(intervalles):
     return sum(b - a for a, b in fusionner(intervalles))
+
+
+def soustraire(intervalles, retires):
+    """Union de « intervalles » privee de l'union de « retires »."""
+    if not retires:
+        return fusionner(intervalles)
+    retires = fusionner(retires)
+    restant = []
+    for a, b in fusionner(intervalles):
+        restant.extend(parties_libres(a, b, retires))
+    return restant
 
 
 def parties_libres(debut, fin, couvert):
@@ -579,17 +603,15 @@ def resoudre_somme(entrees):
         entrees = [tuple(entrees[i:i + 4]) for i in range(0, len(entrees), 4)]
     total = 0.0
     couvert = []
-    ponctuels = set()
-    for rang, debut, fin, valeur in sorted(entrees, key=lambda e: (e[0], e[1], e[2])):
-        if fin <= debut:
-            cle = (debut, round(valeur, 6))
-            if cle in ponctuels:
-                continue
-            if any(a <= debut < b for a, b in couvert):
-                continue
-            ponctuels.add(cle)
-            total += valeur
-            continue
+
+    # Les intervalles d'abord, par priorite de source. Les enregistrements
+    # ponctuels ne couvrent aucune duree : les traiter dans le meme passage
+    # ferait compter deux fois un point prioritaire tombant dans un intervalle
+    # moins prioritaire, puisque le point n'entre jamais dans « couvert ».
+    intervalles = [e for e in entrees if e[2] > e[1]]
+    points = [e for e in entrees if e[2] <= e[1]]
+
+    for rang, debut, fin, valeur in sorted(intervalles, key=lambda e: (e[0], e[1], e[2])):
         libres = parties_libres(debut, fin, couvert)
         if not libres:
             continue
@@ -597,6 +619,16 @@ def resoudre_somme(entrees):
         gagne = sum(b - a for a, b in libres)
         total += valeur * (gagne / duree)
         couvert = fusionner(couvert + libres)
+
+    ponctuels = set()
+    for rang, debut, fin, valeur in sorted(points, key=lambda e: (e[0], e[1])):
+        cle = (debut, round(valeur, 6))
+        if cle in ponctuels:
+            continue
+        if any(a <= debut < b for a, b in couvert):
+            continue
+        ponctuels.add(cle)
+        total += valeur
     return total
 
 
@@ -625,7 +657,7 @@ class Agregateur:
         self.sommes_directes = defaultdict(float)
         self.moyennes = defaultdict(AccMoyenne)
         self.uniques = defaultdict(AccMoyenne)
-        self.sommeil = defaultdict(list)       # nuit -> (stade, debut_ts, fin_ts)
+        self.sommeil_segments = []             # (debut_ts, fin_ts, stade, dec_debut, dec_fin)
         self.anneaux = {}
         self.seances = defaultdict(list)
         self.heures_debout = defaultdict(int)
@@ -644,6 +676,20 @@ class Agregateur:
         self.anomalies = defaultdict(int)
 
     # -- filtres ----------------------------------------------------------
+
+    def _periode_touchee(self, jour_debut, jour_fin):
+        """L'intervalle [debut, fin] recoupe-t-il la periode demandee ?
+
+        Un enregistrement du 31 decembre 23h50 au 1er janvier 00h10 appartient
+        pour moitie a l'annee suivante : le filtrer sur son seul jour de debut
+        ferait perdre cette moitie lors d'un traitement annee par annee.
+        """
+        bas, haut = min(jour_debut, jour_fin), max(jour_debut, jour_fin)
+        if self.depuis and haut < self.depuis:
+            return False
+        if self.jusqu_a and bas > self.jusqu_a:
+            return False
+        return True
 
     def _dans_periode(self, jour):
         if self.depuis and jour < self.depuis:
@@ -675,14 +721,22 @@ class Agregateur:
 
         debut_txt = a.get("startDate")
         jour = jour_local(debut_txt)
-        if not jour or not self._dans_periode(jour):
+        if not jour:
             return
         if not self._source_acceptee(nom, device):
             return
 
         if type_ == SOMMEIL:
+            # Le filtre de periode s'applique a la nuit de rattachement, pas au
+            # jour ou le coucher a eu lieu : sans quoi demander « depuis le 16 »
+            # ferait disparaitre la nuit du 15 au 16.
             self._ingerer_sommeil(a)
             self.retenus += 1
+            return
+
+        if not self._dans_periode(jour) and not (
+                metrique_cumulative(type_)
+                and self._periode_touchee(jour, jour_local(a.get("endDate")) or jour)):
             return
 
         if type_ == HEURE_DEBOUT:
@@ -797,9 +851,6 @@ class Agregateur:
             self.anomalies["sommeil_dates_invalides"] += 1
             return
         try:
-            nuit = debut.date()
-            if debut.hour >= HEURE_BASCULE_NUIT:
-                nuit = nuit + dt.timedelta(days=1)
             bornes = (debut.timestamp(), fin.timestamp())
         except (OverflowError, ValueError, OSError):
             self.anomalies["date_hors_limites"] += 1
@@ -807,9 +858,48 @@ class Agregateur:
         if (fin - debut).days > 2:
             self.anomalies["nuit_invraisemblable"] += 1
             return
-        decalage = int((debut.utcoffset() or dt.timedelta()).total_seconds())
-        self.sommeil[nuit.strftime("%Y-%m-%d")].append(
-            (stade, bornes[0], bornes[1], decalage))
+        # Le rattachement a une nuit se fait plus tard, sur l'episode entier :
+        # decider segment par segment couperait en deux un endormissement qui
+        # traverse l'heure de bascule, et confondrait une sieste de l'apres-midi
+        # avec la nuit qui s'est terminee le matin meme.
+        self.sommeil_segments.append((
+            bornes[0], bornes[1], stade,
+            int((debut.utcoffset() or dt.timedelta()).total_seconds()),
+            int((fin.utcoffset() or dt.timedelta()).total_seconds())))
+
+    def _episodes_sommeil(self):
+        """Regroupe les segments en episodes separes par un trou notable."""
+        episodes = []
+        courant = []
+        fin_courante = None
+        for segment in sorted(self.sommeil_segments):
+            debut, fin = segment[0], segment[1]
+            if courant and debut - fin_courante > SEUIL_SESSION_S:
+                episodes.append(courant)
+                courant = []
+                fin_courante = None
+            courant.append(segment)
+            fin_courante = fin if fin_courante is None else max(fin_courante, fin)
+        if courant:
+            episodes.append(courant)
+        return episodes
+
+    @staticmethod
+    def _nuit_de(episode):
+        """Date a laquelle rattacher un episode : celle du reveil."""
+        debut, _, _, decalage, _ = min(episode)
+        try:
+            local = dt.datetime.fromtimestamp(
+                debut, dt.timezone(dt.timedelta(seconds=decalage)))
+            jour = local.date()
+            if local.hour >= HEURE_BASCULE_NUIT:
+                jour = jour + dt.timedelta(days=1)
+            return jour.strftime("%Y-%m-%d")
+        except (OverflowError, ValueError, OSError):
+            # Date aberrante en fin de plage representable : on rattache au
+            # jour tel quel plutot que de faire echouer tout l'export.
+            return dt.datetime.fromtimestamp(
+                debut, dt.timezone(dt.timedelta(seconds=decalage))).strftime("%Y-%m-%d")
 
     def ingerer_anneaux(self, el):
         a = el.attrib
@@ -848,43 +938,59 @@ class Agregateur:
 
     # -- restitution ------------------------------------------------------
 
-    def _resumer_nuit(self, segments):
+    @staticmethod
+    def _heure(horodatage, decalage):
+        return dt.datetime.fromtimestamp(
+            horodatage, dt.timezone(dt.timedelta(seconds=decalage))).strftime("%H:%M")
+
+    def _resumer_episode(self, episode):
         par_stade = defaultdict(list)
-        decalages = {}
-        for stade, debut, fin, decalage in segments:
+        dec_debut, dec_fin = {}, {}
+        for debut, fin, stade, decalage_d, decalage_f in episode:
             if fin > debut:
                 par_stade[stade].append((debut, fin))
-                decalages.setdefault(debut, decalage)
+                dec_debut.setdefault(debut, decalage_d)
+                dec_fin[fin] = decalage_f
 
-        endormi = []
+        eveil = fusionner(par_stade.get("eveil", []))
+        brut = []
         for stade in STADES_ENDORMI:
-            endormi.extend(par_stade.get(stade, []))
-        endormi = fusionner(endormi)
-        if not endormi and not par_stade.get("au_lit"):
+            brut.extend(par_stade.get(stade, []))
+        # Un segment explicitement marque « eveil » n'est pas du sommeil, meme
+        # si une autre source a couvert la meme plage d'un « endormi » grossier.
+        endormi = soustraire(brut, eveil)
+        au_lit = fusionner(par_stade.get("au_lit", []))
+        if not endormi and not au_lit:
             return None
 
-        total_min = sum(b - a for a, b in endormi) / 60.0
-        resume = {"total_min": arrondir(total_min, 0)}
+        secondes = sum(b - a for a, b in endormi)
+        resume = {"total_min": arrondir(secondes / 60.0, 0)}
         for stade, cle in (("leger", "leger_min"), ("profond", "profond_min"),
-                           ("rem", "rem_min"), ("eveil", "eveil_min"),
-                           ("au_lit", "au_lit_min")):
+                           ("rem", "rem_min")):
             if par_stade.get(stade):
-                resume[cle] = arrondir(duree_union(par_stade[stade]) / 60.0, 0)
+                resume[cle] = arrondir(
+                    sum(b - a for a, b in soustraire(par_stade[stade], eveil)) / 60.0, 0)
+        if eveil:
+            resume["eveil_min"] = arrondir(sum(b - a for a, b in eveil) / 60.0, 0)
+        if au_lit:
+            resume["au_lit_min"] = arrondir(sum(b - a for a, b in au_lit) / 60.0, 0)
 
-        reference = endormi or fusionner(par_stade.get("au_lit", []))
-        if reference:
-            debut = reference[0][0]
-            fin = reference[-1][1]
-            # On reaffiche dans le fuseau ou la nuit a ete vecue, pas dans
-            # celui de la machine qui fait le calcul.
-            fuseau = dt.timezone(dt.timedelta(
-                seconds=decalages.get(debut, next(iter(decalages.values()), 0))))
-            resume["debut"] = dt.datetime.fromtimestamp(debut, fuseau).strftime("%H:%M")
-            resume["fin"] = dt.datetime.fromtimestamp(fin, fuseau).strftime("%H:%M")
-            fenetre = fin - debut
-            if fenetre > 0:
-                resume["efficacite_pct"] = arrondir(100.0 * (total_min * 60.0) / fenetre, 1)
-            # Un reveil = une interruption entre deux blocs de sommeil.
+        reference = endormi or au_lit
+        debut, fin = reference[0][0], reference[-1][1]
+        resume["debut"] = self._heure(
+            debut, dec_debut.get(debut, next(iter(dec_debut.values()), 0)))
+        # L'heure de lever prend le decalage en vigueur AU LEVER : la nuit du
+        # changement d'heure, il n'est pas celui du coucher.
+        resume["fin"] = self._heure(
+            fin, dec_fin.get(fin, next(iter(dec_fin.values()), 0)))
+
+        if endormi:
+            # Efficacite au sens usuel : temps endormi rapporte au temps passe
+            # au lit. A defaut d'enregistrement « au lit » — Apple n'en ecrit
+            # plus depuis watchOS 11 — on retombe sur la duree de l'episode.
+            base = sum(b - a for a, b in au_lit) if au_lit else (fin - debut)
+            if base > 0:
+                resume["efficacite_pct"] = arrondir(min(100.0, 100.0 * secondes / base), 1)
             resume["reveils"] = max(0, len(endormi) - 1)
         return resume
 
@@ -918,10 +1024,25 @@ class Agregateur:
             metrique = par_cle.get(cle)
             jours[jour][cle] = arrondir(acc.moyenne, metrique.decimales if metrique else 2)
 
-        for nuit, segments in self.sommeil.items():
-            resume = self._resumer_nuit(segments)
+        par_nuit = defaultdict(list)
+        for episode in self._episodes_sommeil():
+            nuit = self._nuit_de(episode)
+            if not self._dans_periode(nuit):
+                continue
+            resume = self._resumer_episode(episode)
             if resume:
-                jours[nuit]["sommeil"] = resume
+                par_nuit[nuit].append(resume)
+
+        for nuit, resumes in par_nuit.items():
+            resumes.sort(key=lambda r: -(r.get("total_min") or 0))
+            jours[nuit]["sommeil"] = resumes[0]
+            if len(resumes) > 1:
+                # Les episodes secondaires du meme jour sont des siestes : les
+                # fondre dans la nuit fausserait heure de coucher, efficacite
+                # et nombre de reveils.
+                jours[nuit]["siestes"] = [
+                    {"debut": r["debut"], "fin": r["fin"], "duree_min": r["total_min"]}
+                    for r in resumes[1:]]
 
         for jour, n in self.heures_debout.items():
             jours[jour]["debout_h"] = n
@@ -1580,6 +1701,52 @@ def cmd_autotest(args):
     s = jours.get("2019-05-03", {}).get("sommeil", {})
     verifier("ancien format « Asleep » reconnu", s.get("total_min") == 420, s)
 
+    # Une sieste de l'apres-midi tombe le meme jour que la nuit qui s'est
+    # achevee le matin : les fondre fausserait coucher, efficacite et reveils.
+    jours, _ = _agreger_texte(_construire(
+        nuit
+        + _cat("HKCategoryValueSleepAnalysisAsleepCore",
+               "2024-03-16 14:00:00 +0100", "2024-03-16 14:50:00 +0100")))
+    j = jours.get("2024-03-16", {})
+    verifier("sieste separee de la nuit, pas fondue dedans",
+             j.get("sommeil", {}).get("total_min") == 420
+             and j.get("sommeil", {}).get("debut") == "23:30"
+             and j.get("siestes") and j["siestes"][0]["duree_min"] == 50,
+             {k: j.get(k) for k in ("sommeil", "siestes")})
+
+    # La nuit du 15 au 16 doit survivre a « depuis le 16 ».
+    jours, _ = _agreger_texte(_construire(nuit), depuis="2024-03-16")
+    verifier("nuit conservee quand la periode commence au jour du reveil",
+             jours.get("2024-03-16", {}).get("sommeil", {}).get("total_min") == 420,
+             list(jours))
+    jours, _ = _agreger_texte(_construire(nuit), jusqu_a="2024-03-15")
+    verifier("nuit ecartee quand la periode s'arrete la veille du reveil",
+             "2024-03-16" not in jours, list(jours))
+
+    # Une source grossiere « endormi » et une source qui detaille les reveils.
+    jours, _ = _agreger_texte(_construire(
+        _cat("HKCategoryValueSleepAnalysisAsleep",
+             "2024-03-15 23:00:00 +0100", "2024-03-16 06:00:00 +0100")
+        + _cat("HKCategoryValueSleepAnalysisAwake",
+               "2024-03-16 02:00:00 +0100", "2024-03-16 02:30:00 +0100",
+               source="AutreApp", device="")))
+    s = jours.get("2024-03-16", {}).get("sommeil", {})
+    verifier("un reveil declare par une autre source est deduit du sommeil",
+             s.get("total_min") == 390 and s.get("reveils") == 1, s)
+
+    # Efficacite : temps endormi rapporte au temps passe au lit.
+    s = _agreger_texte(_construire(nuit))[0]["2024-03-16"]["sommeil"]
+    verifier("efficacite calculee sur le temps au lit",
+             s.get("au_lit_min") == 480 and s.get("efficacite_pct") == 87.5, s)
+
+    # Nuit du changement d'heure : le lever ne se lit pas avec le fuseau du coucher.
+    jours, _ = _agreger_texte(_construire(
+        _cat("HKCategoryValueSleepAnalysisAsleepCore",
+             "2024-10-26 23:00:00 +0200", "2024-10-27 07:00:00 +0100")))
+    s = jours.get("2024-10-27", {}).get("sommeil", {})
+    verifier("heure de lever dans le fuseau du lever, pas du coucher",
+             s.get("debut") == "23:00" and s.get("fin") == "07:00", s)
+
     print()
     print("Autres elements")
 
@@ -1707,6 +1874,32 @@ def cmd_autotest(args):
              _chrono() - debut_chrono < 2.0
              and jours.get("2024-03-15", {}).get("pas") == 400,
              (round(_chrono() - debut_chrono, 2), list(jours)))
+
+    # Ordre de priorite annonce : saisie manuelle, montre, iPhone, apps tierces.
+    xml = _construire(
+        _rec(Q + "StepCount", 1000, "2024-03-15 08:00:00 +0100", "2024-03-15 09:00:00 +0100",
+             source="iPhone de Test", device=TELEPHONE)
+        + _rec(Q + "StepCount", 4000, "2024-03-15 08:00:00 +0100", "2024-03-15 09:00:00 +0100",
+               source="Une app tierce", device=""))
+    jours, _ = _agreger_texte(xml)
+    verifier("une app tierce ne passe pas devant l'iPhone",
+             jours["2024-03-15"]["pas"] == 1000, jours["2024-03-15"].get("pas"))
+
+    # Un enregistrement ponctuel prioritaire dans un intervalle moins prioritaire.
+    xml = _construire(
+        _rec(Q + "StepCount", 300, "2024-03-15 08:30:00 +0100")
+        + _rec(Q + "StepCount", 1000, "2024-03-15 08:00:00 +0100", "2024-03-15 09:00:00 +0100",
+               source="iPhone de Test", device=TELEPHONE))
+    jours, _ = _agreger_texte(xml)
+    verifier("point prioritaire dans un intervalle : pas de double comptage",
+             jours["2024-03-15"]["pas"] == 1000, jours["2024-03-15"].get("pas"))
+
+    # Enregistrement a cheval sur le 1er janvier, traitement annee par annee.
+    xml = _construire(_rec(Q + "ActiveEnergyBurned", 100, "2023-12-31 23:00:00 +0100",
+                           "2024-01-01 01:00:00 +0100", unit="kcal"))
+    jours, _ = _agreger_texte(xml, depuis="2024-01-01")
+    verifier("part de l'annee demandee conservee malgre un debut la veille",
+             jours.get("2024-01-01", {}).get("energie_active_kcal") == 50.0, list(jours))
 
     print()
     print("Pieges du format Apple")

@@ -160,7 +160,7 @@ En cas d'erreur réseau, chaque requête est retentée quatre fois (2 s, 4 s, 8 
 python3 sante.py autotest
 ```
 
-51 vérifications sur des exports synthétiques : dédoublonnage, minuit, fuseaux,
+60 vérifications sur des exports synthétiques : dédoublonnage, minuit, fuseaux,
 unités régionales, stades de sommeil, anciens formats, corrélations, saisies
 manuelles, DTD démesurée ou malformée, export tronqué, en-tête absent, lecture
 en flux depuis le zip — et un envoi réseau réel contre un serveur local
@@ -231,10 +231,24 @@ calcul : les données enregistrées en voyage tombent sur le bon jour, et les
 changements d'heure ne posent pas de problème. Les heures de coucher et de lever
 sont réaffichées dans le fuseau où la nuit a été vécue.
 
-**Les nuits.** Une nuit commencée après 18h est rattachée au **jour du réveil**,
-comme dans l'app Santé. Les segments qui se chevauchent — la montre en écrit
-beaucoup, et une app tierce peut écrire les siens — sont unis avant d'être
-comptés, jamais additionnés.
+**Les nuits.** Les segments sont d'abord regroupés en **épisodes** — deux
+périodes séparées par plus de trois heures sont deux sommeils distincts — puis
+chaque épisode est rattaché au **jour du réveil**, comme dans l'app Santé. Une
+sieste de l'après-midi tombe le même jour que la nuit achevée le matin : elle
+sort sous `siestes`, sans fausser l'heure de coucher, l'efficacité ni le nombre
+de réveils de la nuit.
+
+Les segments qui se chevauchent — la montre en écrit beaucoup, une app tierce
+peut écrire les siens — sont unis avant d'être comptés, jamais additionnés. Un
+segment explicitement marqué « éveil » est **retranché** du sommeil, même si une
+autre source a couvert la même plage d'un « endormi » grossier.
+
+L'efficacité est le temps endormi rapporté au **temps passé au lit**, la
+définition usuelle. À défaut d'enregistrement « au lit » — Apple n'en écrit plus
+depuis watchOS 11 — elle retombe sur la durée de l'épisode.
+
+Le filtre de période s'applique à la nuit de rattachement, pas au jour du
+coucher : demander « depuis le 16 » conserve la nuit du 15 au 16.
 
 **Unités.** Miles, pieds, livres, degrés Fahrenheit et kilojoules sont convertis.
 L'unité dépend des réglages régionaux et peut changer au fil de l'historique.
