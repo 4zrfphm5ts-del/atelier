@@ -307,6 +307,12 @@ jour sans Xcode, en attendant `dailyHistory` dans NocturneKit. Une automatisatio
 programmée exige toutefois un iPhone déverrouillé : les données de santé sont
 inaccessibles sur un appareil verrouillé.
 
+**Les doublons exacts.** Deux enregistrements de durée nulle portant le même
+instant et la même valeur sont comptés une seule fois. C'est un choix, pas un
+oubli : l'export n'exporte aucun identifiant d'échantillon, et les restaurations
+iCloud ou un changement de montre produisent réellement des lignes strictement
+identiques. Rien ne permet de les distinguer de vrais doublons.
+
 **Ce que l'outil ne peut pas faire.** `export.xml` ne contient pas l'ordre de
 priorité des sources configuré dans l'app Santé. Reproduire au chiffre près ce
 qu'affiche l'app est donc structurellement impossible à partir du seul fichier.
