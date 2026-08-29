@@ -160,7 +160,7 @@ En cas d'erreur réseau, chaque requête est retentée quatre fois (2 s, 4 s, 8 
 python3 sante.py autotest
 ```
 
-60 vérifications sur des exports synthétiques : dédoublonnage, minuit, fuseaux,
+74 vérifications sur des exports synthétiques : dédoublonnage, minuit, fuseaux,
 unités régionales, stades de sommeil, anciens formats, corrélations, saisies
 manuelles, DTD démesurée ou malformée, export tronqué, en-tête absent, lecture
 en flux depuis le zip — et un envoi réseau réel contre un serveur local
@@ -252,6 +252,13 @@ coucher : demander « depuis le 16 » conserve la nuit du 15 au 16.
 
 **Unités.** Miles, pieds, livres, degrés Fahrenheit et kilojoules sont convertis.
 L'unité dépend des réglages régionaux et peut changer au fil de l'historique.
+
+**L'identification de la montre.** Elle se fait par l'attribut `device`, qui
+contient `hardware:Watch`. Le repli sur le nom de la source n'intervient que
+lorsque cet attribut manque — il manque réellement sur certains enregistrements
+— et exige « apple watch » : se contenter de « watch » ferait passer pour une
+Apple Watch n'importe quelle app tierce au nom bien choisi, et lui donnerait la
+priorité sur les vraies mesures.
 
 **Le nom du fichier.** Le XML n'est pas reconnu à son nom : celui-ci est
 traduit selon la langue de l'iPhone. Il est reconnu à son contenu, en cherchant

@@ -173,6 +173,23 @@ def arrondir(valeur, decimales):
     return int(v) if decimales == 0 else v
 
 
+def valider_date(txt, nom):
+    """Une date de periode mal formee filtrerait tout, ou rien, en silence."""
+    if txt is None:
+        return None
+    # Le format doit etre exact : les dates sont comparees telles quelles, sous
+    # forme de chaines. « 2024-3-15 », que strptime accepte pourtant, se
+    # placerait APRES « 2024-12-31 » dans l'ordre alphabetique et filtrerait
+    # tout de travers.
+    if not re.match(r"^\d{4}-\d{2}-\d{2}$", txt):
+        raise SystemExit("%s : date attendue au format AAAA-MM-JJ, recu %r" % (nom, txt))
+    try:
+        dt.datetime.strptime(txt, "%Y-%m-%d")
+    except ValueError:
+        raise SystemExit("%s : date inexistante au calendrier : %r" % (nom, txt))
+    return txt
+
+
 def nombre(txt):
     """Convertit en flottant, en rejetant NaN et l'infini.
 
@@ -191,7 +208,7 @@ def nombre(txt):
 # --------------------------------------------------------------------------
 
 TETE_SNIFF = 64 * 1024
-PLAFOND_SNIFF = 8 * 1024 * 1024
+PLAFOND_SNIFF = 16 * 1024 * 1024
 MARQUEUR = b"<HealthData "
 VERSION_EXPORT = re.compile(rb"HealthKit Export Version:\s*(\d+)")
 
@@ -275,12 +292,25 @@ def ouvrir_export(chemin):
 
     if zipfile.is_zipfile(chemin):
         z = zipfile.ZipFile(chemin)
+        retenu = None
+        autres = []
         for nom in _candidats_xml(z.namelist()):
             with z.open(nom, "r") as sonde:
                 trouve, tete = _sonder(sonde)
-            if trouve:
-                return (z.open(nom, "r"), "%s!%s" % (chemin, nom),
-                        {"version_export": _version_export(tete)})
+            if not trouve:
+                continue
+            if retenu is None:
+                retenu = (nom, tete)
+            else:
+                autres.append(nom)
+        if retenu is not None:
+            nom, tete = retenu
+            if autres:
+                sys.stderr.write(
+                    "  L'archive contient plusieurs jeux de donnees HealthKit.\n"
+                    "  Retenu : %s (ignores : %s)\n" % (nom, ", ".join(autres)))
+            return (z.open(nom, "r"), "%s!%s" % (chemin, nom),
+                    {"version_export": _version_export(tete)})
         raise SystemExit(
             "Aucun fichier de donnees HealthKit dans %s.\n"
             "L'archive contient : %s"
@@ -356,6 +386,8 @@ class FiltreDTD(io.RawIOBase):
         self._tampon = debut[:i] + debut[j + 2:]
 
     def readinto(self, cible):
+        if len(cible) == 0:
+            return 0
         if not self._entete_traitee:
             self._lire_entete()
             self._entete_traitee = True
@@ -386,12 +418,14 @@ def elements(flux, balises, sur_progression=None):
     contexte = ET.iterparse(tampon, events=("start", "end"))
     racine = None
     lus = 0
+    profondeur = 0
     dans_correlation = 0
     for evenement, element in contexte:
         if racine is None:
             racine = element
             continue
         if evenement == "start":
+            profondeur += 1
             # Apple le dit dans sa propre DTD : « Any Records that appear as
             # children of a correlation also appear as top-level records in
             # this document. » Un repas ou une tension arterielle apparait donc
@@ -401,18 +435,23 @@ def elements(flux, balises, sur_progression=None):
             if element.tag == "Correlation":
                 dans_correlation += 1
             continue
+        profondeur -= 1
         if element.tag == "Correlation":
-            dans_correlation -= 1
+            dans_correlation = max(0, dans_correlation - 1)
         elif element.tag in balises and dans_correlation == 0:
             yield element
             lus += 1
             if sur_progression and lus % 200000 == 0:
                 sur_progression(lus)
-        else:
+        elif profondeur > 0:
             # Enfant d'un element encore ouvert (MetadataEntry,
             # InstantaneousBeatsPerMinute...) : le vider maintenant effacerait
             # des attributs dont le parent a besoin. Il sera libere avec lui.
             continue
+        # Tout element de premier niveau, meme non retenu (ClinicalRecord,
+        # Audiogram...), doit etre detache de la racine : sans quoi une longue
+        # serie d'elements ignores ferait enfler la memoire jusqu'a la taille
+        # du fichier.
         element.clear()
         if racine is not None:
             racine.clear()
@@ -435,14 +474,22 @@ def est_montre(source_nom, device):
         return True
     if re.search(r"model:Watch\b", d):
         return True
-    n = sans_accent(source_nom)
-    return "watch" in n or "montre" in n
+    # Repli sur le nom uniquement quand l'attribut device manque — il manque
+    # reellement sur certains enregistrements ecrits par la montre. On exige
+    # « apple watch » : se contenter de « watch » ferait passer pour une Apple
+    # Watch n'importe quelle app tierce au nom bien choisi, et lui donnerait la
+    # priorite sur les vraies mesures.
+    if d:
+        return False
+    return "apple watch" in sans_accent(source_nom)
 
 
 def est_telephone(source_nom, device):
     d = device or ""
     if "hardware:iPhone" in d or "name:iPhone" in d:
         return True
+    if d:
+        return False
     return "iphone" in sans_accent(source_nom)
 
 
@@ -660,7 +707,7 @@ class Agregateur:
         self.sommeil_segments = []             # (debut_ts, fin_ts, stade, dec_debut, dec_fin)
         self.anneaux = {}
         self.seances = defaultdict(list)
-        self.heures_debout = defaultdict(int)
+        self.heures_debout = defaultdict(set)
 
         self.export_date = None
         self.sources_vues = defaultdict(int)
@@ -742,7 +789,9 @@ class Agregateur:
         if type_ == HEURE_DEBOUT:
             # Un enregistrement par heure de la journee, « Stood » ou « Idle ».
             if a.get("value", "").endswith("Stood"):
-                self.heures_debout[jour] += 1
+                # Plusieurs sources peuvent declarer la meme heure : compter les
+                # enregistrements ferait depasser 24. On compte des heures.
+                self.heures_debout[jour].add(debut_txt[11:13])
             self.retenus += 1
             return
 
@@ -818,6 +867,8 @@ class Agregateur:
                 return valeur / 1000.0
             if u == "ft":
                 return valeur * 0.0003048
+            if u == "yd":
+                return valeur * 0.0009144
             return valeur
         if metrique.cle.startswith("temp_") and u in ("degF", "F"):
             return (valeur - 32.0) * 5.0 / 9.0
@@ -930,9 +981,12 @@ class Agregateur:
         jour = jour_local(a.get("startDate"))
         if not jour or not self._dans_periode(jour):
             return
+        if not self._source_acceptee(a.get("sourceName", ""), a.get("device", "")):
+            return
         duree = nombre(a.get("duration")) or 0.0
-        if (a.get("durationUnit") or "min") == "sec":
-            duree /= 60.0
+        # HealthKit ecrit « s », « sec », « min », « hr »... selon les versions.
+        facteurs = {"s": 1 / 60.0, "sec": 1 / 60.0, "min": 1.0, "hr": 60.0, "h": 60.0}
+        duree *= facteurs.get((a.get("durationUnit") or "min").strip(), 1.0)
         type_ = (a.get("workoutActivityType") or "").replace("HKWorkoutActivityType", "")
         self.seances[jour].append({"type": type_, "duree_min": arrondir(duree, 1)})
 
@@ -1044,8 +1098,8 @@ class Agregateur:
                     {"debut": r["debut"], "fin": r["fin"], "duree_min": r["total_min"]}
                     for r in resumes[1:]]
 
-        for jour, n in self.heures_debout.items():
-            jours[jour]["debout_h"] = n
+        for jour, heures in self.heures_debout.items():
+            jours[jour]["debout_h"] = len(heures)
 
         for jour, anneau in self.anneaux.items():
             jours[jour]["anneaux"] = {k: v for k, v in anneau.items() if v is not None}
@@ -1109,6 +1163,13 @@ def analyser(chemin, agregateur, avec_seances=True, silencieux=False):
                 agregateur.ingerer_seance(el)
             elif el.tag == "ExportDate":
                 agregateur.export_date = el.attrib.get("value")
+    except (zipfile.BadZipFile, EOFError) as e:
+        agregateur.anomalies["archive_illisible"] = 1
+        agregateur.erreur_lecture = str(e)
+        if not silencieux:
+            sys.stderr.write(
+                "\n  L'archive est illisible (%s) : le transfert depuis l'iPhone\n"
+                "  s'est probablement interrompu. Refais l'export.\n" % e)
     except ET.ParseError as e:
         # Export tronque ou mal forme. Mieux vaut rendre les jours deja lus que
         # rien du tout.
@@ -1145,6 +1206,8 @@ def analyser(chemin, agregateur, avec_seances=True, silencieux=False):
 
 def cmd_inspecte(args):
     """Dresse l'etat des lieux du fichier sans rien agreger."""
+    import xml.etree.ElementTree as ET
+
     flux, description, infos = ouvrir_export(args.export)
     types = defaultdict(int)
     sources = defaultdict(int)
@@ -1180,6 +1243,12 @@ def cmd_inspecte(args):
                     premier = j
                 if dernier is None or j > dernier:
                     dernier = j
+    except (ET.ParseError, zipfile.BadZipFile, EOFError) as e:
+        # La commande conseillee en premier ne doit pas s'effondrer sur un
+        # fichier abime : elle dit ce qu'elle a pu lire, et pourquoi elle
+        # s'arrete la.
+        sys.stderr.write("\n  Lecture interrompue (%s).\n"
+                         "  Ce qui suit ne porte que sur la partie lisible.\n" % e)
     finally:
         flux.close()
     sys.stderr.write("\r" + " " * 48 + "\r")
@@ -1201,8 +1270,11 @@ def cmd_inspecte(args):
     print()
     print("Types de mesures (: reconnu par l'outil, . ignore) :")
     for type_, n in sorted(types.items(), key=lambda kv: -kv[1]):
-        connu = ":" if (type_ in METRIQUES or type_ == SOMMEIL
-                        or type_.startswith("<")) else "."
+        metrique = METRIQUES.get(type_)
+        exploite = (type_.startswith("<")
+                    or type_ in (SOMMEIL, HEURE_DEBOUT)
+                    or (metrique is not None and metrique.cle != "_ignore_"))
+        connu = ":" if exploite else "."
         court = type_.replace(Q, "").replace(C, "")
         u = ",".join(sorted(unites.get(type_, ()))) or ""
         print("  %s %8s  %-38s %s" % (connu, f"{n:,}".replace(",", " "), court, u))
@@ -1214,6 +1286,8 @@ def cmd_inspecte(args):
 # --------------------------------------------------------------------------
 
 def cmd_agrege(args):
+    args.depuis = valider_date(args.depuis, "--depuis")
+    args.jusqu_a = valider_date(args.jusqu_a, "--jusqu-a")
     if args.leger:
         args.source = args.source or "montre"
         args.sans_dedup = True
@@ -1325,7 +1399,12 @@ def _envoyer(url, corps, entetes, essai, timeout=30):
     global _OUVREUR
     import urllib.error
 
-    donnees = json.dumps(corps, ensure_ascii=False).encode("utf-8")
+    try:
+        # allow_nan=False : un NaN venu d'un jours.json bricole a la main
+        # produirait un corps que la plupart des serveurs rejettent.
+        donnees = json.dumps(corps, ensure_ascii=False, allow_nan=False).encode("utf-8")
+    except ValueError as e:
+        return 0, "corps non serialisable en JSON (%s)" % e
     if essai:
         return 200, "(essai) %d octets non envoyes" % len(donnees)
     if _OUVREUR is None:
@@ -1354,10 +1433,13 @@ PROFIL_EXEMPLE = {
                   "sont facultatives.",
     "champ_date": "date",
     "enveloppe": None,
-    "garder": ["date", "pas", "fc_repos", "sommeil"],
-    "renommer": {"pas": "steps", "fc_repos": "restingHeartRate",
-                 "sommeil": "sleep", "energie_active_kcal": "activeEnergy"},
+    "garder": ["date", "pas", "fc_repos", "energie_active_kcal",
+               "sommeil_total_min", "sommeil_profond_min"],
     "aplatir": {"sommeil": "sommeil_"},
+    "renommer": {"pas": "steps", "fc_repos": "restingHeartRate",
+                 "energie_active_kcal": "activeEnergy",
+                 "sommeil_total_min": "sleepMinutes",
+                 "sommeil_profond_min": "deepSleepMinutes"},
     "constantes": {"source": "apple-health-export"},
 }
 
@@ -1387,8 +1469,13 @@ def appliquer_profil(jour, profil):
         prefixes = tuple(p for p in (profil.get("aplatir") or {}).values()
                          if isinstance(p, str))
         garder = set(garder)
+        # Un prefixe d'aplatissement laisse passer tout le sous-objet, SAUF si
+        # « garder » nomme explicitement au moins une des cles qui en sortent :
+        # dans ce cas c'est « garder » qui decide, sinon il serait sans effet.
+        detailles = {p for p in prefixes if any(k.startswith(p) for k in garder)}
+        ouverts = tuple(p for p in prefixes if p not in detailles)
         sortie = {k: v for k, v in sortie.items()
-                  if k in garder or (prefixes and k.startswith(prefixes))}
+                  if k in garder or (ouverts and k.startswith(ouverts))}
 
     for ancien, neuf in (profil.get("renommer") or {}).items():
         if ancien in sortie:
@@ -1414,6 +1501,9 @@ def cmd_pousse(args):
             args.champ_date = profil["champ_date"]
         if profil.get("enveloppe") and not args.enveloppe:
             args.enveloppe = profil["enveloppe"]
+
+    args.depuis = valider_date(args.depuis, "--depuis")
+    args.jusqu_a = valider_date(args.jusqu_a, "--jusqu-a")
 
     jours, _ = _charger_jours(args.jours)
     if args.depuis:
@@ -1446,14 +1536,17 @@ def cmd_pousse(args):
                 "dans un fichier versionne)." % args.jeton_env)
         entetes["Authorization"] = args.prefixe_jeton + jeton
 
+    def _renommer_date(jour):
+        if args.champ_date != "date" and isinstance(jour, dict) and "date" in jour:
+            jour = dict(jour)
+            jour[args.champ_date] = jour.pop("date")
+        return jour
+
     def preparer(charge):
-        if isinstance(charge, dict):
-            charge = appliquer_profil(charge, profil)
-        elif isinstance(charge, list):
-            charge = [appliquer_profil(j, profil) for j in charge]
-        if args.champ_date != "date" and isinstance(charge, dict) and "date" in charge:
-            charge = dict(charge)
-            charge[args.champ_date] = charge.pop("date")
+        if isinstance(charge, list):
+            charge = [_renommer_date(appliquer_profil(j, profil)) for j in charge]
+        else:
+            charge = _renommer_date(appliquer_profil(charge, profil))
         if args.enveloppe:
             return {args.enveloppe: charge}
         return charge
@@ -1476,19 +1569,34 @@ def cmd_pousse(args):
         print("\nCorps de la premiere requete :")
         print(json.dumps(lots[0], ensure_ascii=False, indent=1)[:2000])
         if entetes:
-            print("\nEn-tetes : %s" % {k: ("***" if k.lower() == "authorization" else v)
-                                       for k, v in entetes.items()})
+            secrets = ("authorization", "token", "jeton", "key", "cle", "secret",
+                       "cookie", "api")
+            print("\nEn-tetes : %s" % {
+                k: ("***" if any(m in k.lower() for m in secrets) else v)
+                for k, v in entetes.items()})
         return 0
 
     envoyes = list(deja)
+
+    def sauver_etat():
+        if not args.etat:
+            return
+        provisoire = args.etat + ".tmp"
+        with open(provisoire, "w", encoding="utf-8") as f:
+            json.dump({"envoyes": sorted(set(envoyes))}, f)
+            f.flush()
+            os.fsync(f.fileno())
+        os.replace(provisoire, args.etat)
+
     echecs = 0
+    interrompu = False
     for i, corps in enumerate(lots, 1):
         attente = 2.0
         for tentative in range(1, 5):
             code, texte = _envoyer(args.url, corps, entetes, args.essai)
             if 200 <= code < 300:
                 break
-            if code in (400, 401, 403, 404, 422):
+            if code in (400, 401, 403, 404, 422) or 300 <= code < 400:
                 print("  requete %d : erreur definitive %s — %s" % (i, code, texte[:200]))
                 break
             if tentative < 4:
@@ -1500,27 +1608,29 @@ def cmd_pousse(args):
             else:
                 taille = max(1, args.taille_lot)
                 envoyes.extend(j["date"] for j in jours[(i - 1) * taille:i * taille])
+            echecs = 0          # le compteur ne vaut que pour des echecs de SUITE
         else:
             echecs += 1
             if echecs >= 3:
                 print("Trois echecs consecutifs, arret.")
+                interrompu = True
                 break
+        # L'etat est enregistre en cours de route : une interruption ne doit
+        # jamais couter la totalite de ce qui a deja ete envoye.
+        if i % 10 == 0:
+            sauver_etat()
         if i % 20 == 0 or i == len(lots):
             print("  %d/%d" % (i, len(lots)))
 
     if args.etat:
-        # Ecriture atomique : une interruption au mauvais moment laisserait
-        # sinon un fichier tronque, et un fichier d'etat tronque fait soit
-        # tout re-envoyer, soit croire a tort que des jours sont partis.
-        provisoire = args.etat + ".tmp"
-        with open(provisoire, "w", encoding="utf-8") as f:
-            json.dump({"envoyes": sorted(set(envoyes))}, f)
-            f.flush()
-            os.fsync(f.fileno())
-        os.replace(provisoire, args.etat)
+        sauver_etat()
         print("Etat enregistre dans %s (reprise possible)" % args.etat)
-    print("Termine : %d requete(s) en echec." % echecs)
-    return 1 if echecs else 0
+    restants = len(jours) - len(set(envoyes) - deja)
+    if interrompu:
+        print("Arret apres trois echecs de suite ; %d jour(s) non envoye(s)." % restants)
+    else:
+        print("Termine : %d requete(s) en echec." % echecs)
+    return 1 if (echecs or interrompu) else 0
 
 
 # --------------------------------------------------------------------------
@@ -2021,9 +2131,8 @@ def cmd_autotest(args):
     resultat = {j["date"]: j for j in agregateur.finaliser()}
     verifier("fichier reconnu a son contenu, pas a son nom traduit",
              resultat.get("2024-03-15", {}).get("pas") == 606, list(resultat))
-    verifier("version du format relevee",
-             agregateur.version_export is None or isinstance(agregateur.version_export, int),
-             agregateur.version_export)
+    verifier("absence de numero de version correctement rapportee",
+             agregateur.version_export is None, agregateur.version_export)
 
     # export_cda.xml seul : message clair plutot qu'erreur d'analyseur.
     seul = os.path.join(dossier, "export_cda.xml")
@@ -2067,21 +2176,32 @@ def cmd_autotest(args):
     print("Envoi reseau")
 
     recus = []
+    detournes = []
+    etat_serveur = {"echouer_a_partir_de": None, "recus": 0}
 
-    def _serveur():
-        """Petit serveur local qui accepte, redirige ou refuse selon le chemin."""
+    def _serveur(journal, redirection_vers=None):
+        """Serveur local d'essai. Peut accepter, rediriger, ou echouer."""
         import http.server
 
         class Poignee(http.server.BaseHTTPRequestHandler):
             def do_POST(self):
                 taille = int(self.headers.get("Content-Length") or 0)
                 corps = self.rfile.read(taille)
-                if self.path == "/redirige":
+                if self.path == "/redirige" and redirection_vers:
+                    # 302 : urllib le suit par defaut sur un POST, en le
+                    # transformant en GET — sans le corps, mais AVEC l'en-tete
+                    # d'authentification. C'est la fuite qu'on veut empecher.
                     self.send_response(302)
-                    self.send_header("Location", "http://ailleurs.invalide/collecte")
+                    self.send_header("Location", redirection_vers + "/collecte")
                     self.end_headers()
                     return
-                recus.append({
+                etat_serveur["recus"] += 1
+                seuil = etat_serveur["echouer_a_partir_de"]
+                if seuil is not None and etat_serveur["recus"] >= seuil:
+                    self.send_response(500)
+                    self.end_headers()
+                    return
+                journal.append({
                     "chemin": self.path,
                     "corps": json.loads(corps.decode("utf-8")),
                     "auth": self.headers.get("Authorization"),
@@ -2090,6 +2210,13 @@ def cmd_autotest(args):
                 self.send_header("Content-Type", "application/json")
                 self.end_headers()
                 self.wfile.write(b'{"ok":true}')
+
+            def do_GET(self):
+                # Une redirection suivie arrive ici, jeton compris.
+                journal.append({"chemin": self.path, "methode": "GET",
+                                "auth": self.headers.get("Authorization")})
+                self.send_response(200)
+                self.end_headers()
 
             def log_message(self, *a):
                 pass
@@ -2105,9 +2232,13 @@ def cmd_autotest(args):
             code = main(list(args_ligne))
         return code
 
-    serveur = None
+    serveur = collecteur = None
     try:
-        serveur = _serveur()
+        collecteur = _serveur(detournes)
+        import threading as _t
+        _t.Thread(target=collecteur.serve_forever, daemon=True).start()
+        cible = "http://127.0.0.1:%d" % collecteur.server_address[1]
+        serveur = _serveur(recus, redirection_vers=cible)
     except Exception as e:
         print("  (ignore : impossible d'ouvrir un serveur local — %s)" % e)
 
@@ -2162,12 +2293,45 @@ def cmd_autotest(args):
                  (len(recus), etat2.get("envoyes")))
 
         # Une redirection ne doit pas rejouer la requete ailleurs.
+        # La destination de la redirection est un VRAI serveur qui enregistre :
+        # sans le garde-fou, urllib rejouerait la requete et les donnees de
+        # sante atterriraient chez lui. Le test echouerait alors.
         recus.clear()
-        code = _sans_bruit("pousse", chemin_jours, "--url", base + "/redirige")
-        verifier("redirection refusee, jeton non rejoue ailleurs",
-                 code == 1 and not recus, (code, recus))
+        detournes.clear()
+        code = _sans_bruit("pousse", chemin_jours, "--url", base + "/redirige",
+                           "--jeton-env", "JETON_TEST")
+        verifier("redirection refusee : rien n'arrive a la destination detournee",
+                 code == 1 and not detournes and not recus,
+                 (code, len(detournes), len(recus)))
+
+        # Une interruption ne doit pas couter tout ce qui est deja parti.
+        gros = os.path.join(dossier, "beaucoup.json")
+        with open(gros, "w", encoding="utf-8") as f:
+            json.dump({"jours": [{"date": "2024-05-%02d" % (n + 1), "pas": 100 + n}
+                                 for n in range(25)]}, f)
+        etat_partiel = os.path.join(dossier, "etat3.json")
+        recus.clear()
+        etat_serveur["recus"] = 0
+        etat_serveur["echouer_a_partir_de"] = 13
+        code = _sans_bruit("pousse", gros, "--url", base + "/health",
+                           "--etat", etat_partiel)
+        etat_serveur["echouer_a_partir_de"] = None
+        with open(etat_partiel, encoding="utf-8") as f:
+            partiel = json.load(f)["envoyes"]
+        verifier("interruption : les jours deja envoyes restent memorises",
+                 code == 1 and len(partiel) == 12
+                 and partiel[0] == "2024-05-01" and partiel[-1] == "2024-05-12",
+                 (code, len(partiel)))
+
+        recus.clear()
+        code = _sans_bruit("pousse", gros, "--url", base + "/health",
+                           "--etat", etat_partiel)
+        verifier("reprise apres interruption : seuls les jours restants partent",
+                 len(recus) == 13 and recus[0]["corps"]["date"] == "2024-05-13",
+                 [r["corps"]["date"] for r in recus[:2]])
 
         serveur.shutdown()
+        collecteur.shutdown()
 
     # http:// non local refuse d'office.
     refus = ""
@@ -2184,6 +2348,60 @@ def cmd_autotest(args):
     except SystemExit:
         ok_https = False
     verifier("https et boucle locale acceptes", ok_https, "")
+
+    print()
+    print("Divers correctifs")
+
+    # Une app tierce nommee « watch » ne doit pas passer pour l'Apple Watch.
+    verifier("une app tierce nommee « watch » n'est pas prise pour la montre",
+             not est_montre("Watch Sleep Tracker", ""), "")
+    verifier("la montre reste reconnue par son materiel",
+             est_montre("N'importe quoi", MONTRE.replace("&lt;", "<").replace("&gt;", ">")), "")
+    verifier("la montre reste reconnue par son nom quand device manque",
+             est_montre("Apple Watch de Test", ""), "")
+
+    # Heures debout : deux sources sur la meme heure ne font pas deux heures.
+    doublons = "".join(
+        '  <Record type="%s" sourceName="%s" device="" '
+        'startDate="2024-03-15 %02d:00:00 +0100" endDate="2024-03-15 %02d:59:00 +0100" '
+        'value="HKCategoryValueAppleStandHourStood"/>\n' % (HEURE_DEBOUT, src_nom, h, h)
+        for h in (9, 10, 11) for src_nom in ("Apple Watch de Test", "iPhone de Test"))
+    jours, _ = _agreger_texte(_construire(doublons))
+    verifier("heures debout : deux sources sur la meme heure comptent pour une",
+             jours["2024-03-15"]["debout_h"] == 3, jours["2024-03-15"].get("debout_h"))
+
+    # Duree d'entrainement exprimee en secondes ou en heures.
+    for unite, valeur, attendu in (("s", 1890, 31.5), ("hr", 1.5, 90.0), ("min", 42, 42.0)):
+        xml = _construire(' <Workout workoutActivityType="HKWorkoutActivityTypeRunning" '
+                          'duration="%s" durationUnit="%s" sourceName="Apple Watch de Test" '
+                          'startDate="2024-03-15 18:00:00 +0100" '
+                          'endDate="2024-03-15 18:31:00 +0100"/>\n' % (valeur, unite))
+        jours, _ = _agreger_texte(xml)
+        obtenu = jours["2024-03-15"]["seances"][0]["duree_min"]
+        verifier("duree d'entrainement en « %s » convertie en minutes" % unite,
+                 abs(obtenu - attendu) < 0.05, obtenu)
+
+    # Dates de periode mal formees : refus explicite plutot que filtre muet.
+    for mauvaise in ("15/03/2024", "2024-3-15", "hier"):
+        refuse = False
+        try:
+            valider_date(mauvaise, "--depuis")
+        except SystemExit:
+            refuse = True
+        verifier("date de periode invalide refusee : %r" % mauvaise, refuse, "")
+
+    # Le profil : « garder » doit primer sur un aplatissement.
+    forme = appliquer_profil(
+        {"date": "2024-03-15", "sommeil": {"total_min": 455, "profond_min": 80,
+                                           "efficacite_pct": 94.8}},
+        {"garder": ["date", "sommeil_total_min"], "aplatir": {"sommeil": "sommeil_"}})
+    verifier("profil : « garder » filtre aussi les cles aplaties",
+             forme == {"date": "2024-03-15", "sommeil_total_min": 455}, forme)
+    forme = appliquer_profil(
+        {"date": "2024-03-15", "sommeil": {"total_min": 455, "profond_min": 80}},
+        {"garder": ["date"], "aplatir": {"sommeil": "sommeil_"}})
+    verifier("profil : sans cle aplatie nommee, tout le sous-objet passe",
+             sorted(forme) == ["date", "sommeil_profond_min", "sommeil_total_min"], forme)
 
     print()
     print("%d verifications passees, %d en echec." % (len(faits), len(echecs)))
