@@ -180,7 +180,53 @@ def nombre(txt):
 # Lecture du fichier d'export
 # --------------------------------------------------------------------------
 
-NOMS_XML = ("apple_health_export/export.xml", "export.xml")
+TETE_SNIFF = 64 * 1024
+PLAFOND_SNIFF = 8 * 1024 * 1024
+MARQUEUR = b"<HealthData "
+VERSION_EXPORT = re.compile(rb"HealthKit Export Version:\s*(\d+)")
+
+
+def _parasite(nom):
+    """Entrees ajoutees par macOS lors d'un re-zippage, a ignorer."""
+    return nom.startswith("__MACOSX") or os.path.basename(nom).startswith("._")
+
+
+def _sonder(flux):
+    """Cherche l'element racine HealthData en tete de flux.
+
+    L'espace apres le nom compte : il evite de confondre avec HealthDataArchive.
+    Et la recherche doit depasser la DTD interne, qui fait quelques kilo-octets
+    chez Apple mais dont rien ne borne la taille. On lit donc par tranches
+    jusqu'a trouver, plutot que de parier sur une fenetre fixe.
+    """
+    tete = b""
+    while len(tete) < PLAFOND_SNIFF:
+        morceau = flux.read(TETE_SNIFF)
+        if not morceau:
+            break
+        tete += morceau
+        if MARQUEUR in tete:
+            return True, tete
+    return MARQUEUR in tete, tete
+
+
+def _version_export(tete):
+    m = VERSION_EXPORT.search(tete)
+    return int(m.group(1)) if m else None
+
+
+def _candidats_xml(noms):
+    """Fichiers XML plausibles, les plus probables d'abord."""
+    xml = [n for n in noms if n.lower().endswith(".xml") and not _parasite(n)]
+
+    def score(nom):
+        base = os.path.basename(nom).lower()
+        if "cda" in base:
+            return 3          # export_cda.xml : jamais celui qu'on cherche
+        if base == "export.xml":
+            return 0
+        return 1
+    return sorted(xml, key=lambda n: (score(n), len(n)))
 
 
 def verifier_presence(chemin):
@@ -204,31 +250,55 @@ def verifier_presence(chemin):
 
 
 def ouvrir_export(chemin):
-    """Renvoie (flux binaire sur export.xml, description).
+    """Renvoie (flux binaire sur les donnees HealthKit, description, infos).
 
-    Accepte un export.zip (lu en flux, sans decompression sur le disque), un
-    export.xml deja extrait, ou le dossier apple_health_export.
+    Accepte un export.zip (lu en flux, sans decompression sur le disque), le
+    XML deja extrait, ou le dossier apple_health_export.
+
+    Le fichier n'est PAS reconnu a son nom : celui-ci est traduit selon la
+    langue de l'iPhone. Il est reconnu a son contenu, en cherchant l'element
+    racine HealthData dans les premiers kilo-octets. Cela ecarte du meme coup
+    export_cda.xml, un document clinique d'une autre nature, frequemment
+    malforme, et que rien n'obligeait a s'appeler ainsi.
     """
     verifier_presence(chemin)
-    if os.path.isdir(chemin):
-        for nom in ("export.xml", os.path.join("apple_health_export", "export.xml")):
-            candidat = os.path.join(chemin, nom)
-            if os.path.exists(candidat):
-                return open(candidat, "rb"), candidat
-        raise SystemExit("Aucun export.xml trouve dans %s" % chemin)
 
     if zipfile.is_zipfile(chemin):
         z = zipfile.ZipFile(chemin)
-        noms = z.namelist()
-        for attendu in NOMS_XML:
-            if attendu in noms:
-                return z.open(attendu, "r"), "%s!%s" % (chemin, attendu)
-        for nom in noms:
-            if nom.endswith("export.xml") and "cda" not in nom.lower():
-                return z.open(nom, "r"), "%s!%s" % (chemin, nom)
-        raise SystemExit("export.xml introuvable dans l'archive %s" % chemin)
+        for nom in _candidats_xml(z.namelist()):
+            with z.open(nom, "r") as sonde:
+                trouve, tete = _sonder(sonde)
+            if trouve:
+                return (z.open(nom, "r"), "%s!%s" % (chemin, nom),
+                        {"version_export": _version_export(tete)})
+        raise SystemExit(
+            "Aucun fichier de donnees HealthKit dans %s.\n"
+            "L'archive contient : %s"
+            % (chemin, ", ".join(n for n in z.namelist() if not _parasite(n))[:300]))
 
-    return open(chemin, "rb"), chemin
+    if os.path.isdir(chemin):
+        trouves = []
+        for racine, _, fichiers in os.walk(chemin):
+            for f in fichiers:
+                trouves.append(os.path.relpath(os.path.join(racine, f), chemin))
+        for relatif in _candidats_xml(trouves):
+            complet = os.path.join(chemin, relatif)
+            with open(complet, "rb") as sonde:
+                trouve, tete = _sonder(sonde)
+            if trouve:
+                return (open(complet, "rb"), complet,
+                        {"version_export": _version_export(tete)})
+        raise SystemExit("Aucun fichier de donnees HealthKit dans le dossier %s" % chemin)
+
+    with open(chemin, "rb") as sonde:
+        trouve, tete = _sonder(sonde)
+    if not trouve:
+        raise SystemExit(
+            "%s ne contient pas de donnees HealthKit.\n"
+            "S'il s'agit d'export_cda.xml, ce n'est pas le bon fichier : c'est un\n"
+            "document clinique. Donne plutot l'archive export.zip entiere."
+            % os.path.basename(chemin))
+    return open(chemin, "rb"), chemin, {"version_export": _version_export(tete)}
 
 
 class FiltreDTD(io.RawIOBase):
@@ -568,6 +638,7 @@ class Agregateur:
         self.lus = 0
         self.retenus = 0
         self.erreur_lecture = None
+        self.version_export = None
         self.entrees_bufferisees = 0
         self.alerte_memoire_dite = False
         self.anomalies = defaultdict(int)
@@ -878,6 +949,7 @@ class Agregateur:
             "version": VERSION,
             "fichier": os.path.basename(description.split("!")[0]),
             "export_date": self.export_date,
+            "version_export": self.version_export,
             "priorite_source": self.priorite,
             "filtre_source": self.filtre_source or "toutes",
             "dedoublonnage": "intervalles" if self.dedup else "aucun",
@@ -893,7 +965,8 @@ class Agregateur:
 
 
 def analyser(chemin, agregateur, avec_seances=True, silencieux=False):
-    flux, description = ouvrir_export(chemin)
+    flux, description, infos = ouvrir_export(chemin)
+    agregateur.version_export = infos.get("version_export")
     balises = {"Record", "ActivitySummary", "ExportDate"}
     if avec_seances:
         balises.add("Workout")
@@ -951,7 +1024,7 @@ def analyser(chemin, agregateur, avec_seances=True, silencieux=False):
 
 def cmd_inspecte(args):
     """Dresse l'etat des lieux du fichier sans rien agreger."""
-    flux, description = ouvrir_export(args.export)
+    flux, description, infos = ouvrir_export(args.export)
     types = defaultdict(int)
     sources = defaultdict(int)
     unites = defaultdict(set)
@@ -992,6 +1065,7 @@ def cmd_inspecte(args):
 
     print("Fichier          : %s" % description)
     print("Date d'export    : %s" % (export_date or "inconnue"))
+    print("Version du format: %s" % (infos.get("version_export") or "non indiquee"))
     print("Periode couverte : %s -> %s" % (premier or "?", dernier or "?"))
     print("Enregistrements  : %s" % f"{total:,}".replace(",", " "))
     print()
@@ -1622,17 +1696,43 @@ def cmd_autotest(args):
              abs(jours["2024-03-15"]["anneaux"]["energie_active_kcal"] - 500.0) < 0.5,
              jours["2024-03-15"]["anneaux"])
 
-    # Bug d'Apple : les exports d'iOS 16.0/16.1 embarquent une DTD malformee
-    # (declaration non fermee, « > » en trop). La neutraliser en bloc, plutot
-    # que de la faire analyser, rend l'outil insensible a ce defaut.
-    dtd_cassee = ('<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE HealthData [\n'
-                  '<!ELEMENT ICD10 EMPTY\n'
-                  '<!ATTLIST VisionPrescription > device CDATA #IMPLIED>>\n'
-                  '<!ELEMENT HealthData (ExportDate, Me, (Record)*)>\n]>\n'
+    # Reproduction fidele du defaut d'Apple dans « HealthKit Export Version: 12 »
+    # (iOS 16) : la declaration ATTLIST de VisionPrescription n'est jamais
+    # fermee, RightEye et LeftEye se retrouvent imbriquees dedans, et un « > »
+    # surnumeraire precede le « ]> » final. Tous les parseurs de la
+    # bibliotheque standard echouent dessus, ligne 155. Neutraliser le DOCTYPE
+    # en bloc plutot que le faire analyser rend l'outil insensible a ce defaut.
+    dtd_cassee = ('<?xml version="1.0" encoding="UTF-8"?>\n'
+                  '<!DOCTYPE HealthData [\n'
+                  '  <!-- HealthKit Export Version: 12 -->\n'
+                  '  <!ELEMENT HealthData (ExportDate,Me,(Record|Workout)*)>\n'
+                  '  <!ATTLIST HealthData locale CDATA #REQUIRED\n'
+                  '>\n'
+                  '  <!ELEMENT VisionPrescription EMPTY>\n'
+                  '  <!ATTLIST VisionPrescription\n'
+                  '    type CDATA #REQUIRED\n'
+                  '    brand CDATA #IMPLIED\n'
+                  '  <!ELEMENT RightEye EMPTY>\n'
+                  '  <!ATTLIST RightEye\n'
+                  '    sphere CDATA #IMPLIED\n'
+                  '    axisUnit CDATA #IMPLIED\n'
+                  '  <!ELEMENT LeftEye EMPTY>\n'
+                  '    device CDATA #IMPLIED\n'
+                  '  <!ELEMENT MetadataEntry EMPTY>\n'
+                  '>\n'
+                  ']>\n'
                   '<HealthData locale="fr_FR">\n'
                   + _rec(Q + "StepCount", 777, "2024-03-15 08:00:00 +0100",
                          "2024-03-15 09:00:00 +0100")
                   + '</HealthData>\n')
+    import xml.etree.ElementTree as _ET
+    stdlib_echoue = False
+    try:
+        _ET.fromstring(dtd_cassee)
+    except _ET.ParseError:
+        stdlib_echoue = True
+    verifier("la fixture reproduit bien un fichier que la stdlib refuse",
+             stdlib_echoue, "la stdlib l'a accepte : fixture non representative")
     jours, _ = _agreger_texte(dtd_cassee)
     verifier("DTD malformee d'iOS 16 absorbee",
              jours.get("2024-03-15", {}).get("pas") == 777, list(jours))
@@ -1646,6 +1746,47 @@ def cmd_autotest(args):
     verifier("fichier sans ExportDate ni Me",
              jours.get("2024-03-15", {}).get("pas") == 55
              and agregateur.export_date is None, list(jours))
+
+    print()
+    print("Trouver le bon fichier dans l'archive")
+
+    dossier = tempfile.mkdtemp()
+    chemin = os.path.join(dossier, "export.zip")
+    with zipfile.ZipFile(chemin, "w") as z:
+        # Nom traduit selon la langue de l'iPhone, et voisins a ecarter.
+        z.writestr("apple_health_export/\u5bfc\u51fa.xml", _construire(
+            _rec(Q + "StepCount", 606, "2024-03-15 08:00:00 +0100",
+                 "2024-03-15 09:00:00 +0100")))
+        z.writestr("apple_health_export/export_cda.xml",
+                   '<?xml version="1.0"?><ClinicalDocument><section/></ClinicalDocument>')
+        z.writestr("__MACOSX/apple_health_export/._export.xml", "\x00\x05\x16\x07")
+    agregateur = Agregateur()
+    analyser(chemin, agregateur, silencieux=True)
+    resultat = {j["date"]: j for j in agregateur.finaliser()}
+    verifier("fichier reconnu a son contenu, pas a son nom traduit",
+             resultat.get("2024-03-15", {}).get("pas") == 606, list(resultat))
+    verifier("version du format relevee",
+             agregateur.version_export is None or isinstance(agregateur.version_export, int),
+             agregateur.version_export)
+
+    # export_cda.xml seul : message clair plutot qu'erreur d'analyseur.
+    seul = os.path.join(dossier, "export_cda.xml")
+    with open(seul, "w", encoding="utf-8") as f:
+        f.write('<?xml version="1.0"?><ClinicalDocument><section/></ClinicalDocument>')
+    refuse = False
+    try:
+        ouvrir_export(seul)
+    except SystemExit as e:
+        refuse = "HealthKit" in str(e)
+    verifier("document clinique refuse avec une explication", refuse, "")
+
+    # Version du format lue dans le commentaire de la DTD.
+    chemin_v = os.path.join(dossier, "avec_version.xml")
+    with open(chemin_v, "w", encoding="utf-8") as f:
+        f.write(dtd_cassee)
+    _, _, infos = ouvrir_export(chemin_v)
+    verifier("numero de version du format extrait",
+             infos.get("version_export") == 12, infos)
 
     print()
     print("Mise en forme pour l'API")

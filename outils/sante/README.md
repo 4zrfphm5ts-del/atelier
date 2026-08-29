@@ -149,10 +149,15 @@ En cas d'erreur réseau, chaque requête est retentée quatre fois (2 s, 4 s, 8 
 python3 sante.py autotest
 ```
 
-38 vérifications sur des exports synthétiques : dédoublonnage, minuit, fuseaux,
+43 vérifications sur des exports synthétiques : dédoublonnage, minuit, fuseaux,
 unités régionales, stades de sommeil, anciens formats, corrélations, saisies
 manuelles, DTD démesurée ou malformée, export tronqué, en-tête absent, lecture
 en flux depuis le zip.
+
+Il a aussi été confronté à un véritable export Apple « HealthKit Export
+Version 12 », dont la DTD est réellement corrompue et que tous les analyseurs
+XML de la bibliothèque standard refusent (`ParseError: syntax error: line 155`) :
+il le lit sans broncher.
 
 L'outil a par ailleurs été soumis à 500 exports volontairement malformés
 (dates impossibles, valeurs `NaN`, attributs manquants, corrélations imbriquées) :
@@ -221,6 +226,12 @@ comptés, jamais additionnés.
 
 **Unités.** Miles, pieds, livres, degrés Fahrenheit et kilojoules sont convertis.
 L'unité dépend des réglages régionaux et peut changer au fil de l'historique.
+
+**Le nom du fichier.** Le XML n'est pas reconnu à son nom : celui-ci est
+traduit selon la langue de l'iPhone. Il est reconnu à son contenu, en cherchant
+l'élément racine `HealthData`. Cela écarte du même coup `export_cda.xml`, un
+document clinique d'une autre nature et fréquemment malformé, ainsi que les
+entrées parasites `__MACOSX` d'une archive re-zippée sur un Mac.
 
 **La DTD.** Apple place en tête d'`export.xml` une déclaration `<!DOCTYPE>` de
 plusieurs milliers de lignes qui ne sert à rien ici. L'outil la retire à la
