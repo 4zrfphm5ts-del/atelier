@@ -55,9 +55,9 @@ d'enregistrements — soit environ huit ans de port quotidien :
 
 | Mode | Durée | Mémoire | Sortie |
 | --- | --- | --- | --- |
-| complet, avec dédoublonnage | 107 s | 109 Mo | 3 001 jours |
-| `--leger` | 81 s | 31 Mo | 3 001 jours |
-| une seule année | 29 s | 33 Mo | 367 jours |
+| complet, avec dédoublonnage | 99 s | 107 Mo | 3 001 jours |
+| `--leger` | 73 s | 32 Mo | 3 001 jours |
+| une seule année | 28 s | 34 Mo | 366 jours |
 
 Sur cet export, `--leger` donne exactement le même nombre de pas que le mode
 complet : la montre couvre déjà tout, et les enregistrements de l'iPhone sont
