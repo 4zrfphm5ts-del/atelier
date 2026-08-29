@@ -116,6 +116,26 @@ python3 sante.py pousse jours.json \
 | `--champ-date jour` | renomme la clé `date` si l'API en attend une autre |
 | `--entete "X-Truc: valeur"` | en-tête HTTP supplémentaire, répétable |
 | `--etat envoyes.json` | mémorise les jours envoyés : relancer reprend où ça s'était arrêté |
+| `--profil profil.json` | remet les instantanés à la forme attendue par l'API |
+
+**Le profil d'envoi** évite d'avoir à toucher au script quand l'API attend
+d'autres noms de champs. `python3 sante.py profil-exemple > profil.json` en
+produit un modèle commenté ; toutes les clés sont facultatives :
+
+```json
+{
+  "garder": ["date", "pas", "fc_repos", "sommeil"],
+  "aplatir": { "sommeil": "sommeil_" },
+  "renommer": { "pas": "steps", "fc_repos": "restingHeartRate" },
+  "constantes": { "source": "apple-health-export" },
+  "enveloppe": "health",
+  "champ_date": "day"
+}
+```
+
+`garder` filtre, `aplatir` fait remonter les sous-objets avec un préfixe,
+`renommer` s'applique après, `constantes` ajoute des champs fixes. Vérifier le
+résultat avec `--essai` avant d'envoyer quoi que ce soit.
 
 Le jeton se passe par variable d'environnement, jamais en argument ni dans un
 fichier : il n'a rien à faire dans un dépôt ni dans l'historique du shell.

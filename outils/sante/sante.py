@@ -1089,8 +1089,71 @@ def _envoyer(url, corps, entetes, essai, timeout=30):
         return 0, str(e)
 
 
+PROFIL_EXEMPLE = {
+    "_lisez_moi": "Adapte les instantanes a ce qu'attend l'API. Toutes les cles "
+                  "sont facultatives.",
+    "champ_date": "date",
+    "enveloppe": None,
+    "garder": ["date", "pas", "fc_repos", "sommeil"],
+    "renommer": {"pas": "steps", "fc_repos": "restingHeartRate",
+                 "sommeil": "sleep", "energie_active_kcal": "activeEnergy"},
+    "aplatir": {"sommeil": "sommeil_"},
+    "constantes": {"source": "apple-health-export"},
+}
+
+
+def appliquer_profil(jour, profil):
+    """Remet un instantane a la forme attendue par l'API.
+
+    Sans profil, l'instantane part tel quel. Avec, on peut ne garder que
+    certaines cles, les renommer, aplatir les sous-objets et ajouter des
+    champs fixes — sans toucher au script.
+    """
+    if not profil:
+        return jour
+    sortie = dict(jour)
+
+    for cle, prefixe in (profil.get("aplatir") or {}).items():
+        sous = sortie.pop(cle, None)
+        if isinstance(sous, dict):
+            for k, v in sous.items():
+                sortie[prefixe + k] = v
+
+    garder = profil.get("garder")
+    if garder:
+        # Correspondance exacte pour « garder », et prefixes uniquement pour les
+        # cles nees d'un aplatissement : sans quoi « garder: [sommeil] » laisserait
+        # aussi passer tout ce qui commence par « sommeil ».
+        prefixes = tuple(p for p in (profil.get("aplatir") or {}).values()
+                         if isinstance(p, str))
+        garder = set(garder)
+        sortie = {k: v for k, v in sortie.items()
+                  if k in garder or (prefixes and k.startswith(prefixes))}
+
+    for ancien, neuf in (profil.get("renommer") or {}).items():
+        if ancien in sortie:
+            sortie[neuf] = sortie.pop(ancien)
+
+    sortie.update(profil.get("constantes") or {})
+    return sortie
+
+
+def cmd_profil_exemple(args):
+    print(json.dumps(PROFIL_EXEMPLE, ensure_ascii=False, indent=2))
+    return 0
+
+
 def cmd_pousse(args):
     import time
+
+    profil = None
+    if args.profil:
+        with open(args.profil, "r", encoding="utf-8") as f:
+            profil = json.load(f)
+        if profil.get("champ_date") and args.champ_date == "date":
+            args.champ_date = profil["champ_date"]
+        if profil.get("enveloppe") and not args.enveloppe:
+            args.enveloppe = profil["enveloppe"]
 
     jours, _ = _charger_jours(args.jours)
     if args.depuis:
@@ -1124,6 +1187,10 @@ def cmd_pousse(args):
         entetes["Authorization"] = args.prefixe_jeton + jeton
 
     def preparer(charge):
+        if isinstance(charge, dict):
+            charge = appliquer_profil(charge, profil)
+        elif isinstance(charge, list):
+            charge = [appliquer_profil(j, profil) for j in charge]
         if args.champ_date != "date" and isinstance(charge, dict) and "date" in charge:
             charge = dict(charge)
             charge[args.champ_date] = charge.pop("date")
@@ -1544,6 +1611,25 @@ def cmd_autotest(args):
              jours["2024-03-15"]["anneaux"])
 
     print()
+    print("Mise en forme pour l'API")
+
+    instantane = {"date": "2024-03-15", "pas": 8640, "fc_repos": 54.0,
+                  "energie_active_kcal": 440.8, "fc_n": 288,
+                  "sommeil": {"total_min": 455, "profond_min": 80}}
+    forme = appliquer_profil(instantane, {
+        "garder": ["date", "pas", "fc_repos"],
+        "aplatir": {"sommeil": "sommeil_"},
+        "renommer": {"pas": "steps", "fc_repos": "restingHeartRate"},
+        "constantes": {"source": "apple-health-export"},
+    })
+    verifier("profil : selection, aplatissement, renommage, constantes",
+             forme == {"date": "2024-03-15", "steps": 8640, "restingHeartRate": 54.0,
+                       "sommeil_total_min": 455, "sommeil_profond_min": 80,
+                       "source": "apple-health-export"}, forme)
+    verifier("profil absent : instantane inchange",
+             appliquer_profil(instantane, None) == instantane, "")
+
+    print()
     print("%d verifications passees, %d en echec." % (len(faits), len(echecs)))
     return 1 if echecs else 0
 
@@ -1607,9 +1693,14 @@ def construire_parseur():
     q.add_argument("--depuis")
     q.add_argument("--jusqu-a", dest="jusqu_a")
     q.add_argument("--etat", help="fichier de reprise : les jours deja envoyes sont sautes")
+    q.add_argument("--profil", help="fichier JSON decrivant la forme attendue par l'API")
     q.add_argument("--essai", action="store_true",
                    help="n'envoie rien, affiche la requete qui serait faite")
     q.set_defaults(fonction=cmd_pousse)
+
+    e = sous.add_parser("profil-exemple",
+                        help="affiche un profil d'envoi commente, a adapter")
+    e.set_defaults(fonction=cmd_profil_exemple)
 
     t = sous.add_parser("autotest", help="verifie l'outil sur des exports synthetiques")
     t.set_defaults(fonction=cmd_autotest)
