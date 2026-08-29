@@ -90,6 +90,10 @@ METRIQUES = {
 }
 
 SOMMEIL = C + "SleepAnalysis"
+HEURE_DEBOUT = C + "AppleStandHour"
+
+# Mesures qu'Apple ecrit en fraction 0-1 bien qu'elles portent unit="%".
+CLES_FRACTION = ("spo2", "stabilite_pct")
 
 # Valeurs de l'attribut value pour le sommeil, toutes generations d'iOS
 STADES_SOMMEIL = {
@@ -280,17 +284,33 @@ def elements(flux, balises, sur_progression=None):
     contexte = ET.iterparse(tampon, events=("start", "end"))
     racine = None
     lus = 0
+    dans_correlation = 0
     for evenement, element in contexte:
         if racine is None:
             racine = element
             continue
-        if evenement != "end":
+        if evenement == "start":
+            # Apple le dit dans sa propre DTD : « Any Records that appear as
+            # children of a correlation also appear as top-level records in
+            # this document. » Un repas ou une tension arterielle apparait donc
+            # deux fois. Comme iterparse remonte l'enfant AVANT son parent, il
+            # faut savoir qu'on est a l'interieur d'une correlation pour ne
+            # retenir que la copie de premier niveau.
+            if element.tag == "Correlation":
+                dans_correlation += 1
             continue
-        if element.tag in balises:
+        if element.tag == "Correlation":
+            dans_correlation -= 1
+        elif element.tag in balises and dans_correlation == 0:
             yield element
             lus += 1
             if sur_progression and lus % 200000 == 0:
                 sur_progression(lus)
+        else:
+            # Enfant d'un element encore ouvert (MetadataEntry,
+            # InstantaneousBeatsPerMinute...) : le vider maintenant effacerait
+            # des attributs dont le parent a besoin. Il sera libere avec lui.
+            continue
         element.clear()
         if racine is not None:
             racine.clear()
@@ -324,8 +344,21 @@ def est_telephone(source_nom, device):
     return "iphone" in sans_accent(source_nom)
 
 
+def saisie_manuelle(element):
+    """Vrai si l'enregistrement a ete saisi a la main dans l'app Sante."""
+    for meta in element.findall("MetadataEntry"):
+        if meta.get("key") == "HKWasUserEntered" and meta.get("value") in ("1", "YES", "true"):
+            return True
+    return False
+
+
 def rang_source(source_nom, device, priorite):
-    """Plus le rang est petit, plus la source est prioritaire au dedoublonnage."""
+    """Plus le rang est petit, plus la source est prioritaire au dedoublonnage.
+
+    L'app Sante classe d'abord les donnees saisies a la main, puis les
+    appareils Apple, puis les apps tierces. On reprend cet ordre, en tranchant
+    entre montre et telephone que l'app place, elle, au meme niveau.
+    """
     if priorite == "montre":
         if est_montre(source_nom, device):
             return 0
@@ -487,6 +520,7 @@ class Agregateur:
         self.sommeil = defaultdict(list)       # nuit -> (stade, debut_ts, fin_ts)
         self.anneaux = {}
         self.seances = defaultdict(list)
+        self.heures_debout = defaultdict(int)
 
         self.export_date = None
         self.sources_vues = defaultdict(int)
@@ -540,6 +574,13 @@ class Agregateur:
             self.retenus += 1
             return
 
+        if type_ == HEURE_DEBOUT:
+            # Un enregistrement par heure de la journee, « Stood » ou « Idle ».
+            if a.get("value", "").endswith("Stood"):
+                self.heures_debout[jour] += 1
+            self.retenus += 1
+            return
+
         metrique = METRIQUES.get(type_)
         if metrique is None or metrique.cle == "_ignore_":
             self.types_ignores[type_] += 1
@@ -567,6 +608,8 @@ class Agregateur:
             if fin is not None and fin.utcoffset() != debut.utcoffset():
                 fin = fin.astimezone(debut.tzinfo)
             rang = rang_source(nom, device, self.priorite)
+            if saisie_manuelle(el):
+                rang = -1
             try:
                 morceaux = list(decouper_par_jour(debut, fin, valeur))
             except (OverflowError, ValueError, OSError):
@@ -612,8 +655,11 @@ class Agregateur:
             return valeur
         if metrique.cle.endswith("_kcal") and u in ("Cal", "kJ"):
             return valeur / 4.184 if u == "kJ" else valeur
-        if metrique.cle == "spo2" and valeur <= 1.5:
-            return valeur * 100.0     # certaines versions ecrivent une fraction
+        # Apple ecrit ces mesures en FRACTION (0,97) avec pourtant unit="%",
+        # alors que certaines apps tierces ecrivent 97. On ramene tout a une
+        # echelle 0-100 : au-dela de 1,5 la valeur est deja un pourcentage.
+        if metrique.cle in CLES_FRACTION and 0.0 < valeur <= 1.5:
+            return valeur * 100.0
         return valeur
 
     def _ingerer_sommeil(self, a):
@@ -650,9 +696,18 @@ class Agregateur:
         jour = a.get("dateComponents")
         if not jour or not self._dans_periode(jour):
             return
+        # L'unite d'energie des anneaux est portee par son propre attribut et
+        # suit la region : kcal, Cal (= kcal) ou kJ.
+        unite = a.get("activeEnergyBurnedUnit") or "kcal"
+        facteur = 1.0 / 4.184 if unite == "kJ" else 1.0
+
+        def energie(txt):
+            v = nombre(txt)
+            return None if v is None else v * facteur
+
         self.anneaux[jour] = {
-            "energie_active_kcal": arrondir(nombre(a.get("activeEnergyBurned")), 1),
-            "objectif_energie_kcal": arrondir(nombre(a.get("activeEnergyBurnedGoal")), 1),
+            "energie_active_kcal": arrondir(energie(a.get("activeEnergyBurned")), 1),
+            "objectif_energie_kcal": arrondir(energie(a.get("activeEnergyBurnedGoal")), 1),
             "exercice_min": arrondir(nombre(a.get("appleExerciseTime")), 0),
             "objectif_exercice_min": arrondir(nombre(a.get("appleExerciseTimeGoal")), 0),
             "mouvement_min": arrondir(nombre(a.get("appleMoveTime")), 0),
@@ -747,6 +802,9 @@ class Agregateur:
             resume = self._resumer_nuit(segments)
             if resume:
                 jours[nuit]["sommeil"] = resume
+
+        for jour, n in self.heures_debout.items():
+            jours[jour]["debout_h"] = n
 
         for jour, anneau in self.anneaux.items():
             jours[jour]["anneaux"] = {k: v for k, v in anneau.items() if v is not None}
@@ -1381,6 +1439,57 @@ def cmd_autotest(args):
              _chrono() - debut_chrono < 2.0
              and jours.get("2024-03-15", {}).get("pas") == 400,
              (round(_chrono() - debut_chrono, 2), list(jours)))
+
+    print()
+    print("Pieges du format Apple")
+
+    # Apple duplique les Record enfants d'une Correlation au premier niveau.
+    interieur = _rec(Q + "BodyMass", 72.5, "2024-03-15 08:00:00 +0100", unit="kg")
+    xml = _construire(
+        "  <Correlation type=\"HKCorrelationTypeIdentifierBloodPressure\" "
+        "sourceName=\"Sante\" startDate=\"2024-03-15 08:00:00 +0100\" "
+        "endDate=\"2024-03-15 08:00:00 +0100\">\n" + interieur + "  </Correlation>\n"
+        + interieur)
+    jours, agregateur = _agreger_texte(xml)
+    verifier("Record d'une Correlation compte une seule fois",
+             jours["2024-03-15"]["poids_kg_n"] == 1, jours["2024-03-15"].get("poids_kg_n"))
+
+    # Une saisie manuelle prime sur la montre, comme dans l'app Sante.
+    xml = _construire(
+        _rec(Q + "StepCount", 1000, "2024-03-15 08:00:00 +0100", "2024-03-15 09:00:00 +0100")
+        + '  <Record type="%sStepCount" sourceName="Sante" unit="count" '
+          'startDate="2024-03-15 08:00:00 +0100" endDate="2024-03-15 09:00:00 +0100" '
+          'value="1500"><MetadataEntry key="HKWasUserEntered" value="1"/></Record>\n' % Q)
+    jours, _ = _agreger_texte(xml)
+    verifier("saisie manuelle prioritaire sur la montre",
+             jours["2024-03-15"]["pas"] == 1500, jours["2024-03-15"].get("pas"))
+
+    # SpO2 : Apple ecrit une fraction malgre unit="%".
+    xml = _construire(_rec(Q + "OxygenSaturation", 0.97, "2024-03-15 08:00:00 +0100", unit="%")
+                      + _rec(Q + "OxygenSaturation", 96, "2024-03-15 09:00:00 +0100", unit="%"))
+    jours, _ = _agreger_texte(xml)
+    verifier("SpO2 en fraction ramene a une echelle 0-100",
+             jours["2024-03-15"]["spo2_moy"] == 96.5, jours["2024-03-15"].get("spo2_moy"))
+
+    # Heures debout : une categorie horaire, pas une quantite.
+    debout = "".join(
+        '  <Record type="%s" sourceName="Apple Watch de Test" device="%s" '
+        'startDate="2024-03-15 %02d:00:00 +0100" endDate="2024-03-15 %02d:59:00 +0100" '
+        'value="HKCategoryValueAppleStandHour%s"/>\n'
+        % (HEURE_DEBOUT, MONTRE, h, h, "Stood" if h % 2 else "Idle")
+        for h in range(8, 20))
+    jours, _ = _agreger_texte(_construire(debout))
+    verifier("heures debout comptees, « Idle » exclu",
+             jours["2024-03-15"]["debout_h"] == 6, jours["2024-03-15"].get("debout_h"))
+
+    # Anneaux exprimes en kilojoules dans certaines regions.
+    xml = _construire(' <ActivitySummary dateComponents="2024-03-15" '
+                      'activeEnergyBurned="2092" activeEnergyBurnedUnit="kJ" '
+                      'appleExerciseTime="30"/>\n')
+    jours, _ = _agreger_texte(xml)
+    verifier("anneaux en kJ convertis en kcal",
+             abs(jours["2024-03-15"]["anneaux"]["energie_active_kcal"] - 500.0) < 0.5,
+             jours["2024-03-15"]["anneaux"])
 
     print()
     print("%d verifications passees, %d en echec." % (len(faits), len(echecs)))

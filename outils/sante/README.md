@@ -95,8 +95,13 @@ En cas d'erreur réseau, chaque requête est retentée quatre fois (2 s, 4 s, 8 
 python3 sante.py autotest
 ```
 
-24 vérifications sur des exports synthétiques : dédoublonnage, minuit, fuseaux,
-unités, stades de sommeil, anciens formats, lecture en flux depuis le zip.
+34 vérifications sur des exports synthétiques : dédoublonnage, minuit, fuseaux,
+unités régionales, stades de sommeil, anciens formats, corrélations, saisies
+manuelles, DTD démesurée, export tronqué, lecture en flux depuis le zip.
+
+L'outil a par ailleurs été soumis à 500 exports volontairement malformés
+(dates impossibles, valeurs `NaN`, attributs manquants, corrélations imbriquées) :
+aucun plantage, aucun JSON invalide.
 
 ---
 
@@ -110,6 +115,7 @@ unités, stades de sommeil, anciens formats, lecture en flux depuis le zip.
   "energie_active_kcal": 440.8,
   "energie_repos_kcal": 1652.0,
   "exercice_min": 42,
+  "debout_h": 11,
   "fc_moy": 100.4, "fc_min": 48.0, "fc_max": 150.0, "fc_n": 288,
   "fc_repos": 54.0,
   "fc_marche": 96.2,
@@ -161,6 +167,26 @@ comptés, jamais additionnés.
 **Unités.** Miles, pieds, livres, degrés Fahrenheit et kilojoules sont convertis.
 L'unité dépend des réglages régionaux et peut changer au fil de l'historique.
 
+**Les corrélations.** Apple écrit deux fois les mesures groupées — une tension
+artérielle, un repas — une fois dans le `<Correlation>` et une fois au premier
+niveau. C'est écrit noir sur blanc dans sa propre DTD. L'outil ne retient que la
+copie de premier niveau.
+
+**Les saisies manuelles.** L'app Santé classe les données saisies à la main
+au-dessus de tous les appareils. L'outil fait pareil : une valeur corrigée à la
+main l'emporte sur la mesure de la montre.
+
+**Les pourcentages.** SpO2 et stabilité à la marche portent `unit="%"` mais
+Apple y écrit une fraction (`0.97`), là où certaines apps tierces écrivent `97`.
+Les deux sont ramenés à une échelle 0–100.
+
 **Les anneaux.** Les `ActivitySummary` d'Apple sont conservés tels quels, à côté
 des valeurs ré-agrégées. Les deux ne coïncident pas toujours : c'est normal, et
-utile pour se contrôler.
+utile pour se contrôler. Leur unité d'énergie suit la région (kcal, Cal ou kJ)
+et est convertie.
+
+**Ce que l'outil ne peut pas faire.** `export.xml` ne contient pas l'ordre de
+priorité des sources configuré dans l'app Santé. Reproduire au chiffre près ce
+qu'affiche l'app est donc structurellement impossible à partir du seul fichier.
+L'ordre appliqué ici — saisie manuelle, puis montre, puis iPhone, puis apps
+tierces — est le plus proche de celui d'Apple.
