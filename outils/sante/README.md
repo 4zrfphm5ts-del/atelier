@@ -160,11 +160,15 @@ En cas d'erreur réseau, chaque requête est retentée quatre fois (2 s, 4 s, 8 
 python3 sante.py autotest
 ```
 
-74 vérifications sur des exports synthétiques : dédoublonnage, minuit, fuseaux,
+76 vérifications sur des exports synthétiques : dédoublonnage, minuit, fuseaux,
 unités régionales, stades de sommeil, anciens formats, corrélations, saisies
 manuelles, DTD démesurée ou malformée, export tronqué, en-tête absent, lecture
 en flux depuis le zip — et un envoi réseau réel contre un serveur local
 (transmission, jeton, reprise, lots, refus de redirection).
+
+Un test mesure aussi le **pic mémoire** sur deux fichiers de tailles
+différentes et vérifie qu'il ne suit pas la taille du fichier : c'est la
+propriété qui décide si l'outil tourne sur un iPhone, et rien ne la protégeait.
 
 Il a aussi été confronté à un véritable export Apple « HealthKit Export
 Version 12 », dont la DTD est réellement corrompue et que tous les analyseurs

@@ -704,6 +704,7 @@ class Agregateur:
         self.sommes_directes = defaultdict(float)
         self.moyennes = defaultdict(AccMoyenne)
         self.uniques = defaultdict(AccMoyenne)
+        self.uniques_manuelles = defaultdict(AccMoyenne)
         self.sommeil_segments = []             # (debut_ts, fin_ts, stade, dec_debut, dec_fin)
         self.anneaux = {}
         self.seances = defaultdict(list)
@@ -853,7 +854,13 @@ class Agregateur:
         elif metrique.mode == "moyenne":
             self.moyennes[(jour, metrique.cle)].ajouter(valeur)
         else:
-            self.uniques[(jour, metrique.cle)].ajouter(valeur)
+            # L'app Sante place les saisies manuelles au-dessus de tous les
+            # appareils : une valeur corrigee a la main doit l'emporter, pas
+            # etre moyennee avec la mesure qu'elle corrige.
+            if saisie_manuelle(el):
+                self.uniques_manuelles[(jour, metrique.cle)].ajouter(valeur)
+            else:
+                self.uniques[(jour, metrique.cle)].ajouter(valeur)
 
     def _convertir(self, metrique, unite, valeur):
         """Normalise les unites qui varient selon les reglages regionaux."""
@@ -1075,6 +1082,12 @@ class Agregateur:
             jours[jour][cle + "_n"] = acc.n
 
         for (jour, cle), acc in self.uniques.items():
+            if (jour, cle) in self.uniques_manuelles:
+                continue
+            metrique = par_cle.get(cle)
+            jours[jour][cle] = arrondir(acc.moyenne, metrique.decimales if metrique else 2)
+
+        for (jour, cle), acc in self.uniques_manuelles.items():
             metrique = par_cle.get(cle)
             jours[jour][cle] = arrondir(acc.moyenne, metrique.decimales if metrique else 2)
 
@@ -1955,9 +1968,10 @@ def cmd_autotest(args):
     agregateur = Agregateur()
     analyser(chemin, agregateur, silencieux=True)
     partiel = agregateur.finaliser()
-    verifier("export tronque : les jours deja lus sont conserves",
-             len(partiel) >= 1 and agregateur.anomalies.get("lecture_interrompue") == 1,
-             (len(partiel), dict(agregateur.anomalies)))
+    verifier("export tronque : tous les jours lisibles sont conserves",
+             len(partiel) == 8 and agregateur.anomalies.get("lecture_interrompue") == 1
+             and all(j.get("pas") == 10 for j in partiel),
+             (len(partiel), [j["date"] for j in partiel], dict(agregateur.anomalies)))
 
     # Regressions trouvees par fuzzing sur des exports malformes.
     jours, agregateur = _agreger_texte(_construire(
@@ -2034,6 +2048,16 @@ def cmd_autotest(args):
     jours, _ = _agreger_texte(xml)
     verifier("saisie manuelle prioritaire sur la montre",
              jours["2024-03-15"]["pas"] == 1500, jours["2024-03-15"].get("pas"))
+
+    # Une correction manuelle d'une mesure deja quotidienne doit primer.
+    xml = _construire(
+        _rec(Q + "RestingHeartRate", 62, "2024-03-15 09:00:00 +0100", unit="count/min")
+        + '  <Record type="%sRestingHeartRate" sourceName="Sante" unit="count/min" '
+          'startDate="2024-03-15 10:00:00 +0100" endDate="2024-03-15 10:00:00 +0100" '
+          'value="54"><MetadataEntry key="HKWasUserEntered" value="1"/></Record>\n' % Q)
+    jours, _ = _agreger_texte(xml)
+    verifier("saisie manuelle prioritaire aussi sur une mesure quotidienne",
+             jours["2024-03-15"]["fc_repos"] == 54.0, jours["2024-03-15"].get("fc_repos"))
 
     # SpO2 : Apple ecrit une fraction malgre unit="%".
     xml = _construire(_rec(Q + "OxygenSaturation", 0.97, "2024-03-15 08:00:00 +0100", unit="%")
@@ -2348,6 +2372,43 @@ def cmd_autotest(args):
     except SystemExit:
         ok_https = False
     verifier("https et boucle locale acceptes", ok_https, "")
+
+    print()
+    print("Memoire en lecture de flux")
+
+    def _pic_memoire(nombre):
+        """Pic d'allocation pour un fichier de taille donnee."""
+        import tracemalloc
+        corps = "".join('  <ClinicalRecord type="X" identifier="%d" '
+                        'sourceName="Hopital" resourceFilePath="c/%d.json"/>\n' % (i, i)
+                        for i in range(nombre))
+        corps += "".join(
+            _rec(Q + "HeartRate", 60 + i % 40,
+                 "2024-03-15 %02d:%02d:00 +0100" % (i // 60 % 24, i % 60),
+                 unit="count/min")
+            for i in range(nombre))
+        chemin_m = os.path.join(tempfile.mkdtemp(), "export.xml")
+        with open(chemin_m, "w", encoding="utf-8") as f:
+            f.write(_construire(corps))
+        tracemalloc.start()
+        ag = Agregateur()
+        analyser(chemin_m, ag, silencieux=True)
+        ag.finaliser()
+        _, pic = tracemalloc.get_traced_memory()
+        tracemalloc.stop()
+        return pic
+
+    try:
+        petit = _pic_memoire(2000)
+        grand = _pic_memoire(8000)
+        # C'est la propriete qui decide si l'outil tourne sur un iPhone : la
+        # memoire doit dependre du nombre de JOURS, pas de la taille du fichier.
+        # Un fichier quatre fois plus gros ne doit pas quadrupler le pic.
+        verifier("le pic memoire ne suit pas la taille du fichier",
+                 grand < petit * 2.0,
+                 "petit %.1f Mo, grand %.1f Mo" % (petit / 1e6, grand / 1e6))
+    except ImportError:
+        print("  (ignore : tracemalloc indisponible)")
 
     print()
     print("Divers correctifs")
