@@ -409,7 +409,9 @@ td.mono-col{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.8rem;f
 .guide__txt strong{font-weight:900}
 .guide__det{font-size:1.02rem; line-height:1.62; margin:0; color:var(--mut); max-width:64ch}
 .guide__det strong,.guide__det b{color:var(--encre)}
-.guide__fig{border:1px solid var(--ligne); background:var(--feuille); padding:.8rem; overflow-x:auto}
+.guide__fig{overflow-x:auto}
+.guide__fig figure{margin:0}
+.guide__fig figcaption{margin-top:.7rem;font-size:.88rem;color:var(--mut)}
 .guide__fig svg{display:block; width:100%; height:auto}
 .guide__fig > div + div{margin-top:1rem}
 
@@ -473,6 +475,16 @@ td.mono-col{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.8rem;f
 .demarrer__b:focus-visible{outline:2px solid var(--encre); outline-offset:2px}
 .demarrer p{margin:0; font-size:.9rem; color:var(--mut); max-width:52ch}
 .demarrer p b{color:var(--encre); font-weight:600}
+
+/* ---------- références de section, en mode guidé ---------- */
+.guide__reftitre{
+  font-family:'IBM Plex Mono',ui-monospace,monospace;
+  font-size:.68rem; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--mut); margin:.6rem 0 -.3rem;
+  padding-top:1.1rem; border-top:1px solid var(--ligne);
+}
+.guide__ref{display:flex; flex-direction:column; gap:1rem}
+.guide__ref .blocs{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
 </style>
 </head>
 <body>
@@ -499,7 +511,7 @@ td.mono-col{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.8rem;f
   <dl class="cartouche__grille">
     <div class="champ"><dt>Appareil</dt><dd>iPad Pro · M4 / M5</dd></div>
     <div class="champ"><dt>Profil</dt><dd>Travail · bureautique</dd></div>
-    <div class="champ"><dt>Durée</dt><dd>≈ 1 h 30, sécable</dd></div>
+    <div class="champ"><dt>Durée</dt><dd>≈ 1 h 35, sécable</dd></div>
     <div class="champ"><dt>Réversible</dt><dd>Oui, via sauvegarde</dd></div>
     <div class="champ"><dt>Version visée</dt><dd>iPadOS 26.6.x</dd></div>
   </dl>
@@ -592,7 +604,7 @@ td.mono-col{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.8rem;f
     <a href="#e6"><em>06</em> Page 2 · Atelier <span>4 min</span></a>
     <a href="#e7"><em>07</em> Page 3 · Perso <span>4 min</span></a>
     <a href="#e8"><em>08</em> Verrouiller les règles <span>3 min</span></a>
-    <a href="#e9"><em>09</em> Centre de contrôle <span>6 min</span></a>
+    <a href="#e9"><em>09</em> Centre de contrôle <span>8 min</span></a>
     <a href="#e10"><em>10</em> Concentration <span>6 min</span></a>
     <a href="#e11"><em>11</em> Notifications <span>4 min</span></a>
     <a href="#e12"><em>12</em> Raccourcis <span>14 min</span></a>
@@ -617,7 +629,7 @@ td.mono-col{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.8rem;f
     <div class="pas"><input type="checkbox" id="s1"><p class="pas__txt"><strong>Branche l'iPad et connecte-le au Wi-Fi.</strong></p><p class="pas__sous">Une sauvegarde iCloud interrompue ne sert à rien ; sur secteur elle va au bout.</p></div>
     <div class="pas"><input type="checkbox" id="s2"><p class="pas__txt"><strong>Lance une sauvegarde manuelle.</strong></p><p class="pas__sous"><span class="chemin">Réglages › [ton nom] › iCloud › Sauvegarde iCloud</span> → <em>Sauvegarder maintenant</em>. Attends la fin, et vérifie la date affichée sous le bouton.</p></div>
     <div class="pas"><input type="checkbox" id="s3"><p class="pas__txt"><strong>Pas assez d'espace iCloud ?</strong> Sauvegarde sur un ordinateur à la place.</p><p class="pas__sous">Mac : le Finder, iPad dans la barre latérale, <em>Sauvegarder toutes les données de l'iPad sur ce Mac</em>. Windows : l'app Appareils Apple. C'est gratuit et souvent plus rapide.</p></div>
-    <div class="pas"><input type="checkbox" id="s4"><p class="pas__txt"><strong>Note la date et l'heure ici :</strong> ____________</p><p class="pas__sous">Si dans deux jours tu regrettes une décision, c'est ce point de retour que tu chercheras.</p></div>
+    <div class="pas"><input type="checkbox" id="s4"><p class="pas__txt"><strong>Note la date de la sauvegarde dans Notes.</strong></p><p class="pas__sous">Ouvre Notes, crée une note appelée <b>Plan iPad</b> et écris-y la date et l'heure affichées sous <em>Sauvegarder maintenant</em> — par exemple « sauvegarde iCloud du 29/08 à 8 h 12 ». Si dans deux jours tu regrettes une décision, c'est ce point de retour que tu chercheras, et tu ne t'en souviendras pas de tête.</p></div>
   </div>
 </section>
 
@@ -644,10 +656,10 @@ td.mono-col{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.8rem;f
   <div class="liste">
     <div class="pas"><input type="checkbox" id="m1"><p class="pas__txt"><strong>Ouvre l'inventaire</strong> et laisse-le se construire.</p><p class="pas__sous"><span class="chemin">Réglages › Général › Stockage iPad</span>. La barre colorée du haut met dix à trente secondes à se remplir, puis la liste des apps se trie par taille. Commence par le haut : c'est là qu'est le volume.</p></div>
     <div class="pas"><input type="checkbox" id="m2"><p class="pas__txt"><strong>Applique les « Recommandations »</strong> affichées juste sous la barre.</p><p class="pas__sous">Cette section n'apparaît que quand iPadOS a quelque chose à te proposer, et disparaît une fois traitée. On y trouve en général <em>Examiner les pièces jointes volumineuses</em> et <em>Vider la corbeille de Photos</em> : du gain immédiat, sans aucun arbitrage.</p></div>
-    <div class="pas"><input type="checkbox" id="m3"><p class="pas__txt"><strong>Repère les apps mortes — elles sont écrites noir sur blanc ici.</strong></p><p class="pas__sous">Sous le nom de chaque app, la liste affiche sa <b>date de dernière ouverture</b>, et la mention <b>« Jamais utilisée »</b> pour celles que tu n'as jamais lancées. Règle : rien depuis six mois → tu supprimes. C'est bien cet écran qu'il faut lire, pas Temps d'écran — ce dernier ne liste que les apps effectivement <em>utilisées</em>, donc justement pas celles que tu cherches.</p></div>
-    <div class="pas"><input type="checkbox" id="m4"><p class="pas__txt"><strong>Sur les grosses apps, regarde le second chiffre.</strong></p><p class="pas__sous">En touchant une app, iPadOS sépare <em>Taille de l'app</em> (le téléchargement) et <em>Documents et données</em> (ce qu'elle a accumulé). Sur les apps de streaming, de podcasts et de cartes, c'est le second qui explose — et souvent il se vide depuis l'app elle-même, sans rien désinstaller.</p></div>
+    <div class="pas"><input type="checkbox" id="m3"><p class="pas__txt"><strong>Supprime les apps mortes tout de suite, au fil de la liste.</strong></p><p class="pas__sous">Sous le nom de chaque app, la liste affiche sa <b>date de dernière ouverture</b>, et la mention <b>« Jamais utilisée »</b>. Règle sans discussion : rien depuis six mois → tu touches l'app → <em>Supprimer l'app</em>. Ne note rien pour plus tard, fais-le en descendant. C'est bien cet écran qu'il faut lire, pas Temps d'écran — ce dernier ne liste que les apps effectivement <em>utilisées</em>, donc justement pas celles que tu cherches.</p></div>
+    <div class="pas"><input type="checkbox" id="m4"><p class="pas__txt"><strong>Sur les grosses apps, regarde le second chiffre.</strong></p><p class="pas__sous">En touchant une app, iPadOS sépare <em>Taille de l'app</em> (le téléchargement) et <em>Documents et données</em> (ce qu'elle a accumulé). Sur les apps de streaming, de podcasts et de cartes, c'est le second qui explose — et souvent il se vide depuis l'app elle-même, sans rien désinstaller. Cas particulier utile : les vidéos téléchargées de l'app <b>TV</b> se suppriment <em>directement depuis cet écran de stockage</em>, film par film, d'un balayage. Et ne compte pas sur le déchargement pour vider un cache : il conserve précisément les Documents et données.</p></div>
     <div class="pas"><input type="checkbox" id="m5"><p class="pas__txt"><strong>Vide la corbeille de Photos</strong> — si les Recommandations ne s'en sont pas déjà chargées.</p><p class="pas__sous"><span class="chemin">Photos › Collections › Utilitaires › Suppressions récentes</span> → Sélectionner → Tout supprimer. Tes photos y restent <b>30 jours</b> et occupent la place pendant tout ce temps, sur l'iPad comme dans iCloud.</p></div>
-    <div class="pas"><input type="checkbox" id="m6"><p class="pas__txt"><strong>Fusionne les doublons, et visite l'album « Masqué ».</strong></p><p class="pas__sous">Toujours dans <em>Collections › Utilitaires</em>. L'album <b>Doublons</b> n'existe que si la détection a eu lieu : elle est entièrement locale et ne tourne que quand l'iPad est <b>verrouillé, branché et au repos</b> — sur une grosse photothèque, comptez plusieurs nuits. Si l'album est absent ce soir, laisse l'iPad en charge et reviens demain. L'album <b>Masqué</b>, lui, est le réservoir oublié classique : ses photos comptent dans le stockage et n'apparaissent dans aucune recommandation.</p></div>
+    <div class="pas"><input type="checkbox" id="m6"><p class="pas__txt"><strong>Fusionne les doublons, et visite l'album « Masqué ».</strong></p><p class="pas__sous">Toujours dans <em>Collections › Utilitaires</em>. L'album <b>Doublons</b> n'existe que si la détection a eu lieu : elle est entièrement locale et ne tourne que quand l'iPad est <b>verrouillé, branché et au repos</b> — sur une grosse photothèque, comptez plusieurs nuits. Si l'album est absent ce soir, laisse l'iPad en charge et reviens demain. L'album <b>Masqué</b>, lui, est le réservoir oublié classique : ses photos comptent dans le stockage et n'apparaissent dans aucune recommandation. S'il est introuvable, c'est qu'il est masqué de la liste — c'est un réglage à part, dans <span class="chemin">Réglages › Apps › Photos › Afficher l'album Masqué</span>, indépendant du verrou Face ID.</p></div>
     <div class="pas"><input type="checkbox" id="m7"><p class="pas__txt"><strong>Limite l'historique des messages</strong> — en sachant ce que ça déclenche.</p><p class="pas__sous"><span class="chemin">Réglages › Apps › Messages › Conserver les messages</span> → <b>1 an</b>. Trois valeurs seulement : 30 jours, 1 an, Toujours. Attention : passer de <em>Toujours</em> à <em>1 an</em> supprime <b>immédiatement et sans retour</b> tout ce qui est plus ancien, pièces jointes comprises. iPadOS te le demande une fois ; c'est la seule confirmation que tu auras.</p></div>
     <div class="pas"><input type="checkbox" id="m8"><p class="pas__txt"><strong>Mets Safari sur un régime automatique.</strong></p><p class="pas__sous"><span class="chemin">Réglages › Apps › Safari › Fermer les onglets</span> → <b>Après un mois</b> (chaque onglet garde son instantané et son cache — 300 onglets ouverts, ce n'est pas de l'archivage). Puis, pour faire de la place <em>sans</em> perdre historique et onglets ouverts, passe par <span class="chemin">Safari › Avancé › Données de sites</span> : tu y vois le poids par domaine et tu peux tout effacer d'un coup.</p></div>
     <div class="pas"><input type="checkbox" id="m9"><p class="pas__txt"><strong>Ouvre « Sur mon iPad » dans Fichiers</strong> — le réservoir oublié numéro un.</p><p class="pas__sous"><span class="chemin">Fichiers › Parcourir › Emplacements › Sur mon iPad</span> : ce stockage est 100 % local, invisible depuis tes autres appareils, et n'apparaît nulle part dans les recommandations. Passe la vue en liste et trie par taille. Puis vide <em>Suppressions récentes</em> de Fichiers, qui a sa propre corbeille à 30 jours.</p></div>
@@ -655,7 +667,7 @@ td.mono-col{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.8rem;f
     <div class="pas"><input type="checkbox" id="m11"><p class="pas__txt"><strong>Vérifie trois nids à poussière</strong> que personne ne regarde jamais.</p><p class="pas__sous">
       <b>Claviers tiers</b> — <span class="chemin">Réglages › Général › Clavier › Claviers</span> : un clavier peut rester actif après la désinstallation de son app, avec l'accès complet à ta frappe.
       <b>VPN et profils</b> — <span class="chemin">Réglages › Général › VPN et gestion de l'appareil</span> : cet écran <em>n'existe pas</em> si l'iPad est propre ; s'il est là, tu as un profil ou une config VPN orpheline, qui peut casser silencieusement ta connexion.
-      <b>Bluetooth</b> — oublie (pas seulement « déconnecte ») les enceintes d'hôtel et voitures de location qui traînent dans la liste.</p></div>
+      <b>Bluetooth</b> — <span class="chemin">Réglages › Bluetooth</span> : dans <em>Mes appareils</em>, touche le <b>(i)</b> à droite de chaque appareil que tu ne reconnais plus (enceintes d'hôtel, voitures de location, casques revendus) → <b>Oublier cet appareil</b>. « Déconnecter » ne suffit pas : l'appairage reste et l'iPad continuera d'essayer de s'y reconnecter.</p></div>
     <div class="pas"><input type="checkbox" id="m12"><p class="pas__txt"><strong>Supprime maintenant les apps repérées</strong>, une par une, depuis la liste du Stockage.</p><p class="pas__sous">Profites-en pour une question propre à iPadOS 26 : il embarque désormais une app <b>Aperçu</b> native, qui ouvre, annote et réenregistre PDF et images. Beaucoup d'apps PDF tierces sont devenues inutiles — c'est souvent plusieurs gigaoctets et deux icônes de gagnés.</p></div>
     <div class="pas"><input type="checkbox" id="m13"><p class="pas__txt"><strong>Ne touche pas à « Données du système ».</strong></p><p class="pas__sous">Cette ligne enfle et dégonfle toute seule : c'est du cache que iPadOS gère. Aucun réglage ne la vide, et les apps qui le promettent ne servent à rien. Sache aussi qu'iPadOS 26 <b>réserve</b> dynamiquement de l'espace pour ses mises à jour : il apparaît comme occupé sans correspondre à tes données. Si le total te paraît énorme, un simple redémarrage en récupère souvent une bonne part.</p></div>
   </div>
@@ -685,8 +697,8 @@ td.mono-col{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.8rem;f
     <div class="pas"><input type="checkbox" id="t3"><p class="pas__txt"><strong>Supprime toutes les pages sauf une</strong> — le bouton « moins » en haut de chaque vignette.</p><p class="pas__sous">Confirme la suppression. Les apps partent en Bibliothèque. Garde une page, vide, qui deviendra ta page 1.</p></div>
     <div class="pas"><input type="checkbox" id="t4"><p class="pas__txt"><strong>Vide la page restante</strong> : appui long sur chaque icône → <em>Supprimer l'app</em> → <b>Retirer de l'écran d'accueil</b>.</p><p class="pas__sous">Bien lire l'option : « Retirer de l'écran d'accueil » garde l'app en Bibliothèque, « Supprimer l'app » la désinstalle. C'est le même menu, deux gestes très différents.</p></div>
     <div class="pas"><input type="checkbox" id="t5"><p class="pas__txt"><strong>Vérifie que tu as bien un écran nu</strong> : un Dock, une page vide, la Bibliothèque à droite.</p><p class="pas__sous">C'est le moment le plus inconfortable du plan, et le signe que ça marche. À partir d'ici, tout ce que tu poses est un choix.</p></div>
-    <div class="pas"><input type="checkbox" id="t6"><p class="pas__txt"><strong>Fixe maintenant l'apparence des icônes</strong> — pas après.</p><p class="pas__sous">Appui long sur un espace vide → <em>Modifier</em> → <em>Personnaliser</em>. Tu choisis <b>une seule</b> apparence parmi quatre — <b>Par défaut</b>, <b>Sombre</b>, <b>Transparent</b>, <b>Teinté</b> — et, séparément, une taille : <b>Petites</b> ou <b>Grandes</b> icônes.</p></div>
-    <div class="pas"><input type="checkbox" id="t7"><p class="pas__txt"><strong>Reste en petites icônes, apparence « Par défaut ».</strong></p><p class="pas__sous">Les grandes icônes sont le seul moyen natif de supprimer le nom sous les icônes, mais elles font tomber la page de <b>30 à 20 emplacements</b> — et surtout, changer de taille <b>reflue toute la grille et détruit les trous</b> que tu vas placer. D'où l'ordre : on décide avant de composer, jamais après. Même réserve pour le <em>Teinté</em> : très beau au premier regard, nettement plus lent à lire ensuite, parce qu'on reconnaît ses apps à leur couleur.</p></div>
+    <div class="pas"><input type="checkbox" id="t6"><p class="pas__txt"><strong>Fixe l'apparence des icônes maintenant — pas après.</strong></p><p class="pas__sous">Appui long sur un espace vide → <em>Modifier</em> → <em>Personnaliser</em>. Deux réglages sur ce panneau, et ils sont <b>déjà tranchés</b> : apparence <b>Par défaut</b> (ni Sombre, ni Transparent, ni Teinté) et taille <b>Petites</b>. Touche ces deux-là, ferme, passe à la suite.</p></div>
+    <div class="pas"><input type="checkbox" id="t7"><p class="pas__txt"><strong>Pourquoi ces deux choix-là, si tu te poses la question.</strong></p><p class="pas__sous">Les grandes icônes sont le seul moyen natif de supprimer le nom sous les icônes, mais elles font tomber la page de <b>30 à 20 emplacements</b> — et surtout, changer de taille <b>reflue toute la grille et détruit les trous</b> que tu vas placer. D'où l'ordre : on décide avant de composer, jamais après. Même réserve pour le <em>Teinté</em> : très beau au premier regard, nettement plus lent à lire ensuite, parce qu'on reconnaît ses apps à leur couleur.</p></div>
     <div class="pas"><input type="checkbox" id="t8"><p class="pas__txt"><strong>Et décide du zoom d'affichage tout de suite</strong>, pour la même raison.</p><p class="pas__sous"><span class="chemin">Réglages › Luminosité et affichage › Zoom d'affichage</span> → <b>Plus d'espace</b>. Tout devient un peu plus petit, mais l'iPad affiche nettement plus de contenu — décisif dès qu'on travaille à deux fenêtres. Ce réglage change aussi la taille des icônes, donc le nombre d'emplacements par page : si tu le changes après avoir composé tes pages, tu recomposes tout. C'est maintenant ou jamais.</p></div>
   </div>
 </section>
@@ -713,7 +725,7 @@ td.mono-col{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.8rem;f
   <div class="liste">
     <div class="pas"><input type="checkbox" id="d1"><p class="pas__txt"><strong>Vide le Dock entièrement</strong> — appui long sur chaque icône → <em>Retirer de l'écran d'accueil</em>.</p><p class="pas__sous">Ne les fais surtout pas glisser vers le haut : elles rempliraient la page que tu viens tout juste de vider à l'étape 03. Là, elles redescendent en Bibliothèque, et tu les rappelleras une par une.</p></div>
     <div class="pas"><input type="checkbox" id="d2"><p class="pas__txt"><strong>Coupe les suggestions du Dock.</strong></p><p class="pas__sous"><span class="chemin">Réglages › Écran d'accueil et bibliothèque d'apps</span> → sous l'en-tête <em>Dock</em>, désactive <em>Afficher les apps suggérées et récentes</em>. Si tu ne l'y trouves pas, regarde dans <span class="chemin">Réglages › Multitâche et gestes</span> : iPadOS 18 a scindé l'ancien panneau en deux et l'option a pu suivre le multitâche. C'est le réglage le plus rentable de toute la page : il rend les positions du Dock <b>fixes</b>, donc visables au doigt sans regarder, et te rend deux à trois emplacements.</p></div>
-    <div class="pas"><input type="checkbox" id="d3"><p class="pas__txt"><strong>Place les six, de gauche à droite</strong> : Safari, Mail, Messages, Calendrier, Notes, Fichiers.</p><p class="pas__sous">Remplace par ton équivalent si tu n'utilises pas l'app Apple (Outlook au lieu de Mail, Chrome au lieu de Safari) — mais garde le rôle et la position.</p></div>
+    <div class="pas"><input type="checkbox" id="d3"><p class="pas__txt"><strong>Place les six, de gauche à droite</strong> : Safari, Mail, Messages, Calendrier, Notes, Fichiers.</p><p class="pas__sous">Tu viens de les renvoyer en Bibliothèque : ouvre-la avec le bouton à l'extrême droite du Dock, touche le champ de recherche en haut pour obtenir la liste alphabétique, tape le nom, puis maintiens l'icône et fais-la glisser directement dans le Dock. Une par une, dans l'ordre. Remplace par ton équivalent si tu n'utilises pas l'app Apple (Outlook au lieu de Mail, Chrome au lieu de Safari) — mais garde le rôle et la position.</p></div>
   </div>
 </section>
 
@@ -762,10 +774,11 @@ td.mono-col{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.8rem;f
   </figure>
 
   <div class="liste">
-    <div class="pas"><input type="checkbox" id="p1a"><p class="pas__txt"><strong>Pose les deux widgets.</strong></p><p class="pas__sous">Appui long sur le fond → bouton <em>Modifier</em> / <em>+</em> en haut → choisis <b>Calendrier</b> en taille moyenne (4×2) et <b>Rappels</b> en petit (2×2). Cale-les tout en haut à gauche.</p></div>
+    <div class="pas"><input type="checkbox" id="p1a"><p class="pas__txt"><strong>Pose les deux widgets.</strong></p><p class="pas__sous">Appui long sur un espace vide jusqu'au tremblement, puis touche <b>Modifier</b> en haut à gauche, puis <b>Ajouter un widget</b> : la galerie s'ouvre avec un champ de recherche. Prends <b>Calendrier</b> en taille <b>moyenne</b> et pose-le tout en haut à <b>gauche</b> (il occupe les colonnes 1 à 4). Puis <b>Rappels</b> en <b>petit</b>, à sa <b>droite</b> (colonnes 5 et 6). Les deux occupent les deux premières rangées.</p></div>
     <div class="pas"><input type="checkbox" id="p1b"><p class="pas__txt"><strong>Rangée « répondre »</strong> : ta messagerie d'équipe, ta visio, Contacts, FaceTime.</p><p class="pas__sous">Tu les prends dans la Bibliothèque d'apps (à droite de la dernière page) et tu les fais glisser à leur case.</p></div>
     <div class="pas"><input type="checkbox" id="p1c"><p class="pas__txt"><strong>Rangée « piloter »</strong> : Rappels, ta veille, Réglages.</p><p class="pas__sous">Trois seulement, et c'est voulu : Freeform vit sur la page Atelier, et une app ne peut pas être à deux endroits de l'écran d'accueil.</p></div>
-    <div class="pas"><input type="checkbox" id="p1d"><p class="pas__txt"><strong>Ne remplis pas les colonnes 5 et 6.</strong> Le vide fait partie du plan.</p></div>
+    <div class="pas"><input type="checkbox" id="p1d"><p class="pas__txt"><strong>Ne remplis pas les colonnes 5 et 6</strong> sous les widgets. Le vide fait partie du plan.</p></div>
+    <div class="pas"><input type="checkbox" id="p1e"><p class="pas__txt"><strong>Tourne l'iPad et regarde ta page 1.</strong></p><p class="pas__sous">En portrait la grille se recompose sur 5 colonnes au lieu de 6 : tes deux rangées d'apps doivent rester calées à gauche, et la marge rester vide à droite. Si une icône a sauté à la ligne, remets-la à sa place maintenant, tourné — c'est dix secondes, et tu ne le referas plus.</p></div>
   </div>
 </section>
 
@@ -839,7 +852,7 @@ td.mono-col{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.8rem;f
   <div class="liste">
     <div class="pas"><input type="checkbox" id="p3a"><p class="pas__txt"><strong>Widgets Photos (4×2) et Musique (2×2)</strong> en haut.</p></div>
     <div class="pas"><input type="checkbox" id="p3b"><p class="pas__txt"><strong>Rangée « média »</strong> puis <strong>rangée « vie courante »</strong>.</p></div>
-    <div class="pas"><input type="checkbox" id="p3c"><p class="pas__txt"><strong>Crée les trois dossiers</strong> : Jeux, Voyage, Admin.</p><p class="pas__sous">Un dossier se crée en déposant une icône sur une autre. Renomme-le tout de suite : le nom proposé par iPadOS est presque toujours mauvais.</p></div>
+    <div class="pas"><input type="checkbox" id="p3c"><p class="pas__txt"><strong>Crée les trois dossiers</strong> : Jeux, Voyage, Admin.</p><p class="pas__sous">Un dossier se crée en déposant une icône sur une autre ; renomme-le tout de suite, le nom proposé par iPadOS est presque toujours mauvais. Puis remplis-le depuis la Bibliothèque : <b>Jeux</b> = tes jeux ; <b>Voyage</b> = compagnies, trains, hôtels, cartes, traduction ; <b>Admin</b> = impôts, assurance, opérateur, La Poste, santé administrative. <b>Règle du dossier :</b> au moins quatre apps dedans, sinon ce n'est pas un dossier, c'est une cachette — s'il n'y en a que deux, laisse-les en Bibliothèque et supprime le dossier.</p></div>
     <div class="pas"><input type="checkbox" id="p3d"><p class="pas__txt"><strong>Arrête-toi à trois pages.</strong> S'il te reste des apps sans place, la réponse n'est pas une page 4 : c'est la Bibliothèque.</p></div>
   </div>
 </section>
@@ -886,7 +899,7 @@ td.mono-col{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.8rem;f
   <div class="plaque__tete">
     <span class="plaque__num">09</span>
     <h2>Centre de contrôle — trois pages, pas une soupe</h2>
-    <span class="plaque__duree">6 min</span>
+    <span class="plaque__duree">8 min</span>
   </div>
   <p>Depuis iPadOS 18, le Centre de contrôle n'est plus une grille figée : il occupe tout l'écran,
     s'étale sur des <strong>pages empilées verticalement</strong>, et ses commandes se
@@ -980,11 +993,13 @@ td.mono-col{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.8rem;f
 
   <div class="liste">
     <div class="pas"><input type="checkbox" id="c1"><p class="pas__txt"><strong>Repars de zéro si le tien est déjà bricolé.</strong></p><p class="pas__sous"><span class="chemin">Réglages › Centre de contrôle › Réinitialiser le centre de contrôle</span>. Sans annulation possible, mais tu vas tout refaire de toute façon — autant partir de la disposition d'usine, qui est propre.</p></div>
+    <div class="pas"><input type="checkbox" id="c1b"><p class="pas__txt"><strong>Ouvre le Centre de contrôle et passe en mode édition.</strong></p><p class="pas__sous">Balaye vers le bas depuis le coin supérieur <b>droit</b> de l'écran, en partant du bord physique — le coin supérieur <b>gauche</b> ouvre les notifications, c'est l'erreur classique. Au clavier : <code>Globe + C</code>. Puis touche le <b>+</b> en haut à gauche (ou fais un appui long sur une zone vide) : les commandes se mettent à trembler. Tout le reste de cette étape se passe dans cet écran.</p></div>
     <div class="pas"><input type="checkbox" id="c2"><p class="pas__txt"><strong>Supprime ce qui ne te sert jamais</strong> : le <b>−</b> en haut à gauche de chaque commande.</p><p class="pas__sous">Suppression immédiate, sans confirmation — mais la commande reste dans la galerie, donc rien n'est perdu pour de bon.</p></div>
     <div class="pas"><input type="checkbox" id="c3"><p class="pas__txt"><strong>Compose la page 1</strong> selon le schéma, en agrandissant <em>Écoute en cours</em> et <em>Concentration</em>.</p><p class="pas__sous">Une commande en taille 4 affiche son <b>état</b>, pas seulement son icône : c'est ce qui te dit quel mode de concentration est actif sans avoir à le lire.</p></div>
     <div class="pas"><input type="checkbox" id="c4"><p class="pas__txt"><strong>Crée la page 2</strong> : en mode édition, l'icône en cercle pointillé dans la colonne de droite, sous la dernière page.</p><p class="pas__sous">Pour y déplacer une commande, maintiens-la et traîne-la jusqu'au bord haut ou bas de l'écran — la page bascule. Laisse les <b>quatre emplacements de raccourcis vides</b> : tu les rempliras à l'étape 12.</p></div>
+    <div class="pas"><input type="checkbox" id="c4b"><p class="pas__txt"><strong>Page 3 : seulement si tu as des accessoires.</strong></p><p class="pas__sous">Si tu n'as ni accessoire domotique, ni Apple TV, ni enceinte AirPlay, <b>coche et passe</b> : deux pages valent mieux que trois dont une vide. Sinon, crée une troisième page comme la deuxième (l'icône en cercle pointillé, colonne de droite) et pose-y <em>Domicile</em> et <em>Télécommande</em> en grand, puis AirPlay, Reconnaissance musicale, Sous-titres et Contrôle vocal en petit.</p></div>
     <div class="pas"><input type="checkbox" id="c5"><p class="pas__txt"><strong>Vérifie l'accès depuis les apps.</strong></p><p class="pas__sous"><span class="chemin">Réglages › Centre de contrôle</span> → l'interrupteur d'accès au sein des apps doit rester <b>actif</b>. Sinon il faut quitter l'app en cours pour changer le volume, ce qui annule tout le bénéfice.</p></div>
-    <div class="pas"><input type="checkbox" id="c6"><p class="pas__txt"><strong>Et sur l'écran verrouillé ?</strong> À décider selon où traîne l'iPad.</p><p class="pas__sous"><span class="chemin">Réglages › Face ID et code › Autoriser l'accès en mode verrouillé</span> → <em>Centre de contrôle</em>. Le laisser actif est pratique ; le couper empêche qu'on coupe ton Wi-Fi ou active le mode avion sans déverrouiller.</p></div>
+    <div class="pas"><input type="checkbox" id="c6"><p class="pas__txt"><strong>Coupe le Centre de contrôle sur l'écran verrouillé.</strong></p><p class="pas__sous"><span class="chemin">Réglages › Face ID et code › Autoriser l'accès en mode verrouillé</span> → désactive <em>Centre de contrôle</em>. C'est le réglage par défaut de ce plan : sur un iPad posé sur un bureau, n'importe qui peut sinon couper ton Wi-Fi ou activer le mode avion sans déverrouiller — ce qui suffit à empêcher une localisation en cas de vol. Si tu tiens à changer le volume sans déverrouiller, remets-le, mais fais-en un choix.</p></div>
   </div>
 
   <div class="avis">
@@ -1023,14 +1038,15 @@ td.mono-col{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.8rem;f
   </div>
 
   <div class="liste">
-    <div class="pas"><input type="checkbox" id="f1"><p class="pas__txt"><strong>Crée les trois modes.</strong></p><p class="pas__sous"><span class="chemin">Réglages › Concentration</span> → <b>+</b> en haut à droite → un modèle (Travail, Personnel…) ou <em>Personnalisé</em>, puis un nom, une couleur et une icône. « Travail » et « Personnel » existent peut-être déjà : réutilise-les plutôt que d'en créer des doubles. Plafond : <b>10 modes au total</b>, ceux d'Apple compris — arrivé à dix, le bouton + devient inactif.</p></div>
-    <div class="pas"><input type="checkbox" id="f2"><p class="pas__txt"><strong>Lie chaque mode à sa page</strong> — c'est le geste central de l'étape.</p><p class="pas__sous"><span class="chemin">Réglages › Concentration › [le mode] › Personnaliser les écrans</span> → touche l'aperçu <em>Écran d'accueil</em> → active <b>Pages personnalisées</b> → coche la ou les pages voulues → <em>OK</em>. Tu peux en cocher plusieurs : ce n'est pas « une page par mode ». Les pages non cochées disparaissent tant que le mode tourne et reviennent dès qu'il s'arrête — rien n'est supprimé.</p></div>
+    <div class="pas"><input type="checkbox" id="f1"><p class="pas__txt"><strong>Crée les trois modes.</strong></p><p class="pas__sous">Les trois à créer, avec leurs noms exacts : <b>Travail</b>, <b>Atelier</b>, <b>Perso</b>. <span class="chemin">Réglages › Concentration</span> → <b>+</b> en haut à droite → un modèle (Travail, Personnel…) ou <em>Personnalisé</em> pour Atelier, puis un nom, une couleur et une icône. « Travail » et « Personnel » existent peut-être déjà : réutilise-les plutôt que d'en créer des doubles. Plafond : <b>10 modes au total</b>, ceux d'Apple compris — arrivé à dix, le bouton + devient inactif.</p></div>
+    <div class="pas"><input type="checkbox" id="f2"><p class="pas__txt"><strong>Lie chaque mode à sa page</strong> — c'est le geste central de l'étape.</p><p class="pas__sous"><span class="chemin">Réglages › Concentration › [le mode] › Personnaliser les écrans</span> → touche l'aperçu <em>Écran d'accueil</em> → active <b>Pages personnalisées</b> → coche la ou les pages voulues → <em>OK</em>. Tu peux en cocher plusieurs : ce n'est pas « une page par mode ». Les pages non cochées disparaissent tant que le mode tourne et reviennent dès qu'il s'arrête — rien n'est supprimé.<br>
+    Le rattachement, mode par mode : <b>Travail → uniquement la page 1 (Poste)</b> · <b>Atelier → uniquement la page 2</b> · <b>Perso → uniquement la page 3</b>.</p></div>
     <div class="pas"><input type="checkbox" id="f3"><p class="pas__txt"><strong>Règle les autorisations en partant de zéro.</strong></p><p class="pas__sous">Dans <em>Personnes</em> et dans <em>Apps</em>, un sélecteur en haut de l'écran bascule entre <b>« Autoriser les notifications de »</b> (liste blanche) et <b>« Rendre silencieuses les notifications de »</b> (liste noire). Prends toujours la <b>liste blanche</b>, et pars de zéro : tu ajoutes le strict nécessaire. L'inverse — partir de tout et retirer — ne converge jamais. Pour Atelier : Rappels et Calendrier, point.</p></div>
     <div class="pas"><input type="checkbox" id="f4"><p class="pas__txt"><strong>Ajoute les filtres</strong>, la partie que presque personne n'utilise.</p><p class="pas__sous">Dans la fiche du mode, tout en bas : <em>Filtres de concentration › Ajouter un filtre</em>. Côté Apple, exactement quatre apps les gèrent : <b>Calendrier</b> (quels agendas), <b>Mail</b> (quels comptes), <b>Messages</b> (limité aux personnes autorisées) et <b>Safari</b> (un profil ou un groupe d'onglets). Le mode Travail cesse alors de t'<em>afficher</em> tes mails perso, il ne fait pas que les taire. S'y ajoutent deux filtres système — <b>Apparence</b> (qui force le mode clair ou sombre) et <b>Mode économie d'énergie</b> — plus ceux des apps tierces compatibles. À noter : <b>Actualités n'a pas de filtre</b>, contrairement à ce qu'on lit souvent.<br>
     <b>Une exception d'ordre :</b> laisse le filtre <em>Safari</em> de côté pour l'instant. Tes profils Travail et Perso n'existent pas encore — on les crée à l'étape 14, et c'est de là que tu reviendras poser ce filtre.</p></div>
     <div class="pas"><input type="checkbox" id="f5"><p class="pas__txt"><strong>Rends la page dédiée visuellement calme.</strong></p><p class="pas__sous">Dans <em>Options</em>, à l'intérieur du mode : <b>Masquer les pastilles de notification</b> supprime les points rouges pendant que le mode tourne, et <b>Assombrir l'écran verrouillé</b> baisse l'écran d'accueil et de verrouillage. Deux réglages minuscules qui font énormément pour la sensation de calme.</p></div>
     <div class="pas"><input type="checkbox" id="f6"><p class="pas__txt"><strong>Programme les activations automatiques.</strong></p><p class="pas__sous">Dans la fiche du mode : <em>Ajouter un programme</em> → <b>Heure</b> (plage + jours), <b>Lieu</b> (arrivée/départ d'une adresse) ou <b>App</b> (à l'ouverture). Horaire pour Travail et Perso, ouverture d'app pour Atelier. Un mode qu'il faut penser à activer ne s'active jamais. L'<em>Activation intelligente</em> est un interrupteur à part, qui s'ajoute aux programmes sans les remplacer.</p></div>
-    <div class="pas"><input type="checkbox" id="f7"><p class="pas__txt"><strong>Décide du partage entre appareils.</strong></p><p class="pas__sous">L'interrupteur est en bas de <span class="chemin">Réglages › Concentration</span> : il propage <b>l'activation</b> du mode à ton iPhone et ton Mac — activer Travail ici l'active là-bas. Il ne copie pas les modes eux-mêmes : ça, c'est la synchronisation iCloud des réglages. Très pratique — sauf si tu veux être concentré sur l'iPad tout en restant joignable sur le téléphone. À toi ; l'important est de le choisir, pas de le subir.</p></div>
+    <div class="pas"><input type="checkbox" id="f7"><p class="pas__txt"><strong>Laisse le partage entre appareils activé.</strong></p><p class="pas__sous">L'interrupteur est en bas de <span class="chemin">Réglages › Concentration</span> : il propage <b>l'activation</b> du mode à ton iPhone et ton Mac — activer Travail ici l'active là-bas. Il ne copie pas les modes eux-mêmes : ça, c'est la synchronisation iCloud des réglages. C'est le choix par défaut du plan, parce qu'un mode qui ne vaut que sur un appareil ne protège rien. La seule raison de le couper : vouloir être injoignable sur l'iPad tout en restant joignable sur le téléphone.</p></div>
   </div>
 
   <div class="avis">
@@ -1082,10 +1098,14 @@ td.mono-col{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.8rem;f
 
   <div class="liste">
     <div class="pas"><input type="checkbox" id="n1"><p class="pas__txt"><strong>Active le résumé programmé</strong> et donne-lui deux livraisons.</p><p class="pas__sous"><span class="chemin">Réglages › Notifications › Résumé programmé</span> (aussi appelé <em>Notifications planifiées</em>). Il accepte jusqu'à douze livraisons par jour ; n'en garde que <b>deux</b> — par exemple 12 h 30 et 18 h 30, une avant la pause, une en fin de journée. À savoir : ce réglage est <b>global</b>, totalement indépendant de tes modes de concentration. Les deux mécanismes se cumulent sans se gêner.</p></div>
-    <div class="pas"><input type="checkbox" id="n2"><p class="pas__txt"><strong>Descends la liste des apps une seule fois</strong>, de haut en bas, sans revenir en arrière.</p><p class="pas__sous">Pour chacune, un des trois tas. Ne réfléchis pas plus de deux secondes : tu repasseras. Le piège est de vouloir un réglage parfait par app — c'est ce qui fait qu'on abandonne au tiers de la liste.</p></div>
+    <div class="pas"><input type="checkbox" id="n2"><p class="pas__txt"><strong>Descends la liste des apps une seule fois</strong>, de haut en bas, sans revenir en arrière.</p><p class="pas__sous">Dans <span class="chemin">Réglages › Notifications</span>, fais défiler sous les réglages généraux jusqu'à la liste des apps. Trois tas, et rien d'autre :<br>
+      <b>Interrompre</b> — bannière + son + écran verrouillé. Réservé à Messages, Téléphone/FaceTime et Calendrier. <b>Trois apps, pas quatre.</b><br>
+      <b>Grouper</b> — notifications actives mais <em>sans son</em>, et cochées pour la livraison en résumé. Mail, messagerie d'équipe, banque, livraisons, veille.<br>
+      <b>Muet</b> — <em>Autoriser les notifications</em> désactivé. Tout le reste : jeux, boutiques, réseaux, promos.<br>
+      Ne réfléchis pas plus de deux secondes par app : tu repasseras. Le piège est de vouloir un réglage parfait — c'est ce qui fait qu'on abandonne au tiers de la liste.</p></div>
     <div class="pas"><input type="checkbox" id="n3"><p class="pas__txt"><strong>Réserve les « notifications urgentes »</strong> à Messages et Calendrier.</p><p class="pas__sous">Ce statut permet à une app de passer <em>au travers</em> de tes modes de concentration — il se pilote app par app ici, et se retrouve dans chaque mode sous <span class="chemin">Concentration › [le mode] › Apps › Notifications urgentes</span>. Laisse-le actif dans le mode : c'est ce qui rend un mode strict vivable. Mais coupe-le sur les apps qui n'ont rien d'urgent (livraisons, jeux, promos), sinon tout le travail de l'étape 10 est ruiné.</p></div>
     <div class="pas"><input type="checkbox" id="n4"><p class="pas__txt"><strong>Masque le contenu sur l'écran verrouillé</strong> si l'iPad traîne sur un bureau.</p><p class="pas__sous"><span class="chemin">Réglages › Notifications › Afficher les aperçus</span> → <em>Si déverrouillé</em>. Tu vois qu'il y a un message, pas ce qu'il dit, tant que tu n'as pas regardé l'écran. Attention, ce réglage est <b>global</b> : il ne se règle pas par mode de concentration.</p></div>
-    <div class="pas"><input type="checkbox" id="n6"><p class="pas__txt"><strong>Décide du sort des résumés d'Apple Intelligence.</strong></p><p class="pas__sous"><span class="chemin">Réglages › Notifications › Résumer les notifications</span>. Cette fonction condense plusieurs notifications en une phrase. Apple l'avait <b>désactivée pour les actualités</b> en janvier 2025 après des titres inventés, avant de la réactiver avec iPadOS 26 — les résumés sont désormais en italique, marqués « Résumé par Apple Intelligence », et un appui révèle les notifications d'origine. Elle se règle <b>par catégorie d'apps</b> : garde-la pour la messagerie si tu veux, coupe-la pour l'actualité. Juste à côté, <em>Notifications prioritaires</em> est une fonction distincte, qui remonte en haut de la pile ce qu'elle juge important.</p></div>
+    <div class="pas"><input type="checkbox" id="n6"><p class="pas__txt"><strong>Décide du sort des résumés d'Apple Intelligence.</strong></p><p class="pas__sous"><span class="chemin">Réglages › Notifications › Résumer les notifications</span>. Cette fonction condense plusieurs notifications en une phrase. Apple l'avait <b>désactivée pour les actualités</b> en janvier 2025 après des titres inventés, avant de la réactiver avec iPadOS 26 — les résumés sont désormais en italique, marqués « Résumé par Apple Intelligence », et un appui révèle les notifications d'origine. Elle se règle <b>par catégorie d'apps</b>. Le choix du plan : <b>garde-la pour la messagerie</b> (elle y est utile sur les fils longs) et <b>coupe-la pour l'actualité</b> — c'est précisément là qu'elle a inventé des titres. Juste à côté, <em>Notifications prioritaires</em> est une fonction distincte, qui remonte en haut de la pile ce qu'elle juge important.</p></div>
     <div class="pas"><input type="checkbox" id="n5"><p class="pas__txt"><strong>Garde les pastilles rouges pour Mail et Messages seulement.</strong></p><p class="pas__sous">Une pastille est une dette affichée en permanence. Sur les apps du tas « Grouper », désactive-les : le résumé fait déjà le travail, et ton écran d'accueil redevient calme à regarder.</p></div>
   </div>
 </section>
@@ -1278,7 +1298,7 @@ td.mono-col{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.8rem;f
 
   <div class="liste">
     <div class="pas"><input type="checkbox" id="x1"><p class="pas__txt"><strong>Crée tes remplacements de texte.</strong></p><p class="pas__sous"><span class="chemin">Réglages › Général › Clavier › Remplacement de texte</span>. Le meilleur rapport temps gagné / temps investi de tout le plan : <code>@@</code> pour ton adresse mail, <code>adr</code> pour ton adresse postale, <code>bjr</code> pour ta formule d'ouverture, <code>sign</code> pour ta signature complète. Ils se synchronisent sur tous tes appareils.</p></div>
-    <div class="pas"><input type="checkbox" id="x2b"><p class="pas__txt"><strong>Apprends les six raccourcis « Globe ».</strong> C'est le vrai levier d'un iPad au clavier.</p><p class="pas__sous">
+    <div class="pas"><input type="checkbox" id="x2b"><p class="pas__txt"><strong>Essaie les six raccourcis « Globe », une fois chacun.</strong> C'est le vrai levier d'un iPad au clavier.</p><p class="pas__sous">
       <code>Globe + C</code> Centre de contrôle · <code>Globe + N</code> notifications ·
       <code>Globe + A</code> le Dock · <code>Globe + ⇧ + A</code> la Bibliothèque d'apps ·
       <code>Globe + H</code> l'écran d'accueil · <code>Globe + Q</code> une note rapide.
@@ -1289,11 +1309,11 @@ td.mono-col{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.8rem;f
     <div class="pas"><input type="checkbox" id="x13"><p class="pas__txt"><strong>Active le mouchard gratuit</strong> pendant une semaine.</p><p class="pas__sous">Toujours dans <em>Services système</em>, tout en bas : <b>Icône dans la barre d'état</b>. Une fois activé, la flèche de localisation s'affiche <em>chaque fois</em> qu'un service système lit ta position. En une semaine tu sauras exactement qui te suit — et tu couperas en connaissance de cause au lieu de deviner. Tu pourras le désactiver ensuite.</p></div>
     <div class="pas"><input type="checkbox" id="x4"><p class="pas__txt"><strong>Referme l'accès aux photos.</strong></p><p class="pas__sous"><span class="chemin">Réglages › Confidentialité et sécurité › Photos</span> : trois niveaux — <em>Aucun</em>, <em>Photos sélectionnées</em>, <em>Accès complet</em>. Le niveau intermédiaire est mal connu et c'est presque toujours le bon : l'app ne voit qu'une liste explicite d'images. Pour réviser cette liste plus tard, ça ne se passe pas dans Photos mais dans <span class="chemin">Réglages › Apps › [l'app] › Photos › Modifier les photos sélectionnées</span>.</p></div>
     <div class="pas"><input type="checkbox" id="x14"><p class="pas__txt"><strong>Coupe le suivi publicitaire — les deux, ce sont deux réglages différents.</strong></p><p class="pas__sous"><span class="chemin">Réglages › Confidentialité et sécurité › Suivi</span> → désactive <em>Autoriser les apps à demander l'autorisation de suivi</em> : ça refuse toutes les demandes futures <b>et révoque celles déjà accordées</b>. Mais la publicité d'Apple elle-même est ailleurs et n'est pas concernée : <span class="chemin">Réglages › Confidentialité et sécurité › Publicité Apple</span> → coupe les annonces personnalisées. Pendant que tu y es, <em>Analyses et améliorations</em> juste au-dessus contient plusieurs interrupteurs, tous actifs si tu as accepté au premier démarrage.</p></div>
-    <div class="pas"><input type="checkbox" id="x7"><p class="pas__txt"><strong>Sépare tes deux vies dans Safari.</strong></p><p class="pas__sous"><span class="chemin">Réglages › Apps › Safari › Profils</span> : un profil <em>Travail</em> et un profil <em>Perso</em> cloisonnent historique, cookies, favoris, groupes d'onglets <b>et extensions actives</b>. C'est le prolongement direct des trois pages. <b>Reviens maintenant à l'étape 10</b>, dans ton mode Travail, pour lui ajouter le filtre <em>Safari</em> qu'on avait mis de côté : il pointera sur le profil que tu viens de créer. C'est le seul aller-retour du plan. Deux réglages voisins tant que tu y es : tu peux choisir un <b>moteur de recherche différent en navigation privée</b> (Google au quotidien, Qwant ou DuckDuckGo en privé, sans jamais y penser), et <em>Masquer l'adresse IP</em> a deux niveaux, dont le plus fort demande un abonnement iCloud+.</p></div>
+    <div class="pas"><input type="checkbox" id="x7"><p class="pas__txt"><strong>Sépare tes deux vies dans Safari.</strong></p><p class="pas__sous"><span class="chemin">Réglages › Apps › Safari › Profils</span> : un profil <em>Travail</em> et un profil <em>Perso</em> cloisonnent historique, cookies, favoris, groupes d'onglets <b>et extensions actives</b>. C'est le prolongement direct des trois pages. <b>Pose maintenant le filtre Safari qu'on avait mis de côté</b> : <span class="chemin">Réglages › Concentration › Travail › Filtres de concentration › Ajouter un filtre › Safari</span> → type de filtre <em>Profil</em> → choisis <b>Travail</b>. C'est le seul aller-retour du plan, et il prend trente secondes. Deux réglages voisins tant que tu y es : tu peux choisir un <b>moteur de recherche différent en navigation privée</b> (Google au quotidien, Qwant ou DuckDuckGo en privé, sans jamais y penser), et <em>Masquer l'adresse IP</em> a deux niveaux, dont le plus fort demande un abonnement iCloud+.</p></div>
     <div class="pas"><input type="checkbox" id="x5"><p class="pas__txt"><strong>Coupe l'actualisation en arrière-plan là où elle ne sert à rien.</strong></p><p class="pas__sous"><span class="chemin">Réglages › Général › Actualisation en arrière-plan</span>. Garde-la pour la messagerie et les apps de synchronisation, coupe-la pour les jeux, les boutiques et les réseaux. Gain de batterie réel, aucun inconvénient.</p></div>
     <div class="pas"><input type="checkbox" id="x6"><p class="pas__txt"><strong>Ménage la batterie</strong> — et regarde son état, c'est récent sur iPad.</p><p class="pas__sous"><span class="chemin">Réglages › Batterie › État de la batterie et recharge</span> : l'iPad n'affiche capacité maximale et nombre de cycles que depuis iPadOS 17.4. Active la <em>recharge optimisée</em> : elle retient la charge à 80 % jusqu'à peu avant ton réveil habituel — mais elle a besoin d'environ <b>deux semaines</b> pour apprendre ton rythme, donc ne conclus pas qu'elle ne marche pas au bout de trois jours. Sur un iPad qui reste branché toute la journée sur un bureau, c'est ce qui le fait vieillir moins vite.</p></div>
     <div class="pas"><input type="checkbox" id="x8"><p class="pas__txt"><strong>Allonge le verrouillage automatique</strong> si l'iPad s'éteint pendant que tu lis.</p><p class="pas__sous"><span class="chemin">Réglages › Luminosité et affichage › Verrouillage automatique</span> → 5 minutes. Et programme <em>Night Shift</em> de 21 h à 7 h pendant que tu y es.</p></div>
-    <div class="pas"><input type="checkbox" id="x15"><p class="pas__txt"><strong>Envisage la Protection avancée des données</strong> — puissante, mais lis les conditions.</p><p class="pas__sous"><span class="chemin">Réglages › [ton nom] › iCloud › Protection avancée des données</span>. Elle fait passer iCloud d'environ 14 à 23 catégories chiffrées de bout en bout : sauvegarde complète, Photos, Notes, Rappels, Raccourcis, signets. Trois conditions bloquantes : double authentification active, <b>tous</b> tes appareils à jour (un vieux Mac ou une Apple TV suffit à bloquer), et un moyen de récupération configuré — car Apple ne pourra plus rien récupérer pour toi. Effet de bord peu documenté : l'accès à tes données depuis iCloud.com est désactivé, réactivable ponctuellement depuis un appareil de confiance. Si tu n'es pas sûr, passe : ce n'est pas un réglage qu'on active à la légère.</p></div>
+    <div class="pas"><input type="checkbox" id="x15"><p class="pas__txt"><strong>Ne touche pas à la Protection avancée des données ce matin.</strong></p><p class="pas__sous"><span class="chemin">Réglages › [ton nom] › iCloud › Protection avancée des données</span>. Elle fait passer iCloud d'environ 14 à 23 catégories chiffrées de bout en bout : sauvegarde complète, Photos, Notes, Rappels, Raccourcis, signets. Trois conditions bloquantes : double authentification active, <b>tous</b> tes appareils à jour (un vieux Mac ou une Apple TV suffit à bloquer), et un moyen de récupération configuré — car Apple ne pourra plus rien récupérer pour toi. Effet de bord peu documenté : l'accès à tes données depuis iCloud.com est désactivé, réactivable ponctuellement depuis un appareil de confiance. C'est puissant et c'est bien, mais ça se fait la tête reposée, avec ta clé de récupération notée quelque part de sûr — pas au milieu d'une session de rangement. Coche cette case en te disant « j'y reviendrai un dimanche ».</p></div>
   </div>
 
   <div class="avis">
@@ -1581,7 +1601,7 @@ td.mono-col{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.8rem;f
       box: el.querySelector('input[type=checkbox]'),
       num: num ? num.textContent.trim() : '',
       titre: h2 ? h2.textContent.trim() : '',
-      fig: pl ? pl.querySelector('figure .figbox') : null
+      fig: pl ? pl.querySelector('figure') : null
     };
   });
 
@@ -1611,7 +1631,10 @@ td.mono-col{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.8rem;f
   var txt     = n('div','guide__txt');
   var det     = n('div','guide__det');
   var figWrap = n('div','guide__fig');
-  carte.appendChild(lblSec); carte.appendChild(txt); carte.appendChild(det); carte.appendChild(figWrap);
+  var refTitre= n('p','guide__reftitre','Pour cette section');
+  var refWrap = n('div','guide__ref');
+  carte.appendChild(lblSec); carte.appendChild(txt); carte.appendChild(det);
+  carte.appendChild(figWrap); carte.appendChild(refTitre); carte.appendChild(refWrap);
   corps.appendChild(carte);
 
   var pied    = n('div','guide__pied');
@@ -1667,6 +1690,22 @@ td.mono-col{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.8rem;f
     figWrap.innerHTML = '';
     if (e.fig){ figWrap.hidden = false; figWrap.appendChild(e.fig.cloneNode(true)); }
     else figWrap.hidden = true;
+
+    /* Encadres, tableaux et fiches de la section : sans eux, une etape comme
+       « construis les sept raccourcis » serait inexecutable en mode guide. */
+    refWrap.innerHTML = '';
+    var pl = e.el.closest('.plaque');
+    if (pl){
+      Array.prototype.forEach.call(pl.children, function(enfant){
+        if (enfant.classList.contains('avis') ||
+            enfant.classList.contains('blocs') ||
+            enfant.classList.contains('tabwrap')){
+          refWrap.appendChild(enfant.cloneNode(true));
+        }
+      });
+    }
+    var aDesRefs = refWrap.children.length > 0;
+    refWrap.hidden = !aDesRefs; refTitre.hidden = !aDesRefs;
 
     bFait.textContent = (e.box && e.box.checked) ? 'Déjà fait — suivant' : "C'est fait";
     bRetour.disabled = (i === 0);
@@ -1747,8 +1786,9 @@ td.mono-col{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.8rem;f
       return true;
     }catch(e){ return false; }
   }
-  document.querySelectorAll('.invite__b').forEach(function(btn){
-    btn.addEventListener('click', function(){
+  document.addEventListener('click', function(ev){
+    var btn = ev.target && ev.target.closest && ev.target.closest('.invite__b');
+    if (btn){
       var bloc = btn.closest('.invite');
       var cible = bloc && bloc.querySelector('.invite__t');
       if (!cible) return;
@@ -1773,7 +1813,7 @@ td.mono-col{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.8rem;f
         else if (selectionner(cible)) retour(btn, 'Sélectionné — copie-le', false);
         else retour(btn, 'Copie impossible', false);
       }
-    });
+    }
   });
 })();
 </script>
