@@ -18,6 +18,7 @@ au moment explicite de la commande « pousse ».
 from __future__ import annotations
 
 import argparse
+import array
 import csv
 import datetime as dt
 import io
@@ -182,12 +183,33 @@ def nombre(txt):
 NOMS_XML = ("apple_health_export/export.xml", "export.xml")
 
 
+def verifier_presence(chemin):
+    """Distingue « fichier absent » de « fichier encore dans le nuage ».
+
+    Sur iPhone, un fichier d'iCloud Drive qui n'a pas ete rapatrie n'existe
+    localement que sous la forme d'un talon nomme « .export.zip.icloud ».
+    L'erreur qui en decoule est incomprehensible si on ne la nomme pas.
+    """
+    if os.path.exists(chemin):
+        return
+    dossier = os.path.dirname(os.path.abspath(chemin))
+    nom = os.path.basename(chemin)
+    talon = os.path.join(dossier, "." + nom + ".icloud")
+    if os.path.exists(talon):
+        raise SystemExit(
+            "%s n'est pas encore telecharge : il n'existe que dans iCloud.\n"
+            "Ouvre l'app Fichiers, touche le fichier pour le rapatrier (l'icone\n"
+            "de nuage doit disparaitre), attends la fin, puis relance." % nom)
+    raise SystemExit("Fichier introuvable : %s" % chemin)
+
+
 def ouvrir_export(chemin):
     """Renvoie (flux binaire sur export.xml, description).
 
     Accepte un export.zip (lu en flux, sans decompression sur le disque), un
     export.xml deja extrait, ou le dossier apple_health_export.
     """
+    verifier_presence(chemin)
     if os.path.isdir(chemin):
         for nom in ("export.xml", os.path.join("apple_health_export", "export.xml")):
             candidat = os.path.join(chemin, nom)
@@ -374,6 +396,10 @@ def rang_source(source_nom, device, priorite):
 # Accumulateurs
 # --------------------------------------------------------------------------
 
+def _bloc():
+    return array.array("d")
+
+
 class AccMoyenne:
     __slots__ = ("n", "somme", "mini", "maxi")
 
@@ -469,13 +495,18 @@ def parties_libres(debut, fin, couvert):
 def resoudre_somme(entrees):
     """Total d'une metrique cumulative pour un jour, sans double comptage.
 
-    entrees : liste de (rang_source, debut_ts, fin_ts, valeur).
+    entrees : array('d') de quadruplets a plat
+    (rang_source, debut_ts, fin_ts, valeur), ou une liste de tels quadruplets.
 
     Les sources sont traitees par priorite decroissante. Chaque enregistrement
     ne compte que sur la portion de temps qu'aucune source plus prioritaire n'a
     deja couverte, au prorata de sa duree. C'est ce qui evite le total gonfle
     quand l'iPhone dans la poche et la montre au poignet comptent les memes pas.
     """
+    if isinstance(entrees, array.array):
+        # La conversion en tuples ne concerne qu'un seul jour a la fois : le pic
+        # de memoire reste celui du stockage compact.
+        entrees = [tuple(entrees[i:i + 4]) for i in range(0, len(entrees), 4)]
     total = 0.0
     couvert = []
     ponctuels = set()
@@ -505,6 +536,8 @@ def resoudre_somme(entrees):
 
 class Agregateur:
 
+    SEUIL_ALERTE = 3000000
+
     def __init__(self, priorite="montre", filtre_source=None,
                  depuis=None, jusqu_a=None, dedup=True):
         self.priorite = priorite
@@ -513,7 +546,12 @@ class Agregateur:
         self.jusqu_a = jusqu_a
         self.dedup = dedup
 
-        self.sommes = defaultdict(list)        # (jour, cle) -> entrees
+        # Un tuple Python de quatre flottants coute environ 130 octets une fois
+        # range dans une liste ; le meme quadruplet dans un array('d') en coute
+        # 32. Sur un export de plusieurs annees, l'ecart se compte en centaines
+        # de mega-octets — et sur iPhone, c'est la difference entre traiter le
+        # fichier et se faire tuer par le systeme.
+        self.sommes = defaultdict(_bloc)      # (jour, cle) -> quadruplets a plat
         self.sommes_directes = defaultdict(float)
         self.moyennes = defaultdict(AccMoyenne)
         self.uniques = defaultdict(AccMoyenne)
@@ -530,6 +568,8 @@ class Agregateur:
         self.lus = 0
         self.retenus = 0
         self.erreur_lecture = None
+        self.entrees_bufferisees = 0
+        self.alerte_memoire_dite = False
         self.anomalies = defaultdict(int)
 
     # -- filtres ----------------------------------------------------------
@@ -624,7 +664,16 @@ class Agregateur:
                     except (OverflowError, ValueError, OSError):
                         self.anomalies["date_hors_limites"] += 1
                         continue
-                    self.sommes[(j, metrique.cle)].append((rang, bornes[0], bornes[1], v))
+                    self.sommes[(j, metrique.cle)].extend(
+                        (float(rang), bornes[0], bornes[1], v))
+                    self.entrees_bufferisees += 1
+                    if (self.entrees_bufferisees == self.SEUIL_ALERTE
+                            and not self.alerte_memoire_dite):
+                        self.alerte_memoire_dite = True
+                        sys.stderr.write(
+                            "\n  Beaucoup de donnees a dedoublonner. Si le traitement\n"
+                            "  s'interrompt faute de memoire, relance annee par annee\n"
+                            "  (--depuis / --jusqu-a) ou ajoute --leger.\n")
                 else:
                     self.sommes_directes[(j, metrique.cle)] += v
         elif metrique.mode == "moyenne":
@@ -958,6 +1007,9 @@ def cmd_inspecte(args):
 # --------------------------------------------------------------------------
 
 def cmd_agrege(args):
+    if args.leger:
+        args.source = args.source or "montre"
+        args.sans_dedup = True
     agregateur = Agregateur(
         priorite=args.priorite,
         filtre_source=args.source,
@@ -1528,6 +1580,9 @@ def construire_parseur():
                    help="source qui l'emporte en cas de recouvrement (defaut : montre)")
     a.add_argument("--depuis", help="date de debut incluse, AAAA-MM-JJ")
     a.add_argument("--jusqu-a", dest="jusqu_a", help="date de fin incluse, AAAA-MM-JJ")
+    a.add_argument("--leger", action="store_true",
+                   help="preregle pour telephone : montre seule, sans dedoublonnage, "
+                        "memoire minimale")
     a.add_argument("--sans-dedup", action="store_true",
                    help="somme brute, sans dedoublonnage : beaucoup moins de memoire, "
                         "a reserver au cas ou l'on filtre deja sur une seule source")

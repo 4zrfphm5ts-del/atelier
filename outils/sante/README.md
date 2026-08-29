@@ -48,13 +48,47 @@ python3 sante.py agrege export.zip -o jours.json --csv jours.csv
 | `--sans-dedup` | somme brute, mémoire minimale — à réserver au cas où l'on filtre déjà sur une seule source |
 | `--lisible` | JSON indenté |
 
-**Si la mémoire manque** (typiquement sur iPhone avec dix ans d'historique) :
-traiter année par année, `--depuis 2023-01-01 --jusqu-a 2023-12-31`, puis pousser
-chaque fichier séparément.
+| `--leger` | préréglage iPhone : montre seule, sans dédoublonnage, mémoire minimale |
 
-Ordres de grandeur mesurés : un export de 210 Mo / 583 000 enregistrements
-(≈ 3 ans de port quotidien) est traité en 13 secondes avec 73 Mo de mémoire, et
-produit 600 Ko de JSON.
+**Mesures réelles**, sur un export synthétique de 1,18 Go et 3,3 millions
+d'enregistrements — soit environ huit ans de port quotidien :
+
+| Mode | Durée | Mémoire | Sortie |
+| --- | --- | --- | --- |
+| complet, avec dédoublonnage | 107 s | 109 Mo | 3 001 jours |
+| `--leger` | 81 s | 31 Mo | 3 001 jours |
+| une seule année | 29 s | 33 Mo | 367 jours |
+
+Sur cet export, `--leger` donne exactement le même nombre de pas que le mode
+complet : la montre couvre déjà tout, et les enregistrements de l'iPhone sont
+intégralement recouverts. L'écart n'apparaît que si l'iPhone a bougé seul.
+
+## 3 bis. Sur iPhone, sans aucun ordinateur
+
+Installer **a-Shell mini** depuis l'App Store — moins de 250 Mo, et il contient
+déjà Python 3.11 avec tout ce dont le script a besoin. L'a-Shell complet pèse
+environ 2 Go : inutile ici, et malvenu sur un téléphone déjà chargé.
+
+1. Déposer `sante.py` et `export.zip` dans **Fichiers → Sur mon iPhone → a-Shell**
+   (ou utiliser `pickFolder` dans a-Shell pour aller les chercher ailleurs).
+2. Dans a-Shell : `python3 sante.py agrege export.zip -o jours.json --leger`
+
+Trois précautions qui évitent les échecs les plus courants :
+
+- **Rapatrier le fichier avant.** Un `export.zip` qui vit dans iCloud Drive
+  n'existe localement que sous forme de talon tant qu'on ne l'a pas touché dans
+  l'app Fichiers. L'outil le détecte et le dit, mais autant l'éviter : touche le
+  fichier, attends que l'icône de nuage disparaisse.
+- **Ne pas quitter a-Shell pendant le traitement.** L'app ne demande aucun temps
+  d'exécution en arrière-plan : passer sur une autre application suspend le
+  script, et une app suspendue est la première que le système tue quand il
+  manque de mémoire. L'écran, lui, ne s'éteindra pas tout seul.
+- **Pas besoin de `unzip`.** Il n'est pas fourni avec a-Shell, et il ne sert à
+  rien : le script lit l'archive en flux, sans jamais écrire le gigaoctet de XML
+  sur le disque.
+
+Si le traitement s'interrompt malgré tout, reprendre année par année avec
+`--depuis` et `--jusqu-a`.
 
 ## 4. Pousser vers NOCTURNE
 
@@ -184,6 +218,19 @@ Les deux sont ramenés à une échelle 0–100.
 des valeurs ré-agrégées. Les deux ne coïncident pas toujours : c'est normal, et
 utile pour se contrôler. Leur unité d'énergie suit la région (kcal, Cal ou kJ)
 et est convertie.
+
+**L'export reste manuel.** Aucune action Raccourcis d'Apple ne déclenche
+« Exporter toutes les données de santé », et HealthKit n'expose pas cette
+archive : c'est une fonction de l'app Santé, pas du framework. Le rattrapage
+historique passe donc forcément par l'export à la main — une fois.
+
+**En revanche, la suite peut s'automatiser sans Mac.** Raccourcis sait lire
+HealthKit nativement : les actions « Rechercher tous les échantillons de santé »
+et « Calculer les statistiques » permettent de filtrer par type, par période et
+par source, puis d'envoyer le résultat à une API. De quoi tenir le quotidien à
+jour sans Xcode, en attendant `dailyHistory` dans NocturneKit. Une automatisation
+programmée exige toutefois un iPhone déverrouillé : les données de santé sont
+inaccessibles sur un appareil verrouillé.
 
 **Ce que l'outil ne peut pas faire.** `export.xml` ne contient pas l'ordre de
 priorité des sources configuré dans l'app Santé. Reproduire au chiffre près ce
