@@ -345,6 +345,117 @@ td.mono-col{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.8rem;f
   font-size:.72rem;color:var(--mut);display:flex;
   flex-wrap:wrap;gap:.4rem 1.4rem;
 }
+
+/* ---------- mode guidé : une instruction à la fois ---------- */
+
+.jauge__guide{
+  font:inherit; font-weight:600; letter-spacing:.04em;
+  color:var(--papier); background:var(--terra);
+  border:1px solid var(--terra); padding:.22rem .7rem; cursor:pointer;
+  white-space:nowrap;
+}
+.jauge__guide:hover{opacity:.88}
+.jauge__guide:focus-visible{outline:2px solid var(--encre);outline-offset:2px}
+
+.guide{
+  position:fixed; inset:0; z-index:100;
+  background:var(--papier);
+  background-image:
+    linear-gradient(var(--grille) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grille) 1px, transparent 1px);
+  background-size:28px 28px;
+  display:flex; flex-direction:column;
+}
+.guide[hidden]{display:none !important}
+
+.guide__haut{
+  border-bottom:1px solid var(--ligne); background:var(--feuille);
+  padding:.7rem clamp(1rem,4vw,2rem);
+  display:flex; align-items:center; gap:.9rem; flex-wrap:wrap;
+}
+.guide__ou{
+  font-family:'IBM Plex Mono',ui-monospace,monospace;
+  font-size:.7rem; letter-spacing:.12em; text-transform:uppercase;
+  color:var(--terra); font-weight:600;
+}
+.guide__piste{flex:1; min-width:110px; height:6px; background:var(--creux); border:1px solid var(--ligne-fine)}
+.guide__jus{height:100%; width:0%; background:var(--olive); transition:width .25s ease}
+@media (prefers-reduced-motion:reduce){ .guide__jus{transition:none} }
+.guide__cpt{
+  font-family:'IBM Plex Mono',ui-monospace,monospace;
+  font-size:.74rem; font-variant-numeric:tabular-nums; color:var(--mut);
+}
+.guide__fermer{
+  font:inherit; font-size:.8rem; color:var(--mut); background:none;
+  border:1px solid var(--ligne); padding:.2rem .6rem; cursor:pointer;
+}
+.guide__fermer:hover{border-color:var(--terra); color:var(--terra)}
+.guide__fermer:focus-visible{outline:2px solid var(--terra);outline-offset:2px}
+
+.guide__corps{
+  flex:1; overflow-y:auto; -webkit-overflow-scrolling:touch;
+  padding:clamp(1.4rem,5vw,3rem) clamp(1rem,4vw,2rem) 2rem;
+}
+.guide__carte{max-width:760px; margin:0 auto; display:flex; flex-direction:column; gap:1.1rem}
+.guide__section{
+  font-family:'IBM Plex Mono',ui-monospace,monospace;
+  font-size:.7rem; letter-spacing:.14em; text-transform:uppercase; color:var(--mut);
+}
+.guide__txt{
+  font-family:'Fraunces',Georgia,serif; font-weight:600;
+  font-size:clamp(1.35rem,3.4vw,1.9rem); line-height:1.24;
+  margin:0; text-wrap:balance; letter-spacing:-.01em;
+}
+.guide__txt strong{font-weight:900}
+.guide__det{font-size:1.02rem; line-height:1.62; margin:0; color:var(--mut); max-width:64ch}
+.guide__det strong,.guide__det b{color:var(--encre)}
+.guide__fig{border:1px solid var(--ligne); background:var(--feuille); padding:.8rem; overflow-x:auto}
+.guide__fig svg{display:block; width:100%; height:auto}
+.guide__fig > div + div{margin-top:1rem}
+
+.guide__fini{
+  max-width:760px; margin:0 auto; display:flex; flex-direction:column; gap:1rem; text-align:center;
+  padding-top:2rem;
+}
+.guide__fini h2{font-family:'Fraunces',Georgia,serif;font-weight:900;font-size:clamp(1.6rem,4vw,2.4rem);margin:0}
+.guide__fini p{margin:0 auto;max-width:52ch;color:var(--mut)}
+
+.guide__pied{
+  border-top:1px solid var(--ligne); background:var(--feuille);
+  padding:.8rem clamp(1rem,4vw,2rem);
+  padding-bottom:calc(.8rem + env(safe-area-inset-bottom,0px));
+  display:flex; gap:.6rem; align-items:center;
+}
+.guide__pied button{
+  font:inherit; cursor:pointer; padding:.72rem 1rem; border:1px solid var(--ligne);
+  background:var(--papier); color:var(--encre); font-size:.94rem;
+}
+.guide__pied button:focus-visible{outline:2px solid var(--terra);outline-offset:2px}
+.guide__pied .g-fait{
+  margin-left:auto; background:var(--olive); border-color:var(--olive);
+  color:var(--feuille); font-weight:600; padding:.72rem clamp(1.2rem,4vw,2.4rem);
+}
+.guide__pied .g-fait:hover{opacity:.9}
+.guide__pied button:disabled{opacity:.4;cursor:default}
+
+/* ---------- invites copiables ---------- */
+.invite{
+  border:1px solid var(--ligne); background:var(--papier);
+  padding:.65rem .75rem; display:flex; flex-direction:column; gap:.5rem;
+}
+.invite__t{
+  margin:0; font-family:'IBM Plex Mono',ui-monospace,monospace;
+  font-size:.78rem; line-height:1.6; color:var(--encre);
+  white-space:pre-wrap; word-break:break-word; -webkit-user-select:text; user-select:text;
+}
+.invite__b{
+  align-self:flex-start; font:inherit; font-size:.74rem; font-weight:600;
+  letter-spacing:.03em; border:1px solid var(--terra); color:var(--terra);
+  background:none; padding:.22rem .62rem; cursor:pointer;
+}
+.invite__b:hover{background:var(--terra-pale)}
+.invite__b:focus-visible{outline:2px solid var(--terra);outline-offset:2px}
+.invite__b.ok{border-color:var(--olive); color:var(--olive)}
 </style>
 </head>
 <body>
@@ -354,6 +465,7 @@ td.mono-col{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.8rem;f
   <span>AVANCEMENT</span>
   <span class="jauge__piste"><span class="jauge__jus" id="jus"></span></span>
   <b id="cpt">0 / 0</b>
+  <button class="jauge__guide" id="lancer" type="button">Mode guidé</button>
   <button class="jauge__raz" id="raz" type="button">Tout décocher</button>
 </div>
 
@@ -371,8 +483,9 @@ td.mono-col{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.8rem;f
     <div class="champ"><dt>Appareil</dt><dd>iPad Pro · M4 / M5</dd></div>
     <div class="champ"><dt>Profil</dt><dd>Travail · bureautique</dd></div>
     <div class="champ"><dt>Parti pris</dt><dd>Réorganisation complète</dd></div>
-    <div class="champ"><dt>Durée</dt><dd>≈ 1 h 25, sécable</dd></div>
+    <div class="champ"><dt>Durée</dt><dd>≈ 1 h 30, sécable</dd></div>
     <div class="champ"><dt>Réversible</dt><dd>Oui, via sauvegarde</dd></div>
+    <div class="champ"><dt>Version visée</dt><dd>iPadOS 26.6.x</dd></div>
   </dl>
 </header>
 
@@ -448,7 +561,7 @@ td.mono-col{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.8rem;f
   <nav class="sommaire">
     <a href="#e1"><em>01</em> Sauvegarder <span>3 min</span></a>
     <a href="#e2"><em>02</em> Le grand ménage <span>18 min</span></a>
-    <a href="#e3"><em>03</em> Table rase <span>4 min</span></a>
+    <a href="#e3"><em>03</em> Table rase <span>5 min</span></a>
     <a href="#e4"><em>04</em> Le Dock <span>2 min</span></a>
     <a href="#e5"><em>05</em> Page 1 · Poste <span>5 min</span></a>
     <a href="#e6"><em>06</em> Page 2 · Atelier <span>4 min</span></a>
@@ -459,7 +572,7 @@ td.mono-col{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.8rem;f
     <a href="#e11"><em>11</em> Notifications <span>4 min</span></a>
     <a href="#e12"><em>12</em> Raccourcis <span>12 min</span></a>
     <a href="#e13"><em>13</em> Fenêtrage <span>6 min</span></a>
-    <a href="#e14"><em>14</em> Finitions <span>8 min</span></a>
+    <a href="#e14"><em>14</em> Finitions <span>12 min</span></a>
     <a href="#e15"><em>15</em> Entretien <span>rappel</span></a>
   </nav>
 </section>
@@ -527,7 +640,7 @@ td.mono-col{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.8rem;f
   <div class="plaque__tete">
     <span class="plaque__num">03</span>
     <h2>Table rase — le geste qui change tout</h2>
-    <span class="plaque__duree">4 min</span>
+    <span class="plaque__duree">5 min</span>
   </div>
   <p>Voilà pourquoi les gens abandonnent : ils essaient de <em>réarranger</em> des icônes une par
     une, en les faisant glisser entre des pages qui défilent trop vite. C'est insupportable, et
@@ -547,8 +660,9 @@ td.mono-col{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.8rem;f
     <div class="pas"><input type="checkbox" id="t3"><p class="pas__txt"><strong>Supprime toutes les pages sauf une</strong> — le bouton « moins » en haut de chaque vignette.</p><p class="pas__sous">Confirme la suppression. Les apps partent en Bibliothèque. Garde une page, vide, qui deviendra ta page 1.</p></div>
     <div class="pas"><input type="checkbox" id="t4"><p class="pas__txt"><strong>Vide la page restante</strong> : appui long sur chaque icône → <em>Supprimer l'app</em> → <b>Retirer de l'écran d'accueil</b>.</p><p class="pas__sous">Bien lire l'option : « Retirer de l'écran d'accueil » garde l'app en Bibliothèque, « Supprimer l'app » la désinstalle. C'est le même menu, deux gestes très différents.</p></div>
     <div class="pas"><input type="checkbox" id="t5"><p class="pas__txt"><strong>Vérifie que tu as bien un écran nu</strong> : un Dock, une page vide, la Bibliothèque à droite.</p><p class="pas__sous">C'est le moment le plus inconfortable du plan, et le signe que ça marche. À partir d'ici, tout ce que tu poses est un choix.</p></div>
-    <div class="pas"><input type="checkbox" id="t6"><p class="pas__txt"><strong>Fixe maintenant la taille et le style des icônes</strong> — pas après.</p><p class="pas__sous">Appui long sur un espace vide → <em>Modifier</em> → <em>Personnaliser</em>. Quatre styles (<b>Par défaut</b>, <b>Sombre</b>, <b>Transparent</b>, <b>Teinté</b>), chacun déclinable en Clair / Sombre / <b>Auto</b>. Et une bascule <b>Petites / Grandes</b> icônes.</p></div>
-    <div class="pas"><input type="checkbox" id="t7"><p class="pas__txt"><strong>Reste en petites icônes, style « Par défaut » + « Auto ».</strong></p><p class="pas__sous">Les grandes icônes sont le seul moyen natif de supprimer le nom sous les icônes, mais elles font tomber la page de <b>30 à 20 emplacements</b> — et surtout, basculer d'une taille à l'autre <b>reflue toute la grille et détruit les trous</b> que tu vas placer. D'où l'ordre : on décide avant de composer, jamais après. Même piège pour le style Teinté : très beau au premier regard, nettement plus lent à lire ensuite, parce que tu reconnais tes apps à leur couleur.</p></div>
+    <div class="pas"><input type="checkbox" id="t6"><p class="pas__txt"><strong>Fixe maintenant l'apparence des icônes</strong> — pas après.</p><p class="pas__sous">Appui long sur un espace vide → <em>Modifier</em> → <em>Personnaliser</em>. Tu choisis <b>une seule</b> apparence parmi quatre — <b>Par défaut</b>, <b>Sombre</b>, <b>Transparent</b>, <b>Teinté</b> — et, séparément, une taille : <b>Petites</b> ou <b>Grandes</b> icônes.</p></div>
+    <div class="pas"><input type="checkbox" id="t7"><p class="pas__txt"><strong>Reste en petites icônes, apparence « Par défaut ».</strong></p><p class="pas__sous">Les grandes icônes sont le seul moyen natif de supprimer le nom sous les icônes, mais elles font tomber la page de <b>30 à 20 emplacements</b> — et surtout, changer de taille <b>reflue toute la grille et détruit les trous</b> que tu vas placer. D'où l'ordre : on décide avant de composer, jamais après. Même réserve pour le <em>Teinté</em> : très beau au premier regard, nettement plus lent à lire ensuite, parce qu'on reconnaît ses apps à leur couleur.</p></div>
+    <div class="pas"><input type="checkbox" id="t8"><p class="pas__txt"><strong>Et décide du zoom d'affichage tout de suite</strong>, pour la même raison.</p><p class="pas__sous"><span class="chemin">Réglages › Luminosité et affichage › Zoom d'affichage</span> → <b>Plus d'espace</b>. Tout devient un peu plus petit, mais l'iPad affiche nettement plus de contenu — décisif dès qu'on travaille à deux fenêtres. Ce réglage change aussi la taille des icônes, donc le nombre d'emplacements par page : si tu le changes après avoir composé tes pages, tu recomposes tout. C'est maintenant ou jamais.</p></div>
   </div>
 </section>
 
@@ -588,13 +702,14 @@ td.mono-col{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.8rem;f
     haut (les widgets), un bloc d'action en bas à gauche (huit apps), et du vide à droite.</p>
 
   <div class="avis">
-    <b>Le piège n°1 de l'iPad : deux dispositions, pas une</b>
-    <p>Contrairement à l'iPhone, l'iPad mémorise <strong>séparément</strong> la disposition en
-      portrait et celle en paysage. Ranger l'une ne range pas l'autre. Les schémas ci-dessous sont en
-      <strong>paysage</strong> (6 colonnes × 5 rangées, 30 emplacements) — l'orientation de travail
-      avec un clavier. Compose d'abord celle-là ; si tu te sers aussi de l'iPad en portrait
-      (5 colonnes × 6 rangées), il faudra refaire le placement une seconde fois, tourné. Ce n'est pas
-      un bug, c'est ainsi.</p>
+    <b>Compose dans l'orientation où tu travailles — puis tourne l'iPad</b>
+    <p>Les schémas sont en <strong>paysage</strong> (6 colonnes × 5 rangées, 30 emplacements) :
+      l'orientation d'un iPad au clavier. Fais celle-là d'abord. Puis, la page finie,
+      <strong>tourne l'iPad et regarde</strong> : en portrait la grille se recompose sur 5 colonnes,
+      et tes espaces vides ne tombent pas forcément où tu les voulais. Dix secondes pour vérifier,
+      et tu rectifies sur place si besoin.<br>
+      Compte aussi tes colonnes toi-même plutôt que de me croire : le nombre d'emplacements dépend
+      de la taille d'écran du modèle.</p>
   </div>
 
   <figure>
@@ -981,7 +1096,7 @@ td.mono-col{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.8rem;f
       <p>Le seul qui tourne sans que tu le lances. À 8 h, agenda + tâches + météo sont agrégés et
         résumés dans une note. Remplace l'ouverture de trois apps.</p>
       <p><b>Actions :</b> <code>Rechercher des événements de calendrier</code> (début = aujourd'hui, limite 15) → <code>Rechercher des rappels</code> (échéance aujourd'hui, non terminés) → <code>Obtenir les prévisions météo</code> → <code>Texte</code> (les trois, sous des titres AGENDA / TÂCHES / MÉTÉO) → <code>Utiliser le modèle</code> → <code>Créer une note</code>.</p>
-      <p><b>Invite :</b> « Écris en français un brief de journée en 5 puces maximum. Signale les conflits d'horaire et la première échéance critique. Pas d'introduction. »</p>
+      <div class="invite"><p class="invite__t">Écris en français un brief de journée en 5 puces maximum. Signale les conflits d'horaire et la première échéance critique. Pas d'introduction.</p><button class="invite__b" type="button">Copier l'invite</button></div>
     </div>
     <div class="bloc">
       <span class="bloc__eti">Raccourci 2 · partage</span>
@@ -989,7 +1104,7 @@ td.mono-col{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.8rem;f
       <p>Le plus rentable en usage pro : contrats, comptes rendus, spécifications. Tu partages le
         PDF, tu récupères un résumé, une liste d'actions et les chiffres cités.</p>
       <p><b>Actions :</b> <code>Recevoir Fichiers/PDF depuis la feuille de partage</code> → <code>Créer du texte enrichi à partir d'un PDF</code> → <code>Obtenir le texte de l'entrée</code> → <code>Utiliser le modèle</code> → <code>Créer une note</code> → <code>Afficher le contenu</code>.</p>
-      <p><b>Invite :</b> « En français. Section 1 : résumé en 5 puces. Section 2 : actions à faire, une par ligne, commençant par un verbe. Section 3 : chiffres, dates et montants cités. N'invente rien. »</p>
+      <div class="invite"><p class="invite__t">En français. Section 1 : résumé en 5 puces. Section 2 : actions à faire, une par ligne, commençant par un verbe. Section 3 : chiffres, dates et montants cités. N'invente rien.</p><button class="invite__b" type="button">Copier l'invite</button></div>
     </div>
     <div class="bloc">
       <span class="bloc__eti">Raccourci 3 · partage</span>
@@ -997,7 +1112,7 @@ td.mono-col{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.8rem;f
       <p>Tu sélectionnes le compte rendu, tu partages, les tâches sont créées et datées. Zéro
         ressaisie. C'est ici que le <em>typage</em> de sortie du modèle devient décisif.</p>
       <p><b>Actions :</b> <code>Recevoir Texte</code> → <code>Utiliser le modèle</code> avec <b>Sortie : Liste</b> → <code>Répéter chaque élément</code> → <code>Ajouter un rappel</code> (liste Travail, demain 9 h) → <code>Fin de la répétition</code>.</p>
-      <p><b>Invite :</b> « Extrais uniquement les actions à faire. Une action par élément, à l'impératif, en français. Si aucune action, renvoie une liste vide. »</p>
+      <div class="invite"><p class="invite__t">Extrais uniquement les actions à faire. Une action par élément, à l'impératif, en français. Si aucune action, renvoie une liste vide.</p><button class="invite__b" type="button">Copier l'invite</button></div>
     </div>
     <div class="bloc">
       <span class="bloc__eti">Raccourci 4 · partage</span>
@@ -1005,7 +1120,7 @@ td.mono-col{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.8rem;f
       <p>Deux touchers au lieu de dix minutes de lecture. Marche dans Safari et dans toute app qui
         sait partager une URL.</p>
       <p><b>Actions :</b> <code>Recevoir Pages web Safari / URL</code> → <code>Obtenir le contenu de la page web</code> → <code>Obtenir le texte de l'entrée</code> → <code>Utiliser le modèle</code> → <code>Copier dans le presse-papiers</code> → <code>Afficher le contenu</code>.</p>
-      <p><b>Invite :</b> « Résume ce texte en français : 3 puces de fond, puis une ligne "À retenir". Si c'est une publicité ou une page de connexion, réponds seulement "Pas de contenu". »</p>
+      <div class="invite"><p class="invite__t">Résume ce texte en français : 3 puces de fond, puis une ligne "À retenir". Si c'est une publicité ou une page de connexion, réponds seulement "Pas de contenu".</p><button class="invite__b" type="button">Copier l'invite</button></div>
     </div>
     <div class="bloc">
       <span class="bloc__eti">Raccourci 5 · widget</span>
@@ -1110,28 +1225,41 @@ td.mono-col{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.8rem;f
 <section class="plaque" id="e14">
   <div class="plaque__tete">
     <span class="plaque__num">14</span>
-    <h2>Finitions — le confort qu'on ne voit qu'à l'usage</h2>
-    <span class="plaque__duree">8 min</span>
+    <h2>Finitions — confidentialité, batterie, confort</h2>
+    <span class="plaque__duree">12 min</span>
   </div>
   <p>Rien de spectaculaire ici, que des réglages qu'on ne remarque qu'une fois pris. Ils se font
-    d'une traite.</p>
+    d'une traite. Un mot d'orientation d'abord : depuis iPadOS 18, <strong>tous les réglages par app
+    sont regroupés dans une section « Apps »</strong> en bas des Réglages. Si un chemin te paraît
+    introuvable, c'est presque toujours ça.</p>
 
   <div class="liste">
-    <div class="pas"><input type="checkbox" id="x1"><p class="pas__txt"><strong>Crée tes remplacements de texte.</strong></p><p class="pas__sous"><span class="chemin">Réglages › Général › Clavier › Remplacement de texte</span>. Le meilleur rapport temps gagné / temps investi de tout ce plan : <code>@@</code> pour ton adresse mail, <code>adr</code> pour ton adresse postale, <code>bjr</code> pour ta formule d'ouverture, <code>sign</code> pour ta signature complète. Ils se synchronisent sur tous tes appareils.</p></div>
+    <div class="pas"><input type="checkbox" id="x1"><p class="pas__txt"><strong>Crée tes remplacements de texte.</strong></p><p class="pas__sous"><span class="chemin">Réglages › Général › Clavier › Remplacement de texte</span>. Le meilleur rapport temps gagné / temps investi de tout le plan : <code>@@</code> pour ton adresse mail, <code>adr</code> pour ton adresse postale, <code>bjr</code> pour ta formule d'ouverture, <code>sign</code> pour ta signature complète. Ils se synchronisent sur tous tes appareils.</p></div>
     <div class="pas"><input type="checkbox" id="x2b"><p class="pas__txt"><strong>Apprends les six raccourcis « Globe ».</strong> C'est le vrai levier d'un iPad au clavier.</p><p class="pas__sous">
       <code>Globe + C</code> Centre de contrôle · <code>Globe + N</code> notifications ·
       <code>Globe + A</code> le Dock · <code>Globe + ⇧ + A</code> la Bibliothèque d'apps ·
       <code>Globe + H</code> l'écran d'accueil · <code>Globe + Q</code> une note rapide.
-      Et <b>maintiens Globe</b> pour afficher la liste complète. Avec ça, tu n'as plus jamais besoin
-      de lever la main vers l'écran.</p></div>
-    <div class="pas"><input type="checkbox" id="x3"><p class="pas__txt"><strong>Règle l'Apple Pencil</strong> — et sache ce que le tien sait faire.</p><p class="pas__sous"><span class="chemin">Réglages › Apple Pencil</span>. Le <em>Toucher deux fois</em> n'existe que sur l'Apple Pencil 2 et le Pencil Pro ; le modèle USB-C d'entrée de gamme n'a ni double-tap, ni pincement, ni pression, ni haptique — aucun réglage ne compense, c'est matériel. Deux gestes valent le détour : au Pencil, <b>balayage depuis le coin inférieur droit</b> = note rapide, <b>coin inférieur gauche</b> = capture d'écran, tous deux paramétrables ici. Enfin, ne cherche pas de curseur de sensibilité à la pression : il n'y en a pas au niveau système, ça se règle app par app.</p></div>
-    <div class="pas"><input type="checkbox" id="x4"><p class="pas__txt"><strong>Reprends la main sur la localisation et les photos.</strong></p><p class="pas__sous"><span class="chemin">Réglages › Confidentialité et sécurité › Service de localisation</span> : passe tout ce qui n'est ni une carte ni la météo sur <em>Jamais</em> ou <em>Lors de l'utilisation</em>, et coupe <em>Position exacte</em> pour les autres. Puis, dans <em>Photos</em>, repasse les apps qui ont accès à toute la photothèque sur <b>Photos sélectionnées</b>. Presque aucune n'en a besoin.</p></div>
+      Et <b>maintiens Globe</b> pour afficher la liste complète.</p></div>
+    <div class="pas"><input type="checkbox" id="x3"><p class="pas__txt"><strong>Règle l'Apple Pencil</strong> — et sache ce que le tien sait faire.</p><p class="pas__sous"><span class="chemin">Réglages › Apple Pencil</span>. Le <em>Toucher deux fois</em> n'existe que sur l'Apple Pencil 2 et le Pencil Pro ; le modèle USB-C n'a ni double-tap, ni pincement, ni pression, ni haptique — aucun réglage ne compense, c'est matériel. Deux gestes valent le détour : au Pencil, <b>balayage depuis le coin inférieur droit</b> = note rapide, <b>coin inférieur gauche</b> = capture d'écran. Ne cherche pas de curseur de sensibilité à la pression : il n'y en a pas au niveau système, ça se règle app par app.</p></div>
+    <div class="pas"><input type="checkbox" id="x11"><p class="pas__txt"><strong>Allume le rapport de confidentialité maintenant</strong> — tu le liras dans une semaine.</p><p class="pas__sous"><span class="chemin">Réglages › Confidentialité et sécurité › Rapport de confidentialité des apps</span>. Il est <b>éteint par défaut</b> et n'enregistre rien tant qu'on ne l'active pas. Ensuite il tient 7 jours glissants et se lit dans les deux sens : <em>par app</em> (ce qu'elle a touché) et <em>par domaine</em> (quelles apps causent à doubleclick.net). C'est le seul outil qui te donne des faits plutôt que des impressions — d'où l'intérêt de l'allumer aujourd'hui.</p></div>
+    <div class="pas"><input type="checkbox" id="x12"><p class="pas__txt"><strong>Reprends la localisation app par app</strong>, puis descends jusqu'aux services système.</p><p class="pas__sous"><span class="chemin">Réglages › Confidentialité et sécurité › Service de localisation</span>. Quatre niveaux ; seul <em>Toujours</em> mérite ta méfiance. Et sous le choix de niveau, un interrupteur <b>séparé</b> : <em>Position exacte</em> — désactivé, l'app reçoit une zone approximative au lieu de tes coordonnées, ce qui suffit à la météo et aux boutiques. Puis descends <b>tout en bas</b>, après toutes les apps, jusqu'à <em>Services système</em> : coupe <em>Publicité basée sur la position</em>, et vide <em>Zones importantes</em> (un historique chiffré de tes lieux, actif par défaut).</p></div>
+    <div class="pas"><input type="checkbox" id="x13"><p class="pas__txt"><strong>Active le mouchard gratuit</strong> pendant une semaine.</p><p class="pas__sous">Toujours dans <em>Services système</em>, tout en bas : <b>Icône dans la barre d'état</b>. Une fois activé, la flèche de localisation s'affiche <em>chaque fois</em> qu'un service système lit ta position. En une semaine tu sauras exactement qui te suit — et tu couperas en connaissance de cause au lieu de deviner. Tu pourras le désactiver ensuite.</p></div>
+    <div class="pas"><input type="checkbox" id="x4"><p class="pas__txt"><strong>Referme l'accès aux photos.</strong></p><p class="pas__sous"><span class="chemin">Réglages › Confidentialité et sécurité › Photos</span> : trois niveaux — <em>Aucun</em>, <em>Photos sélectionnées</em>, <em>Accès complet</em>. Le niveau intermédiaire est mal connu et c'est presque toujours le bon : l'app ne voit qu'une liste explicite d'images. Pour réviser cette liste plus tard, ça ne se passe pas dans Photos mais dans <span class="chemin">Réglages › Apps › [l'app] › Photos › Modifier les photos sélectionnées</span>.</p></div>
+    <div class="pas"><input type="checkbox" id="x14"><p class="pas__txt"><strong>Coupe le suivi publicitaire — les deux, ce sont deux réglages différents.</strong></p><p class="pas__sous"><span class="chemin">Réglages › Confidentialité et sécurité › Suivi</span> → désactive <em>Autoriser les apps à demander l'autorisation de suivi</em> : ça refuse toutes les demandes futures <b>et révoque celles déjà accordées</b>. Mais la publicité d'Apple elle-même est ailleurs et n'est pas concernée : <span class="chemin">Réglages › Confidentialité et sécurité › Publicité Apple</span> → coupe les annonces personnalisées. Pendant que tu y es, <em>Analyses et améliorations</em> juste au-dessus contient plusieurs interrupteurs, tous actifs si tu as accepté au premier démarrage.</p></div>
+    <div class="pas"><input type="checkbox" id="x7"><p class="pas__txt"><strong>Sépare tes deux vies dans Safari.</strong></p><p class="pas__sous"><span class="chemin">Réglages › Apps › Safari › Profils</span> : un profil <em>Travail</em> et un profil <em>Perso</em> cloisonnent historique, cookies, favoris, groupes d'onglets <b>et extensions actives</b>. C'est le prolongement direct des trois pages — et un filtre de concentration peut imposer le bon profil (étape 10). Deux réglages voisins tant que tu y es : tu peux choisir un <b>moteur de recherche différent en navigation privée</b> (Google au quotidien, Qwant ou DuckDuckGo en privé, sans jamais y penser), et <em>Masquer l'adresse IP</em> a deux niveaux, dont le plus fort demande un abonnement iCloud+.</p></div>
     <div class="pas"><input type="checkbox" id="x5"><p class="pas__txt"><strong>Coupe l'actualisation en arrière-plan là où elle ne sert à rien.</strong></p><p class="pas__sous"><span class="chemin">Réglages › Général › Actualisation en arrière-plan</span>. Garde-la pour la messagerie et les apps de synchronisation, coupe-la pour les jeux, les boutiques et les réseaux. Gain de batterie réel, aucun inconvénient.</p></div>
-    <div class="pas"><input type="checkbox" id="x6"><p class="pas__txt"><strong>Ménage la batterie.</strong></p><p class="pas__sous">Dans <span class="chemin">Réglages › Batterie</span>, active la <em>recharge optimisée</em> (ou la limite de charge si ton modèle la propose). Un iPad qui reste branché toute la journée sur un bureau vieillit nettement moins vite ainsi.</p></div>
-    <div class="pas"><input type="checkbox" id="x7"><p class="pas__txt"><strong>Sépare tes deux vies dans Safari.</strong></p><p class="pas__sous">Dans <span class="chemin">Réglages › Apps › Safari › Profils</span>, Safari accepte des <em>profils</em> (Travail / Perso) : onglets, favoris, historique et extensions séparés, et un profil peut être imposé par un filtre de concentration. C'est le prolongement naturel des trois pages.</p></div>
-    <div class="pas"><input type="checkbox" id="x9"><p class="pas__txt"><strong>Gagne de la place à l'écran</strong> — le réglage le plus rentable de la liste.</p><p class="pas__sous"><span class="chemin">Réglages › Luminosité et affichage › Zoom d'affichage</span> → <b>Plus d'espace</b>. Tout devient un peu plus petit, mais l'iPad affiche nettement plus de contenu — décisif dès qu'on travaille à deux fenêtres. Essaie une journée avant de juger.</p></div>
-    <div class="pas"><input type="checkbox" id="x10"><p class="pas__txt"><strong>Accélère le pointeur du trackpad.</strong></p><p class="pas__sous"><span class="chemin">Réglages › Général › Trackpad et souris</span> : le curseur de vitesse est réglé très bas par défaut. Pousse-le vers le maximum et active <em>Toucher pour cliquer</em> — traverser un écran de 13 pouces cesse d'être une expédition.</p></div>
+    <div class="pas"><input type="checkbox" id="x6"><p class="pas__txt"><strong>Ménage la batterie</strong> — et regarde son état, c'est récent sur iPad.</p><p class="pas__sous"><span class="chemin">Réglages › Batterie › État de la batterie et recharge</span> : l'iPad n'affiche capacité maximale et nombre de cycles que depuis iPadOS 17.4. Active la <em>recharge optimisée</em> : elle retient la charge à 80 % jusqu'à peu avant ton réveil habituel — mais elle a besoin d'environ <b>deux semaines</b> pour apprendre ton rythme, donc ne conclus pas qu'elle ne marche pas au bout de trois jours. Sur un iPad qui reste branché toute la journée sur un bureau, c'est ce qui le fait vieillir moins vite.</p></div>
     <div class="pas"><input type="checkbox" id="x8"><p class="pas__txt"><strong>Allonge le verrouillage automatique</strong> si l'iPad s'éteint pendant que tu lis.</p><p class="pas__sous"><span class="chemin">Réglages › Luminosité et affichage › Verrouillage automatique</span> → 5 minutes. Et programme <em>Night Shift</em> de 21 h à 7 h pendant que tu y es.</p></div>
+    <div class="pas"><input type="checkbox" id="x15"><p class="pas__txt"><strong>Envisage la Protection avancée des données</strong> — puissante, mais lis les conditions.</p><p class="pas__sous"><span class="chemin">Réglages › [ton nom] › iCloud › Protection avancée des données</span>. Elle fait passer iCloud d'environ 14 à 23 catégories chiffrées de bout en bout : sauvegarde complète, Photos, Notes, Rappels, Raccourcis, signets. Trois conditions bloquantes : double authentification active, <b>tous</b> tes appareils à jour (un vieux Mac ou une Apple TV suffit à bloquer), et un moyen de récupération configuré — car Apple ne pourra plus rien récupérer pour toi. Effet de bord peu documenté : l'accès à tes données depuis iCloud.com est désactivé, réactivable ponctuellement depuis un appareil de confiance. Si tu n'es pas sûr, passe : ce n'est pas un réglage qu'on active à la légère.</p></div>
+  </div>
+
+  <div class="avis">
+    <b>Une protection de l'iPhone qui n'existe pas sur iPad</b>
+    <p>La <strong>Protection des appareils volés</strong> — ce délai d'une heure et le Face ID
+      obligatoire pour changer le mot de passe du compte hors de tes lieux de confiance — est
+      réservée à l'iPhone. Sur iPad, elle n'existe pas : quiconque connaît ton code peut, avec
+      l'appareil en main, aller loin. La conséquence pratique tient en une ligne : <strong>un code à
+      six chiffres, pas quatre</strong>, et jamais saisi en public sans couvrir l'écran.</p>
   </div>
 </section>
 
@@ -1173,6 +1301,15 @@ td.mono-col{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.8rem;f
       <p>Prends <em>une</em> page et pose-toi la question app par app : « est-ce que je l'ai ouverte
         depuis cette page, ce mois-ci ? ». Non → Bibliothèque. On ne fait qu'une page à la fois,
         sinon on ne le fait pas.</p>
+    </div>
+    <div class="bloc">
+      <span class="bloc__eti">Dans quelques semaines</span>
+      <h3>iPadOS 27 arrive</h3>
+      <p>Il est en bêta depuis juin et sort à la rentrée. Rien de ce plan ne devient faux, mais des
+        libellés de réglages peuvent bouger — c'est déjà arrivé entre la 25 et la 26. <b>N'installe
+        pas la bêta</b> sur l'iPad dont tu te sers tous les jours : c'est exactement la machine
+        qu'il ne faut pas exposer. Quand la version finale sortira, attends une semaine, puis
+        repasse sur les étapes 08 et 13 pour vérifier que tes réglages ont survécu.</p>
     </div>
     <div class="bloc">
       <span class="bloc__eti">Le signal d'alarme</span>
@@ -1383,6 +1520,216 @@ td.mono-col{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.8rem;f
     peindre();
   });
   peindre();
+})();
+</script>
+<script>
+(function(){
+  'use strict';
+  var pas = Array.prototype.slice.call(document.querySelectorAll('.pas'));
+  if (!pas.length) return;
+
+  /* Chaque étape retient sa section et le schéma de cette section. */
+  var etapes = pas.map(function(el){
+    var pl = el.closest('.plaque');
+    var num = pl && pl.querySelector('.plaque__num');
+    var h2  = pl && pl.querySelector('h2');
+    return {
+      el: el,
+      box: el.querySelector('input[type=checkbox]'),
+      num: num ? num.textContent.trim() : '',
+      titre: h2 ? h2.textContent.trim() : '',
+      fig: pl ? pl.querySelector('figure .figbox') : null
+    };
+  });
+
+  /* ---------- construction de la surcouche ---------- */
+  function n(tag, cls, txt){
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (txt !== undefined) e.textContent = txt;
+    return e;
+  }
+  var g       = n('div','guide'); g.hidden = true;
+  g.setAttribute('role','dialog');
+  g.setAttribute('aria-label','Mode guidé, une étape à la fois');
+
+  var haut    = n('div','guide__haut');
+  var ou      = n('span','guide__ou','');
+  var piste   = n('span','guide__piste');
+  var jus     = n('span','guide__jus');
+  var cpt     = n('span','guide__cpt','');
+  var fermer  = n('button','guide__fermer','Fermer'); fermer.type='button';
+  piste.appendChild(jus);
+  haut.appendChild(ou); haut.appendChild(piste); haut.appendChild(cpt); haut.appendChild(fermer);
+
+  var corps   = n('div','guide__corps');
+  var carte   = n('div','guide__carte');
+  var lblSec  = n('p','guide__section','');
+  var txt     = n('div','guide__txt');
+  var det     = n('div','guide__det');
+  var figWrap = n('div','guide__fig');
+  carte.appendChild(lblSec); carte.appendChild(txt); carte.appendChild(det); carte.appendChild(figWrap);
+  corps.appendChild(carte);
+
+  var pied    = n('div','guide__pied');
+  var bRetour = n('button','g-retour','Retour');  bRetour.type='button';
+  var bPasser = n('button','g-passer','Passer');  bPasser.type='button';
+  var bFait   = n('button','g-fait',"C'est fait"); bFait.type='button';
+  pied.appendChild(bRetour); pied.appendChild(bPasser); pied.appendChild(bFait);
+
+  g.appendChild(haut); g.appendChild(corps); g.appendChild(pied);
+  document.body.appendChild(g);
+
+  var i = 0, fini = false;
+
+  function faits(){ return etapes.filter(function(e){ return e.box && e.box.checked; }).length; }
+
+  function peindre(){
+    var f = faits();
+    jus.style.width = (f / etapes.length * 100) + '%';
+    cpt.textContent = f + ' / ' + etapes.length;
+  }
+
+  function afficher(){
+    peindre();
+    if (fini){
+      carte.hidden = true;
+      if (!g.querySelector('.guide__fini')){
+        var bloc = n('div','guide__fini');
+        var h = n('h2',null,'Voilà, ton iPad est en ordre.');
+        var p = n('p',null,"Tu peux fermer. Le plan reste disponible si tu veux revoir un réglage — et la dernière étape, l'entretien, se lit une fois puis s'oublie.");
+        bloc.appendChild(h); bloc.appendChild(p); corps.appendChild(bloc);
+      }
+      g.querySelector('.guide__fini').hidden = false;
+      pied.hidden = true;
+      ou.textContent = 'TERMINÉ';
+      return;
+    }
+    var bloc = g.querySelector('.guide__fini');
+    if (bloc) bloc.hidden = true;
+    carte.hidden = false; pied.hidden = false;
+
+    var e = etapes[i];
+    ou.textContent = 'ÉTAPE ' + e.num;
+    lblSec.textContent = e.titre;
+
+    txt.innerHTML = '';
+    var t = e.el.querySelector('.pas__txt');
+    if (t) txt.appendChild(t.cloneNode(true));
+
+    det.innerHTML = '';
+    var d = e.el.querySelector('.pas__sous');
+    if (d) det.appendChild(d.cloneNode(true));
+
+    figWrap.innerHTML = '';
+    if (e.fig){ figWrap.hidden = false; figWrap.appendChild(e.fig.cloneNode(true)); }
+    else figWrap.hidden = true;
+
+    bFait.textContent = (e.box && e.box.checked) ? 'Déjà fait — suivant' : "C'est fait";
+    bRetour.disabled = (i === 0);
+    corps.scrollTop = 0;
+  }
+
+  function avancer(){
+    if (i >= etapes.length - 1){ fini = true; } else { i++; }
+    afficher();
+  }
+
+  bFait.addEventListener('click', function(){
+    var e = etapes[i];
+    if (e.box && !e.box.checked){
+      e.box.checked = true;
+      e.box.dispatchEvent(new Event('change', {bubbles:true}));
+    }
+    avancer();
+  });
+  bPasser.addEventListener('click', avancer);
+  bRetour.addEventListener('click', function(){
+    if (fini){ fini = false; i = etapes.length - 1; }
+    else if (i > 0){ i--; }
+    afficher();
+  });
+
+  function ouvrir(){
+    var premier = etapes.findIndex(function(e){ return !(e.box && e.box.checked); });
+    fini = (premier === -1);
+    i = fini ? etapes.length - 1 : premier;
+    g.hidden = false;
+    document.body.style.overflow = 'hidden';
+    afficher();
+    fermer.focus();
+  }
+  function quitter(){
+    g.hidden = true;
+    document.body.style.overflow = '';
+    var e = etapes[Math.min(i, etapes.length - 1)];
+    if (e && e.el && e.el.scrollIntoView) e.el.scrollIntoView({block:'center'});
+  }
+  fermer.addEventListener('click', quitter);
+
+  document.addEventListener('keydown', function(ev){
+    if (g.hidden) return;
+    if (ev.key === 'Escape'){ quitter(); }
+    else if (ev.key === 'ArrowRight'){ avancer(); }
+    else if (ev.key === 'ArrowLeft' && i > 0){ i--; afficher(); }
+  });
+
+  var lancer = document.getElementById('lancer');
+  if (lancer) lancer.addEventListener('click', ouvrir);
+})();
+</script>
+<script>
+(function(){
+  'use strict';
+  /* Copie d'une invite. Dans une page encapsulée, l'API presse-papiers peut être
+     refusée : on retombe sur execCommand, puis en dernier recours on sélectionne
+     le texte pour que la copie manuelle soit immédiate. */
+  function retour(btn, texte, ok){
+    var avant = btn.getAttribute('data-avant') || btn.textContent;
+    btn.setAttribute('data-avant', avant);
+    btn.textContent = texte;
+    btn.classList.toggle('ok', !!ok);
+    clearTimeout(btn._t);
+    btn._t = setTimeout(function(){
+      btn.textContent = btn.getAttribute('data-avant');
+      btn.classList.remove('ok');
+    }, 2200);
+  }
+  function selectionner(el){
+    try{
+      var r = document.createRange(); r.selectNodeContents(el);
+      var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+      return true;
+    }catch(e){ return false; }
+  }
+  document.querySelectorAll('.invite__b').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var bloc = btn.closest('.invite');
+      var cible = bloc && bloc.querySelector('.invite__t');
+      if (!cible) return;
+      var texte = cible.textContent;
+
+      if (navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(texte).then(function(){
+          retour(btn, 'Copié', true);
+        }).catch(function(){ secours(); });
+      } else secours();
+
+      function secours(){
+        var ta = document.createElement('textarea');
+        ta.value = texte;
+        ta.setAttribute('readonly','');
+        ta.style.position = 'fixed'; ta.style.top = '-1000px'; ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        var ok = false;
+        try { ta.select(); ok = document.execCommand('copy'); } catch(e){ ok = false; }
+        document.body.removeChild(ta);
+        if (ok) retour(btn, 'Copié', true);
+        else if (selectionner(cible)) retour(btn, 'Sélectionné — copie-le', false);
+        else retour(btn, 'Copie impossible', false);
+      }
+    });
+  });
 })();
 </script>
 
