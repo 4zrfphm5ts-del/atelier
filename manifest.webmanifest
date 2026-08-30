@@ -1,0 +1,17 @@
+{
+  "name": "Studio BFievé — ateliers",
+  "short_name": "Atelier",
+  "description": "Les petites choses fabriquées maison : L'Enseigne, Au Soleil, Drink Gamz', Piou Piou Express.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#26221C",
+  "theme_color": "#26221C",
+  "lang": "fr",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

@@ -2,6 +2,17 @@
 <html lang="fr"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Studio BFievé — ateliers</title>
+<meta name="description" content="Les ateliers du Studio BFievé : L'Enseigne, Au Soleil, Drink Gamz', Piou Piou Express.">
+<meta name="theme-color" content="#26221C">
+<!-- Installable sur l'écran d'accueil : un raccourci « Atelier » qui ouvre les
+     quatre apps, sans avoir à retrouver l'URL. -->
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Atelier">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 <style>
 body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;
   font-family:system-ui,sans-serif;background:#26221C;color:#FAF5EC;padding:24px;box-sizing:border-box}
@@ -17,4 +28,10 @@ small{color:#b5ab9e;font-size:.78rem}
 <a href="au-soleil/"><span class="e">☀️</span><span><b>Au Soleil</b><small>Trouver une terrasse au soleil maintenant — Lille · Le Touquet</small></span></a>
 <a href="drink-gamz/"><span class="e">🍻</span><span><b>Drink Gamz'</b><small>Jeux de soirée — 15 modes, gorgées ou gages</small></span></a>
 <a href="piou-piou-express/"><span class="e">🐦</span><span><b>Piou Piou Express</b><small>Arcade 2 joueurs — graines et trains</small></span></a>
-</main></body></html>
+</main>
+<script>
+/* Hors ligne : le worker garde cette page et ses icônes, rien d'autre.
+   En https seulement, et son échec ne casse rien. */
+if("serviceWorker" in navigator && location.protocol==="https:"){ navigator.serviceWorker.register("sw.js").catch(()=>{}); }
+</script>
+</body></html>

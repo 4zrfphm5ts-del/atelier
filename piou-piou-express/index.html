@@ -5,6 +5,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>PIOU PIOU EXPRESS 🐦🚂</title>
 <meta name="description" content="Piou Piou Express : petit jeu d'arcade dans le navigateur — fais voyager les poussins en train, sans rien installer.">
+<meta name="theme-color" content="#8fd3ff">
+<!-- Installable sur l'écran d'accueil : sans manifeste ni icône carrée, iOS
+     range une capture de la page, et le jeu n'est joignable qu'en retrouvant
+     l'URL dans le navigateur. -->
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Piou Piou">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%238fd3ff'/%3E%3Ccircle cx='32' cy='34' r='16' fill='%23ffd93d'/%3E%3Ccircle cx='26' cy='30' r='3' fill='%23222'/%3E%3Cpath d='M44 34l8 4-8 4z' fill='%23ff9f1c'/%3E%3C/svg%3E">
 <style>
   :root{
@@ -881,6 +892,11 @@ requestAnimationFrame(loop);
 renderCharRow();
 resetBirds();
 refillSeeds();
+
+/* Hors ligne : le worker garde une copie de la page et des icônes. En https
+   seulement — en local (file:// ou http://) l'enregistrement échoue, et son
+   échec ne doit rien casser du jeu déjà démarré. */
+if("serviceWorker" in navigator && location.protocol==="https:"){ navigator.serviceWorker.register("sw.js").catch(()=>{}); }
 </script>
 </body>
 </html>

@@ -440,10 +440,10 @@ a:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--terra);outline-
     <dl class="cartouche__grille">
       <div class="champ"><dt>Dépôt</dt><dd>4zrfphm5ts-del/atelier</dd></div>
       <div class="champ"><dt>Branche</dt><dd>main</dd></div>
-      <div class="champ"><dt>Dernier commit</dt><dd>0829d3c</dd></div>
-      <div class="champ"><dt>Chantier</dt><dd>8 commits · 02 → 07-07-2026</dd></div>
-      <div class="champ"><dt>Fichiers suivis</dt><dd>32 · 2,31 Mo</dd></div>
-      <div class="champ"><dt>Code écrit</dt><dd>4 236 lignes</dd></div>
+      <div class="champ"><dt>Dernier commit</dt><dd>30-08-2026</dd></div>
+      <div class="champ"><dt>Chantier</dt><dd>12 commits · 02-07 → 30-08-2026</dd></div>
+      <div class="champ"><dt>Fichiers suivis</dt><dd>63 · 2,8 Mo</dd></div>
+      <div class="champ"><dt>Code écrit</dt><dd>6 821 lignes</dd></div>
       <div class="champ"><dt>Hébergement</dt><dd>GitHub Pages</dd></div>
       <div class="champ"><dt>Sites en ligne</dt><dd>5, dont 1 non listé</dd></div>
     </dl>
@@ -511,7 +511,7 @@ a:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--terra);outline-
             <text x="40" y="302" font-size="11" letter-spacing="1.6" opacity=".6">③ DÉPÔT</text>
             <rect x="40" y="316" width="900" height="132" fill="none" class="tr" stroke="#C1502E" stroke-width="1.8"/>
             <text x="60" y="344" font-size="13" font-weight="600" class="trf" fill="#C1502E">4zrfphm5ts-del/atelier · branche main</text>
-            <text x="60" y="364" font-size="11" opacity=".65">32 fichiers · 2,31 Mo · 8 commits</text>
+            <text x="60" y="364" font-size="11" opacity=".65">63 fichiers · 2,8 Mo · 12 commits</text>
 
             <g font-size="11">
               <rect x="60" y="382" width="128" height="24" fill="none" stroke="currentColor" stroke-opacity=".28"/>
@@ -585,7 +585,7 @@ a:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--terra);outline-
       <span class="plaque__num">PL. 2</span>
       <h2>L'arborescence, fichier par fichier</h2>
     </div>
-    <p>À droite, les 32 fichiers réellement versionnés, avec leur poids. À gauche, ce qui les fabrique et qui <strong>n'est pas dans le dépôt</strong> — reconstitué à partir des traces laissées dans les fichiers générés.</p>
+    <p>À droite, les 63 fichiers réellement versionnés, avec leur poids. À gauche, ce qui les fabrique et qui <strong>n'est pas dans le dépôt</strong> — reconstitué à partir des traces laissées dans les fichiers générés.</p>
 
     <div class="arbo">
 
@@ -603,38 +603,57 @@ a:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--terra);outline-
       </div>
 
       <div class="bloc">
-        <div class="bloc__tete"><b>Sorties · dépôt publié</b><em>32 fichiers · 2,31 Mo</em></div>
+        <div class="bloc__tete"><b>Sorties · dépôt publié</b><em>63 fichiers · 2,8 Mo</em></div>
 <pre class="tree"><span class="d">atelier/</span>
-├── index.html            <span class="n">4 K</span>   <span class="g">landing, 4 apps</span>
+├── index.html            <span class="n">8 K</span>   <span class="g">landing, 4 apps</span>
+├── manifest.webmanifest  <span class="n">4 K</span>   <span class="g">« Atelier »</span>
+├── sw.js                 <span class="n">4 K</span>   <span class="g">landing seule</span>
+├── icon-512/192/180.png        <span class="g">écran d'accueil</span>
+├── favicon-32.png        <span class="n">4 K</span>
 ├── sitemap.xml           <span class="n">4 K</span>   <span class="g">5 URL</span>
 ├── .nojekyll             <span class="n">0</span>     <span class="g">sert tel quel</span>
 │
-├── <span class="d">enseigne/</span>                   <span class="g">312 K</span>
-│   ├── index.html        <span class="n">48 K</span>  <span class="g">735 l.</span>
+├── <span class="d">tools/</span>
+│   └── make_icons.py     <span class="n">8 K</span>   <span class="g">refait les icônes</span>
+│
+├── <span class="d">enseigne/</span>                   <span class="g">332 K</span>
+│   ├── index.html        <span class="n">48 K</span>  <span class="g">740 l.</span>
 │   ├── mentions-legales.html <span class="n">8 K</span>
+│   ├── icon-512/192/180.png    <span class="g">écran d'accueil</span>
+│   ├── favicon-32.png    <span class="n">4 K</span>
 │   └── <span class="d">img/</span>
 │       ├── og-enseigne.jpg        <span class="n">100 K</span>
 │       ├── apercu-dada-cafeteria.jpg <span class="n">48 K</span>
 │       ├── apercu-le-matisse.jpg  <span class="n">48 K</span>
 │       └── apercu-le-saint-jean.jpg <span class="n">52 K</span>
 │
-├── <span class="d">au-soleil/</span>                  <span class="g">56 K</span>
-│   ├── index.html        <span class="n">20 K</span>  <span class="g">322 l.</span>
-│   └── data.js           <span class="n">32 K</span>  <span class="g">209 terrasses</span>
+├── <span class="d">au-soleil/</span>                  <span class="g">268 K</span>
+│   ├── index.html        <span class="n">24 K</span>  <span class="g">331 l.</span>
+│   ├── data.js           <span class="n">32 K</span>  <span class="g">209 terrasses</span>
+│   ├── leaflet-1.9.4.js  <span class="n">148 K</span> <span class="g">plus d'unpkg</span>
+│   ├── leaflet-1.9.4.css <span class="n">16 K</span>
+│   ├── manifest.webmanifest <span class="n">4 K</span>
+│   ├── sw.js             <span class="n">8 K</span>   <span class="g">cache v1</span>
+│   ├── icon-512/192/180.png    <span class="g">écran d'accueil</span>
+│   └── favicon-32.png    <span class="n">4 K</span>
 │
 ├── <span class="d">drink-gamz/</span>                 <span class="g">356 K</span>
 │   ├── index.html        <span class="n">100 K</span> <span class="g">1 237 l.</span>
 │   ├── manifest.webmanifest <span class="n">4 K</span>
-│   ├── sw.js             <span class="n">4 K</span>   <span class="g">cache v3</span>
+│   ├── sw.js             <span class="n">4 K</span>   <span class="g">cache v5</span>
 │   ├── icon-512.png      <span class="n">164 K</span>
 │   ├── icon-192.png      <span class="n">40 K</span>
 │   ├── icon-180.png      <span class="n">36 K</span>
 │   └── favicon-32.png    <span class="n">4 K</span>
 │
-├── <span class="d">piou-piou-express/</span>          <span class="g">44 K</span>
-│   └── index.html        <span class="n">40 K</span>  <span class="g">872 l.</span>
+├── <span class="d">piou-piou-express/</span>          <span class="g">88 K</span>
+│   ├── index.html        <span class="n">44 K</span>  <span class="g">899 l.</span>
+│   ├── manifest.webmanifest <span class="n">4 K</span>
+│   ├── sw.js             <span class="n">8 K</span>   <span class="g">cache v1</span>
+│   ├── icon-512/192/180.png    <span class="g">écran d'accueil</span>
+│   └── favicon-32.png    <span class="n">4 K</span>
 │
-└── <span class="d">dada/</span>                       <span class="g">1,6 M</span>
+└── <span class="d">dada/</span>                       <span class="g">1,7 M</span>
     ├── index.html        <span class="n">28 K</span>  <span class="g">515 l.</span>
     └── <span class="d">assets/</span>
         ├── styles.css    <span class="n">20 K</span>  <span class="g">334 l.</span>
@@ -648,7 +667,9 @@ a:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--terra);outline-
         ├── plat-bourguignon.jpg <span class="n">108 K</span>
         ├── brunch-toast.jpg <span class="n">136 K</span>
         ├── brunch-table.jpg <span class="n">120 K</span>
-        └── brunch-dessert.jpg <span class="n">104 K</span>
+        ├── brunch-dessert.jpg <span class="n">104 K</span>
+        ├── icon-512/192/180.png    <span class="g">carrées, enfin</span>
+        └── favicon-32.png <span class="n">4 K</span>
 </pre>
         <div class="bloc__note">Les médias de DADA pèsent 1,5 Mo — 68 % du dépôt à eux seuls, pour un seul des cinq sites.</div>
       </div>
@@ -704,12 +725,14 @@ a:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--terra);outline-
             <dt>Champs</dt><dd><code>n</code> nom · <code>lat/lng</code> · <code>facing</code> orientation · <code>horizon</code> hauteur · <code>type</code> · <code>h</code> horaires OSM · <code>w</code> site</dd>
             <dt>Source</dt><dd>OpenStreetMap (ODbL), régénérable par <code>tools/fetch_osm.py</code></dd>
             <dt>Sortie</dt><dd>4 états par terrasse : soleil · partiel · ombre · nuit, plus l'heure du prochain changement</dd>
-            <dt>Runtime</dt><dd>Leaflet 1.9.4 depuis unpkg + tuiles OpenStreetMap</dd>
+            <dt>Hors ligne</dt><dd>service worker, cache <code>ausoleil-v1</code> : page, terrasses et Leaflet. Sans réseau il reste la liste et le calcul du soleil, pas le fond de carte</dd>
+            <dt>Runtime</dt><dd>Leaflet 1.9.4 servi par le site + tuiles OpenStreetMap</dd>
           </dl>
           <div class="puces">
-            <span class="puce puce--fort">2 services externes</span>
+            <span class="puce puce--fort">1 service externe</span>
             <span class="puce">data.js généré</span>
-            <span class="puce">322 lignes</span>
+            <span class="puce">installable · hors ligne</span>
+            <span class="puce">331 lignes</span>
             <span class="puce">aucune police web</span>
           </div>
         </div>
@@ -722,12 +745,12 @@ a:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--terra);outline-
           <span class="etat">en ligne · PWA</span>
         </div>
         <div class="fiche__corps">
-          <p>La machine à jeux de soirée, sur un seul téléphone. Le plus gros fichier de l'atelier, et le seul installable sur l'écran d'accueil.</p>
+          <p>La machine à jeux de soirée, sur un seul téléphone. Le plus gros fichier de l'atelier, et la première app à avoir été installable sur l'écran d'accueil.</p>
           <dl class="specs">
             <dt>Jeux</dt><dd>15 — Mode Épique, La Roue, Action ou Vérité, Je n'ai jamais, Tu préfères, Le plus susceptible, Picolo, Le Roi, La Bombe, Méduse, King Game, Paranoïa, Quiz Culture G, GeoGuess, Rent Guesser</dd>
             <dt>Niveaux</dt><dd>🍼 Enfance · 😎 Soft · 🤪 Délire · 🌶️ Chaud · 🍑 Sexe 18+ · 💀 Trash 18+</dd>
             <dt>Sanctions</dt><dd>deux modes au choix : gorgées ou gages</dd>
-            <dt>Hors ligne</dt><dd>service worker, cache <code>drinkgamz-v3</code>, repli sur index.html</dd>
+            <dt>Hors ligne</dt><dd>service worker, cache <code>drinkgamz-v5</code>, réseau d'abord puis repli sur la copie</dd>
             <dt>Poids</dt><dd>1 237 lignes dans un fichier de 100 K + 4 icônes (244 K)</dd>
           </dl>
           <div class="puces">
@@ -743,7 +766,7 @@ a:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--terra);outline-
         <div class="fiche__id">
           <div class="fiche__mark"><span class="glyphe" aria-hidden="true">🐦</span><h3>Piou Piou Express</h3></div>
           <span class="chemin">/piou-piou-express/</span>
-          <span class="etat">en ligne</span>
+          <span class="etat">en ligne · PWA</span>
         </div>
         <div class="fiche__corps">
           <p>Un jeu d'arcade en canvas : deux poussins, des graines à ramasser, des trains à éviter. Deux joueurs sur le même clavier, ou solo contre l'ordinateur.</p>
@@ -751,12 +774,14 @@ a:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--terra);outline-
             <dt>Modes</dt><dd>2 joueurs · solo contre l'ordi · échange des manettes en cours de partie</dd>
             <dt>Format</dt><dd>match en manches, compte à rebours, écran d'entre-deux, confettis de fin</dd>
             <dt>Moteur</dt><dd>canvas 960×600 redimensionné, boucle de rendu maison — ~45 fonctions (draw*, spawnTrain, cpuThink…)</dd>
-            <dt>Poids</dt><dd>872 lignes, 40 K, un seul fichier</dd>
+            <dt>Hors ligne</dt><dd>service worker, cache <code>pioupiou-v1</code></dd>
+            <dt>Poids</dt><dd>899 lignes, 44 K, une page + manifeste, worker et icônes</dd>
+            <dt>Manque</dt><dd>aucune commande tactile : installé sur un téléphone, il réclame toujours un clavier</dd>
           </dl>
           <div class="puces">
             <span class="puce puce--fort">0 dépendance réseau</span>
             <span class="puce">tout est dans la page</span>
-            <span class="puce">pas de service worker</span>
+            <span class="puce">installable · hors ligne</span>
           </div>
         </div>
       </article>
@@ -798,7 +823,7 @@ a:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--terra);outline-
 
     <figure>
       <div class="figbox">
-        <svg viewBox="0 0 980 420" role="img" aria-label="Schéma des dépendances au chargement : L'Enseigne et DADA appellent Google Fonts, Au Soleil appelle unpkg et les tuiles OpenStreetMap, Drink Gamz et Piou Piou n'appellent rien.">
+        <svg viewBox="0 0 980 420" role="img" aria-label="Schéma des dépendances au chargement : L'Enseigne et DADA appellent Google Fonts, Au Soleil n'appelle plus que les tuiles OpenStreetMap, Drink Gamz et Piou Piou n'appellent rien.">
           <defs>
             <marker id="fl2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
               <path d="M0 0 L10 5 L0 10 z" class="plf" fill="#35576F"/>
@@ -820,8 +845,8 @@ a:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--terra);outline-
 
             <rect x="404" y="44" width="172" height="72" fill="none" class="tr" stroke="#C1502E" stroke-width="1.5"/>
             <text x="490" y="70" font-size="12.5" text-anchor="middle" font-weight="600">Au Soleil</text>
-            <text x="490" y="90" font-size="10" text-anchor="middle" opacity=".6">2 services externes</text>
-            <text x="490" y="106" font-size="10" text-anchor="middle" opacity=".6">+ data.js local</text>
+            <text x="490" y="90" font-size="10" text-anchor="middle" opacity=".6">1 service externe</text>
+            <text x="490" y="106" font-size="10" text-anchor="middle" opacity=".6">+ data.js et Leaflet locaux</text>
 
             <rect x="596" y="44" width="172" height="72" fill="none" class="tr" stroke="#C1502E" stroke-width="1.5"/>
             <text x="682" y="70" font-size="12.5" text-anchor="middle" font-weight="600">Drink Gamz'</text>
@@ -830,21 +855,19 @@ a:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--terra);outline-
 
             <rect x="788" y="44" width="172" height="72" fill="none" class="tr" stroke="#C1502E" stroke-width="1.5"/>
             <text x="874" y="70" font-size="12.5" text-anchor="middle" font-weight="600">Piou Piou</text>
-            <text x="874" y="90" font-size="10" text-anchor="middle" opacity=".6">0 · tout est dans la page</text>
-            <text x="874" y="106" font-size="10" text-anchor="middle" opacity=".6">1 seul fichier</text>
+            <text x="874" y="90" font-size="10" text-anchor="middle" opacity=".6">0 · marche hors ligne</text>
+            <text x="874" y="106" font-size="10" text-anchor="middle" opacity=".6">service worker</text>
 
             <!-- flèches -->
             <g fill="none" class="pl" stroke="#35576F" stroke-width="1.4" marker-end="url(#fl2)">
               <path d="M106 116 L106 190 L200 190 L200 292"/>
               <path d="M298 116 L298 224 L236 224 L236 292"/>
-              <path d="M450 116 L450 172 L546 172 L546 292"/>
               <path d="M556 116 L556 236 L822 236 L822 292"/>
             </g>
 
             <g font-size="10" class="plf" fill="#35576F">
               <text x="116" y="184">Fraunces · Work Sans</text>
               <text x="306" y="218">Rubik · Antonio · Inter</text>
-              <text x="444" y="166" text-anchor="end">carte JS + CSS</text>
               <text x="690" y="230" text-anchor="middle">tuiles de carte</text>
             </g>
 
@@ -855,10 +878,10 @@ a:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--terra);outline-
             <text x="40" y="342" font-size="10.5" opacity=".65">si indisponible : la mise en page tient,</text>
             <text x="40" y="358" font-size="10.5" opacity=".65">les polices retombent sur celles du système</text>
 
-            <rect x="440" y="296" width="212" height="72" fill="none" class="pl" stroke="#35576F" stroke-width="1.4" stroke-dasharray="5 4"/>
-            <text x="460" y="322" font-size="12.5" class="plf" fill="#35576F" font-weight="600">unpkg.com</text>
-            <text x="460" y="342" font-size="10.5" opacity=".65">Leaflet 1.9.4 (JS + CSS)</text>
-            <text x="460" y="358" font-size="10.5" opacity=".65">si indisponible : pas de carte</text>
+            <rect x="440" y="296" width="212" height="72" fill="none" class="tr" stroke="#C1502E" stroke-width="1.4"/>
+            <text x="460" y="322" font-size="12.5" font-weight="600">rapatrié — 30-08-2026</text>
+            <text x="460" y="342" font-size="10.5" opacity=".65">Leaflet 1.9.4 est servi par le site,</text>
+            <text x="460" y="358" font-size="10.5" opacity=".65">plus par unpkg : rien à attendre</text>
 
             <rect x="688" y="296" width="272" height="72" fill="none" class="pl" stroke="#35576F" stroke-width="1.4" stroke-dasharray="5 4"/>
             <text x="708" y="322" font-size="12.5" class="plf" fill="#35576F" font-weight="600">tile.openstreetmap.org</text>
@@ -869,7 +892,7 @@ a:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--terra);outline-
           </g>
         </svg>
       </div>
-      <figcaption>Deux sites sur cinq fonctionnent totalement sans réseau après le premier chargement. Au Soleil est le plus exposé : sans unpkg, la carte ne s'affiche pas du tout.</figcaption>
+      <figcaption>Trois sites sur cinq fonctionnent sans réseau après le premier chargement, et un quatrième presque : Au Soleil garde sa liste et son calcul du soleil, il ne perd que le fond de carte.</figcaption>
     </figure>
   </section>
 
@@ -877,9 +900,9 @@ a:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--terra);outline-
   <section class="plaque">
     <div class="plaque__tete">
       <span class="plaque__num">PL. 5</span>
-      <h2>Six jours de chantier</h2>
+      <h2>Deux mois de chantier</h2>
     </div>
-    <p>Tout le dépôt tient en huit commits, du 2 au 7 juillet 2026. Le premier livre les quatre apps d'un coup ; les suivants ouvrent DADA, puis durcissent le référencement de L'Enseigne.</p>
+    <p>Douze commits, du 2 juillet au 30 août 2026. Le premier livre les quatre apps d'un coup ; les suivants ouvrent DADA, durcissent le référencement de L'Enseigne, puis rendent les apps increvables sur iPhone et enfin transportables.</p>
 
     <div class="chrono">
       <span class="c-date premiere">02-07</span><span class="c-sha premiere">2417d69</span><span class="c-txt premiere">Ateliers en ligne — les 4 apps + L'Enseigne, générés par <span class="inline-code">public-web/build_public.py</span>. 16 fichiers, 3 041 lignes.</span>
@@ -890,6 +913,10 @@ a:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--terra);outline-
       <span class="c-date">06-07</span><span class="c-sha">6f96f08</span><span class="c-txt">Mentions légales — SIREN et SIRET renseignés, page terminée.</span>
       <span class="c-date">07-07</span><span class="c-sha">a5c5435</span><span class="c-txt">DADA — carte à jour et refonte selon retours : ordre carte/brunch, bar, horaires, équipe.</span>
       <span class="c-date">07-07</span><span class="c-sha">0829d3c</span><span class="c-txt">SEO et partage — favicon, image OG, canonical, JSON-LD pour DADA ; métas ajoutées aux trois apps.</span>
+      <span class="c-date">19-08</span><span class="c-sha">1162fa1</span><span class="c-txt">Plan de l'atelier : arborescence, chaîne de fabrication, fiches des cinq sites.</span>
+      <span class="c-date">23-08</span><span class="c-sha">990a68e</span><span class="c-txt">Drink Gamz' — le service worker ne peut plus figer l'app sur une copie abîmée.</span>
+      <span class="c-date">23-08</span><span class="c-sha">2012e4c</span><span class="c-txt">Les cinq sites — plus de point unique de panne qui laisse un écran blanc sur iPhone.</span>
+      <span class="c-date">30-08</span><span class="c-sha">—</span><span class="c-txt">Les apps s'emportent : icônes d'écran d'accueil partout, Au Soleil et Piou Piou installables et hors ligne, Leaflet rapatrié.</span>
     </div>
   </section>
 
@@ -903,8 +930,8 @@ a:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--terra);outline-
 
     <div class="ouverts">
       <div class="ouvert">
-        <b>Les scripts ne sont nulle part</b>
-        <span><span class="inline-code">build_public.py</span> et <span class="inline-code">fetch_osm.py</span> n'existent que sur le poste. Le dépôt ne peut pas être reconstruit à partir de lui-même.</span>
+        <b>Les scripts ne sont presque nulle part</b>
+        <span><span class="inline-code">build_public.py</span> et <span class="inline-code">fetch_osm.py</span> n'existent que sur le poste. Le dépôt ne peut toujours pas être reconstruit à partir de lui-même — seul <span class="inline-code">tools/make_icons.py</span> a été versionné.</span>
       </div>
       <div class="ouvert">
         <b>L'email de DADA est un placeholder</b>
@@ -916,11 +943,19 @@ a:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--terra);outline-
       </div>
       <div class="ouvert">
         <b>Au Soleil dépend d'un CDN</b>
-        <span>Leaflet vient d'unpkg. Un fichier de 150 K copié dans <span class="inline-code">au-soleil/</span> supprimerait la dépendance.</span>
+        <span>Réglé le 30-08-2026 : Leaflet est copié dans <span class="inline-code">au-soleil/</span>, empreintes SHA-256 identiques aux SRI qu'il remplace. Restent les tuiles OpenStreetMap, qui ne se rapatrient pas.</span>
       </div>
       <div class="ouvert">
         <b>Le sitemap est figé</b>
         <span>Les 5 URL portent toutes <span class="inline-code">lastmod 2026-07-07</span>, y compris celles qui n'ont pas bougé depuis le 2 juillet.</span>
+      </div>
+      <div class="ouvert">
+        <b>Piou Piou n'a pas de commandes tactiles</b>
+        <span>Il s'installe maintenant sur un téléphone, mais reste jouable au clavier seulement : l'app s'emporte, la partie non. C'est une fonctionnalité à écrire, pas une réparation.</span>
+      </div>
+      <div class="ouvert">
+        <b>Les tuiles de carte ne sont pas gardées</b>
+        <span>Hors ligne, Au Soleil affiche ses terrasses sur un fond gris. Garder les tuiles d'une ville tiendrait dans quelques Mo — décision à prendre (poids, licence OSM).</span>
       </div>
       <div class="ouvert">
         <b>1,5 Mo de photos non optimisées</b>
@@ -930,7 +965,7 @@ a:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--terra);outline-
   </section>
 
   <footer class="pied">
-    <span>Relevé établi le 19-08-2026 sur la branche main · commit 0829d3c</span>
+    <span>Relevé établi le 19-08-2026 · mis à jour le 30-08-2026 (icônes, hors ligne, Leaflet rapatrié)</span>
     <span>Studio BFievé — atelier</span>
   </footer>
 
