@@ -315,7 +315,10 @@ blockquote{
 @media (max-width:900px){
   .brunch__inner,.soeurs,.evenements__inner,.infos__grid{ grid-template-columns:1fr; }
   .menu-grid,.menu-grid--three,.qualites,.cards{ grid-template-columns:1fr; }
-  .brunch__stamp{ width:96px;height:96px;font-size:.9rem;left:auto;right:-10px;bottom:-16px; }
+  /* right:-10px plus la rotation de -12deg poussaient le tampon a 393 px sur un
+     ecran de 390 : la page entiere se decalait de 3 px horizontalement. Il
+     chevauche toujours le coin de la photo, sans sortir de l'ecran. */
+  .brunch__stamp{ width:96px;height:96px;font-size:.9rem;left:auto;right:0;bottom:-16px; }
   .soeurs__photo{ order:2; }
   .carte-gallery{ grid-template-columns:1fr 1fr; }
 }
@@ -332,3 +335,10 @@ blockquote{
   .brunch__list{ grid-template-columns:1fr; }
   .resa__grid{ grid-template-columns:1fr; }
 }
+
+/* Le h1 ne portait qu'une image : le titre de la page etait vide de texte, seul des
+   neuf sites de l'atelier dans ce cas. Le logo reste, le titre revient — masque a
+   l'oeil, lu par les lecteurs d'ecran et les moteurs. L'alt de l'image passe a vide
+   parce que le texte adjacent porte desormais l'information : sinon elle est
+   annoncee deux fois de suite. */
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}

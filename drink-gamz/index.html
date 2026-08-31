@@ -1271,7 +1271,7 @@ try{
 if(state.players.length>=2 && activeLevels().length){ /* on reste sur setup, l'utilisateur clique Entrer */ }
 window.addEventListener("resize",()=>{ if(cc.style.display==="block"){ cc.width=innerWidth; cc.height=innerHeight; } });
 // service worker (offline) — uniquement en https (site hébergé), inerte en local/file
-if("serviceWorker" in navigator && location.protocol==="https:"){ navigator.serviceWorker.register("sw.js").catch(()=>{}); }
+if("serviceWorker" in navigator && isSecureContext && location.protocol!=="file:"){ navigator.serviceWorker.register("sw.js").catch(()=>{}); }
 
 // vibration globale + retour au toucher sur tout élément interactif (Android/desktop ; iOS Safari ne supporte pas l'API Vibration)
 document.addEventListener("pointerdown", e=>{

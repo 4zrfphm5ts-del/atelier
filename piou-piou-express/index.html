@@ -3,6 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Piou Piou Express">
+<link rel="apple-touch-icon" href="icon-180.png">
 <title>PIOU PIOU EXPRESS 🐦🚂</title>
 <meta name="description" content="Piou Piou Express : petit jeu d'arcade dans le navigateur — fais voyager les poussins en train, sans rien installer.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%238fd3ff'/%3E%3Ccircle cx='32' cy='34' r='16' fill='%23ffd93d'/%3E%3Ccircle cx='26' cy='30' r='3' fill='%23222'/%3E%3Cpath d='M44 34l8 4-8 4z' fill='%23ff9f1c'/%3E%3C/svg%3E">
@@ -21,11 +25,11 @@
     color:var(--ink); display:flex; align-items:center; justify-content:center;
     min-height:100%; padding:14px; overflow:hidden;
   }
-  /* Largeur ET hauteur calculées, plutôt que la hauteur déduite d'aspect-ratio :
-     sans aspect-ratio (iOS < 15) le plateau s'effondrait à zéro pixel et le jeu
-     n'était plus qu'une page bleue vide. Les deux min() se correspondent
-     exactement, le rapport 960/600 est donc conservé dans les deux cas. */
   #stage{
+    /* Largeur ET hauteur calculées, plutôt que la hauteur déduite d'aspect-ratio :
+       sans aspect-ratio (iOS < 15) le plateau s'effondrait à zéro pixel et le jeu
+       n'était plus qu'une page bleue vide. Les deux min() se correspondent
+       exactement, le rapport 960/600 est donc conservé dans les deux cas. */
     position:relative;
     width:min(96vw, calc((100vh - 28px) * 1.6));
     height:min(60vw, calc(100vh - 28px));
@@ -49,6 +53,26 @@
       background:linear-gradient(180deg, rgba(10,30,55,.62), rgba(10,30,55,.78));
       backdrop-filter:blur(3px); z-index:5; gap:2vh}
   .ov.hidden{display:none}
+  /* Portrait etroit : le plateau ne fait plus que 234 px de haut (height:min(60vw,...)),
+     alors que le menu en demande environ 474. Avec overflow:hidden sur #stage, les deux
+     boutons de lancement tombaient hors du cadre et devenaient physiquement inatteignables
+     — document.elementFromPoint a leur centre rendait BODY. A l'ecran on ne voyait qu'un
+     fragment de carte joueur flottant dans un rectangle, sans titre ni bouton.
+     SEUL #ovMenu passe en fixed : le decompte, l'inter-manche, la pause et l'ecran de fin
+     doivent rester cales sur le plateau, sans quoi ils se detachent du jeu. */
+  @media (orientation:portrait) and (max-width:700px){
+    #ovMenu{position:fixed; inset:0; overflow-y:auto; padding:5vh 6%; gap:1.4vh}
+  }
+  /* Piou Piou se joue a DEUX sur le MEME clavier (WASD contre fleches) : il n'y a aucune
+     commande tactile, et il ne peut pas y en avoir sans repenser le jeu. Sur un appareil
+     sans clavier, on le dit — au lieu de laisser croire qu'une partie va demarrer.
+     Le message informe, il ne bloque pas : un clavier Bluetooth se branche tres bien. */
+  .sans-clavier{display:none}
+  @media (hover:none) and (pointer:coarse){
+    .sans-clavier{display:block; margin:0 auto; max-width:34ch; padding:10px 14px;
+      border-radius:14px; background:rgba(255,255,255,.92); color:#123;
+      font-size:14px; line-height:1.45; box-shadow:0 6px 20px rgba(10,30,55,.25)}
+  }
   .logo{font-weight:800; line-height:.92; letter-spacing:.5px;
     font-size:clamp(30px,7.4vw,74px);
     color:#fff; text-shadow:0 5px 0 #1c74c9, 0 8px 14px rgba(0,0,0,.35);}
@@ -120,6 +144,9 @@
   <div class="ov" id="ovMenu">
     <div class="logo">PIOU PIOU <span class="a">EXPRESS</span></div>
     <div class="sub">🐦 Deux piafs, plein de graines, des trains qui foncent 🚂</div>
+    <div class="sans-clavier">⌨️ Piou Piou se joue <b>à deux sur le même clavier</b> —
+      <b>WASD</b> contre les <b>flèches</b>. Sur un écran tactile il n'y a rien à toucher :
+      ouvre-le sur un ordinateur, ou branche un clavier.</div>
     <div class="sub" style="margin-top:.4vh;font-weight:700">Qui joue ? 👇</div>
     <div class="row" id="charRow"></div>
     <button class="cta sec" id="btnSwap" style="padding:9px 20px;font-size:15px">🔄 Échanger les manettes</button>
@@ -881,6 +908,10 @@ requestAnimationFrame(loop);
 renderCharRow();
 resetBirds();
 refillSeeds();
+</script>
+<script>
+if ('serviceWorker' in navigator && isSecureContext && location.protocol !== 'file:')
+  addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));
 </script>
 </body>
 </html>

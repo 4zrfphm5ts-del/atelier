@@ -1,4 +1,4 @@
-/* Drink Gamz' — service worker. Genere par _outils/pwaify.py, ne pas editer a la main.
+/* Piou Piou Express — service worker. Genere par _outils/pwaify.py, ne pas editer a la main.
  *
  * 🔴 REGLE DE SURVIE, apprise sur Drink Gamz' (correctif amont du 23/08, retrouve le
  * 30/08 dans le depot public) : LA PAGE PASSE PAR LE RESEAU D'ABORD. L'inverse — le
@@ -8,7 +8,7 @@
  * etant fixe, meme un redeploiement n'y change rien.
  * Le cache n'est donc qu'un FILET : il sert quand le reseau ne repond pas.
  * Aucune dependance reseau : l'app tient entierement en cache. */
-const C = "drink-gamz-v4";
+const C = "piou-piou-express-v2";
 const ASSETS = ["./", "./index.html", "./manifest.webmanifest", "./icon-180.png", "./icon-192.png", "./icon-512.png", "./favicon-32.png"];
 const RESEAU = [];
 /* Soiree en cave, reseau a une barre : on n'attend pas la fin des temps. */
@@ -58,9 +58,9 @@ function horsService() {
   return new Response(
     "<!DOCTYPE html><html lang=fr><meta charset=utf-8>" +
     "<meta name=viewport content='width=device-width,initial-scale=1'>" +
-    "<title>Drink Gamz'</title>" +
+    "<title>Piou Piou Express</title>" +
     "<body style='margin:0;min-height:100vh;display:flex;align-items:center;" +
-    "justify-content:center;background:#0c0420;color:#111;" +
+    "justify-content:center;background:#8fd3ff;color:#111;" +
     "font:16px/1.6 system-ui,sans-serif;text-align:center;padding:32px'>" +
     "<div><p>Pas de reseau, et plus rien en memoire.</p>" +
     "<p>Reconnecte-toi une fois : l'app se reinstalle toute seule.</p></div>",

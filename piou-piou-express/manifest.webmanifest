@@ -1,14 +1,13 @@
 {
-  "name": "Drink Gamz'",
-  "short_name": "Drink Gamz'",
-  "orientation": "portrait",
-  "lang": "fr",
-  "background_color": "#0a0418",
-  "theme_color": "#0c0420",
-  "description": "La machine à jeux de soirée : 10 jeux + Mode Épique, niveaux réglables, mode gorgées ou gages.",
+  "name": "Piou Piou Express",
+  "short_name": "Piou Piou Express",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
+  "orientation": "any",
+  "lang": "fr",
+  "background_color": "#8fd3ff",
+  "theme_color": "#8fd3ff",
   "icons": [
     {
       "src": "icon-192.png",

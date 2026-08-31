@@ -1,0 +1,1501 @@
+<!DOCTYPE html>
+<html lang="fr" data-profile="lui">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#F6F3ED">
+<meta name="color-scheme" content="light">
+<title>Penderie</title>
+<meta name="description" content="Penderie — la garde-robe intelligente du foyer. Cataloguez vos pièces, laissez le styliste composer selon la météo. Local, privé, sans compte.">
+<meta name="robots" content="noindex, nofollow">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Penderie">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" href="favicon-32.png">
+<style>
+/* ================= PENDERIE — penderie éditoriale =================
+   Papier crème, hairlines, serif New York pour l'émotion,
+   sans system pour la fonction. Aucun emoji dans l'UI. */
+:root{
+  --paper:#F6F3ED;        /* fond page — jamais de blanc pur */
+  --card:#EDE8DF;         /* greige — socle des photos */
+  --shell:#FAF8F3;        /* coquille d'œuf — zones photo, multiply-friendly */
+  --ink:#1D1A16;          /* noir chaud */
+  --ink2:#6E675C;         /* taupe — métadonnées */
+  --hair:#DDD6C9;         /* filets 1px */
+  --lui:#4E5A48;          /* olive */
+  --elle:#A65D4E;         /* terracotta */
+  --nous:#8A7B5C;         /* bronze — le commun */
+  --danger:#93442E;
+  --acc:var(--lui);
+  --serif:'New York', ui-serif, Georgia, 'Times New Roman', serif;
+  --sans:-apple-system, system-ui, 'Helvetica Neue', sans-serif;
+  --sat:env(safe-area-inset-top, 0px);
+  --sab:env(safe-area-inset-bottom, 0px);
+}
+html[data-profile="elle"]{ --acc:var(--elle); }
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
+html,body{margin:0; padding:0; background:var(--paper)}
+body{
+  font-family:var(--sans); color:var(--ink); font-size:15px; line-height:1.5;
+  -webkit-font-smoothing:antialiased; overscroll-behavior-y:none;
+  -webkit-user-select:none; user-select:none; -webkit-touch-callout:none;
+}
+input,textarea{-webkit-user-select:text; user-select:text}
+button{font-family:var(--sans); border:none; background:none; color:inherit; padding:0; cursor:pointer; font-size:inherit}
+img{-webkit-user-drag:none}
+
+/* ---- typo édito ---- */
+.eyebrow{font-size:11px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:var(--ink2)}
+.display{font-family:var(--serif); font-weight:600; font-size:32px; line-height:1.15; letter-spacing:-.01em}
+.h2{font-family:var(--serif); font-weight:500; font-size:22px; line-height:1.2}
+.serifit{font-family:var(--serif); font-style:italic}
+.num{font-variant-numeric:tabular-nums}
+
+/* ---- structure ---- */
+#app{max-width:560px; margin:0 auto; min-height:100dvh; display:flex; flex-direction:column}
+header{
+  position:sticky; top:0; z-index:40; background:color-mix(in srgb, var(--paper) 92%, transparent);
+  -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px);
+  padding:calc(10px + var(--sat)) 20px 10px; display:flex; align-items:center; justify-content:space-between;
+  border-bottom:1px solid var(--hair);
+}
+.wordmark{font-family:var(--serif); font-weight:600; font-size:17px; letter-spacing:.02em}
+.wordmark span{color:var(--acc); transition:color .3s}
+
+/* switch profil — pastille glissante */
+.pswitch{display:flex; background:var(--card); border-radius:999px; padding:3px; position:relative; border:1px solid var(--hair)}
+.pswitch button{
+  position:relative; z-index:2; padding:5px 14px; font-size:12px; font-weight:600; letter-spacing:.06em;
+  color:var(--ink2); border-radius:999px; transition:color .3s;
+  display:flex; align-items:center; gap:6px;
+}
+.pswitch button.on{color:var(--ink)}
+.pswitch .dot{width:7px; height:7px; border-radius:50%; flex:none}
+.pswitch .glide{
+  position:absolute; z-index:1; top:3px; bottom:3px; border-radius:999px; background:var(--shell);
+  border:1px solid var(--hair); transition:left .26s cubic-bezier(.34,1.3,.64,1), width .26s cubic-bezier(.34,1.3,.64,1);
+}
+
+main{flex:1; padding-bottom:calc(86px + var(--sab))}
+.view{display:none; padding:20px; animation:enter .32s cubic-bezier(.32,.72,0,1)}
+.view.on{display:block}
+@keyframes enter{from{opacity:0; transform:translateY(8px)}to{opacity:1; transform:none}}
+
+/* ---- nav basse ---- */
+nav{
+  position:fixed; bottom:0; left:0; right:0; z-index:40;
+  background:color-mix(in srgb, var(--paper) 94%, transparent);
+  -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px);
+  border-top:1px solid var(--hair);
+}
+.navin{max-width:560px; margin:0 auto; display:flex; align-items:center; padding:10px 8px calc(10px + var(--sab))}
+nav .tab{
+  flex:1; text-align:center; font-size:10px; font-weight:600; letter-spacing:.12em; text-transform:uppercase;
+  color:var(--ink2); padding:10px 2px; transition:color .2s, letter-spacing .2s;
+}
+nav .tab.on{color:var(--ink); letter-spacing:.13em}
+nav .addbtn{
+  flex:none; width:46px; height:46px; border-radius:50%; background:var(--ink); color:var(--paper);
+  font-size:22px; font-weight:300; line-height:1; display:flex; align-items:center; justify-content:center;
+  margin:0 6px; transition:transform .12s cubic-bezier(.32,.72,0,1); box-shadow:0 6px 18px rgba(29,26,22,.18);
+}
+nav .addbtn:active{transform:scale(.94)}
+
+/* ---- chips ---- */
+.chips{display:flex; gap:8px; overflow-x:auto; -webkit-overflow-scrolling:touch; scrollbar-width:none; padding:2px}
+.chips::-webkit-scrollbar{display:none}
+.chip{
+  flex:none; padding:7px 14px; border-radius:999px; border:1px solid var(--hair); background:transparent;
+  font-size:12.5px; font-weight:500; color:var(--ink2); transition:all .2s; white-space:nowrap;
+}
+.chip.on{background:var(--ink); color:var(--paper); border-color:var(--ink)}
+.chip:active{transform:scale(.96)}
+
+/* ---- grille penderie ---- */
+.grid{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+@media(min-width:480px){.grid{grid-template-columns:1fr 1fr 1fr}}
+.cell{border-radius:14px; overflow:hidden; background:var(--card); position:relative; border:1px solid var(--hair)}
+.cell .ph{aspect-ratio:3/4; display:flex; align-items:center; justify-content:center; padding:10%; background:var(--shell)}
+.cell .ph img{max-width:100%; max-height:100%; object-fit:contain; mix-blend-mode:multiply}
+.cell:active{transform:scale(.97); transition:transform .12s cubic-bezier(.32,.72,0,1)}
+.cellmeta{padding:8px 10px 10px}
+.cellmeta b{display:block; font-size:12.5px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.cellmeta small{font-size:10px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:var(--ink2)}
+.cell .flag{position:absolute; top:8px; right:8px; z-index:2; width:22px; height:22px; border-radius:50%;
+  background:color-mix(in srgb, var(--paper) 85%, transparent); display:flex; align-items:center; justify-content:center}
+.cell .flag svg{width:12px; height:12px}
+.cell.sale .ph{opacity:.38}
+.cell .salelab{position:absolute; top:42%; left:0; right:0; text-align:center; font-size:10px; font-weight:700;
+  letter-spacing:.16em; text-transform:uppercase; color:var(--ink2); z-index:2}
+.sechead{display:flex; align-items:baseline; justify-content:space-between; margin:22px 0 10px; padding-bottom:6px; border-bottom:1px solid var(--hair)}
+.sechead:first-child{margin-top:0}
+
+/* ---- fiches & sheets ---- */
+.sheet{
+  position:fixed; inset:0; z-index:60; background:var(--paper); display:none; flex-direction:column;
+  overflow-y:auto; -webkit-overflow-scrolling:touch; overscroll-behavior:contain;
+}
+.sheet.on{display:flex; animation:sheetin .34s cubic-bezier(.32,.72,0,1)}
+@keyframes sheetin{from{opacity:0; transform:translateY(4%)}to{opacity:1; transform:none}}
+.sheethead{
+  position:sticky; top:0; z-index:5; display:flex; align-items:center; justify-content:space-between;
+  padding:calc(12px + var(--sat)) 20px 12px; background:color-mix(in srgb, var(--paper) 92%, transparent);
+  -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px);
+}
+.sheethead .x{font-size:13px; font-weight:600; color:var(--ink2); letter-spacing:.04em; padding:6px 2px}
+.sheetbody{padding:4px 20px calc(40px + var(--sab)); flex:1}
+
+/* fiche pièce */
+.itemhero{background:var(--card); border-radius:18px; border:1px solid var(--hair); padding:8%; display:flex; align-items:center; justify-content:center; min-height:46dvh}
+.itemhero img{max-width:100%; max-height:44dvh; object-fit:contain; mix-blend-mode:multiply}
+.metalist{margin-top:6px}
+.metarow{display:flex; align-items:center; justify-content:space-between; gap:14px; padding:12px 0; border-bottom:1px solid var(--hair); font-size:13.5px}
+.metarow .k{color:var(--ink2)}
+.metarow .v{text-align:right; font-weight:500; display:flex; align-items:center; gap:6px; flex-wrap:wrap; justify-content:flex-end}
+.swatch{width:14px; height:14px; border-radius:50%; border:1px solid rgba(29,26,22,.15); display:inline-block; vertical-align:-2px}
+.dots{display:inline-flex; gap:3px}
+.dots i{width:6px; height:6px; border-radius:50%; background:var(--hair)}
+.dots i.f{background:var(--ink)}
+.textact{font-size:13.5px; font-weight:600; text-decoration:underline; text-underline-offset:3px; padding:8px 0; color:var(--ink)}
+.textact.danger{color:var(--danger)}
+.actrow{display:flex; gap:26px; justify-content:center; margin-top:18px; flex-wrap:wrap}
+
+/* ---- formulaire ajout ---- */
+.photozone{
+  border-radius:18px; background:var(--card); border:1px dashed color-mix(in srgb, var(--ink2) 50%, transparent);
+  aspect-ratio:4/4.4; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; overflow:hidden; position:relative;
+}
+.photozone.filled{border-style:solid; border-color:var(--hair); background:var(--shell)}
+.photozone img{position:absolute; inset:0; width:100%; height:100%; object-fit:contain; padding:6%; mix-blend-mode:multiply}
+.photozone .retake{position:absolute; bottom:10px; right:10px; z-index:2; font-size:12px; font-weight:600;
+  background:color-mix(in srgb, var(--paper) 92%, transparent); padding:7px 12px; border-radius:999px; border:1px solid var(--hair)}
+.pbtn{display:flex; align-items:center; gap:9px; padding:11px 18px; border-radius:999px; background:var(--ink); color:var(--paper); font-size:13.5px; font-weight:600}
+.pbtn.ghost{background:transparent; color:var(--ink); border:1px solid var(--ink)}
+.formsec{margin-top:22px}
+.formsec>.eyebrow{display:block; margin-bottom:10px}
+.wrapchips{display:flex; flex-wrap:wrap; gap:8px}
+.colorchip{display:flex; align-items:center; gap:7px; padding:6px 12px 6px 7px; border-radius:999px; border:1px solid var(--hair); font-size:12.5px; color:var(--ink2); transition:all .15s}
+.colorchip .swatch{width:18px; height:18px}
+.colorchip.on{border-color:var(--ink); color:var(--ink); background:var(--shell); font-weight:600}
+.fld{width:100%; padding:12px 14px; border-radius:12px; border:1px solid var(--hair); background:var(--shell); font-size:15px; color:var(--ink); font-family:var(--sans); outline:none}
+.fld:focus{border-color:var(--ink2)}
+.fldrow{display:flex; gap:10px}
+.fldrow>*{flex:1}
+.stepper{display:flex; align-items:center; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--hair)}
+.stepper .lab{font-size:13.5px; color:var(--ink2)}
+.stepper .val{font-size:13.5px; font-weight:600; min-width:96px; text-align:right}
+.stepper .ctr{display:flex; gap:0; border:1px solid var(--hair); border-radius:10px; overflow:hidden; margin-left:12px}
+.stepper .ctr button{width:38px; height:34px; display:flex; align-items:center; justify-content:center; font-size:18px; color:var(--ink); background:var(--shell)}
+.stepper .ctr button:first-child{border-right:1px solid var(--hair)}
+.togglerow{display:flex; align-items:center; justify-content:space-between; padding:12px 0; border-bottom:1px solid var(--hair); font-size:13.5px}
+.tgl{width:44px; height:26px; border-radius:999px; background:var(--hair); position:relative; transition:background .2s; flex:none}
+.tgl::after{content:''; position:absolute; top:3px; left:3px; width:20px; height:20px; border-radius:50%; background:var(--paper); transition:left .2s cubic-bezier(.34,1.3,.64,1); box-shadow:0 1px 4px rgba(0,0,0,.15)}
+.tgl.on{background:var(--acc)}
+.tgl.on::after{left:21px}
+.savebar{
+  position:sticky; bottom:0; margin:26px -20px 0; padding:14px 20px calc(14px + var(--sab));
+  background:linear-gradient(transparent, var(--paper) 34%);
+}
+.bigbtn{width:100%; padding:16px; border-radius:14px; background:var(--ink); color:var(--paper); font-size:15px; font-weight:600; letter-spacing:.02em; transition:transform .12s}
+.bigbtn:active{transform:scale(.98)}
+.bigbtn[disabled]{opacity:.35}
+.bigbtn.ghost{background:transparent; border:1px solid var(--ink); color:var(--ink)}
+
+/* ---- aujourd'hui ---- */
+.todaydate{font-family:var(--serif); font-style:italic; font-size:23px; margin:2px 0 3px}
+.wline{display:flex; align-items:center; gap:8px; flex-wrap:wrap}
+.wline button{text-decoration:underline; text-underline-offset:3px; font-size:11px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:var(--ink2)}
+.lookcards{display:flex; gap:14px; overflow-x:auto; -webkit-overflow-scrolling:touch; scroll-snap-type:x mandatory; margin:18px -20px 0; padding:2px 20px 8px; scrollbar-width:none}
+.lookcards::-webkit-scrollbar{display:none}
+.lookcard{flex:none; width:min(78vw, 380px); scroll-snap-align:center; background:var(--shell); border:1px solid var(--hair); border-radius:20px; padding:16px; display:flex; flex-direction:column}
+.lookcard .dir{display:flex; align-items:baseline; justify-content:space-between; margin-bottom:10px}
+.canvasflat{position:relative; aspect-ratio:3/3.4; border-radius:14px; background:var(--card); overflow:hidden}
+.canvasflat .piece{position:absolute; display:flex; align-items:center; justify-content:center; transition:transform .25s cubic-bezier(.32,.72,0,1)}
+.canvasflat .piece img{width:100%; height:100%; object-fit:contain; mix-blend-mode:multiply; filter:drop-shadow(0 8px 18px rgba(29,26,22,.10))}
+.canvasflat .piece.locked::after{
+  content:''; position:absolute; inset:-4px; border:1.5px solid var(--acc); border-radius:12px;
+}
+.reasons{display:flex; flex-wrap:wrap; gap:6px; margin:12px 0 4px}
+.reason{font-size:11px; font-weight:600; letter-spacing:.03em; color:var(--ink2); background:var(--card); padding:4px 10px; border-radius:999px}
+.reason.plus{color:var(--acc)}
+.lookacts{display:flex; gap:10px; margin-top:12px}
+.lookacts .bigbtn{padding:13px}
+.hint{font-size:11.5px; color:var(--ink2); text-align:center; margin-top:10px}
+
+/* ---- looks journal ---- */
+.lookgrid{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+.lookthumb{border-radius:14px; overflow:hidden; border:1px solid var(--hair); background:var(--shell)}
+.lookthumb .canvasflat{border-radius:0; border:none}
+.lookthumb .lm{padding:8px 10px}
+.lookthumb .lm b{font-size:12px; font-weight:600; display:block}
+.lookthumb .lm small{font-size:10.5px; color:var(--ink2)}
+
+/* ---- profil ---- */
+.profcard{display:flex; align-items:center; gap:16px; padding:18px 0 22px}
+.monogram{width:64px; height:64px; border-radius:50%; border:1.5px solid var(--acc); display:flex; align-items:center; justify-content:center;
+  font-family:var(--serif); font-size:26px; font-weight:500; color:var(--acc); flex:none; overflow:hidden; background:var(--shell)}
+.monogram img{width:100%; height:100%; object-fit:cover}
+.statrow{display:flex; gap:12px; margin:6px 0 2px}
+.stat{flex:1; background:var(--shell); border:1px solid var(--hair); border-radius:14px; padding:12px 14px}
+.stat b{font-family:var(--serif); font-size:26px; font-weight:500; display:block; line-height:1.1}
+.stat small{font-size:10.5px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:var(--ink2)}
+.colorbar{display:flex; height:14px; border-radius:999px; overflow:hidden; border:1px solid var(--hair); margin-top:10px}
+.palettechips{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px}
+.smallitems{display:flex; gap:10px; overflow-x:auto; margin:10px -20px 0; padding:0 20px; scrollbar-width:none}
+.smallitems::-webkit-scrollbar{display:none}
+.smallitems .cell{flex:none; width:104px}
+
+/* ---- quiz / onboarding ---- */
+.onb{position:fixed; inset:0; z-index:80; background:var(--paper); display:none; flex-direction:column; overflow-y:auto}
+.onb.on{display:flex}
+.onbpage{flex:1; display:none; flex-direction:column; justify-content:center; padding:40px 30px calc(40px + var(--sab)); min-height:100dvh}
+.onbpage.on{display:flex; animation:enter .4s cubic-bezier(.32,.72,0,1)}
+.onbpage .display{font-size:40px; margin-bottom:12px}
+.onbpage p{color:var(--ink2); margin:0 0 26px; font-size:15px}
+.pagin{display:flex; gap:6px; justify-content:center; padding:20px}
+.pagin i{width:18px; height:2px; background:var(--hair); transition:background .3s}
+.pagin i.on{background:var(--ink)}
+.qopt{display:block; width:100%; text-align:left; padding:15px 16px; border:1px solid var(--hair); border-radius:14px; margin-bottom:10px; font-size:14.5px; background:var(--shell); transition:all .15s}
+.qopt.on{border-color:var(--ink); font-weight:600}
+.namerow{display:flex; align-items:center; gap:12px; margin-bottom:14px}
+.namerow .dot{width:12px; height:12px; border-radius:50%; flex:none}
+
+/* ---- divers ---- */
+.empty{text-align:center; padding:56px 26px; color:var(--ink2)}
+.empty .serifit{font-size:19px; display:block; margin-bottom:10px; color:var(--ink)}
+.banner{background:var(--shell); border:1px solid var(--hair); border-radius:14px; padding:12px 14px; font-size:12.5px; color:var(--ink2); margin-bottom:16px; display:flex; gap:10px; align-items:flex-start}
+.banner b{color:var(--ink)}
+.banner .x{margin-left:auto; color:var(--ink2); font-size:16px; padding:0 2px; flex:none}
+#toast{
+  position:fixed; left:50%; bottom:calc(104px + var(--sab)); transform:translateX(-50%) translateY(20px); z-index:90;
+  background:var(--ink); color:var(--paper); font-size:13px; font-weight:500; padding:11px 20px; border-radius:999px;
+  opacity:0; pointer-events:none; transition:all .3s cubic-bezier(.32,.72,0,1); max-width:86vw; text-align:center;
+}
+#toast.on{opacity:1; transform:translateX(-50%) translateY(0)}
+.searchrow{display:flex; gap:10px; margin-bottom:14px}
+.searchrow .fld{padding:10px 14px; font-size:14px}
+dialog{border:none; border-radius:18px; background:var(--paper); color:var(--ink); padding:24px; max-width:320px; width:86vw; font-family:var(--sans)}
+dialog::backdrop{background:rgba(29,26,22,.35); -webkit-backdrop-filter:blur(3px); backdrop-filter:blur(3px)}
+.skel{background:var(--card); border-radius:14px; position:relative; overflow:hidden}
+.skel::after{content:''; position:absolute; inset:0; background:linear-gradient(100deg, transparent 30%, rgba(250,248,243,.7) 50%, transparent 70%); animation:shim 1.8s infinite}
+@keyframes shim{from{transform:translateX(-100%)}to{transform:translateX(100%)}}
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <div class="wordmark">Penderie<span>.</span></div>
+    <div class="pswitch" id="pswitch">
+      <div class="glide" id="pglide"></div>
+      <button data-p="lui"><span class="dot" style="background:var(--lui)"></span><span id="pname-lui">Lui</span></button>
+      <button data-p="elle"><span class="dot" style="background:var(--elle)"></span><span id="pname-elle">Elle</span></button>
+    </div>
+  </header>
+
+  <main>
+    <section class="view" id="view-today"></section>
+    <section class="view" id="view-closet"></section>
+    <section class="view" id="view-looks"></section>
+    <section class="view" id="view-profile"></section>
+  </main>
+
+  <nav><div class="navin">
+    <button class="tab" data-v="today">Aujourd'hui</button>
+    <button class="tab" data-v="closet">Penderie</button>
+    <button class="addbtn" data-action="add">+</button>
+    <button class="tab" data-v="looks">Looks</button>
+    <button class="tab" data-v="profile">Profil</button>
+  </div></nav>
+</div>
+
+<!-- sheet : ajout / édition -->
+<div class="sheet" id="sheet-add">
+  <div class="sheethead">
+    <span class="eyebrow" id="add-title">Nouvelle pièce</span>
+    <button class="x" data-action="close-add">Fermer</button>
+  </div>
+  <div class="sheetbody" id="add-body"></div>
+</div>
+
+<!-- sheet : fiche pièce -->
+<div class="sheet" id="sheet-item">
+  <div class="sheethead">
+    <span class="eyebrow">Fiche pièce</span>
+    <button class="x" data-action="close-item">Fermer</button>
+  </div>
+  <div class="sheetbody" id="item-body"></div>
+</div>
+
+<!-- sheet : quiz colorimétrie -->
+<div class="sheet" id="sheet-quiz">
+  <div class="sheethead">
+    <span class="eyebrow">Diagnostic couleur</span>
+    <button class="x" data-action="close-quiz">Fermer</button>
+  </div>
+  <div class="sheetbody" id="quiz-body"></div>
+</div>
+
+<!-- sheet : détail look -->
+<div class="sheet" id="sheet-look">
+  <div class="sheethead">
+    <span class="eyebrow">Look</span>
+    <button class="x" data-action="close-look">Fermer</button>
+  </div>
+  <div class="sheetbody" id="look-body"></div>
+</div>
+
+<!-- onboarding -->
+<div class="onb" id="onb">
+  <div class="onbpage" data-page="0">
+    <div class="display">Penderie.</div>
+    <p>Votre garde-robe, à deux. Chaque pièce photographiée, chaque matin une tenue pensée — météo, couleurs, occasion. Tout reste sur ce téléphone.</p>
+    <button class="bigbtn" data-action="onb-next">Commencer</button>
+  </div>
+  <div class="onbpage" data-page="1">
+    <div class="h2" style="margin-bottom:6px">La maison</div>
+    <p>Deux penderies, deux monogrammes.</p>
+    <div class="namerow"><span class="dot" style="background:var(--lui)"></span><input class="fld" id="onb-lui" placeholder="Lui"></div>
+    <div class="namerow"><span class="dot" style="background:var(--elle)"></span><input class="fld" id="onb-elle" placeholder="Elle"></div>
+    <button class="bigbtn" data-action="onb-next" style="margin-top:14px">Continuer</button>
+  </div>
+  <div class="onbpage" data-page="2">
+    <div class="h2" style="margin-bottom:6px">La météo du matin</div>
+    <p>Le styliste s'habille selon le ciel. Votre ville :</p>
+    <input class="fld" id="onb-city" placeholder="Ville">
+    <button class="bigbtn" data-action="onb-done" style="margin-top:14px">Ouvrir ma penderie</button>
+    <div class="hint" id="onb-city-hint"></div>
+  </div>
+  <div class="pagin"><i class="on"></i><i></i><i></i></div>
+</div>
+
+<div id="toast"></div>
+<dialog id="confirm"><div id="confirm-txt" style="font-size:14.5px; margin-bottom:18px"></div>
+  <div style="display:flex; gap:10px">
+    <button class="bigbtn ghost" style="flex:1; padding:12px" data-action="confirm-no">Annuler</button>
+    <button class="bigbtn" style="flex:1; padding:12px; background:var(--danger)" data-action="confirm-yes">Confirmer</button>
+  </div>
+</dialog>
+
+<input type="file" accept="image/*" capture="environment" id="fcam" hidden>
+<input type="file" accept="image/*" id="flib" hidden>
+<input type="file" accept=".json,application/json" id="fimport" hidden>
+
+<script>
+'use strict';
+/* ================================================================
+   PENDERIE v1 — garde-robe du foyer, locale et privée.
+   IndexedDB (blobs) · moteur de style par règles · Open-Meteo.
+   ================================================================ */
+const APP_V = '1.0';
+
+/* ---------- catalogue ---------- */
+const COLORS = [
+  ['noir','Noir','#26221E',1,'n','fo','doux'],
+  ['blanc','Blanc','#F4F2EC',1,'n','cl','doux'],
+  ['ecru','Écru / crème','#EBE0C9',1,'c','cl','doux'],
+  ['grisclair','Gris clair','#C6C4BE',1,'f','cl','doux'],
+  ['gris','Gris','#8E8C86',1,'f','mo','doux'],
+  ['anthracite','Anthracite','#4A4742',1,'n','fo','doux'],
+  ['marine','Marine','#2E3A50',1,'f','fo','doux'],
+  ['denim','Denim','#5F7695',1,'f','mo','doux'],
+  ['bleu','Bleu','#3E68AE',0,'f','mo','vif'],
+  ['bleuciel','Bleu ciel','#A9C3DC',0,'f','cl','doux'],
+  ['beige','Beige','#D3C3A3',1,'c','cl','doux'],
+  ['camel','Camel','#B08349',1,'c','mo','doux'],
+  ['marron','Marron','#6C4A32',1,'c','fo','doux'],
+  ['kaki','Kaki','#7C7452',1,'c','mo','doux'],
+  ['olive','Olive','#576140',1,'c','fo','doux'],
+  ['vertsapin','Vert sapin','#2F4A3C',0,'f','fo','doux'],
+  ['vert','Vert','#4A8153',0,'f','mo','vif'],
+  ['rouge','Rouge','#B03A30',0,'c','mo','vif'],
+  ['bordeaux','Bordeaux','#6E2E35',0,'c','fo','doux'],
+  ['rosepale','Rose pâle','#E3C2BC',0,'f','cl','doux'],
+  ['rose','Rose / fuchsia','#C75B7F',0,'f','mo','vif'],
+  ['orange','Orange','#C97236',0,'c','mo','vif'],
+  ['jaune','Jaune','#D9B23F',0,'c','cl','vif'],
+  ['moutarde','Moutarde','#B08A3A',0,'c','mo','doux'],
+  ['lavande','Lavande','#B3A8C8',0,'f','cl','doux'],
+  ['violet','Violet','#6D5386',0,'f','fo','vif'],
+  ['dore','Doré','#BFA05C',0,'c','mo','doux'],
+  ['argente','Argenté','#B9BCC0',0,'f','cl','doux'],
+  ['multicolore','Multicolore','#C75B7F',0,'n','mo','vif'],
+].map(([id,label,hex,n,t,v,ch])=>({id,label,hex,n:!!n,t,v,ch}));
+const CMAP = Object.fromEntries(COLORS.map(c=>[c.id,c]));
+// L (luminosité approx.) depuis hex, pour contraste de valeur
+COLORS.forEach(c=>{const x=parseInt(c.hex.slice(1),16);c.L=Math.round(((x>>16&255)*.299+(x>>8&255)*.587+(x&255)*.114)/2.55)});
+
+const WHITELIST = [
+  ['marine','camel'],['marine','bordeaux'],['marine','blanc'],['marine','ecru'],['marine','olive'],
+  ['gris','bordeaux'],['gris','rosepale'],['gris','bleuciel'],['gris','lavande'],
+  ['anthracite','camel'],['anthracite','vertsapin'],['camel','marron'],['camel','ecru'],['camel','blanc'],
+  ['kaki','ecru'],['denim','blanc'],['denim','ecru'],['blanc','beige'],['olive','ecru'],['bordeaux','beige'],
+];
+
+const CATS = {
+  top:{label:'Hauts', one:'Haut'},
+  maille:{label:'Mailles', one:'Maille'},
+  bottom:{label:'Bas', one:'Bas'},
+  robe:{label:'Robes', one:'Robe'},
+  outer:{label:'Vestes & manteaux', one:'Veste'},
+  shoes:{label:'Chaussures', one:'Chaussures'},
+  acc:{label:'Accessoires', one:'Accessoire'},
+};
+// [id, label, chaleur 1-5, registre 1-5, extra flags]
+const SUBS = {
+  top:[['tshirt','T-shirt',2,2],['chemise','Chemise',2,3],['polo','Polo',2,3],['blouse','Blouse',1,3],['debardeur','Débardeur',1,2],['topml','Top manches longues',2,2]],
+  maille:[['pullfin','Pull fin',3,3],['grossemaille','Grosse maille',4,2],['cardigan','Cardigan',3,3,'lay'],['sweat','Sweat',3,2],['hoodie','Hoodie',3,2],['gilet','Gilet',2,3,'lay']],
+  bottom:[['jean','Jean',3,2],['chino','Chino',2,3],['tailleur','Pantalon tailleur',2,4],['cargo','Cargo',3,2],['jogging','Jogging',2,1],['short','Short',1,2],['jupe','Jupe',2,3],['legging','Legging',2,1]],
+  robe:[['robe','Robe',2,3],['combi','Combinaison',2,3]],
+  outer:[['blazer','Blazer',2,4,'lay'],['surchemise','Surchemise',3,2,'lay'],['vestejean','Veste en jean',3,2],['vestecuir','Veste en cuir',3,3],['trench','Trench',3,3,'wp'],['imper','Imperméable',2,2,'wp'],['manteau','Manteau en laine',4,4],['doudoune','Doudoune',5,2,'wp'],['parka','Parka',5,2,'wp'],['coupevent','Coupe-vent',2,1,'wp']],
+  shoes:[['sneakers','Sneakers',2,2],['derbies','Derbies / richelieus',2,4],['mocassins','Mocassins',2,3],['bottines','Bottines',3,3],['bottes','Bottes',4,3],['sandales','Sandales',1,2],['talons','Talons',1,4],['sport','Chaussures de sport',2,1]],
+  acc:[['ceinture','Ceinture',1,3],['echarpe','Écharpe',4,3],['bonnet','Bonnet',4,2],['chapeau','Casquette / chapeau',2,2],['sac','Sac',1,3],['bijou','Bijou',1,3],['collants','Collants',2,3],['lunettes','Lunettes de soleil',1,2],['montre','Montre',1,3]],
+};
+const SUBMAP = {};
+Object.entries(SUBS).forEach(([cat,arr])=>arr.forEach(([id,label,w,f,x])=>SUBMAP[id]={cat,id,label,w,f,lay:x==='lay',wp:x==='wp'}));
+
+const MATERIALS = ['coton','lin','laine','maille','cachemire','denim','cuir','daim','soie','viscose','synthétique','technique','polaire'];
+const RAINFRAGILE = ['daim','soie'];
+const HOTBAN = ['laine','cuir','polaire','cachemire'];
+
+const OCCASIONS = [
+  ['detente','Détente',2],['travail','Travail',3.5],['rdv','Rendez-vous',3],
+  ['soiree','Soirée',3.5],['sport','Sport',1],['ceremonie','Cérémonie',5],
+];
+const FORMLAB = {1:'Sport',2:'Casual',3:'Smart casual',4:'Habillé',5:'Cérémonie'};
+const WARMLAB = {1:'Très léger',2:'Léger',3:'Mi-saison',4:'Chaud',5:'Très chaud'};
+
+const DIRECTIONS = [
+  {id:'sure', label:'La sûre', tag:'Les valeurs sûres, bien accordées.'},
+  {id:'deco', label:'La détendue', tag:'Confort d’abord, sans négliger.'},
+  {id:'auda', label:'L’audacieuse', tag:'Un cran plus affirmée.'},
+];
+
+/* ---------- utilitaires ---------- */
+const $ = s=>document.querySelector(s);
+const $$ = s=>[...document.querySelectorAll(s)];
+const esc = s=>String(s??'').replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+const uid = ()=>Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+const todayISO = ()=>new Date().toISOString().slice(0,10);
+const DAYS=['dimanche','lundi','mardi','mercredi','jeudi','vendredi','samedi'];
+const MONTHS=['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+function frDate(d){d=d instanceof Date?d:new Date(d+'T12:00');const s=`${DAYS[d.getDay()]} ${d.getDate()} ${MONTHS[d.getMonth()]}`;return s[0].toUpperCase()+s.slice(1)}
+function daysSince(iso){if(!iso)return 999;return Math.max(0,Math.round((Date.now()-new Date(iso+'T12:00'))/864e5))}
+let toastTimer;
+function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('on');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('on'),2600)}
+function confirmDlg(txt){return new Promise(res=>{
+  $('#confirm-txt').textContent=txt; const d=$('#confirm'); d.showModal();
+  d.onclick=e=>{const a=e.target.closest('[data-action]');if(!a)return;d.close();res(a.dataset.action==='confirm-yes')};
+})}
+
+/* ---------- IndexedDB ---------- */
+let db;
+function idb(){
+  return new Promise((res,rej)=>{
+    const rq=indexedDB.open('penderie',1);
+    rq.onupgradeneeded=()=>{const d=rq.result;
+      d.createObjectStore('items',{keyPath:'id'});
+      d.createObjectStore('looks',{keyPath:'id'});
+      d.createObjectStore('kv',{keyPath:'k'});
+    };
+    rq.onsuccess=()=>res(rq.result); rq.onerror=()=>rej(rq.error);
+  });
+}
+const tx=(store,mode,fn)=>new Promise((res,rej)=>{
+  const t=db.transaction(store,mode), s=t.objectStore(store), out=fn(s);
+  t.oncomplete=()=>res(out&&out.result!==undefined?out.result:out); t.onerror=()=>rej(t.error);
+});
+const dbAll=s=>tx(s,'readonly',st=>{const r=st.getAll();return r}).then(r=>r.result||r);
+const dbPut=(s,v)=>tx(s,'readwrite',st=>st.put(v));
+const dbDel=(s,k)=>tx(s,'readwrite',st=>st.delete(k));
+const kvGet=async k=>{const r=await tx('kv','readonly',st=>st.get(k));return (r.result||r)?.v};
+const kvSet=(k,v)=>dbPut('kv',{k,v});
+
+/* ---------- état ---------- */
+const S = {
+  profile:'lui', view:'today', items:[], looks:[],
+  profiles:{lui:{name:'Lui'},elle:{name:'Elle'}},
+  city:null, weather:null, manualWeather:null,
+  occasion:'detente', locks:{}, suggestions:[], catFilter:'all', search:'',
+  editing:null, draft:null, quizStep:0, quizAns:{}, urls:new Map(),
+};
+function objURL(id, blob){
+  if(S.urls.has(id))return S.urls.get(id);
+  const u=URL.createObjectURL(blob); S.urls.set(id,u); return u;
+}
+function thumbURL(it){return it.thumb?objURL(it.id+'-t',it.thumb):(it.photo?objURL(it.id,it.photo):'')}
+
+/* ---------- photos ---------- */
+function loadImg(file){return new Promise((res,rej)=>{
+  const u=URL.createObjectURL(file), im=new Image();
+  im.onload=()=>res({im,u}); im.onerror=rej; im.src=u;
+})}
+function toBlob(cv,q){return new Promise(res=>cv.toBlob(res,'image/jpeg',q))}
+async function processPhoto(file){
+  const {im,u}=await loadImg(file);
+  const scale=Math.min(1, 1600/Math.max(im.naturalWidth,im.naturalHeight));
+  const w=Math.round(im.naturalWidth*scale), h=Math.round(im.naturalHeight*scale);
+  const cv=document.createElement('canvas'); cv.width=w; cv.height=h;
+  cv.getContext('2d').drawImage(im,0,0,w,h);
+  const photo=await toBlob(cv,.8);
+  const ts=Math.min(1, 520/Math.max(w,h));
+  const cv2=document.createElement('canvas'); cv2.width=Math.round(w*ts); cv2.height=Math.round(h*ts);
+  cv2.getContext('2d').drawImage(cv,0,0,cv2.width,cv2.height);
+  const thumb=await toBlob(cv2,.78);
+  const colors=detectColors(cv2);
+  URL.revokeObjectURL(u);
+  return {photo,thumb,colors};
+}
+/* détection de couleurs : on échantillonne, on écarte ce qui ressemble au fond
+   (coins de l'image), on mappe vers la palette nommée. */
+function detectColors(cv){
+  try{
+    const d=32, c=document.createElement('canvas'); c.width=d; c.height=d;
+    c.getContext('2d').drawImage(cv,0,0,d,d);
+    const px=c.getContext('2d').getImageData(0,0,d,d).data;
+    const corner=(x,y)=>{const i=(y*d+x)*4;return [px[i],px[i+1],px[i+2]]};
+    const corners=[corner(1,1),corner(d-2,1),corner(1,d-2),corner(d-2,d-2),corner(Math.floor(d/2),1)];
+    const isBg=(r,g,b)=>corners.some(([cr,cg,cb])=>Math.abs(r-cr)+Math.abs(g-cg)+Math.abs(b-cb)<90);
+    const counts={};
+    for(let i=0;i<px.length;i+=4){
+      const r=px[i],g=px[i+1],b=px[i+2];
+      if(isBg(r,g,b))continue;
+      let best=null,bd=1e9;
+      for(const col of COLORS){
+        if(col.id==='multicolore')continue;
+        const x=parseInt(col.hex.slice(1),16), cr=x>>16&255, cg=x>>8&255, cb=x&255;
+        const dd=(r-cr)**2+(g-cg)**2*1.2+(b-cb)**2;
+        if(dd<bd){bd=dd;best=col.id}
+      }
+      if(best)counts[best]=(counts[best]||0)+1;
+    }
+    const tot=Object.values(counts).reduce((a,b)=>a+b,0);
+    if(!tot)return [];
+    return Object.entries(counts).map(([id,n])=>[id,n/tot]).filter(([,r])=>r>.12)
+      .sort((a,b)=>b[1]-a[1]).slice(0,2).map(([id])=>id);
+  }catch(e){return []}
+}
+
+/* ---------- météo ---------- */
+const WMO={0:'Ciel dégagé',1:'Plutôt clair',2:'Éclaircies',3:'Couvert',45:'Brouillard',48:'Brouillard',51:'Bruine',53:'Bruine',55:'Bruine',61:'Pluie',63:'Pluie',65:'Pluie forte',66:'Pluie verglaçante',67:'Pluie verglaçante',71:'Neige',73:'Neige',75:'Neige',77:'Neige',80:'Averses',81:'Averses',82:'Averses fortes',85:'Neige',86:'Neige',95:'Orage',96:'Orage',99:'Orage'};
+async function geocode(name){
+  const r=await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(name)}&count=1&language=fr&format=json`);
+  const j=await r.json();
+  if(!j.results?.length)return null;
+  const g=j.results[0];
+  return {name:g.name, lat:g.latitude, lon:g.longitude};
+}
+async function fetchWeather(){
+  if(!S.city)return null;
+  try{
+    const r=await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${S.city.lat}&longitude=${S.city.lon}&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max,wind_speed_10m_max&timezone=auto&forecast_days=2`);
+    const j=await r.json();
+    const w={
+      tmax:Math.round(j.daily.temperature_2m_max[0]), tmin:Math.round(j.daily.temperature_2m_min[0]),
+      rain:(j.daily.precipitation_probability_max[0]??0)>50 || (j.daily.precipitation_sum[0]??0)>1,
+      wind:Math.round(j.daily.wind_speed_10m_max[0]??0),
+      code:j.daily.weather_code[0], t:Date.now(), offline:false,
+    };
+    localStorage.setItem('penderie-weather', JSON.stringify(w));
+    return w;
+  }catch(e){
+    const c=localStorage.getItem('penderie-weather');
+    if(c){const w=JSON.parse(c); w.offline=true; return w}
+    return null;
+  }
+}
+function weatherCtx(){
+  if(S.manualWeather)return S.manualWeather;
+  if(S.weather)return S.weather;
+  return {tmax:18,tmin:12,rain:false,wind:10,code:2,fallback:true};
+}
+
+/* =====================================================
+   MOTEUR DE STYLE — règles transparentes, score expliqué
+   ===================================================== */
+function warmthTarget(t){
+  if(t<0)return [11,14]; if(t<6)return [9,11]; if(t<11)return [7,9];
+  if(t<16)return [5,7]; if(t<21)return [3.6,5.4]; if(t<26)return [2.5,4]; return [0,2.5];
+}
+function pieceAllowed(it,ctx,occ){
+  const sub=SUBMAP[it.sub]||{};
+  const t=ctx.tmax;
+  if(it.sub==='short' && !(t>=21 || (t>=16&&ctx.tmin>=15)))return false;
+  if(it.sub==='sandales' && t<20)return false;
+  if(t>=26 && it.warmth>=4)return false;
+  if(t>=26 && HOTBAN.includes(it.material))return false;
+  if(t<11 && ['sandales'].includes(it.sub))return false;
+  if(t>=21 && ['bottes','doudoune','parka','manteau','grossemaille','bonnet','echarpe'].includes(it.sub))return false;
+  if(t>=24 && it.cat==='maille' && it.warmth>=3)return false;
+  if(ctx.rain && RAINFRAGILE.includes(it.material))return false;
+  // pré-filtre registre : pas de pièce à plus de 2 crans de la cible
+  const target=OCCASIONS.find(o=>o[0]===occ)[2];
+  if(Math.abs(it.formality-target)>2)return false;
+  if(occ==='sport' && it.formality>2)return false;
+  return true;
+}
+function evaluate(o, ctx, prof, occ, dir, recentSets){
+  // o = {top,bottom,robe,maille,outer,shoes,acc}
+  const pieces=[o.outer,o.maille,o.top,o.robe,o.bottom,o.shoes,o.acc].filter(Boolean);
+  const big=[o.outer,o.maille,o.top,o.robe,o.bottom].filter(Boolean);
+  let score=10; const R=[];
+  const add=(d,label)=>{score+=d; if(label)R.push({d,label})};
+
+  /* --- registre (formalité) --- */
+  const fs=pieces.filter(p=>p.cat!=='acc').map(p=>p.formality);
+  const fmax=Math.max(...fs), fmin=Math.min(...fs);
+  if(fmax-fmin>=3)return null;
+  if(fs.some(f=>f<=1)&&fs.some(f=>f>=4))return null;
+  if(fmax-fmin===2){
+    // « un seul dress down » : une seule pièce peut descendre de 2 crans (sneakers
+    // blanches avec blazer = le smart casual moderne) ; deux, ça se délite.
+    const n4=pieces.filter(p=>p.formality>=4&&p.cat!=='acc').length;
+    const lows=pieces.filter(p=>p.cat!=='acc'&&p.formality===fmin).length;
+    if(n4>=1&&fmin>=2&&lows===1)add(1,'smart casual assumé');
+    else add(-2,'registres qui jurent');
+  }
+  const target=OCCASIONS.find(x=>x[0]===occ)[2] + (dir==='deco'?-0.7:0);
+  const F=(fs.reduce((a,b)=>a+b,0)+o.shoes.formality)/(fs.length+1);
+  const fdiff=Math.abs(F-target);
+  if(target>=4.5 && F<target-1.4)return null;
+  if(fdiff>1.4)add(-2,'loin du registre demandé');
+  else if(fdiff>.8)add(-1,null);
+
+  /* --- météo : budget chaleur --- */
+  const wt=(o.outer?.warmth||0)*1 + (o.maille?.warmth||0)*.8 + (o.top?o.top.warmth*.5:0) + (o.bottom?o.bottom.warmth*.7:0) + (o.robe?o.robe.warmth*1.2:0);
+  const [lo,hi]=warmthTarget(ctx.tmax);
+  const gap=wt<lo?lo-wt:wt>hi?wt-hi:0;
+  if(gap>3)return null;
+  if(gap>1.2)add(-2, wt<lo?`trop léger pour ${ctx.tmax}°`:`trop chaud pour ${ctx.tmax}°`);
+  else if(gap>0.4)add(-1,null);
+  if(ctx.tmax-ctx.tmin>8){
+    const removable=o.outer||(o.maille&&SUBMAP[o.maille.sub]?.lay);
+    if(removable)add(1,`une couche pour le matin (${ctx.tmin}° → ${ctx.tmax}°)`);
+    else if(ctx.tmax<26)add(-1,'matin frais, rien à retirer');
+  }
+  if(ctx.rain){
+    if(o.outer&&(o.outer.waterproof||SUBMAP[o.outer.sub]?.wp))add(1,'parée pour la pluie');
+    else add(-1,'pluie annoncée — parapluie');
+    if(['bottines','bottes','sport'].includes(o.shoes.sub))add(1,null);
+    if(o.shoes.material==='cuir')add(-1,null);
+  }
+  if(ctx.wind>30){
+    if(o.outer&&SUBMAP[o.outer.sub]?.wp)add(1,null);
+    if((o.robe||o.bottom?.sub==='jupe')&&ctx.tmax<21)add(-1,'du vent pour une jupe');
+  }
+
+  /* --- couleurs --- */
+  const allColorIds=[...new Set(pieces.flatMap(p=>p.colors||[]))];
+  const nonNeutral=allColorIds.filter(id=>!CMAP[id]?.n);
+  if(nonNeutral.length>3)return null;
+  if(nonNeutral.length===3)add(-1,'trois couleurs vives, ça fait beaucoup');
+  let wl=0;
+  for(const [a,b] of WHITELIST){
+    if(allColorIds.includes(a)&&allColorIds.includes(b)){
+      wl++; if(wl<=2)add(2,`${CMAP[a].label.toLowerCase()} + ${CMAP[b].label.toLowerCase()}, classique qui marche`);
+    }
+  }
+  // clash : deux vives éloignées sur deux grosses pièces
+  const bigVifs=big.filter(p=>p.colors?.some(c=>CMAP[c]&&!CMAP[c].n&&CMAP[c].ch==='vif'));
+  if(bigVifs.length>=2){
+    const c1=bigVifs[0].colors.find(c=>!CMAP[c].n), c2=bigVifs[1].colors.find(c=>!CMAP[c].n);
+    if(c1!==c2)add(-2,'deux couleurs fortes qui se battent');
+  }
+  const bigIds=big.map(p=>p.colors?.[0]).filter(Boolean);
+  if(bigIds.includes('noir')&&bigIds.includes('marron'))add(-1,null);
+  if(bigIds.includes('blanc')&&bigIds.includes('ecru'))add(-1,null);
+  // rappel de couleur chaussures <-> haut
+  const upColors=[o.top,o.maille,o.outer,o.acc,o.robe].filter(Boolean).flatMap(p=>p.colors||[]);
+  if(o.shoes.colors?.some(c=>upColors.includes(c)&&c!=='blanc'&&c!=='noir'))add(1,'rappel de couleur jusqu’aux chaussures');
+  // contraste de valeur
+  const Ls=big.map(p=>CMAP[p.colors?.[0]]?.L??50);
+  const spread=Math.max(...Ls)-Math.min(...Ls);
+  const mono=allColorIds.length<=2&&nonNeutral.length===0;
+  if(spread<18&&!mono&&big.length>=3)add(-1,'tenue un peu plate, tout dans les mêmes tons');
+  if(spread>=45)add(1,'beau contraste clair / foncé');
+  const darkbig=big.filter(p=>['noir','marine','anthracite','marron','vertsapin'].includes(p.colors?.[0])).length;
+  if(darkbig>=3)add(-1,'très sombre de la tête aux pieds');
+
+  /* --- colorimétrie perso (près du visage) --- */
+  if(prof?.undertone){
+    const faceP=[o.top,o.maille,o.robe].filter(Boolean);
+    let bestB=0, worstM=0;
+    for(const p of faceP){
+      const c=CMAP[p.colors?.[0]]; if(!c||c.n)continue; // les neutres vont à tout le monde
+      if(c.t===prof.undertone||c.t==='n'){
+        bestB=Math.max(bestB, c.ch===prof.chroma?2:1);
+      }else if(c.ch==='vif'&&c.t!=='n'&&prof.undertone!=='n'){worstM=Math.min(worstM,-1)}
+    }
+    if(bestB)add(bestB, bestB===2?'pile dans ta palette':'dans tes tons');
+    if(worstM)add(worstM,'couleur qui t’éteint près du visage');
+    if(prof.contrast==='fort'&&spread>=45)add(1,null);
+    if(prof.contrast==='doux'&&spread<30&&big.length>=3)add(1,'camaïeu doux, ton contraste');
+  }
+
+  /* --- composition --- */
+  const third=o.outer||(o.maille&&['cardigan','gilet'].includes(o.maille.sub));
+  if(third&&ctx.tmax<26)add(2,'la troisième pièce qui structure');
+  else if(o.acc&&['echarpe','chapeau','bijou','sac'].includes(o.acc.sub))add(1,'l’accessoire qui finit');
+  const strong=pieces.filter(p=>p.pattern==='fort');
+  const subtle=pieces.filter(p=>p.pattern==='subtil');
+  if(strong.length>1)return null;
+  if(strong.length+subtle.length>=3)add(-2,'trop de motifs');
+  if(strong.length===1&&subtle.length===0)add(1,'un seul motif fort, le reste calme');
+  if(strong.length===1&&subtle.length>=1){
+    const shared=strong[0].colors?.some(c=>subtle.some(s=>s.colors?.includes(c)));
+    if(!shared)add(-1,'motifs sans couleur commune');
+  }
+  const stmt=pieces.filter(p=>p.statement).length;
+  if(stmt>1)add(-(stmt-1),'plusieurs pièces statement, une seule star');
+  if(o.top&&o.bottom){
+    if(o.top.silhouette==='loose'&&o.bottom.silhouette==='loose')add(-2,'volumes noyés (tout loose)');
+    else if((o.top.silhouette==='loose')!==(o.bottom.silhouette==='loose')&&(o.top.silhouette==='loose'||o.bottom.silhouette==='loose'))add(1,'volumes équilibrés');
+  }
+  if(o.outer&&o.maille&&o.outer.warmth<o.maille.warmth&&!SUBMAP[o.maille.sub]?.lay)add(-1,null);
+  if(o.bottom?.sub==='short'&&(o.shoes.formality>=4||['bottes','bottines'].includes(o.shoes.sub)))return null;
+  if(o.shoes.sub==='sandales'&&o.bottom?.sub==='tailleur')return null;
+
+  /* --- directions --- */
+  if(dir==='sure'&&nonNeutral.length===0)add(1,'palette neutre, élégance sûre');
+  if(dir==='deco'&&pieces.some(p=>['sweat','hoodie','sneakers','cardigan','jean','jogging'].includes(p.sub)))add(1,null);
+  if(dir==='auda'){
+    // l'audace se joue sur les vraies pièces, pas sur une montre
+    const bigNonNeutral=[...big,o.shoes].filter(Boolean).some(p=>p.colors?.some(c=>CMAP[c]&&!CMAP[c].n));
+    const bold=bigNonNeutral||stmt>0||strong.length>0;
+    if(!bold)return null;
+    add(1,'l’accent qui ose');
+  }
+
+  /* --- rotation / fraîcheur --- */
+  let rec=0;
+  for(const p of pieces){const d=daysSince(p.lastWorn); rec+=0.6*Math.exp(-d/6)}
+  if(rec>0.5)add(-Math.min(2,Math.round(rec*10)/10),'déjà portée ces derniers jours');
+  const fresh=pieces.filter(p=>!(p.wornCount>0)).length;
+  if(fresh>0)add(Math.min(0.9,fresh*0.3),fresh>=2?'des pièces à ressortir':null);
+  // anti-redite vs looks récents
+  const ids=new Set(pieces.map(p=>p.id));
+  for(const rs of recentSets){
+    let inter=0; rs.forEach(id=>{if(ids.has(id))inter++});
+    if(inter/Math.max(rs.size,ids.size)>0.6){add(-2,'déjà vue cette semaine');break}
+  }
+
+  score*= (0.95+Math.random()*0.1);
+  return {score, reasons:R.filter(r=>r.label).sort((a,b)=>Math.abs(b.d)-Math.abs(a.d)).slice(0,4), o};
+}
+
+function generate(){
+  const ctx=weatherCtx();
+  const prof=S.profiles[S.profile];
+  const occ=S.occasion;
+  const pool=S.items.filter(it=>it.profile===S.profile&&!it.archived&&it.dispo!==false);
+  const av=cat=>pool.filter(it=>it.cat===cat&&pieceAllowed(it,ctx,occ));
+  let tops=av('top'), bottoms=av('bottom'), robes=av('robe'), mailles=av('maille'),
+      outers=av('outer'), shoes=av('shoes'), accs=av('acc');
+
+  const missing=[];
+  if(!shoes.length)missing.push('des chaussures');
+  if(!robes.length){if(!tops.length)missing.push('un haut');if(!bottoms.length)missing.push('un bas')}
+  if(missing.length)return {missing};
+
+  const target=OCCASIONS.find(x=>x[0]===occ)[2];
+  const pre=it=>{
+    const d=daysSince(it.lastWorn);
+    return -(Math.abs(it.formality-target))*0.8 + Math.min(d,30)/30 + (it.fav?0.4:0) + Math.random()*0.6;
+  };
+  const topk=(arr,k)=>arr.slice().sort((a,b)=>pre(b)-pre(a)).slice(0,k);
+  tops=topk(tops,7); bottoms=topk(bottoms,7); robes=topk(robes,4);
+  mailles=topk(mailles,5); outers=topk(outers,5); shoes=topk(shoes,5); accs=topk(accs,4);
+
+  const [lo]=warmthTarget(ctx.tmax);
+  const needOuter=ctx.tmax<16, canOuter=ctx.tmax<24;
+  const needKnit=ctx.tmax<9;
+  const recentSets=S.looks.filter(l=>l.profile===S.profile&&daysSince(l.date)<=14).map(l=>new Set(l.itemIds));
+  const L=S.locks;
+  const lock=(arr,slot)=>L[slot]?arr.filter(i=>i.id===L[slot]):arr;
+  const withNone=(arr,requiredFlag)=>requiredFlag?arr:[null,...arr];
+
+  const results={};
+  for(const dir of ['sure','deco','auda']){
+    let best=null;
+    const Ts=lock(tops,'top'), Bs=lock(bottoms,'bottom'), Rs=lock(robes,'robe'),
+          Ms=lock(mailles,'maille'), Os=lock(outers,'outer'), Ss=lock(shoes,'shoes'), As=lock(accs,'acc');
+    const bases=[];
+    for(const t of Ts)for(const b of Bs)bases.push({top:t,bottom:b});
+    for(const r of Rs)bases.push({robe:r});
+    if(L.robe)bases.splice(0,bases.length,...Rs.map(r=>({robe:r})));
+    let evals=0;
+    for(const base of bases){
+      for(const m of withNone(Ms,needKnit&&Ms.length>0)){
+        if(m&&base.robe&&!['cardigan','gilet'].includes(m.sub))continue;
+        for(const o of (canOuter?withNone(Os,needOuter&&Os.length>0):[null])){
+          for(const s of Ss){
+            for(const a of (As.length?[null,As[0],As[1]].filter((x,i,arr)=>arr.indexOf(x)===i):[null])){
+              if(++evals>2600)break;
+              const r=evaluate({...base,maille:m,outer:o,shoes:s,acc:a},ctx,prof,occ,dir,recentSets);
+              if(r&&(!best||r.score>best.score)){
+                // diversité entre directions
+                const chosen=Object.values(results).map(x=>new Set(x.pieces.map(p=>p.id)));
+                const ids=[base.top,base.bottom,base.robe,m,o,s].filter(Boolean).map(p=>p.id);
+                const tooClose=chosen.some(cs=>{let n=0;ids.forEach(id=>{if(cs.has(id))n++});return n>=ids.length-1});
+                if(!tooClose||!chosen.length)best=r;
+              }
+            }
+          }
+        }
+      }
+    }
+    if(best)results[dir]={dir, score:best.score, reasons:best.reasons, pieces:[best.o.outer,best.o.maille,best.o.top,best.o.robe,best.o.bottom,best.o.shoes,best.o.acc].filter(Boolean), o:best.o};
+  }
+  return {results, ctx};
+}
+
+/* =====================================================
+   VUES
+   ===================================================== */
+function switchView(v){
+  S.view=v;
+  $$('.view').forEach(x=>x.classList.remove('on'));
+  $('#view-'+v).classList.add('on');
+  $$('nav .tab').forEach(t=>t.classList.toggle('on',t.dataset.v===v));
+  render();
+  window.scrollTo(0,0);
+}
+function render(){
+  ({today:renderToday, closet:renderCloset, looks:renderLooks, profile:renderProfile})[S.view]();
+  updateSwitch();
+}
+function updateSwitch(){
+  $('#pname-lui').textContent=S.profiles.lui.name;
+  $('#pname-elle').textContent=S.profiles.elle.name;
+  document.documentElement.dataset.profile=S.profile;
+  $$('#pswitch button').forEach(b=>b.classList.toggle('on',b.dataset.p===S.profile));
+  const btn=$(`#pswitch button[data-p="${S.profile}"]`);
+  const g=$('#pglide');
+  g.style.left=btn.offsetLeft+'px'; g.style.width=btn.offsetWidth+'px';
+}
+
+/* ---- Aujourd'hui ---- */
+function renderToday(){
+  const v=$('#view-today');
+  const ctx=weatherCtx();
+  const wname=S.manualWeather?'Réglée à la main':(WMO[ctx.code]||'');
+  const wtxt=ctx.fallback
+    ? `Météo indisponible — <button data-action="manual-weather">régler à la main</button>`
+    : `${ctx.tmin}° → ${ctx.tmax}° · ${wname}${ctx.rain?' · pluie probable':''}${S.city?' · '+esc(S.city.name):''}${ctx.offline?' · hors ligne':''} <button data-action="manual-weather">ajuster</button>`;
+  const occChips=OCCASIONS.map(([id,label])=>`<button class="chip ${S.occasion===id?'on':''}" data-action="occ" data-occ="${id}">${label}</button>`).join('');
+
+  let cards='';
+  const g=S.lastGen;
+  if(!g){cards=`<div class="lookcards"><div class="lookcard"><div class="skel" style="aspect-ratio:3/3.4"></div></div></div>`}
+  else if(g.missing){
+    cards=`<div class="empty"><span class="serifit">La penderie ${esc(S.profiles[S.profile].name)} est encore légère.</span>
+    Il me manque ${g.missing.join(', ')} pour composer une tenue.<br><br>
+    <button class="pbtn" data-action="add" style="margin:0 auto">Ajouter une pièce</button></div>`;
+  }else{
+    const dirs=DIRECTIONS.filter(d=>g.results[d.id]);
+    if(!dirs.length){
+      cards=`<div class="empty"><span class="serifit">Rien ne passe mes règles aujourd’hui.</span>Essaie une autre occasion, ou ajoute des pièces ${ctx.tmax>=21?'plus légères':'plus chaudes'}.</div>`;
+    }else{
+      cards=`<div class="lookcards">`+dirs.map(d=>{
+        const r=g.results[d.id];
+        return `<div class="lookcard" data-dir="${d.id}">
+          <div class="dir"><span class="eyebrow" style="color:var(--acc)">${d.label}</span><span style="font-size:11px;color:var(--ink2)">${d.tag}</span></div>
+          ${flatlay(r.pieces, true)}
+          <div class="reasons">${r.reasons.map(x=>`<span class="reason ${x.d>0?'plus':''}">${x.d>0?'+':'−'} ${esc(x.label)}</span>`).join('')}</div>
+          <div class="lookacts">
+            <button class="bigbtn" data-action="wear" data-dir="${d.id}">Je la porte</button>
+            <button class="bigbtn ghost" data-action="shuffle" data-dir="${d.id}" style="flex:0 0 auto; padding:13px 16px">Remélanger</button>
+          </div>
+        </div>`;
+      }).join('')+`</div><div class="hint">Touchez une pièce pour la verrouiller avant de remélanger.</div>`;
+    }
+  }
+
+  v.innerHTML=`
+    <div class="eyebrow">${esc(S.profiles[S.profile].name)} · Tenue du jour</div>
+    <div class="todaydate">${frDate(new Date())}</div>
+    <div class="wline eyebrow" style="font-weight:500">${wtxt}</div>
+    <div class="chips" style="margin-top:16px">${occChips}</div>
+    ${cards}`;
+}
+const FLATPOS={
+  outer:{l:0,t:5,w:52,r:-5,z:1}, maille:{l:42,t:2,w:46,r:4,z:2}, top:{l:44,t:1,w:46,r:3,z:2},
+  robe:{l:26,t:2,w:48,r:1,z:2}, bottom:{l:6,t:36,w:46,r:-2,z:3}, shoes:{l:56,t:60,w:36,r:6,z:4}, acc:{l:4,t:70,w:24,r:-8,z:4},
+};
+function flatlay(pieces, lockable){
+  // si top+maille, décaler le top
+  const hasM=pieces.some(p=>p.cat==='maille'), hasT=pieces.some(p=>p.cat==='top');
+  return `<div class="canvasflat">`+pieces.map(p=>{
+    let pos={...(FLATPOS[p.cat]||FLATPOS.acc)};
+    if(p.cat==='top'&&hasM){pos={l:2,t:0,w:38,r:-6,z:1}}
+    const locked=S.locks[p.cat]===p.id;
+    return `<div class="piece ${locked?'locked':''}" data-action="${lockable?'lock':''}" data-cat="${p.cat}" data-id="${p.id}"
+      style="left:${pos.l}%;top:${pos.t}%;width:${pos.w}%;aspect-ratio:1;transform:rotate(${pos.r}deg);z-index:${pos.z}">
+      <img src="${thumbURL(p)}" alt="">
+    </div>`;
+  }).join('')+`</div>`;
+}
+async function regenerate(){
+  S.lastGen=null; renderToday();
+  await new Promise(r=>setTimeout(r,30)); // laisse peindre le skeleton
+  S.lastGen=generate();
+  renderToday();
+}
+
+/* ---- Penderie ---- */
+function renderCloset(){
+  const v=$('#view-closet');
+  const mine=S.items.filter(i=>i.profile===S.profile&&!i.archived);
+  const cats=['all',...Object.keys(CATS)];
+  const chips=cats.map(c=>`<button class="chip ${S.catFilter===c?'on':''}" data-action="catf" data-cat="${c}">${c==='all'?'Tout':CATS[c].label}</button>`).join('');
+  let list=mine;
+  if(S.catFilter!=='all')list=list.filter(i=>i.cat===S.catFilter);
+  if(S.search){const q=S.search.toLowerCase();list=list.filter(i=>(i.name+' '+(i.brand||'')+' '+(SUBMAP[i.sub]?.label||'')).toLowerCase().includes(q))}
+
+  let body;
+  if(!mine.length){
+    body=`<div class="empty"><span class="serifit">Une penderie vide est une page blanche.</span>
+      Photographiez votre première pièce — comptez vingt secondes par vêtement.<br><br>
+      <button class="pbtn" data-action="add" style="margin:0 auto">Ajouter une pièce</button></div>`;
+  }else if(!list.length){
+    body=`<div class="empty"><span class="serifit">Rien ici pour l’instant.</span></div>`;
+  }else{
+    const groups={};
+    list.forEach(i=>{(groups[i.cat]=groups[i.cat]||[]).push(i)});
+    body=Object.keys(CATS).filter(c=>groups[c]).map(c=>`
+      <div class="sechead"><span class="eyebrow">${CATS[c].label}</span><span class="eyebrow num" style="font-weight:500">${groups[c].length}</span></div>
+      <div class="grid">${groups[c].map(cellHTML).join('')}</div>`).join('');
+  }
+  const banner=installBanner();
+  v.innerHTML=`${banner}
+    <div class="searchrow"><input class="fld" placeholder="Chercher une pièce, une marque…" value="${esc(S.search)}" data-action="search"></div>
+    <div class="chips" style="margin-bottom:16px">${chips}</div>${body}`;
+}
+function cellHTML(i){
+  return `<div class="cell ${i.dispo===false?'sale':''}" data-action="open-item" data-id="${i.id}">
+    ${i.fav?`<span class="flag"><svg viewBox="0 0 24 24" fill="var(--acc)"><path d="M12 21C7 16.5 3 13.2 3 9.1 3 6.3 5.2 4 8 4c1.6 0 3.1.8 4 2 .9-1.2 2.4-2 4-2 2.8 0 5 2.3 5 5.1 0 4.1-4 7.4-9 11.9z"/></svg></span>`:''}
+    ${i.dispo===false?'<span class="salelab">Au sale</span>':''}
+    <div class="ph"><img src="${thumbURL(i)}" alt="" loading="lazy"></div>
+    <div class="cellmeta"><b>${esc(i.name)}</b><small>${esc(i.brand||SUBMAP[i.sub]?.label||'')}</small></div>
+  </div>`;
+}
+function installBanner(){
+  const isIOS=/iphone|ipad/i.test(navigator.userAgent);
+  const standalone=navigator.standalone===true||matchMedia('(display-mode: standalone)').matches;
+  if(!isIOS||standalone||localStorage.getItem('penderie-nobanner')||location.protocol==='file:')return '';
+  return `<div class="banner"><div><b>Avant de tout cataloguer :</b> ajoute Penderie à ton écran d’accueil (Partager → « Sur l’écran d’accueil »). L’app installée a son propre stockage, durable — Safari peut effacer le sien.</div><button class="x" data-action="nobanner">×</button></div>`;
+}
+
+/* ---- ajout / édition ---- */
+function openAdd(item){
+  S.editing=item||null;
+  S.draft=item?{...item, colors:[...(item.colors||[])]}:{
+    cat:'top', sub:'tshirt', colors:[], pattern:'none', silhouette:'regular',
+    warmth:2, formality:2, material:'', brand:'', name:'', price:null,
+    statement:false, waterproof:false, photo:null, thumb:null,
+  };
+  $('#add-title').textContent=item?'Modifier la pièce':'Nouvelle pièce';
+  renderAdd();
+  $('#sheet-add').classList.add('on');
+}
+function renderAdd(){
+  const d=S.draft;
+  const photoURL=d.thumb?URL.createObjectURL(d.thumb):null;
+  const catChips=Object.entries(CATS).map(([id,c])=>`<button class="chip ${d.cat===id?'on':''}" data-action="d-cat" data-cat="${id}">${c.label}</button>`).join('');
+  const subChips=SUBS[d.cat].map(([id,label])=>`<button class="chip ${d.sub===id?'on':''}" data-action="d-sub" data-sub="${id}">${label}</button>`).join('');
+  const colorChips=COLORS.map(c=>`<button class="colorchip ${d.colors.includes(c.id)?'on':''}" data-action="d-color" data-c="${c.id}">
+    <span class="swatch" style="background:${c.hex}"></span>${c.label}</button>`).join('');
+  const patChips=[['none','Uni'],['subtil','Motif discret'],['fort','Motif fort']].map(([id,l])=>`<button class="chip ${d.pattern===id?'on':''}" data-action="d-pat" data-p="${id}">${l}</button>`).join('');
+  const silChips=[['fitted','Ajustée'],['regular','Droite'],['loose','Loose']].map(([id,l])=>`<button class="chip ${d.silhouette===id?'on':''}" data-action="d-sil" data-s="${id}">${l}</button>`).join('');
+  const matChips=['',...MATERIALS].map(m=>`<button class="chip ${d.material===m?'on':''}" data-action="d-mat" data-m="${m}">${m||'—'}</button>`).join('');
+
+  $('#add-body').innerHTML=`
+    <div class="photozone ${photoURL?'filled':''}" id="pz">
+      ${photoURL?`<img src="${photoURL}"><button class="retake" data-action="take-photo">Reprendre</button>`:`
+        <span class="serifit" style="color:var(--ink2);font-size:16px">La pièce, posée à plat, fond clair.</span>
+        <button class="pbtn" data-action="take-photo">Prendre en photo</button>
+        <button class="pbtn ghost" data-action="pick-photo">Depuis mes photos</button>`}
+    </div>
+    <div class="formsec"><span class="eyebrow">Catégorie</span><div class="wrapchips">${catChips}</div></div>
+    <div class="formsec"><span class="eyebrow">Type</span><div class="wrapchips">${subChips}</div></div>
+    <div class="formsec"><span class="eyebrow">Couleurs · 2 max, la dominante d’abord</span><div class="wrapchips" style="max-height:132px;overflow-y:auto">${colorChips}</div></div>
+    <div class="formsec">
+      <span class="eyebrow">Détails</span>
+      <div class="fldrow" style="margin-bottom:10px">
+        <input class="fld" placeholder="Nom (auto sinon)" value="${esc(d.name||'')}" data-action="d-name">
+        <input class="fld" placeholder="Marque" value="${esc(d.brand||'')}" data-action="d-brand">
+      </div>
+      <div class="stepper"><span class="lab">Chaleur</span>
+        <span class="val">${WARMLAB[d.warmth]}</span>
+        <span class="ctr"><button data-action="d-warm" data-d="-1">−</button><button data-action="d-warm" data-d="1">+</button></span></div>
+      <div class="stepper"><span class="lab">Registre</span>
+        <span class="val">${FORMLAB[d.formality]}</span>
+        <span class="ctr"><button data-action="d-form" data-d="-1">−</button><button data-action="d-form" data-d="1">+</button></span></div>
+      <div style="padding:12px 0; border-bottom:1px solid var(--hair)"><div class="eyebrow" style="margin-bottom:8px">Motif</div><div class="wrapchips">${patChips}</div></div>
+      <div style="padding:12px 0; border-bottom:1px solid var(--hair)"><div class="eyebrow" style="margin-bottom:8px">Coupe</div><div class="wrapchips">${silChips}</div></div>
+      <div style="padding:12px 0; border-bottom:1px solid var(--hair)"><div class="eyebrow" style="margin-bottom:8px">Matière (optionnel)</div><div class="wrapchips">${matChips}</div></div>
+      <div class="togglerow"><span>Pièce statement (couleur ou coupe qui claque)</span><button class="tgl ${d.statement?'on':''}" data-action="d-stmt"></button></div>
+      <div class="togglerow"><span>Résiste à la pluie</span><button class="tgl ${d.waterproof?'on':''}" data-action="d-wp"></button></div>
+      <div class="togglerow" style="border-bottom:none"><span>Prix (pour le coût par port)</span>
+        <input class="fld" style="width:96px;padding:8px 10px;text-align:right" inputmode="decimal" placeholder="—" value="${d.price??''}" data-action="d-price"></div>
+    </div>
+    <div class="savebar">
+      <button class="bigbtn" data-action="save-item" ${d.thumb?'':'disabled'}>${S.editing?'Enregistrer':'Ajouter à la penderie'}</button>
+    </div>`;
+}
+async function handlePhoto(file){
+  if(!file)return;
+  toast('Traitement de la photo…');
+  try{
+    const {photo,thumb,colors}=await processPhoto(file);
+    S.draft.photo=photo; S.draft.thumb=thumb;
+    if(!S.editing&&colors.length&&!S.draft.colors.length)S.draft.colors=colors;
+    renderAdd();
+    if(colors.length)toast(`Couleur détectée : ${colors.map(c=>CMAP[c].label.toLowerCase()).join(', ')} — corrige si besoin`);
+  }catch(e){toast('Photo illisible, réessaie.')}
+}
+async function saveItem(){
+  const d=S.draft;
+  if(!d.thumb)return;
+  const colorLabel=d.colors[0]?CMAP[d.colors[0]].label.toLowerCase():'';
+  const it={
+    id:S.editing?.id||uid(), profile:S.editing?.profile||S.profile,
+    cat:d.cat, sub:d.sub,
+    name:d.name?.trim()||`${SUBMAP[d.sub].label} ${colorLabel}`.trim(),
+    brand:d.brand?.trim()||'', colors:d.colors.slice(0,3),
+    pattern:d.pattern, silhouette:d.silhouette, material:d.material||'',
+    warmth:d.warmth, formality:d.formality,
+    statement:!!d.statement, waterproof:!!d.waterproof,
+    price:d.price?Number(d.price):null,
+    photo:d.photo||S.editing?.photo, thumb:d.thumb||S.editing?.thumb,
+    fav:S.editing?.fav||false, dispo:S.editing?.dispo!==false,
+    wornCount:S.editing?.wornCount||0, lastWorn:S.editing?.lastWorn||null,
+    archived:S.editing?.archived||false, createdAt:S.editing?.createdAt||todayISO(),
+  };
+  await dbPut('items',it);
+  S.urls.delete(it.id); S.urls.delete(it.id+'-t');
+  const ix=S.items.findIndex(x=>x.id===it.id);
+  if(ix>=0)S.items[ix]=it; else S.items.push(it);
+  if(S.editing){
+    $('#sheet-add').classList.remove('on');
+    toast('Pièce mise à jour');
+    if($('#sheet-item').classList.contains('on'))openItem(it.id);
+  }else{
+    toast(`${it.name} — ajoutée`);
+    // mode rafale : on repart pour une autre
+    S.editing=null;
+    S.draft={...S.draft, photo:null, thumb:null, colors:[], name:'', brand:'', price:null, statement:false};
+    renderAdd();
+  }
+  if(S.view==='closet'||S.view==='today')render();
+}
+
+/* ---- fiche pièce ---- */
+function openItem(id){
+  const i=S.items.find(x=>x.id===id); if(!i)return;
+  const worn=i.wornCount||0;
+  const cpw=i.price&&worn?` · ${(i.price/worn).toFixed(0)} € / port`:'';
+  const colorSw=(i.colors||[]).map(c=>`<span class="swatch" style="background:${CMAP[c]?.hex}"></span> ${CMAP[c]?.label||''}`).join(' · ');
+  const dots=n=>`<span class="dots">${[1,2,3,4,5].map(x=>`<i class="${x<=n?'f':''}"></i>`).join('')}</span>`;
+  $('#item-body').innerHTML=`
+    <div class="itemhero"><img src="${i.photo?objURL(i.id,i.photo):thumbURL(i)}" alt=""></div>
+    <div style="margin-top:16px">
+      ${i.brand?`<div class="eyebrow">${esc(i.brand)}</div>`:''}
+      <div class="h2" style="margin-top:2px">${esc(i.name)}</div>
+    </div>
+    <div class="metalist">
+      <div class="metarow"><span class="k">Catégorie</span><span class="v">${CATS[i.cat].one} · ${SUBMAP[i.sub]?.label||''}</span></div>
+      <div class="metarow"><span class="k">Couleurs</span><span class="v">${colorSw||'—'}</span></div>
+      ${i.material?`<div class="metarow"><span class="k">Matière</span><span class="v">${esc(i.material)}</span></div>`:''}
+      <div class="metarow"><span class="k">Chaleur</span><span class="v">${dots(i.warmth)} ${WARMLAB[i.warmth]}</span></div>
+      <div class="metarow"><span class="k">Registre</span><span class="v">${dots(i.formality)} ${FORMLAB[i.formality]}</span></div>
+      ${i.pattern!=='none'?`<div class="metarow"><span class="k">Motif</span><span class="v">${i.pattern==='fort'?'Fort':'Discret'}</span></div>`:''}
+      <div class="metarow"><span class="k">Portée</span><span class="v num">${worn} fois${i.lastWorn?` · le ${new Date(i.lastWorn+'T12:00').toLocaleDateString('fr-FR')}`:''}${cpw}</span></div>
+      <div class="togglerow"><span>Favori</span><button class="tgl ${i.fav?'on':''}" data-action="i-fav" data-id="${i.id}"></button></div>
+      <div class="togglerow"><span>Au sale (indisponible)</span><button class="tgl ${i.dispo===false?'on':''}" data-action="i-sale" data-id="${i.id}"></button></div>
+    </div>
+    <div class="actrow">
+      <button class="textact" data-action="i-edit" data-id="${i.id}">Modifier</button>
+      <button class="textact" data-action="i-archive" data-id="${i.id}">${i.archived?'Désarchiver':'Archiver'}</button>
+      <button class="textact danger" data-action="i-del" data-id="${i.id}">Supprimer</button>
+    </div>`;
+  $('#sheet-item').classList.add('on');
+}
+
+/* ---- looks ---- */
+function renderLooks(){
+  const v=$('#view-looks');
+  const mine=S.looks.filter(l=>l.profile===S.profile).sort((a,b)=>b.date.localeCompare(a.date));
+  if(!mine.length){
+    v.innerHTML=`<div class="eyebrow">Journal des tenues</div>
+      <div class="empty"><span class="serifit">Aucun look pour l’instant.</span>Les tenues portées ou gardées depuis « Aujourd’hui » s’archivent ici, comme un lookbook.</div>`;
+    return;
+  }
+  const byMonth={};
+  mine.forEach(l=>{const k=l.date.slice(0,7);(byMonth[k]=byMonth[k]||[]).push(l)});
+  v.innerHTML=`<div class="eyebrow">Journal des tenues</div>`+Object.entries(byMonth).map(([m,ls])=>{
+    const d=new Date(m+'-15T12:00');
+    return `<div class="sechead"><span class="h2" style="font-size:19px">${MONTHS[d.getMonth()][0].toUpperCase()+MONTHS[d.getMonth()].slice(1)} ${d.getFullYear()}</span><span class="eyebrow num">${ls.length}</span></div>
+    <div class="lookgrid">${ls.map(l=>{
+      const pieces=l.itemIds.map(id=>S.items.find(i=>i.id===id)).filter(Boolean);
+      const occ=OCCASIONS.find(o=>o[0]===l.occasion)?.[1]||'';
+      return `<div class="lookthumb" data-action="open-look" data-id="${l.id}">${flatlay(pieces,false)}
+        <div class="lm"><b>${new Date(l.date+'T12:00').toLocaleDateString('fr-FR',{day:'numeric',month:'short'})}</b><small>${occ}${l.worn?'':' · idée'}</small></div></div>`;
+    }).join('')}</div>`;
+  }).join('');
+}
+function openLook(id){
+  const l=S.looks.find(x=>x.id===id); if(!l)return;
+  const pieces=l.itemIds.map(x=>S.items.find(i=>i.id===x)).filter(Boolean);
+  $('#look-body').innerHTML=`
+    <div class="serifit" style="font-size:21px">${frDate(l.date)}</div>
+    <div class="eyebrow" style="margin:4px 0 14px">${OCCASIONS.find(o=>o[0]===l.occasion)?.[1]||''}${l.worn?'':' · idée de look'}</div>
+    ${flatlay(pieces,false)}
+    <div class="metalist">${pieces.map(p=>`<div class="metarow" data-action="open-item" data-id="${p.id}"><span class="k">${CATS[p.cat].one}</span><span class="v">${esc(p.name)}</span></div>`).join('')}</div>
+    <div class="actrow">
+      <button class="textact" data-action="rewear" data-id="${l.id}">Reporter aujourd’hui</button>
+      <button class="textact danger" data-action="del-look" data-id="${l.id}">Retirer du journal</button>
+    </div>`;
+  $('#sheet-look').classList.add('on');
+}
+
+/* ---- profil ---- */
+function renderProfile(){
+  const v=$('#view-profile');
+  const p=S.profiles[S.profile];
+  const mine=S.items.filter(i=>i.profile===S.profile&&!i.archived);
+  const worn=mine.reduce((a,i)=>a+(i.wornCount||0),0);
+  const sale=mine.filter(i=>i.dispo===false).length;
+  // répartition couleurs
+  const cc={};
+  mine.forEach(i=>{const c=i.colors?.[0];if(c)cc[c]=(cc[c]||0)+1});
+  const ccArr=Object.entries(cc).sort((a,b)=>b[1]-a[1]);
+  const colorbar=ccArr.length?`<div class="colorbar">${ccArr.map(([c,n])=>`<span style="flex:${n};background:${CMAP[c]?.hex}"></span>`).join('')}</div>`:'';
+  // palette recommandée
+  let pal='';
+  if(p.undertone){
+    const recs=COLORS.filter(c=>!c.n&&c.id!=='multicolore'&&(c.t===p.undertone||c.t==='n')&&(p.chroma?c.ch===p.chroma:true)).slice(0,8);
+    pal=`<div class="palettechips">${recs.map(c=>`<span class="colorchip on" style="pointer-events:none"><span class="swatch" style="background:${c.hex}"></span>${c.label}</span>`).join('')}</div>
+    <div class="hint" style="text-align:left; margin-top:8px">Les neutres (marine, écru, gris, denim, camel) vont à tout le monde. Ces accents-là sont les tiens — le styliste les favorise près du visage.</div>`;
+  }
+  const least=mine.filter(i=>i.dispo!==false).sort((a,b)=>(a.wornCount||0)-(b.wornCount||0)).slice(0,6);
+  v.innerHTML=`
+    <div class="profcard">
+      <div class="monogram">${p.photo?`<img src="${objURL('prof-'+S.profile,p.photo)}">`:esc((p.name||'?')[0])}</div>
+      <div>
+        <div class="display" style="font-size:27px">${esc(p.name)}</div>
+        <button class="textact" data-action="prof-photo" style="font-size:12px; padding:2px 0">${p.photo?'Changer la photo':'Ajouter une photo de toi'}</button>
+      </div>
+    </div>
+    <div class="statrow">
+      <div class="stat"><b class="num">${mine.length}</b><small>Pièces</small></div>
+      <div class="stat"><b class="num">${worn}</b><small>Ports loggés</small></div>
+      <div class="stat"><b class="num">${S.looks.filter(l=>l.profile===S.profile).length}</b><small>Looks</small></div>
+    </div>
+    ${colorbar}
+
+    <div class="sechead"><span class="eyebrow">Ta colorimétrie</span></div>
+    ${p.undertone?`<div style="font-size:13.5px; color:var(--ink2)">Sous-ton <b style="color:var(--ink)">${{c:'chaud',f:'froid',n:'neutre'}[p.undertone]}</b> · contraste <b style="color:var(--ink)">${p.contrast==='fort'?'marqué':'doux'}</b> · couleurs <b style="color:var(--ink)">${p.chroma==='vif'?'vives':'douces'}</b></div>${pal}
+      <button class="textact" data-action="quiz" style="margin-top:10px">Refaire le diagnostic</button>`
+    :`<div style="font-size:13.5px;color:var(--ink2)">Trois questions pour connaître les couleurs qui t’illuminent — le styliste s’en servira.</div>
+      <button class="pbtn" data-action="quiz" style="margin-top:12px">Faire le diagnostic couleur</button>`}
+
+    ${least.length?`<div class="sechead"><span class="eyebrow">À ressortir</span></div>
+    <div class="smallitems">${least.map(cellHTML).join('')}</div>`:''}
+
+    <div class="sechead"><span class="eyebrow">Entretien</span></div>
+    <div class="metarow"><span class="k">Au sale</span><span class="v num">${sale} pièce${sale>1?'s':''}</span></div>
+    ${sale?`<button class="textact" data-action="laundry-day" style="margin-top:8px">Jour de lessive — tout remettre propre</button>`:''}
+
+    <div class="sechead"><span class="eyebrow">Réglages</span></div>
+    <div class="metarow"><span class="k">Ville météo</span><span class="v">${esc(S.city?.name||'—')}</span></div>
+    <button class="textact" data-action="change-city" style="margin-top:8px">Changer de ville</button>
+
+    <div class="sechead"><span class="eyebrow">Sauvegarde</span></div>
+    <div style="font-size:13px;color:var(--ink2);margin-bottom:10px">Tout vit sur cet appareil. Exporte de temps en temps (les deux penderies, photos comprises).</div>
+    <div class="actrow" style="justify-content:flex-start; margin-top:6px">
+      <button class="textact" data-action="export">Exporter</button>
+      <button class="textact" data-action="import">Importer</button>
+    </div>
+    <div class="hint" style="text-align:left; margin-top:26px">Penderie v${APP_V} — locale, privée, sans compte. Studio BFievé.</div>`;
+}
+
+/* ---- quiz colorimétrie ---- */
+const QUIZ=[
+  {q:'Au soleil, les veines de ton poignet tirent plutôt vers…', k:'undertone',
+   opts:[['f','Le bleu / violet — et l’argenté te va bien'],['c','Le vert / olive — et l’or te va bien'],['n','Franchement, les deux']]},
+  {q:'Cheveux vs peau : le contraste est…', k:'contrast',
+   opts:[['fort','Marqué (cheveux foncés, peau claire — ou l’inverse)'],['doux','Doux, ton sur ton']]},
+  {q:'Les couleurs franches et saturées (fuchsia, cobalt, rouge vif)…', k:'chroma',
+   opts:[['vif','Me réveillent le teint'],['doux','M’écrasent — je préfère les tons doux']]},
+];
+function openQuiz(){S.quizStep=0;S.quizAns={};renderQuiz();$('#sheet-quiz').classList.add('on')}
+function renderQuiz(){
+  const step=QUIZ[S.quizStep];
+  if(!step){
+    const p=S.profiles[S.profile];
+    Object.assign(p,S.quizAns);
+    kvSet('profiles',S.profiles);
+    $('#quiz-body').innerHTML=`<div class="empty"><span class="serifit">C’est noté, ${esc(p.name)}.</span>
+      Sous-ton ${{c:'chaud',f:'froid',n:'neutre'}[p.undertone]}, contraste ${p.contrast==='fort'?'marqué':'doux'}, couleurs ${p.chroma==='vif'?'vives':'douces'}.<br>
+      Le styliste en tient compte dès maintenant.<br><br>
+      <button class="pbtn" data-action="close-quiz" style="margin:0 auto">Voir ma palette</button></div>`;
+    return;
+  }
+  $('#quiz-body').innerHTML=`
+    <div class="eyebrow" style="margin:10px 0 4px">Question ${S.quizStep+1} / ${QUIZ.length}</div>
+    <div class="h2" style="margin-bottom:18px">${step.q}</div>
+    ${step.opts.map(([v,l])=>`<button class="qopt" data-action="quiz-ans" data-k="${step.k}" data-v="${v}">${l}</button>`).join('')}`;
+}
+
+/* ---- météo manuelle ---- */
+function manualWeatherSheet(){
+  const bands=[['froid','Froid (< 8°)',4,1],['frais','Frais (8-14°)',12,7],['doux','Doux (15-20°)',18,12],['chaud','Chaud (21-25°)',23,16],['canicule','Très chaud (26°+)',29,19]];
+  $('#look-body').innerHTML=`
+    <div class="h2" style="margin-bottom:4px">La météo, à ta main</div>
+    <div style="font-size:13px;color:var(--ink2);margin-bottom:16px">Si le réseau manque ou que le ciel ment.</div>
+    ${bands.map(([id,l,tx,tn])=>`<button class="qopt" data-action="mw" data-tmax="${tx}" data-tmin="${tn}">${l}</button>`).join('')}
+    <div class="togglerow" style="margin-top:8px"><span>Pluie probable</span><button class="tgl ${S.mwRain?'on':''}" data-action="mw-rain"></button></div>
+    <button class="textact" data-action="mw-auto" style="margin-top:16px">Revenir à la météo automatique</button>`;
+  $('#sheet-look').classList.add('on');
+}
+
+/* ---- export / import ---- */
+function blobToDataURL(b){return new Promise(r=>{const f=new FileReader();f.onload=()=>r(f.result);f.readAsDataURL(b)})}
+function dataURLToBlob(u){const [h,d]=u.split(',');const m=h.match(/:(.*?);/)[1];const bin=atob(d);const a=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)a[i]=bin.charCodeAt(i);return new Blob([a],{type:m})}
+async function doExport(){
+  toast('Préparation de l’export…');
+  const items=await Promise.all(S.items.map(async i=>({...i, photo:i.photo?await blobToDataURL(i.photo):null, thumb:i.thumb?await blobToDataURL(i.thumb):null})));
+  const profiles={};
+  for(const [k,p] of Object.entries(S.profiles))profiles[k]={...p, photo:p.photo?await blobToDataURL(p.photo):null};
+  const payload=JSON.stringify({app:'penderie',v:1,exportedAt:new Date().toISOString(),profiles,city:S.city,items,looks:S.looks});
+  const file=new File([payload],`penderie-${todayISO()}.json`,{type:'application/json'});
+  if(navigator.canShare?.({files:[file]})){
+    try{await navigator.share({files:[file],title:'Sauvegarde Penderie'});toast('Export partagé');return}catch(e){if(e.name==='AbortError')return}
+  }
+  const a=document.createElement('a');a.href=URL.createObjectURL(file);a.download=file.name;a.click();
+  toast('Export téléchargé');
+}
+async function doImport(file){
+  try{
+    const j=JSON.parse(await file.text());
+    if(j.app!=='penderie')throw 0;
+    const ok=await confirmDlg(`Remplacer les données actuelles par cette sauvegarde (${j.items.length} pièces) ?`);
+    if(!ok)return;
+    // purge
+    await tx('items','readwrite',s=>s.clear()); await tx('looks','readwrite',s=>s.clear());
+    for(const i of j.items){i.photo=i.photo?dataURLToBlob(i.photo):null;i.thumb=i.thumb?dataURLToBlob(i.thumb):null;await dbPut('items',i)}
+    for(const l of j.looks)await dbPut('looks',l);
+    for(const [k,p] of Object.entries(j.profiles||{}))if(p.photo)p.photo=dataURLToBlob(p.photo);
+    S.profiles=j.profiles||S.profiles; await kvSet('profiles',S.profiles);
+    if(j.city){S.city=j.city; await kvSet('city',S.city)}
+    S.items=await dbAll('items'); S.looks=await dbAll('looks');
+    S.urls.forEach(u=>URL.revokeObjectURL(u)); S.urls.clear();
+    toast('Sauvegarde restaurée'); render();
+  }catch(e){toast('Fichier illisible')}
+}
+
+/* ---- porter / garder ---- */
+async function wearLook(dir, wear){
+  const r=S.lastGen?.results?.[dir]; if(!r)return;
+  const look={id:uid(), profile:S.profile, itemIds:r.pieces.map(p=>p.id), date:todayISO(), occasion:S.occasion, direction:dir, worn:!!wear};
+  await dbPut('looks',look); S.looks.push(look);
+  if(wear){
+    for(const p of r.pieces){
+      p.wornCount=(p.wornCount||0)+1; p.lastWorn=todayISO();
+      await dbPut('items',p);
+    }
+    toast('Beau choix. Look enregistré au journal.');
+  }else toast('Idée gardée au journal.');
+}
+
+/* =====================================================
+   ÉVÉNEMENTS
+   ===================================================== */
+let photoTarget='item'; // 'item' | 'profile'
+document.addEventListener('click', async e=>{
+  const el=e.target.closest('[data-action]');
+  if(!el)return;
+  const a=el.dataset.action;
+  const d=S.draft;
+  switch(a){
+    /* nav */
+    case 'add': openAdd(); break;
+    case 'close-add': $('#sheet-add').classList.remove('on'); break;
+    case 'close-item': $('#sheet-item').classList.remove('on'); break;
+    case 'close-quiz': $('#sheet-quiz').classList.remove('on'); renderProfile(); break;
+    case 'close-look': $('#sheet-look').classList.remove('on'); break;
+
+    /* aujourd'hui */
+    case 'occ': S.occasion=el.dataset.occ; S.locks={}; await regenerate(); break;
+    case 'shuffle': await regenerate(); break;
+    case 'wear': await wearLook(el.dataset.dir,true); await regenerate(); break;
+    case 'lock': {
+      const cat=el.dataset.cat, id=el.dataset.id;
+      if(S.locks[cat]===id)delete S.locks[cat]; else S.locks[cat]=id;
+      el.classList.toggle('locked');
+      break;
+    }
+    case 'manual-weather': manualWeatherSheet(); break;
+    case 'mw': S.manualWeather={tmax:+el.dataset.tmax,tmin:+el.dataset.tmin,rain:!!S.mwRain,wind:10,code:2}; $('#sheet-look').classList.remove('on'); await regenerate(); break;
+    case 'mw-rain': S.mwRain=!S.mwRain; el.classList.toggle('on'); break;
+    case 'mw-auto': S.manualWeather=null; S.mwRain=false; $('#sheet-look').classList.remove('on'); await regenerate(); break;
+
+    /* penderie */
+    case 'catf': S.catFilter=el.dataset.cat; renderCloset(); break;
+    case 'open-item': $('#sheet-look').classList.remove('on'); openItem(el.dataset.id); break;
+    case 'nobanner': localStorage.setItem('penderie-nobanner','1'); renderCloset(); break;
+
+    /* formulaire */
+    case 'take-photo': photoTarget='item'; $('#fcam').click(); break;
+    case 'pick-photo': photoTarget='item'; $('#flib').click(); break;
+    case 'd-cat': d.cat=el.dataset.cat; d.sub=SUBS[d.cat][0][0]; {const s=SUBMAP[d.sub]; d.warmth=s.w; d.formality=s.f;} renderAdd(); break;
+    case 'd-sub': d.sub=el.dataset.sub; {const s=SUBMAP[d.sub]; d.warmth=s.w; d.formality=s.f; d.waterproof=!!s.wp;} renderAdd(); break;
+    case 'd-color': {
+      const c=el.dataset.c;
+      if(d.colors.includes(c))d.colors=d.colors.filter(x=>x!==c);
+      else{d.colors.push(c); if(d.colors.length>2)d.colors=d.colors.slice(-2)}
+      renderAdd(); break;
+    }
+    case 'd-pat': d.pattern=el.dataset.p; renderAdd(); break;
+    case 'd-sil': d.silhouette=el.dataset.s; renderAdd(); break;
+    case 'd-mat': d.material=el.dataset.m; renderAdd(); break;
+    case 'd-warm': d.warmth=Math.min(5,Math.max(1,d.warmth+ +el.dataset.d)); renderAdd(); break;
+    case 'd-form': d.formality=Math.min(5,Math.max(1,d.formality+ +el.dataset.d)); renderAdd(); break;
+    case 'd-stmt': d.statement=!d.statement; el.classList.toggle('on'); break;
+    case 'd-wp': d.waterproof=!d.waterproof; el.classList.toggle('on'); break;
+    case 'save-item': await saveItem(); break;
+
+    /* fiche */
+    case 'i-fav': {const i=S.items.find(x=>x.id===el.dataset.id); i.fav=!i.fav; await dbPut('items',i); el.classList.toggle('on'); if(S.view==='closet')renderCloset(); break}
+    case 'i-sale': {const i=S.items.find(x=>x.id===el.dataset.id); i.dispo=i.dispo===false; await dbPut('items',i); el.classList.toggle('on'); if(S.view==='closet')renderCloset(); break}
+    case 'i-edit': {$('#sheet-item').classList.remove('on'); openAdd(S.items.find(x=>x.id===el.dataset.id)); break}
+    case 'i-archive': {const i=S.items.find(x=>x.id===el.dataset.id); i.archived=!i.archived; await dbPut('items',i); $('#sheet-item').classList.remove('on'); toast(i.archived?'Pièce archivée':'Pièce de retour'); render(); break}
+    case 'i-del': {
+      const i=S.items.find(x=>x.id===el.dataset.id);
+      if(await confirmDlg(`Supprimer « ${i.name} » définitivement ?`)){
+        await dbDel('items',i.id); S.items=S.items.filter(x=>x.id!==i.id);
+        $('#sheet-item').classList.remove('on'); toast('Pièce supprimée'); render();
+      } break;
+    }
+
+    /* looks */
+    case 'open-look': openLook(el.dataset.id); break;
+    case 'del-look': {
+      if(await confirmDlg('Retirer ce look du journal ?')){
+        await dbDel('looks',el.dataset.id); S.looks=S.looks.filter(l=>l.id!==el.dataset.id);
+        $('#sheet-look').classList.remove('on'); renderLooks();
+      } break;
+    }
+    case 'rewear': {
+      const l=S.looks.find(x=>x.id===el.dataset.id);
+      for(const id of l.itemIds){const i=S.items.find(x=>x.id===id); if(i){i.wornCount=(i.wornCount||0)+1;i.lastWorn=todayISO();await dbPut('items',i)}}
+      const nl={...l,id:uid(),date:todayISO(),worn:true};
+      await dbPut('looks',nl); S.looks.push(nl);
+      $('#sheet-look').classList.remove('on'); toast('Reporté aujourd’hui'); break;
+    }
+
+    /* profil */
+    case 'quiz': openQuiz(); break;
+    case 'quiz-ans': S.quizAns[el.dataset.k]=el.dataset.v; S.quizStep++; renderQuiz(); break;
+    case 'prof-photo': photoTarget='profile'; $('#flib').click(); break;
+    case 'laundry-day': {
+      for(const i of S.items.filter(x=>x.profile===S.profile&&x.dispo===false)){i.dispo=true;await dbPut('items',i)}
+      toast('Tout est propre.'); renderProfile(); break;
+    }
+    case 'change-city': {
+      const name=prompt('Ville pour la météo :',S.city?.name||'');
+      if(name){toast('Recherche…'); const g=await geocode(name);
+        if(g){S.city=g; await kvSet('city',g); S.weather=await fetchWeather(); toast(`Météo réglée sur ${g.name}`); render(); if(S.view==='today')await regenerate()}
+        else toast('Ville introuvable');
+      } break;
+    }
+    case 'export': await doExport(); break;
+    case 'import': $('#fimport').click(); break;
+
+    /* onboarding */
+    case 'onb-next': {
+      const cur=$('.onbpage.on'), n=+cur.dataset.page+1;
+      cur.classList.remove('on'); $(`.onbpage[data-page="${n}"]`).classList.add('on');
+      $$('.pagin i').forEach((i,ix)=>i.classList.toggle('on',ix<=n)); break;
+    }
+    case 'onb-done': {
+      S.profiles.lui.name=$('#onb-lui').value.trim()||'Lui';
+      S.profiles.elle.name=$('#onb-elle').value.trim()||'Elle';
+      await kvSet('profiles',S.profiles);
+      const cityName=$('#onb-city').value.trim();
+      $('#onb-city-hint').textContent='Un instant…';
+      if(cityName){const g=await geocode(cityName).catch(()=>null); if(g){S.city=g; await kvSet('city',g)}}
+      await kvSet('onboarded',true);
+      $('#onb').classList.remove('on');
+      S.weather=await fetchWeather();
+      switchView('closet'); await regenerate();
+      break;
+    }
+  }
+});
+// inputs texte du formulaire + recherche
+document.addEventListener('input', e=>{
+  const el=e.target.closest('[data-action]'); if(!el)return;
+  const a=el.dataset.action;
+  if(a==='d-name')S.draft.name=el.value;
+  if(a==='d-brand')S.draft.brand=el.value;
+  if(a==='d-price')S.draft.price=el.value.replace(',','.');
+  if(a==='search'){S.search=el.value; clearTimeout(S._st); S._st=setTimeout(()=>{const f=document.activeElement===el; renderCloset(); if(f){const n=$('[data-action="search"]');n.focus();n.setSelectionRange(n.value.length,n.value.length)}},250)}
+});
+$('#fcam').addEventListener('change', e=>{handlePhoto(e.target.files[0]); e.target.value=''});
+$('#flib').addEventListener('change', async e=>{
+  const f=e.target.files[0]; e.target.value='';
+  if(!f)return;
+  if(photoTarget==='profile'){
+    const {thumb}=await processPhoto(f);
+    S.profiles[S.profile].photo=thumb; await kvSet('profiles',S.profiles);
+    S.urls.delete('prof-'+S.profile); renderProfile(); toast('Jolie photo.');
+  }else handlePhoto(f);
+});
+$('#fimport').addEventListener('change', e=>{if(e.target.files[0])doImport(e.target.files[0]); e.target.value=''});
+$$('nav .tab').forEach(t=>t.addEventListener('click',()=>switchView(t.dataset.v)));
+$$('#pswitch button').forEach(b=>b.addEventListener('click',async ()=>{
+  if(S.profile===b.dataset.p)return;
+  S.profile=b.dataset.p; S.locks={}; S.catFilter='all'; S.lastGen=null;
+  await kvSet('activeProfile',S.profile);
+  render();
+  if(S.view==='today')await regenerate();
+}));
+
+/* =====================================================
+   BOOT
+   ===================================================== */
+(async function boot(){
+  try{
+    db=await idb();
+    navigator.storage?.persist?.().catch(()=>{});
+    S.items=await dbAll('items')||[];
+    S.looks=await dbAll('looks')||[];
+    const profs=await kvGet('profiles'); if(profs)S.profiles=profs;
+    S.city=await kvGet('city')||null;
+    S.profile=await kvGet('activeProfile')||'lui';
+    const onboarded=await kvGet('onboarded');
+    updateSwitch();
+    if(!onboarded){
+      $('#onb').classList.add('on');
+      $('.onbpage[data-page="0"]').classList.add('on');
+    }else{
+      const h=location.hash.slice(1);
+      switchView(['today','closet','looks','profile'].includes(h)?h:'today');
+      S.weather=await fetchWeather();
+      if(S.view==='today')await regenerate();
+    }
+    if('serviceWorker' in navigator && isSecureContext && location.protocol!=='file:')
+      navigator.serviceWorker.register('./sw.js').catch(()=>{});
+  }catch(err){
+    document.body.innerHTML=`<div style="padding:40px;font-family:system-ui"><b>Penderie n’a pas pu démarrer.</b><br><small>${esc(err?.message||err)}</small></div>`;
+  }
+})();
+window.addEventListener('resize',updateSwitch);
+</script>
+</body>
+</html>

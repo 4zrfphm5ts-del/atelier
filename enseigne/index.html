@@ -194,7 +194,7 @@ nav.masquee{transform:translateY(-100%)}
 
 /* ===== PROCESS ===== */
 .process{background:var(--encre);color:var(--papier)}
-.process .kicker{color:var(--terra)}
+.process .kicker{color:#D9713F}  /* var(--terra) sur --encre ne donnait que 3,35:1 ; 4,81:1 ici */
 .process .lead{color:rgba(250,245,236,.65)}
 .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:2rem;margin-top:3rem}
 .step h3{font-size:1.25rem;margin:.8rem 0 .5rem;font-weight:600}
@@ -236,11 +236,18 @@ nav.masquee{transform:translateY(-100%)}
 .devis{background:var(--terra);color:var(--creme);border-top:2px solid var(--encre);border-bottom:2px solid var(--encre)}
 .devis .kicker{color:var(--creme);opacity:.85}
 .devis h2{font-size:var(--fs-h2);max-width:16em}
-.devis .lead{color:rgba(255,249,240,.85)}
+/* ⚠️ MARGE DE 0,0035 SUR LE SEUIL, ET C'EST LE PLAFOND ATTEIGNABLE.
+   La creme PURE sur --terra vaut exactement 4,503524:1 pour un seuil AA de 4,5. On ne
+   peut pas faire mieux sans toucher au fond : la creme est deja la couleur la plus claire
+   de la charte. Consequence a retenir avant d'ajuster --terra, meme de peu : les trois
+   regles ci-dessous basculent SOUS le seuil au premier assombrissement.
+   Et verifier AVANT arrondi, jamais apres — a deux decimales cette valeur s'affiche
+   « 4,50 » et se confond avec un echec arrondi vers le haut. */
+.devis .lead{color:var(--creme)}  /* etait creme a 85 % = 3,71:1 */
 .devis .btn{background:var(--creme);color:var(--encre)}
 .devis-row{display:flex;gap:1.5rem;align-items:center;flex-wrap:wrap;margin-top:2rem}
 .devis .mail{font-weight:600;color:var(--creme);text-decoration:underline;text-underline-offset:4px}
-.devis .note{margin-top:1.2rem;font-size:.85rem;color:rgba(255,249,240,.8)}
+.devis .note{margin-top:1.2rem;font-size:.85rem;color:var(--creme)}  /* etait 3,45:1 ; voir l'avertissement ci-dessus */
 
 /* ===== FOOTER ===== */
 footer{padding:2.8rem 0;background:var(--encre);color:rgba(250,245,236,.75)}
@@ -681,6 +688,7 @@ footer .elan a{text-decoration:none;border-bottom:1px solid var(--terra)}
 </footer>
 
 <script>
+
 /* 61 blocs de contenu sont en opacity:0 et n'apparaissent que révélés par
    IntersectionObserver, plus bas dans ce script. Si l'observateur manque ou
    qu'une erreur survient avant d'y arriver, la page reste vide — le visiteur
@@ -689,7 +697,6 @@ function toutReveler(){
   try{ document.querySelectorAll('.rv').forEach(el=>el.classList.add('in')); }catch(e){}
 }
 addEventListener('error', toutReveler);
-
 const nav=document.getElementById('nav'),progress=document.getElementById('progress');
 const burger=document.getElementById('burger'),links=document.getElementById('navlinks');
 const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
