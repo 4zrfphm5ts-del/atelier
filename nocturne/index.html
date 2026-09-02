@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#0a1017">
+<meta name="color-scheme" content="dark">
+<title>Nocturne — Remote</title>
+<meta name="description" content="Nocturne — télécommande des lumières : blanc, couleur, effets et modes, applicables à toute la maison ou à une seule pièce.">
+<meta name="robots" content="noindex, nofollow">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Nocturne">
+<style>
+  :root{
+    --bg:#0a1017; --bg2:#0e161f; --panel:#111a24; --panel2:#16202b;
+    --line:rgba(255,255,255,.07); --line2:rgba(255,255,255,.13);
+    --ink:#e8eef4; --mut:#6f8194; --acc:#5eead4; --acc-dim:rgba(94,234,212,.16);
+    --danger:#f87171;
+    --rayon:18px;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
+  html,body{margin:0; min-height:100%}
+  body{
+    font-family:ui-rounded,'SF Pro Rounded','Segoe UI',system-ui,sans-serif;
+    background:
+      radial-gradient(120% 80% at 50% -20%, #14202c 0%, var(--bg2) 45%, var(--bg) 100%) fixed;
+    color:var(--ink);
+    -webkit-user-select:none; user-select:none;
+    padding:0 0 108px;
+  }
+  .page{max-width:720px; margin:0 auto; padding:0 16px}
+
+  /* ---------- en-tête ---------- */
+  header{padding:22px 0 12px}
+  h1{margin:0; font-size:1.35rem; font-weight:650; letter-spacing:.01em}
+  header p{margin:4px 0 0; font-size:.82rem; color:var(--mut)}
+
+  /* ---------- titres de section ---------- */
+  .titre{
+    font-size:.72rem; letter-spacing:.22em; text-transform:uppercase;
+    color:var(--mut); margin:26px 0 12px; font-weight:600;
+  }
+  .titre:first-child{margin-top:0}
+
+  /* ---------- portée (toute la maison / pièce / lampe) ---------- */
+  .portee{
+    position:sticky; top:0; z-index:20; margin:0 -16px; padding:10px 16px 12px;
+    background:var(--bg); border-bottom:1px solid var(--line);
+    box-shadow:0 10px 20px -12px rgba(0,0,0,.9);
+  }
+  .rangee{display:flex; gap:8px; overflow-x:auto; scrollbar-width:none; padding:2px 0}
+  .rangee::-webkit-scrollbar{display:none}
+  .chip{
+    flex:0 0 auto; display:inline-flex; align-items:center; gap:8px;
+    border:1px solid var(--line2); background:var(--panel);
+    color:var(--ink); font:inherit; font-size:.9rem; padding:9px 15px;
+    border-radius:999px; cursor:pointer; transition:border-color .15s, background .15s, color .15s;
+  }
+  .chip[aria-pressed="true"]{
+    border-color:var(--acc); color:var(--acc); background:var(--acc-dim);
+  }
+  .chip .pastille{
+    width:20px; height:20px; border-radius:50%; flex:0 0 auto;
+    box-shadow:0 0 12px currentColor;
+  }
+  .chip.mini{font-size:.82rem; padding:7px 13px}
+  .portee .libelle{font-size:.72rem; letter-spacing:.18em; text-transform:uppercase; color:var(--mut); margin:0 0 8px; font-weight:600}
+
+  /* ---------- aperçu des pièces ---------- */
+  .maison{display:grid; grid-template-columns:repeat(auto-fill,minmax(148px,1fr)); gap:10px}
+  .piece{
+    position:relative; overflow:hidden; text-align:left;
+    border:1px solid var(--line); background:var(--panel); color:var(--ink);
+    border-radius:var(--rayon); padding:13px 14px 12px; font:inherit; cursor:pointer;
+    transition:border-color .15s;
+  }
+  .piece[aria-pressed="true"]{border-color:var(--acc)}
+  .piece .halo{
+    position:absolute; inset:auto -30% -60% -30%; height:130px; border-radius:50%;
+    filter:blur(26px); opacity:.55; pointer-events:none; transition:background .25s, opacity .25s;
+  }
+  .piece .nom{position:relative; font-size:.95rem; font-weight:600; display:flex; align-items:center; gap:7px}
+  .piece .etat{position:relative; display:block; margin-top:3px; font-size:.75rem; color:var(--mut)}
+  .piece .pt{
+    position:absolute; top:13px; right:13px; width:9px; height:9px; border-radius:50%;
+    background:#33414f; transition:background .2s, box-shadow .2s;
+  }
+  .piece.allumee .pt{background:var(--acc); box-shadow:0 0 10px var(--acc)}
+
+  /* ---------- carte de réglages ---------- */
+  .carte{border:1px solid var(--line); background:var(--panel); border-radius:22px; padding:16px}
+
+  .ligne{display:flex; align-items:center; gap:14px; min-height:44px}
+  .ligne .etiq{
+    flex:0 0 auto; width:96px; font-size:.72rem; letter-spacing:.16em;
+    text-transform:uppercase; color:var(--mut); font-weight:600;
+  }
+  .ligne .val{flex:0 0 auto; min-width:74px; text-align:right; font-size:1.05rem; font-weight:650; color:var(--acc); font-variant-numeric:tabular-nums}
+  .bornes{display:flex; justify-content:space-between; font-size:.72rem; color:var(--mut); margin:-2px 0 6px; padding:0 110px 0 110px}
+  .bornes.pleine{padding:0}
+
+  /* curseurs */
+  input[type=range]{
+    -webkit-appearance:none; appearance:none; flex:1 1 auto; min-width:0;
+    height:34px; background:transparent; margin:0; cursor:pointer;
+  }
+  input[type=range]::-webkit-slider-runnable-track{height:6px; border-radius:999px; background:var(--piste,#33414f)}
+  input[type=range]::-moz-range-track{height:6px; border-radius:999px; background:var(--piste,#33414f)}
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none; width:26px; height:26px; margin-top:-10px; border-radius:50%;
+    background:#eef4f8; border:3px solid rgba(94,234,212,.85);
+    box-shadow:0 0 0 5px rgba(10,16,23,.75), 0 2px 8px rgba(0,0,0,.5);
+  }
+  input[type=range]::-moz-range-thumb{
+    width:26px; height:26px; border-radius:50%; background:#eef4f8;
+    border:3px solid rgba(94,234,212,.85); box-shadow:0 0 0 5px rgba(10,16,23,.75);
+  }
+  input[type=range]:disabled{opacity:.4; cursor:default}
+
+  /* interrupteur */
+  .interrupteur{display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:6px}
+  .interrupteur .quoi{font-size:1rem; font-weight:600}
+  .interrupteur .quoi small{display:block; font-weight:400; font-size:.76rem; color:var(--mut); margin-top:2px}
+  .bascule{
+    width:60px; height:34px; border-radius:999px; border:1px solid var(--line2);
+    background:#1b2530; position:relative; cursor:pointer; flex:0 0 auto; transition:background .18s, border-color .18s;
+  }
+  .bascule::after{
+    content:''; position:absolute; top:3px; left:3px; width:26px; height:26px; border-radius:50%;
+    background:#8296a8; transition:transform .18s, background .18s;
+  }
+  .bascule[aria-pressed="true"]{background:var(--acc-dim); border-color:var(--acc)}
+  .bascule[aria-pressed="true"]::after{transform:translateX(26px); background:var(--acc); box-shadow:0 0 12px var(--acc)}
+
+  /* grilles de pastilles */
+  .grille{display:flex; flex-wrap:wrap; gap:9px}
+  .grille .chip{flex:0 0 auto}
+
+  /* modes */
+  .modes{display:grid; grid-template-columns:repeat(auto-fill,minmax(152px,1fr)); gap:10px}
+  .mode{
+    position:relative; overflow:hidden; text-align:left; font:inherit; cursor:pointer;
+    border:1px solid var(--line); background:var(--panel); color:var(--ink);
+    border-radius:var(--rayon); padding:13px 14px;
+  }
+  .mode:active{border-color:var(--acc)}
+  .mode .halo{position:absolute; inset:auto -32% -74% -32%; height:120px; border-radius:50%; filter:blur(24px); opacity:.42}
+  .mode .voile{position:absolute; inset:0; background:linear-gradient(180deg, rgba(17,26,36,.72), rgba(17,26,36,.35)); pointer-events:none}
+  .mode .nom{position:relative; display:block; font-size:.95rem; font-weight:600}
+  .mode .desc{position:relative; display:block; margin-top:3px; font-size:.74rem; color:#9fb0c0; line-height:1.32}
+
+  /* barre d'action */
+  .barre{
+    position:fixed; left:0; right:0; bottom:0; z-index:30; padding:12px 16px calc(12px + env(safe-area-inset-bottom));
+    background:linear-gradient(180deg, rgba(10,16,23,0), rgba(10,16,23,.94) 32%);
+    backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+  }
+  .barre .dedans{max-width:720px; margin:0 auto; display:flex; gap:10px}
+  .btn{
+    flex:1 1 auto; font:inherit; font-size:.95rem; font-weight:600; padding:14px 16px;
+    border-radius:16px; border:1px solid var(--acc); background:var(--acc-dim); color:var(--acc); cursor:pointer;
+  }
+  .btn.secondaire{flex:0 0 auto; border-color:var(--line2); background:var(--panel); color:var(--mut)}
+  .btn:active{filter:brightness(1.25)}
+
+  /* journal du pont */
+  details.journal{border:1px solid var(--line); background:var(--panel); border-radius:var(--rayon); padding:12px 14px; margin-top:12px}
+  details.journal summary{cursor:pointer; font-size:.82rem; color:var(--mut); font-weight:600}
+  details.journal ol{margin:10px 0 0; padding:0 0 0 18px; font-size:.76rem; color:var(--mut); line-height:1.6; max-height:190px; overflow:auto}
+  details.journal code{color:var(--acc); font-size:.74rem}
+
+  /* toast */
+  .toast{
+    position:fixed; left:50%; bottom:96px; transform:translate(-50%,14px); z-index:40;
+    background:#16202b; border:1px solid var(--acc); color:var(--acc);
+    padding:11px 18px; border-radius:999px; font-size:.86rem; font-weight:600;
+    opacity:0; pointer-events:none; transition:opacity .2s, transform .2s; white-space:nowrap;
+    max-width:calc(100vw - 32px); overflow:hidden; text-overflow:ellipsis;
+  }
+  .toast.vu{opacity:1; transform:translate(-50%,0)}
+
+  /* ---------- effets animés (aperçu) ---------- */
+  .fx-bougie{animation:fxBougie 3.1s ease-in-out infinite}
+  .fx-flamme{animation:fxFlamme 1.4s ease-in-out infinite}
+  .fx-prisme{animation:fxPrisme 9s linear infinite}
+  .fx-etincelles{animation:fxEtincelles 1.7s steps(2,end) infinite}
+  .fx-opale{animation:fxOpale 6s ease-in-out infinite}
+  .fx-scintillement{animation:fxScintillement .9s ease-in-out infinite}
+  .fx-sous-leau{animation:fxSousLeau 7s ease-in-out infinite}
+  .fx-cosmos{animation:fxCosmos 12s ease-in-out infinite}
+  .fx-rayon{animation:fxRayon 5s ease-in-out infinite}
+  .fx-enchantement{animation:fxEnchantement 8s linear infinite}
+  @keyframes fxBougie{0%,100%{opacity:.5}42%{opacity:.34}68%{opacity:.6}}
+  @keyframes fxFlamme{0%,100%{opacity:.58; transform:scale(1)}30%{opacity:.3; transform:scale(.94)}62%{opacity:.66; transform:scale(1.05)}}
+  @keyframes fxPrisme{from{filter:blur(26px) hue-rotate(0deg)}to{filter:blur(26px) hue-rotate(360deg)}}
+  @keyframes fxEtincelles{0%,100%{opacity:.55}50%{opacity:.2}}
+  @keyframes fxOpale{0%,100%{opacity:.36; filter:blur(30px)}50%{opacity:.62; filter:blur(20px)}}
+  @keyframes fxScintillement{0%,100%{opacity:.62}50%{opacity:.28}}
+  @keyframes fxSousLeau{0%,100%{transform:translateX(-6%) scale(1)}50%{transform:translateX(6%) scale(1.08)}}
+  @keyframes fxCosmos{0%,100%{opacity:.4; filter:blur(30px) hue-rotate(-14deg)}50%{opacity:.6; filter:blur(22px) hue-rotate(14deg)}}
+  @keyframes fxRayon{0%,100%{opacity:.42}50%{opacity:.68}}
+  @keyframes fxEnchantement{from{filter:blur(24px) hue-rotate(-30deg)}to{filter:blur(24px) hue-rotate(330deg)}}
+  @media (prefers-reduced-motion:reduce){
+    .piece .halo,.mode .halo{animation:none !important}
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header>
+    <h1>Nocturne <span style="color:var(--mut); font-weight:400">· Remote</span></h1>
+    <p>Blanc, couleur, effets et modes — pour toute la maison ou une seule pièce.</p>
+  </header>
+
+  <!-- PORTÉE : c'est elle qui décide ce que touchent tous les réglages ci-dessous -->
+  <div class="portee">
+    <p class="libelle">Portée</p>
+    <div class="rangee" id="pieces-portee"></div>
+    <div class="rangee" id="lampes-portee" style="margin-top:8px"></div>
+  </div>
+
+  <p class="titre">La maison</p>
+  <div class="maison" id="maison"></div>
+
+  <p class="titre" id="titre-reglages">Réglages</p>
+  <div class="carte">
+
+    <div class="interrupteur">
+      <div class="quoi">Allumé<small id="sous-interrupteur">—</small></div>
+      <button class="bascule" id="power" aria-pressed="false" aria-label="Allumer ou éteindre"></button>
+    </div>
+
+    <div class="ligne">
+      <span class="etiq">Intensité</span>
+      <input type="range" id="bri" min="1" max="100" step="1" aria-label="Intensité">
+      <span class="val" id="bri-val">—</span>
+    </div>
+
+    <p class="titre">Blanc</p>
+    <div class="ligne">
+      <span class="etiq" style="width:0"></span>
+      <input type="range" id="kelvin" min="0" max="100" step="1" aria-label="Température de blanc">
+      <span class="val" id="kelvin-val">—</span>
+    </div>
+    <div class="bornes" style="padding:0 88px 0 14px"><span>6500 K</span><span>2000 K</span></div>
+
+    <p class="titre">Couleur</p>
+    <div class="ligne">
+      <span class="etiq">Teinte</span>
+      <input type="range" id="hue" min="0" max="360" step="1" aria-label="Teinte">
+      <span class="val" id="hue-val">—</span>
+    </div>
+    <div class="ligne">
+      <span class="etiq">Saturation</span>
+      <input type="range" id="sat" min="0" max="100" step="1" aria-label="Saturation">
+      <span class="val" id="sat-val">—</span>
+    </div>
+    <div class="grille" id="presets" style="margin-top:14px"></div>
+
+    <p class="titre">Effets</p>
+    <div class="grille" id="effets"></div>
+  </div>
+
+  <p class="titre">Modes</p>
+  <div class="modes" id="modes"></div>
+
+  <details class="journal">
+    <summary>Journal du pont — dernières commandes envoyées</summary>
+    <ol id="journal"></ol>
+  </details>
+
+</div>
+
+<div class="barre">
+  <div class="dedans">
+    <button class="btn" id="appliquer-tout">Appliquer à toute la maison</button>
+    <button class="btn secondaire" id="tout-eteindre">Tout éteindre</button>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(() => {
+'use strict';
+
+/* =========================================================================
+   1. LE FOYER — pièces et lampes
+   Une seule liste à éditer pour refléter votre installation : chaque lampe
+   reçoit ensuite exactement les mêmes options (blanc, couleur, effets, modes).
+   ========================================================================= */
+const PIECES = [
+  { id:'salon',      nom:'Salon',       emoji:'🛋️', lampes:['Lampadaire','Guirlande','Plafonnier'] },
+  { id:'chambre',    nom:'Chambre',     emoji:'🛏️', lampes:['Chevet gauche','Chevet droit','Plafonnier'] },
+  { id:'cuisine',    nom:'Cuisine',     emoji:'🍳', lampes:['Plan de travail','Suspension'] },
+  { id:'sdb',        nom:'Salle de bain', emoji:'🛁', lampes:['Miroir','Plafonnier'] },
+  { id:'bureau',     nom:'Bureau',      emoji:'💻', lampes:['Lampe de bureau','Rétroéclairage'] },
+  { id:'entree',     nom:'Entrée',      emoji:'🚪', lampes:['Applique'] },
+  { id:'exterieur',  nom:'Extérieur',   emoji:'🌿', lampes:['Terrasse','Façade'] },
+];
+
+/* Presets de couleur — ceux de la section Couleur */
+const PRESETS = [
+  { id:'bougie',   nom:'Bougie',            h:28,  s:90 },
+  { id:'ambre',    nom:'Ambre',             h:42,  s:87 },
+  { id:'coucher',  nom:'Coucher de soleil', h:14,  s:83 },
+  { id:'rose',     nom:'Rose',              h:340, s:75 },
+  { id:'violet',   nom:'Violet',            h:275, s:89 },
+  { id:'bleunuit', nom:'Bleu nuit',         h:240, s:82 },
+  { id:'glacier',  nom:'Glacier',           h:200, s:30 },
+  { id:'foret',    nom:'Forêt',             h:134, s:68 },
+];
+
+/* Effets — « aucun » compris, comme dans la section Effets */
+const EFFETS = [
+  { id:'bougie',        nom:'Bougie',          fx:'fx-bougie' },
+  { id:'flamme',        nom:'Flamme',          fx:'fx-flamme' },
+  { id:'prisme',        nom:'Prisme',          fx:'fx-prisme' },
+  { id:'etincelles',    nom:'Étincelles',      fx:'fx-etincelles' },
+  { id:'opale',         nom:'Opale',           fx:'fx-opale' },
+  { id:'scintillement', nom:'Scintillement',   fx:'fx-scintillement' },
+  { id:'sousleau',      nom:"Sous l'eau",      fx:'fx-sous-leau' },
+  { id:'cosmos',        nom:'Cosmos',          fx:'fx-cosmos' },
+  { id:'rayon',         nom:'Rayon de soleil', fx:'fx-rayon' },
+  { id:'enchantement',  nom:'Enchantement',    fx:'fx-enchantement' },
+  { id:'aucun',         nom:'Aucun',           fx:'' },
+];
+
+/* Modes — un mode est un réglage complet, applicable à tout ou à une pièce.
+   teinte + saturation pour la couleur, kelvin pour le blanc. */
+const MODES = [
+  { id:'reveil',      nom:'Réveil',       desc:'Blanc doux qui réveille sans agresser', on:true, mode:'blanc',   bri:70,  k:3400 },
+  { id:'journee',     nom:'Journée',      desc:'Lumière du jour, franche',              on:true, mode:'blanc',   bri:95,  k:6000 },
+  { id:'concentration',nom:'Concentration',desc:'Blanc froid pour travailler',          on:true, mode:'blanc',   bri:100, k:5500 },
+  { id:'lecture',     nom:'Lecture',      desc:'Blanc neutre, confortable',             on:true, mode:'blanc',   bri:85,  k:4000 },
+  { id:'detente',     nom:'Détente',      desc:'Blanc très chaud, en retrait',          on:true, mode:'blanc',   bri:45,  k:2300 },
+  { id:'diner',      nom:'Dîner',        desc:'Ambre tamisé au-dessus de la table',    on:true, mode:'couleur', bri:55,  h:34,  s:58 },
+  { id:'cheminee',    nom:'Cheminée',     desc:'Braises et flamme qui bouge',           on:true, mode:'couleur', bri:40,  h:20,  s:88, effet:'flamme' },
+  { id:'cinema',      nom:'Cinéma',       desc:'Bleu profond, quasi éteint',            on:true, mode:'couleur', bri:22,  h:250, s:72 },
+  { id:'soiree',      nom:'Soirée',       desc:'Violet vif et scintillant',             on:true, mode:'couleur', bri:80,  h:300, s:92, effet:'scintillement' },
+  { id:'coucher',     nom:'Coucher de soleil', desc:'Orange rasant, chaleur de fin de jour', on:true, mode:'couleur', bri:60, h:14, s:88, effet:'rayon' },
+  { id:'aurore',      nom:'Aurore',       desc:'Vert-bleu mouvant',                     on:true, mode:'couleur', bri:50,  h:160, s:72, effet:'enchantement' },
+  { id:'lagon',       nom:'Lagon',        desc:'Turquoise et ondulations',              on:true, mode:'couleur', bri:45,  h:190, s:76, effet:'sousleau' },
+  { id:'cosmos',      nom:'Cosmos',       desc:'Violet lointain qui dérive',            on:true, mode:'couleur', bri:35,  h:265, s:82, effet:'cosmos' },
+  { id:'veilleuse',   nom:'Veilleuse',    desc:'Ambre minuscule pour la nuit',          on:true, mode:'couleur', bri:6,   h:25,  s:92 },
+  { id:'nuit',        nom:'Nuit',         desc:'Tout s’éteint',                         on:false },
+];
+
+/* =========================================================================
+   2. COULEURS — utilitaires d'affichage
+   ========================================================================= */
+
+/* Kelvin → RGB (approximation de Tanner Helland), pour peindre les aperçus */
+function kelvinRgb(k){
+  const t = k / 100;
+  let r, v, b;
+  if (t <= 66){
+    r = 255;
+    v = 99.4708025861 * Math.log(t) - 161.1195681661;
+    b = t <= 19 ? 0 : 138.5177312231 * Math.log(t - 10) - 305.0447927307;
+  } else {
+    r = 329.698727446 * Math.pow(t - 60, -0.1332047592);
+    v = 288.1221695283 * Math.pow(t - 60, -0.0755148492);
+    b = 255;
+  }
+  const borne = x => Math.max(0, Math.min(255, Math.round(x || 0)));
+  return [borne(r), borne(v), borne(b)];
+}
+const kelvinCss = k => { const [r,v,b] = kelvinRgb(k); return 'rgb(' + r + ',' + v + ',' + b + ')'; };
+const hsCss = (h, s, l) => 'hsl(' + h + ' ' + s + '% ' + (l === undefined ? 55 : l) + '%)';
+
+/* Couleur visible d'une lampe, selon qu'elle est en blanc ou en couleur */
+function couleurLampe(l){
+  return l.mode === 'blanc' ? kelvinCss(l.k) : hsCss(l.h, l.s);
+}
+
+/* =========================================================================
+   3. ÉTAT — une entrée par lampe, mêmes champs partout
+   ========================================================================= */
+const CLE = 'nocturne.remote.v1';
+const LAMPES = [];  // { id, nom, piece }
+PIECES.forEach(p => p.lampes.forEach((nom, i) => LAMPES.push({ id: p.id + ':' + i, nom, piece: p.id })));
+
+const parDefaut = () => ({ on:false, bri:70, mode:'blanc', k:2700, h:28, s:90, effet:'aucun' });
+
+let etat = { lampes:{}, portee:{ type:'tout' } };
+LAMPES.forEach(l => etat.lampes[l.id] = parDefaut());
+
+try {
+  const brut = localStorage.getItem(CLE);
+  if (brut){
+    const sauve = JSON.parse(brut);
+    LAMPES.forEach(l => {
+      if (sauve.lampes && sauve.lampes[l.id]) etat.lampes[l.id] = Object.assign(parDefaut(), sauve.lampes[l.id]);
+    });
+    if (sauve.portee) etat.portee = sauve.portee;
+  }
+} catch(e){ /* stockage indisponible : on repart des valeurs par défaut */ }
+
+function sauver(){
+  try { localStorage.setItem(CLE, JSON.stringify(etat)); } catch(e){}
+}
+
+/* =========================================================================
+   4. PORTÉE — quelles lampes reçoivent les réglages
+   { type:'tout' } | { type:'piece', piece } | { type:'lampe', piece, lampe }
+   ========================================================================= */
+function ciblees(){
+  const p = etat.portee;
+  if (p.type === 'lampe') return LAMPES.filter(l => l.id === p.lampe);
+  if (p.type === 'piece') return LAMPES.filter(l => l.piece === p.piece);
+  return LAMPES.slice();
+}
+
+function nomPortee(){
+  const p = etat.portee;
+  if (p.type === 'lampe'){
+    const l = LAMPES.find(x => x.id === p.lampe);
+    const piece = PIECES.find(x => x.id === p.piece);
+    return l ? (piece.nom + ' · ' + l.nom) : 'toute la maison';
+  }
+  if (p.type === 'piece'){
+    const piece = PIECES.find(x => x.id === p.piece);
+    return piece ? piece.nom : 'toute la maison';
+  }
+  return 'toute la maison';
+}
+
+/* Valeur de référence des lampes ciblées : celle de la première */
+function commun(champ){
+  const c = ciblees();
+  if (!c.length) return parDefaut()[champ];
+  return etat.lampes[c[0].id][champ];
+}
+const auMoinsUneAllumee = () => ciblees().some(l => etat.lampes[l.id].on);
+
+/* =========================================================================
+   5. APPLIQUER — le seul chemin d'écriture
+   patch : les champs à changer ; cible : les lampes (par défaut, la portée)
+   ========================================================================= */
+function appliquer(patch, cible, message){
+  const lampes = cible || ciblees();
+  lampes.forEach(l => Object.assign(etat.lampes[l.id], patch));
+  sauver();
+  envoyerAuPont(lampes, patch);
+  rendre();
+  if (message) toast(message);
+}
+
+/* Sortie vers l'installation réelle. Rien n'est envoyé sur le réseau ici :
+   on émet un évènement que le pont (Hue, Home Assistant, MQTT…) peut écouter.
+       document.addEventListener('nocturne:commande', e => envoyer(e.detail));  */
+const JOURNAL = [];
+
+/* Décrit les lampes réellement touchées, qui ne sont pas toujours la portée
+   affichée (« Appliquer à toute la maison » vise tout depuis n'importe où). */
+function decrire(lampes){
+  if (lampes.length === LAMPES.length) return 'toute la maison';
+  const pieces = [...new Set(lampes.map(l => l.piece))];
+  if (pieces.length !== 1) return lampes.length + ' lampes';
+  const nomPiece = PIECES.find(p => p.id === pieces[0]).nom;
+  const toutes = LAMPES.filter(l => l.piece === pieces[0]).length === lampes.length;
+  return toutes ? nomPiece : nomPiece + ' · ' + lampes[0].nom;
+}
+
+function envoyerAuPont(lampes, patch){
+  const commande = {
+    horodatage: new Date().toISOString(),
+    portee: decrire(lampes),
+    lampes: lampes.map(l => l.id),
+    reglages: patch,
+  };
+  JOURNAL.unshift(commande);
+  JOURNAL.length = Math.min(JOURNAL.length, 40);
+  document.dispatchEvent(new CustomEvent('nocturne:commande', { detail: commande }));
+  rendreJournal();
+}
+
+/* =========================================================================
+   6. AFFICHAGE
+   ========================================================================= */
+const $ = s => document.querySelector(s);
+const els = {
+  piecesPortee:$('#pieces-portee'), lampesPortee:$('#lampes-portee'), maison:$('#maison'),
+  titreReglages:$('#titre-reglages'), sousInter:$('#sous-interrupteur'), power:$('#power'),
+  bri:$('#bri'), briVal:$('#bri-val'), kelvin:$('#kelvin'), kelvinVal:$('#kelvin-val'),
+  hue:$('#hue'), hueVal:$('#hue-val'), sat:$('#sat'), satVal:$('#sat-val'),
+  presets:$('#presets'), effets:$('#effets'), modes:$('#modes'),
+  journal:$('#journal'), toast:$('#toast'), appliquerTout:$('#appliquer-tout'), toutEteindre:$('#tout-eteindre'),
+};
+
+/* Le curseur de blanc va de 6500 K (gauche, froid) à 2000 K (droite, chaud),
+   comme sur la télécommande : sa position 0→100 est donc inversée. */
+const K_MAX = 6500, K_MIN = 2000;
+const posVersK = pos => Math.round((K_MAX - (K_MAX - K_MIN) * pos / 100) / 50) * 50;
+const kVersPos = k => (K_MAX - k) * 100 / (K_MAX - K_MIN);
+
+/* Remplissage coloré d'une piste de curseur */
+function piste(el, degrade){
+  el.style.setProperty('--piste', 'linear-gradient(90deg, ' + degrade + ')');
+}
+
+function classeFx(idEffet){
+  const e = EFFETS.find(x => x.id === idEffet);
+  return e ? e.fx : '';
+}
+
+function rendrePortee(){
+  const p = etat.portee;
+  els.piecesPortee.innerHTML =
+    '<button class="chip" data-portee="tout" aria-pressed="' + (p.type === 'tout') + '">🏠 Toute la maison</button>' +
+    PIECES.map(pi => {
+      const actif = p.type !== 'tout' && p.piece === pi.id;
+      return '<button class="chip" data-portee="piece" data-piece="' + pi.id + '" aria-pressed="' + actif + '">' +
+             pi.emoji + ' ' + pi.nom + '</button>';
+    }).join('');
+
+  if (p.type === 'tout'){
+    els.lampesPortee.innerHTML = '';
+    els.lampesPortee.style.display = 'none';
+  } else {
+    const piece = PIECES.find(x => x.id === p.piece);
+    els.lampesPortee.style.display = '';
+    els.lampesPortee.innerHTML =
+      '<button class="chip mini" data-portee="piece" data-piece="' + piece.id + '" aria-pressed="' + (p.type === 'piece') + '">Toutes les lampes</button>' +
+      LAMPES.filter(l => l.piece === piece.id).map(l =>
+        '<button class="chip mini" data-portee="lampe" data-piece="' + piece.id + '" data-lampe="' + l.id + '" ' +
+        'aria-pressed="' + (p.type === 'lampe' && p.lampe === l.id) + '">' + l.nom + '</button>'
+      ).join('');
+  }
+}
+
+function rendreMaison(){
+  els.maison.innerHTML = PIECES.map(pi => {
+    const lampes = LAMPES.filter(l => l.piece === pi.id).map(l => etat.lampes[l.id]);
+    const allumees = lampes.filter(l => l.on);
+    const vive = allumees[0] || lampes[0];
+    const bri = allumees.length ? allumees.reduce((s,l) => s + l.bri, 0) / allumees.length : 0;
+    const effet = allumees.length ? allumees[0].effet : 'aucun';
+    const nomEffet = (EFFETS.find(e => e.id === effet) || {}).nom;
+    const actif = etat.portee.type !== 'tout' && etat.portee.piece === pi.id;
+    const detail = allumees.length
+      ? Math.round(bri) + ' % · ' + (effet === 'aucun'
+          ? (vive.mode === 'blanc' ? vive.k + ' K' : 'teinte ' + vive.h + '°')
+          : nomEffet)
+      : 'éteinte';
+    return '<button class="piece' + (allumees.length ? ' allumee' : '') + '" data-portee="piece" data-piece="' + pi.id + '" aria-pressed="' + actif + '">' +
+      '<span class="halo ' + (allumees.length ? classeFx(effet) : '') + '" style="background:' +
+        (allumees.length ? couleurLampe(vive) : 'transparent') + '; opacity:' + (allumees.length ? (0.25 + bri / 220) : 0) + '"></span>' +
+      '<span class="pt"></span>' +
+      '<span class="nom">' + pi.emoji + ' ' + pi.nom + '</span>' +
+      '<span class="etat">' + lampes.length + ' lampe' + (lampes.length > 1 ? 's' : '') + ' · ' + detail + '</span>' +
+    '</button>';
+  }).join('');
+}
+
+function rendreReglages(){
+  const on = auMoinsUneAllumee();
+  const bri = commun('bri'), k = commun('k'), h = commun('h'), s = commun('s');
+  const mode = commun('mode'), effet = commun('effet');
+  const nb = ciblees().length;
+
+  els.titreReglages.textContent = 'Réglages · ' + nomPortee();
+  els.sousInter.textContent = nomPortee() + ' · ' + nb + ' lampe' + (nb > 1 ? 's' : '');
+  els.power.setAttribute('aria-pressed', String(on));
+
+  const teinte = mode === 'blanc' ? kelvinCss(k) : hsCss(h, s);
+  els.bri.value = bri;  els.briVal.textContent = bri + ' %';
+  piste(els.bri, '#1b2530, ' + teinte);
+
+  els.kelvin.value = kVersPos(k);  els.kelvinVal.textContent = k + ' K';
+  piste(els.kelvin, kelvinCss(6500) + ', ' + kelvinCss(4600) + ', ' + kelvinCss(3200) + ', ' + kelvinCss(2000));
+
+  els.hue.value = h;  els.hueVal.textContent = h + '°';
+  piste(els.hue, 'hsl(0 85% 55%), hsl(60 85% 55%), hsl(120 85% 55%), hsl(180 85% 55%), hsl(240 85% 55%), hsl(300 85% 55%), hsl(360 85% 55%)');
+
+  els.sat.value = s;  els.satVal.textContent = s + ' %';
+  piste(els.sat, hsCss(h, 0, 45) + ', ' + hsCss(h, 100));
+
+  els.presets.innerHTML = PRESETS.map(p => {
+    const actif = mode === 'couleur' && h === p.h && s === p.s;
+    return '<button class="chip" data-preset="' + p.id + '" aria-pressed="' + actif + '">' +
+      '<span class="pastille" style="background:' + hsCss(p.h, p.s) + '; color:' + hsCss(p.h, p.s) + '"></span>' + p.nom + '</button>';
+  }).join('');
+
+  els.effets.innerHTML = EFFETS.map(e =>
+    '<button class="chip" data-effet="' + e.id + '" aria-pressed="' + (effet === e.id) + '">' + e.nom + '</button>'
+  ).join('');
+}
+
+function rendreModes(){
+  els.modes.innerHTML = MODES.map(m => {
+    const couleur = m.on === false ? 'transparent'
+      : (m.mode === 'blanc' ? kelvinCss(m.k) : hsCss(m.h, m.s));
+    return '<button class="mode" data-mode="' + m.id + '">' +
+      '<span class="halo ' + classeFx(m.effet || 'aucun') + '" style="background:' + couleur + '"></span>' +
+      '<span class="voile"></span>' +
+      '<span class="nom">' + m.nom + '</span>' +
+      '<span class="desc">' + m.desc + '</span>' +
+    '</button>';
+  }).join('');
+}
+
+function rendreJournal(){
+  els.journal.innerHTML = JOURNAL.map(c =>
+    '<li>' + c.horodatage.slice(11, 19) + ' — <b>' + c.portee + '</b> (' + c.lampes.length + ') ' +
+    '<code>' + JSON.stringify(c.reglages) + '</code></li>'
+  ).join('') || '<li>Aucune commande pour l’instant.</li>';
+}
+
+function rendre(){ rendrePortee(); rendreMaison(); rendreReglages(); rendreModes(); }
+
+let minuteurToast;
+function toast(texte){
+  els.toast.textContent = texte;
+  els.toast.classList.add('vu');
+  clearTimeout(minuteurToast);
+  minuteurToast = setTimeout(() => els.toast.classList.remove('vu'), 1900);
+}
+
+/* =========================================================================
+   7. INTERACTIONS
+   ========================================================================= */
+
+/* Écriture sans envoi au pont — pendant qu'un curseur glisse */
+function majEtat(patch){
+  ciblees().forEach(l => Object.assign(etat.lampes[l.id], patch));
+  sauver();
+  rendre();
+}
+
+/* Un curseur : maj continue pendant le glissement, envoi au pont au relâchement */
+function brancherCurseur(el, patchDepuisValeur){
+  let dernier = null;
+  el.addEventListener('input', () => { dernier = patchDepuisValeur(+el.value); majEtat(dernier); });
+  el.addEventListener('change', () => {
+    if (!dernier) dernier = patchDepuisValeur(+el.value);
+    envoyerAuPont(ciblees(), dernier);
+    dernier = null;
+  });
+}
+
+brancherCurseur(els.bri,    v => ({ bri:v, on:true }));
+brancherCurseur(els.kelvin, v => ({ k:posVersK(v), mode:'blanc', on:true }));
+brancherCurseur(els.hue,    v => ({ h:v, mode:'couleur', on:true }));
+brancherCurseur(els.sat,    v => ({ s:v, mode:'couleur', on:true }));
+
+/* Interrupteur de la portée courante */
+els.power.addEventListener('click', () => {
+  const allumer = !auMoinsUneAllumee();
+  appliquer({ on:allumer }, null, (allumer ? 'Allumé' : 'Éteint') + ' — ' + nomPortee());
+});
+
+/* Clics délégués : portée, presets, effets, modes */
+document.addEventListener('click', ev => {
+  const cible = ev.target.closest('[data-portee], [data-preset], [data-effet], [data-mode]');
+  if (!cible) return;
+
+  if (cible.dataset.portee){
+    const t = cible.dataset.portee;
+    etat.portee = t === 'tout' ? { type:'tout' }
+                : t === 'piece' ? { type:'piece', piece:cible.dataset.piece }
+                : { type:'lampe', piece:cible.dataset.piece, lampe:cible.dataset.lampe };
+    sauver(); rendre();
+    return;
+  }
+
+  if (cible.dataset.preset){
+    const p = PRESETS.find(x => x.id === cible.dataset.preset);
+    appliquer({ mode:'couleur', h:p.h, s:p.s, on:true }, null, p.nom + ' — ' + nomPortee());
+    return;
+  }
+
+  if (cible.dataset.effet){
+    const e = EFFETS.find(x => x.id === cible.dataset.effet);
+    appliquer(e.id === 'aucun' ? { effet:'aucun' } : { effet:e.id, on:true },
+              null, (e.id === 'aucun' ? 'Sans effet' : e.nom) + ' — ' + nomPortee());
+    return;
+  }
+
+  if (cible.dataset.mode){
+    const m = MODES.find(x => x.id === cible.dataset.mode);
+    appliquer(patchDuMode(m), null, m.nom + ' — ' + nomPortee());
+  }
+});
+
+/* Un mode ne touche que les champs qu'il définit */
+function patchDuMode(m){
+  if (m.on === false) return { on:false };
+  const patch = { on:true, bri:m.bri, mode:m.mode, effet:m.effet || 'aucun' };
+  if (m.mode === 'blanc') patch.k = m.k; else { patch.h = m.h; patch.s = m.s; }
+  return patch;
+}
+
+/* Étendre le réglage affiché à toute la maison, quelle que soit la portée */
+els.appliquerTout.addEventListener('click', () => {
+  const courant = {
+    on:auMoinsUneAllumee(), bri:commun('bri'), mode:commun('mode'),
+    k:commun('k'), h:commun('h'), s:commun('s'), effet:commun('effet'),
+  };
+  appliquer(courant, LAMPES, 'Réglage de ' + nomPortee() + ' étendu à toute la maison');
+});
+
+els.toutEteindre.addEventListener('click', () => {
+  appliquer({ on:false }, LAMPES, 'Toutes les lampes éteintes');
+});
+
+/* =========================================================================
+   8. DÉPART
+   ========================================================================= */
+rendre();
+rendreJournal();
+
+/* Point d'entrée pour un pont réel (Hue, Home Assistant, MQTT…) :
+   window.Nocturne.pieces / lampes / etat, et l'évènement 'nocturne:commande'. */
+window.Nocturne = {
+  pieces:PIECES, lampes:LAMPES, modes:MODES, presets:PRESETS, effets:EFFETS,
+  etat: () => JSON.parse(JSON.stringify(etat)),
+  appliquerMode: (idMode, portee) => {
+    const m = MODES.find(x => x.id === idMode);
+    if (!m) return false;
+    if (portee) etat.portee = portee;
+    appliquer(patchDuMode(m), null, m.nom + ' — ' + nomPortee());
+    return true;
+  },
+};
+
+})();
+</script>
+</body>
+</html>
