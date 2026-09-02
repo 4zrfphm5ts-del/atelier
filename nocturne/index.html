@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#0a1017">
 <meta name="color-scheme" content="dark">
-<title>Nocturne — Remote</title>
-<meta name="description" content="Nocturne — télécommande des lumières : blanc, couleur, effets et modes, applicables à toute la maison ou à une seule pièce.">
+<title data-t="titrePage">Nocturne — Remote</title>
+<meta name="description" data-t-content="metaDesc" content="Nocturne — télécommande des lumières : blanc, couleur, effets et modes, applicables à toute la maison ou à une seule pièce.">
 <meta name="robots" content="noindex, nofollow">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -33,9 +33,19 @@
   .page{max-width:720px; margin:0 auto; padding:0 16px}
 
   /* ---------- en-tête ---------- */
-  header{padding:22px 0 12px}
+  header{padding:22px 0 12px; display:flex; align-items:flex-start; justify-content:space-between; gap:14px}
+  header .intitule{min-width:0}
   h1{margin:0; font-size:1.35rem; font-weight:650; letter-spacing:.01em}
   header p{margin:4px 0 0; font-size:.82rem; color:var(--mut)}
+
+  /* sélecteur de langue */
+  .langues{flex:0 0 auto; display:flex; margin-top:3px; border:1px solid var(--line2); background:var(--panel); border-radius:999px; overflow:hidden}
+  .langues button{
+    font:inherit; font-size:.74rem; font-weight:700; letter-spacing:.08em;
+    padding:7px 12px; border:0; background:transparent; color:var(--mut); cursor:pointer;
+    transition:background .15s, color .15s;
+  }
+  .langues button[aria-pressed="true"]{background:var(--acc-dim); color:var(--acc)}
 
   /* ---------- titres de section ---------- */
   .titre{
@@ -211,64 +221,70 @@
 <div class="page">
 
   <header>
-    <h1>Nocturne <span style="color:var(--mut); font-weight:400">· Remote</span></h1>
-    <p>Blanc, couleur, effets et modes — pour toute la maison ou une seule pièce.</p>
+    <div class="intitule">
+      <h1>Nocturne <span style="color:var(--mut); font-weight:400">· Remote</span></h1>
+      <p data-t="accroche">Blanc, couleur, effets et modes — pour toute la maison ou une seule pièce.</p>
+    </div>
+    <div class="langues" role="group" aria-label="Langue / Language">
+      <button type="button" data-langue="fr" aria-pressed="true" lang="fr">FR</button>
+      <button type="button" data-langue="en" aria-pressed="false" lang="en">EN</button>
+    </div>
   </header>
 
   <!-- PORTÉE : c'est elle qui décide ce que touchent tous les réglages ci-dessous -->
   <div class="portee">
-    <p class="libelle">Portée</p>
+    <p class="libelle" data-t="portee">Portée</p>
     <div class="rangee" id="pieces-portee"></div>
     <div class="rangee" id="lampes-portee" style="margin-top:8px"></div>
   </div>
 
-  <p class="titre">La maison</p>
+  <p class="titre" data-t="maison">La maison</p>
   <div class="maison" id="maison"></div>
 
   <p class="titre" id="titre-reglages">Réglages</p>
   <div class="carte">
 
     <div class="interrupteur">
-      <div class="quoi">Allumé<small id="sous-interrupteur">—</small></div>
-      <button class="bascule" id="power" aria-pressed="false" aria-label="Allumer ou éteindre"></button>
+      <div class="quoi"><span data-t="allume">Allumé</span><small id="sous-interrupteur">—</small></div>
+      <button class="bascule" id="power" aria-pressed="false" data-t-aria="ariaPower" aria-label="Allumer ou éteindre"></button>
     </div>
 
     <div class="ligne">
-      <span class="etiq">Intensité</span>
-      <input type="range" id="bri" min="1" max="100" step="1" aria-label="Intensité">
+      <span class="etiq" data-t="intensite">Intensité</span>
+      <input type="range" id="bri" min="1" max="100" step="1" data-t-aria="ariaBri" aria-label="Intensité">
       <span class="val" id="bri-val">—</span>
     </div>
 
-    <p class="titre">Blanc</p>
+    <p class="titre" data-t="blanc">Blanc</p>
     <div class="ligne">
       <span class="etiq" style="width:0"></span>
-      <input type="range" id="kelvin" min="0" max="100" step="1" aria-label="Température de blanc">
+      <input type="range" id="kelvin" min="0" max="100" step="1" data-t-aria="ariaKelvin" aria-label="Température de blanc">
       <span class="val" id="kelvin-val">—</span>
     </div>
     <div class="bornes" style="padding:0 88px 0 14px"><span>6500 K</span><span>2000 K</span></div>
 
-    <p class="titre">Couleur</p>
+    <p class="titre" data-t="couleur">Couleur</p>
     <div class="ligne">
-      <span class="etiq">Teinte</span>
-      <input type="range" id="hue" min="0" max="360" step="1" aria-label="Teinte">
+      <span class="etiq" data-t="teinte">Teinte</span>
+      <input type="range" id="hue" min="0" max="360" step="1" data-t-aria="ariaTeinte" aria-label="Teinte">
       <span class="val" id="hue-val">—</span>
     </div>
     <div class="ligne">
-      <span class="etiq">Saturation</span>
-      <input type="range" id="sat" min="0" max="100" step="1" aria-label="Saturation">
+      <span class="etiq" data-t="saturation">Saturation</span>
+      <input type="range" id="sat" min="0" max="100" step="1" data-t-aria="ariaSat" aria-label="Saturation">
       <span class="val" id="sat-val">—</span>
     </div>
     <div class="grille" id="presets" style="margin-top:14px"></div>
 
-    <p class="titre">Effets</p>
+    <p class="titre" data-t="effets">Effets</p>
     <div class="grille" id="effets"></div>
   </div>
 
-  <p class="titre">Modes</p>
+  <p class="titre" data-t="modes">Modes</p>
   <div class="modes" id="modes"></div>
 
   <details class="journal">
-    <summary>Journal du pont — dernières commandes envoyées</summary>
+    <summary data-t="journalTitre">Journal du pont — dernières commandes envoyées</summary>
     <ol id="journal"></ol>
   </details>
 
@@ -276,8 +292,8 @@
 
 <div class="barre">
   <div class="dedans">
-    <button class="btn" id="appliquer-tout">Appliquer à toute la maison</button>
-    <button class="btn secondaire" id="tout-eteindre">Tout éteindre</button>
+    <button class="btn" id="appliquer-tout" data-t="btnTout">Appliquer à toute la maison</button>
+    <button class="btn secondaire" id="tout-eteindre" data-t="btnEteindre">Tout éteindre</button>
   </div>
 </div>
 
@@ -350,6 +366,152 @@ const MODES = [
 ];
 
 /* =========================================================================
+   1 bis. LANGUES — français (source) et anglais (calque)
+   Le français est écrit en clair : dans le markup pour les libellés fixes
+   (attributs data-t), et dans les listes ci-dessus pour les noms de pièces,
+   presets, effets et modes. L'anglais est un simple calque indexé par les
+   mêmes identifiants : ajouter une langue = ajouter un objet de la même
+   forme dans LANGUES et une entrée dans PHRASES.
+   ========================================================================= */
+const CLE_LANGUE = 'nocturne.langue.v1';
+
+/* Calque anglais. Chaque clé correspond soit à un data-t du markup,
+   soit à l'identifiant d'une pièce, d'une lampe, d'un preset, d'un effet
+   ou d'un mode. Les noms d'effets reprennent ceux de la télécommande. */
+const EN = {
+  ui: {
+    titrePage:'Nocturne — Remote',
+    metaDesc:'Nocturne — light remote: white, color, effects and modes, for the whole home or a single room.',
+    accroche:'White, color, effects and modes — for the whole home or a single room.',
+    portee:'Scope',
+    maison:'Your home',
+    allume:'On',
+    intensite:'Brightness',
+    blanc:'White',
+    couleur:'Color',
+    teinte:'Hue',
+    saturation:'Saturation',
+    effets:'Effects',
+    modes:'Modes',
+    journalTitre:'Bridge log — last commands sent',
+    btnTout:'Apply to the whole home',
+    btnEteindre:'Turn everything off',
+    ariaPower:'Turn on or off',
+    ariaBri:'Brightness',
+    ariaKelvin:'White temperature',
+    ariaTeinte:'Hue',
+    ariaSat:'Saturation',
+  },
+  pieces: {
+    salon:'Living room', chambre:'Bedroom', cuisine:'Kitchen', sdb:'Bathroom',
+    bureau:'Office', entree:'Hallway', exterieur:'Outdoors',
+  },
+  lampes: {
+    'salon:0':'Floor lamp',   'salon:1':'String lights', 'salon:2':'Ceiling light',
+    'chambre:0':'Left bedside','chambre:1':'Right bedside','chambre:2':'Ceiling light',
+    'cuisine:0':'Worktop',    'cuisine:1':'Pendant',
+    'sdb:0':'Mirror',         'sdb:1':'Ceiling light',
+    'bureau:0':'Desk lamp',   'bureau:1':'Backlight',
+    'entree:0':'Wall light',
+    'exterieur:0':'Terrace',  'exterieur:1':'Facade',
+  },
+  presets: {
+    bougie:'Candle', ambre:'Amber', coucher:'Sunset', rose:'Pink',
+    violet:'Purple', bleunuit:'Midnight blue', glacier:'Glacier', foret:'Forest',
+  },
+  effets: {
+    bougie:'Candle', flamme:'Fire', prisme:'Prism', etincelles:'Sparkle',
+    opale:'Opal', scintillement:'Glisten', sousleau:'Underwater', cosmos:'Cosmos',
+    rayon:'Sunbeam', enchantement:'Enchant', aucun:'None',
+  },
+  modes: {
+    reveil:        { nom:'Wake-up',    desc:'Soft white that wakes you gently' },
+    journee:       { nom:'Daytime',    desc:'Clear daylight' },
+    concentration: { nom:'Focus',      desc:'Cool white for working' },
+    lecture:       { nom:'Reading',    desc:'Neutral white, easy on the eyes' },
+    detente:       { nom:'Relax',      desc:'Very warm white, kept low' },
+    diner:         { nom:'Dinner',     desc:'Dimmed amber over the table' },
+    cheminee:      { nom:'Fireplace',  desc:'Embers and a moving flame' },
+    cinema:        { nom:'Movie',      desc:'Deep blue, almost off' },
+    soiree:        { nom:'Party',      desc:'Bright purple, glistening' },
+    coucher:       { nom:'Sunset',     desc:'Low orange, end-of-day warmth' },
+    aurore:        { nom:'Aurora',     desc:'Shifting blue-green' },
+    lagon:         { nom:'Lagoon',     desc:'Turquoise and ripples' },
+    cosmos:        { nom:'Cosmos',     desc:'Distant purple, drifting' },
+    veilleuse:     { nom:'Night light',desc:'A tiny amber for the night' },
+    nuit:          { nom:'Night',      desc:'Everything goes off' },
+  },
+};
+
+/* Phrases construites en JavaScript (celles qui portent une valeur ou un
+   pluriel) : elles n'existent pas dans le markup, il leur faut les deux
+   langues. */
+const PHRASES = {
+  fr: {
+    touteMaison:  'toute la maison',
+    puceMaison:  '🏠 Toute la maison',
+    toutesLampes: 'Toutes les lampes',
+    eteinte:      'éteinte',
+    sansEffet:    'Sans effet',
+    toutEteint:   'Toutes les lampes éteintes',
+    journalVide:  'Aucune commande pour l’instant.',
+    nbLampes:  n => n + ' lampe' + (n > 1 ? 's' : ''),
+    pourcent:  n => n + ' %',
+    teinteDe:  h => 'teinte ' + h + '°',
+    reglages:  p => 'Réglages · ' + p,
+    sousInter: (p, n) => p + ' · ' + PHRASES.fr.nbLampes(n),
+    bascule:   (on, p) => (on ? 'Allumé' : 'Éteint') + ' — ' + p,
+    applique:  (quoi, p) => quoi + ' — ' + p,
+    etendu:    p => 'Réglage de ' + p + ' étendu à toute la maison',
+  },
+  en: {
+    touteMaison:  'the whole home',
+    puceMaison:  '🏠 Whole home',
+    toutesLampes: 'All lights',
+    eteinte:      'off',
+    sansEffet:    'No effect',
+    toutEteint:   'All lights turned off',
+    journalVide:  'No commands yet.',
+    nbLampes:  n => n + ' light' + (n > 1 ? 's' : ''),
+    pourcent:  n => n + '%',
+    teinteDe:  h => 'hue ' + h + '°',
+    reglages:  p => 'Settings · ' + p,
+    sousInter: (p, n) => p + ' · ' + PHRASES.en.nbLampes(n),
+    bascule:   (on, p) => (on ? 'On' : 'Off') + ' — ' + p,
+    applique:  (quoi, p) => quoi + ' — ' + p,
+    etendu:    p => p + ' settings applied to the whole home',
+  },
+};
+
+const LANGUES = ['fr', 'en'];
+
+/* Langue de départ : le choix mémorisé, sinon celle du navigateur, sinon fr. */
+function langueInitiale(){
+  try {
+    const sauve = localStorage.getItem(CLE_LANGUE);
+    if (LANGUES.indexOf(sauve) !== -1) return sauve;
+  } catch(e){}
+  const nav = (navigator.language || 'fr').toLowerCase();
+  return nav.indexOf('fr') === 0 ? 'fr' : 'en';
+}
+
+let LANGUE = langueInitiale();
+
+/* Raccourci vers les phrases de la langue courante */
+const P = () => PHRASES[LANGUE];
+
+/* Noms traduisibles : le français vient des listes ci-dessus, l'anglais du
+   calque EN ; si une entrée manque, on retombe sur le français. */
+const calque = (table, id) => (LANGUE === 'fr' ? null : (EN[table] || {})[id]) || null;
+const nomPiece  = id => calque('pieces', id)  || (PIECES.find(p => p.id === id) || {}).nom || '';
+const nomLampe  = id => calque('lampes', id)  || (LAMPES.find(l => l.id === id) || {}).nom || '';
+const nomPreset = id => calque('presets', id) || (PRESETS.find(p => p.id === id) || {}).nom || '';
+const nomEffet  = id => calque('effets', id)  || (EFFETS.find(e => e.id === id) || {}).nom || '';
+const modeEn    = id => (LANGUE === 'fr' ? null : EN.modes[id]) || null;
+const nomMode   = id => (modeEn(id) || MODES.find(m => m.id === id) || {}).nom || '';
+const descMode  = id => (modeEn(id) || MODES.find(m => m.id === id) || {}).desc || '';
+
+/* =========================================================================
    2. COULEURS — utilitaires d'affichage
    ========================================================================= */
 
@@ -419,14 +581,13 @@ function nomPortee(){
   const p = etat.portee;
   if (p.type === 'lampe'){
     const l = LAMPES.find(x => x.id === p.lampe);
-    const piece = PIECES.find(x => x.id === p.piece);
-    return l ? (piece.nom + ' · ' + l.nom) : 'toute la maison';
+    return l ? (nomPiece(p.piece) + ' · ' + nomLampe(l.id)) : P().touteMaison;
   }
   if (p.type === 'piece'){
     const piece = PIECES.find(x => x.id === p.piece);
-    return piece ? piece.nom : 'toute la maison';
+    return piece ? nomPiece(piece.id) : P().touteMaison;
   }
-  return 'toute la maison';
+  return P().touteMaison;
 }
 
 /* Valeur de référence des lampes ciblées : celle de la première */
@@ -457,20 +618,22 @@ const JOURNAL = [];
 
 /* Décrit les lampes réellement touchées, qui ne sont pas toujours la portée
    affichée (« Appliquer à toute la maison » vise tout depuis n'importe où). */
-function decrire(lampes){
-  if (lampes.length === LAMPES.length) return 'toute la maison';
+function decrire(ids){
+  if (ids.length === LAMPES.length) return P().touteMaison;
+  const lampes = ids.map(id => LAMPES.find(l => l.id === id)).filter(Boolean);
+  if (!lampes.length) return P().nbLampes(0);
   const pieces = [...new Set(lampes.map(l => l.piece))];
-  if (pieces.length !== 1) return lampes.length + ' lampes';
-  const nomPiece = PIECES.find(p => p.id === pieces[0]).nom;
+  if (pieces.length !== 1) return P().nbLampes(lampes.length);
   const toutes = LAMPES.filter(l => l.piece === pieces[0]).length === lampes.length;
-  return toutes ? nomPiece : nomPiece + ' · ' + lampes[0].nom;
+  return toutes ? nomPiece(pieces[0]) : nomPiece(pieces[0]) + ' · ' + nomLampe(lampes[0].id);
 }
 
 function envoyerAuPont(lampes, patch){
+  const ids = lampes.map(l => l.id);
   const commande = {
     horodatage: new Date().toISOString(),
-    portee: decrire(lampes),
-    lampes: lampes.map(l => l.id),
+    portee: decrire(ids),   /* libellé figé dans la langue du moment de l'envoi */
+    lampes: ids,
     reglages: patch,
   };
   JOURNAL.unshift(commande);
@@ -511,11 +674,11 @@ function classeFx(idEffet){
 function rendrePortee(){
   const p = etat.portee;
   els.piecesPortee.innerHTML =
-    '<button class="chip" data-portee="tout" aria-pressed="' + (p.type === 'tout') + '">🏠 Toute la maison</button>' +
+    '<button class="chip" data-portee="tout" aria-pressed="' + (p.type === 'tout') + '">' + P().puceMaison + '</button>' +
     PIECES.map(pi => {
       const actif = p.type !== 'tout' && p.piece === pi.id;
       return '<button class="chip" data-portee="piece" data-piece="' + pi.id + '" aria-pressed="' + actif + '">' +
-             pi.emoji + ' ' + pi.nom + '</button>';
+             pi.emoji + ' ' + nomPiece(pi.id) + '</button>';
     }).join('');
 
   if (p.type === 'tout'){
@@ -525,10 +688,10 @@ function rendrePortee(){
     const piece = PIECES.find(x => x.id === p.piece);
     els.lampesPortee.style.display = '';
     els.lampesPortee.innerHTML =
-      '<button class="chip mini" data-portee="piece" data-piece="' + piece.id + '" aria-pressed="' + (p.type === 'piece') + '">Toutes les lampes</button>' +
+      '<button class="chip mini" data-portee="piece" data-piece="' + piece.id + '" aria-pressed="' + (p.type === 'piece') + '">' + P().toutesLampes + '</button>' +
       LAMPES.filter(l => l.piece === piece.id).map(l =>
         '<button class="chip mini" data-portee="lampe" data-piece="' + piece.id + '" data-lampe="' + l.id + '" ' +
-        'aria-pressed="' + (p.type === 'lampe' && p.lampe === l.id) + '">' + l.nom + '</button>'
+        'aria-pressed="' + (p.type === 'lampe' && p.lampe === l.id) + '">' + nomLampe(l.id) + '</button>'
       ).join('');
   }
 }
@@ -540,19 +703,18 @@ function rendreMaison(){
     const vive = allumees[0] || lampes[0];
     const bri = allumees.length ? allumees.reduce((s,l) => s + l.bri, 0) / allumees.length : 0;
     const effet = allumees.length ? allumees[0].effet : 'aucun';
-    const nomEffet = (EFFETS.find(e => e.id === effet) || {}).nom;
     const actif = etat.portee.type !== 'tout' && etat.portee.piece === pi.id;
     const detail = allumees.length
-      ? Math.round(bri) + ' % · ' + (effet === 'aucun'
-          ? (vive.mode === 'blanc' ? vive.k + ' K' : 'teinte ' + vive.h + '°')
-          : nomEffet)
-      : 'éteinte';
+      ? P().pourcent(Math.round(bri)) + ' · ' + (effet === 'aucun'
+          ? (vive.mode === 'blanc' ? vive.k + ' K' : P().teinteDe(vive.h))
+          : nomEffet(effet))
+      : P().eteinte;
     return '<button class="piece' + (allumees.length ? ' allumee' : '') + '" data-portee="piece" data-piece="' + pi.id + '" aria-pressed="' + actif + '">' +
       '<span class="halo ' + (allumees.length ? classeFx(effet) : '') + '" style="background:' +
         (allumees.length ? couleurLampe(vive) : 'transparent') + '; opacity:' + (allumees.length ? (0.25 + bri / 220) : 0) + '"></span>' +
       '<span class="pt"></span>' +
-      '<span class="nom">' + pi.emoji + ' ' + pi.nom + '</span>' +
-      '<span class="etat">' + lampes.length + ' lampe' + (lampes.length > 1 ? 's' : '') + ' · ' + detail + '</span>' +
+      '<span class="nom">' + pi.emoji + ' ' + nomPiece(pi.id) + '</span>' +
+      '<span class="etat">' + P().nbLampes(lampes.length) + ' · ' + detail + '</span>' +
     '</button>';
   }).join('');
 }
@@ -563,12 +725,12 @@ function rendreReglages(){
   const mode = commun('mode'), effet = commun('effet');
   const nb = ciblees().length;
 
-  els.titreReglages.textContent = 'Réglages · ' + nomPortee();
-  els.sousInter.textContent = nomPortee() + ' · ' + nb + ' lampe' + (nb > 1 ? 's' : '');
+  els.titreReglages.textContent = P().reglages(nomPortee());
+  els.sousInter.textContent = P().sousInter(nomPortee(), nb);
   els.power.setAttribute('aria-pressed', String(on));
 
   const teinte = mode === 'blanc' ? kelvinCss(k) : hsCss(h, s);
-  els.bri.value = bri;  els.briVal.textContent = bri + ' %';
+  els.bri.value = bri;  els.briVal.textContent = P().pourcent(bri);
   piste(els.bri, '#1b2530, ' + teinte);
 
   els.kelvin.value = kVersPos(k);  els.kelvinVal.textContent = k + ' K';
@@ -577,17 +739,17 @@ function rendreReglages(){
   els.hue.value = h;  els.hueVal.textContent = h + '°';
   piste(els.hue, 'hsl(0 85% 55%), hsl(60 85% 55%), hsl(120 85% 55%), hsl(180 85% 55%), hsl(240 85% 55%), hsl(300 85% 55%), hsl(360 85% 55%)');
 
-  els.sat.value = s;  els.satVal.textContent = s + ' %';
+  els.sat.value = s;  els.satVal.textContent = P().pourcent(s);
   piste(els.sat, hsCss(h, 0, 45) + ', ' + hsCss(h, 100));
 
   els.presets.innerHTML = PRESETS.map(p => {
     const actif = mode === 'couleur' && h === p.h && s === p.s;
     return '<button class="chip" data-preset="' + p.id + '" aria-pressed="' + actif + '">' +
-      '<span class="pastille" style="background:' + hsCss(p.h, p.s) + '; color:' + hsCss(p.h, p.s) + '"></span>' + p.nom + '</button>';
+      '<span class="pastille" style="background:' + hsCss(p.h, p.s) + '; color:' + hsCss(p.h, p.s) + '"></span>' + nomPreset(p.id) + '</button>';
   }).join('');
 
   els.effets.innerHTML = EFFETS.map(e =>
-    '<button class="chip" data-effet="' + e.id + '" aria-pressed="' + (effet === e.id) + '">' + e.nom + '</button>'
+    '<button class="chip" data-effet="' + e.id + '" aria-pressed="' + (effet === e.id) + '">' + nomEffet(e.id) + '</button>'
   ).join('');
 }
 
@@ -598,17 +760,17 @@ function rendreModes(){
     return '<button class="mode" data-mode="' + m.id + '">' +
       '<span class="halo ' + classeFx(m.effet || 'aucun') + '" style="background:' + couleur + '"></span>' +
       '<span class="voile"></span>' +
-      '<span class="nom">' + m.nom + '</span>' +
-      '<span class="desc">' + m.desc + '</span>' +
+      '<span class="nom">' + nomMode(m.id) + '</span>' +
+      '<span class="desc">' + descMode(m.id) + '</span>' +
     '</button>';
   }).join('');
 }
 
 function rendreJournal(){
   els.journal.innerHTML = JOURNAL.map(c =>
-    '<li>' + c.horodatage.slice(11, 19) + ' — <b>' + c.portee + '</b> (' + c.lampes.length + ') ' +
+    '<li>' + c.horodatage.slice(11, 19) + ' — <b>' + decrire(c.lampes) + '</b> (' + c.lampes.length + ') ' +
     '<code>' + JSON.stringify(c.reglages) + '</code></li>'
-  ).join('') || '<li>Aucune commande pour l’instant.</li>';
+  ).join('') || '<li>' + P().journalVide + '</li>';
 }
 
 function rendre(){ rendrePortee(); rendreMaison(); rendreReglages(); rendreModes(); }
@@ -619,6 +781,40 @@ function toast(texte){
   els.toast.classList.add('vu');
   clearTimeout(minuteurToast);
   minuteurToast = setTimeout(() => els.toast.classList.remove('vu'), 1900);
+}
+
+/* =========================================================================
+   6 bis. LANGUE — pose des libellés fixes et bascule
+   Le markup porte le français ; il est relevé une fois au démarrage et sert
+   de dictionnaire français. Passer à l'anglais remplace ces libellés par
+   ceux d'EN.ui, puis redessine tout le reste (noms de pièces, de modes,
+   phrases construites, journal).
+   ========================================================================= */
+const FR_FIXE = { texte:{}, aria:{}, attr:{} };
+
+document.querySelectorAll('[data-t]').forEach(el => { FR_FIXE.texte[el.dataset.t] = el.innerHTML; });
+document.querySelectorAll('[data-t-aria]').forEach(el => { FR_FIXE.aria[el.dataset.tAria] = el.getAttribute('aria-label'); });
+document.querySelectorAll('[data-t-content]').forEach(el => { FR_FIXE.attr[el.dataset.tContent] = el.getAttribute('content'); });
+
+const libelle = cle => (LANGUE === 'fr' ? null : EN.ui[cle]) || FR_FIXE.texte[cle] || FR_FIXE.aria[cle] || FR_FIXE.attr[cle] || '';
+
+function poserLibelles(){
+  document.querySelectorAll('[data-t]').forEach(el => { el.innerHTML = libelle(el.dataset.t); });
+  document.querySelectorAll('[data-t-aria]').forEach(el => { el.setAttribute('aria-label', libelle(el.dataset.tAria)); });
+  document.querySelectorAll('[data-t-content]').forEach(el => { el.setAttribute('content', libelle(el.dataset.tContent)); });
+  document.querySelectorAll('[data-langue]').forEach(b => {
+    b.setAttribute('aria-pressed', String(b.dataset.langue === LANGUE));
+  });
+  document.documentElement.lang = LANGUE;
+}
+
+/* Seul chemin de changement de langue : tout le visible en dépend. */
+function appliquerLangue(l){
+  LANGUE = LANGUES.indexOf(l) !== -1 ? l : 'fr';
+  try { localStorage.setItem(CLE_LANGUE, LANGUE); } catch(e){}
+  poserLibelles();
+  rendre();
+  rendreJournal();
 }
 
 /* =========================================================================
@@ -651,13 +847,18 @@ brancherCurseur(els.sat,    v => ({ s:v, mode:'couleur', on:true }));
 /* Interrupteur de la portée courante */
 els.power.addEventListener('click', () => {
   const allumer = !auMoinsUneAllumee();
-  appliquer({ on:allumer }, null, (allumer ? 'Allumé' : 'Éteint') + ' — ' + nomPortee());
+  appliquer({ on:allumer }, null, P().bascule(allumer, nomPortee()));
 });
 
 /* Clics délégués : portée, presets, effets, modes */
 document.addEventListener('click', ev => {
-  const cible = ev.target.closest('[data-portee], [data-preset], [data-effet], [data-mode]');
+  const cible = ev.target.closest('[data-langue], [data-portee], [data-preset], [data-effet], [data-mode]');
   if (!cible) return;
+
+  if (cible.dataset.langue){
+    appliquerLangue(cible.dataset.langue);
+    return;
+  }
 
   if (cible.dataset.portee){
     const t = cible.dataset.portee;
@@ -670,20 +871,20 @@ document.addEventListener('click', ev => {
 
   if (cible.dataset.preset){
     const p = PRESETS.find(x => x.id === cible.dataset.preset);
-    appliquer({ mode:'couleur', h:p.h, s:p.s, on:true }, null, p.nom + ' — ' + nomPortee());
+    appliquer({ mode:'couleur', h:p.h, s:p.s, on:true }, null, P().applique(nomPreset(p.id), nomPortee()));
     return;
   }
 
   if (cible.dataset.effet){
     const e = EFFETS.find(x => x.id === cible.dataset.effet);
     appliquer(e.id === 'aucun' ? { effet:'aucun' } : { effet:e.id, on:true },
-              null, (e.id === 'aucun' ? 'Sans effet' : e.nom) + ' — ' + nomPortee());
+              null, P().applique(e.id === 'aucun' ? P().sansEffet : nomEffet(e.id), nomPortee()));
     return;
   }
 
   if (cible.dataset.mode){
     const m = MODES.find(x => x.id === cible.dataset.mode);
-    appliquer(patchDuMode(m), null, m.nom + ' — ' + nomPortee());
+    appliquer(patchDuMode(m), null, P().applique(nomMode(m.id), nomPortee()));
   }
 });
 
@@ -701,29 +902,33 @@ els.appliquerTout.addEventListener('click', () => {
     on:auMoinsUneAllumee(), bri:commun('bri'), mode:commun('mode'),
     k:commun('k'), h:commun('h'), s:commun('s'), effet:commun('effet'),
   };
-  appliquer(courant, LAMPES, 'Réglage de ' + nomPortee() + ' étendu à toute la maison');
+  appliquer(courant, LAMPES, P().etendu(nomPortee()));
 });
 
 els.toutEteindre.addEventListener('click', () => {
-  appliquer({ on:false }, LAMPES, 'Toutes les lampes éteintes');
+  appliquer({ on:false }, LAMPES, P().toutEteint);
 });
 
 /* =========================================================================
    8. DÉPART
    ========================================================================= */
-rendre();
-rendreJournal();
+appliquerLangue(LANGUE);   /* pose la langue, les libellés, puis dessine tout */
 
 /* Point d'entrée pour un pont réel (Hue, Home Assistant, MQTT…) :
    window.Nocturne.pieces / lampes / etat, et l'évènement 'nocturne:commande'. */
 window.Nocturne = {
   pieces:PIECES, lampes:LAMPES, modes:MODES, presets:PRESETS, effets:EFFETS,
   etat: () => JSON.parse(JSON.stringify(etat)),
+  langues:LANGUES.slice(),
+  langue: () => LANGUE,
+  setLangue: l => { if (LANGUES.indexOf(l) === -1) return false; appliquerLangue(l); return true; },
+  /* noms dans la langue affichée — les listes ci-dessus restent en français */
+  nom: { piece:nomPiece, lampe:nomLampe, preset:nomPreset, effet:nomEffet, mode:nomMode, descMode:descMode },
   appliquerMode: (idMode, portee) => {
     const m = MODES.find(x => x.id === idMode);
     if (!m) return false;
     if (portee) etat.portee = portee;
-    appliquer(patchDuMode(m), null, m.nom + ' — ' + nomPortee());
+    appliquer(patchDuMode(m), null, P().applique(nomMode(m.id), nomPortee()));
     return true;
   },
 };
