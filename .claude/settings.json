@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "mcp__Gmail__search_threads",
+      "mcp__Gmail__get_thread",
+      "mcp__Gmail__get_message",
+      "mcp__Gmail__list_labels",
+      "mcp__Gmail__list_drafts",
+      "mcp__Gmail__get_draft",
+      "mcp__Gmail__trash_thread",
+      "mcp__Gmail__trash_message",
+      "mcp__Gmail__untrash_thread",
+      "mcp__Gmail__untrash_message",
+      "mcp__Gmail__label_thread",
+      "mcp__Gmail__label_message",
+      "mcp__Gmail__unlabel_thread",
+      "mcp__Gmail__unlabel_message",
+      "mcp__Gmail__update_message_labels",
+      "mcp__Gmail__create_label",
+      "mcp__Gmail__update_label",
+      "mcp__Gmail__mark_thread_spam",
+      "mcp__Gmail__mark_message_spam",
+      "mcp__Gmail__unmark_thread_spam",
+      "mcp__Gmail__unmark_message_spam",
+      "mcp__Gmail__create_draft",
+      "mcp__Gmail__update_draft"
+    ],
+    "ask": [
+      "mcp__Gmail__send_message",
+      "mcp__Gmail__reply",
+      "mcp__Gmail__forward",
+      "mcp__Gmail__delete_label"
+    ]
+  }
+}
