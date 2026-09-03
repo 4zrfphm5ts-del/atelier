@@ -86,6 +86,20 @@ img{max-width:100%;display:block}
 .btn--block{ width:100%; text-align:center; }
 
 /* =========================================================
+   BANDEAU ÉVÉNEMENT (temporaire)
+   ========================================================= */
+.bandeau{
+  background:var(--jaune); color:var(--noir);
+  border-bottom:3px solid var(--noir);
+  padding:.55rem clamp(1rem,4vw,2.5rem);
+  font-family:'Rubik'; font-size:.92rem; line-height:1.35; text-align:center;
+}
+.bandeau p{ margin:0; }
+.bandeau strong{ font-weight:900; text-transform:uppercase; letter-spacing:.5px; }
+.bandeau a{ color:var(--noir); text-decoration:underline; text-decoration-thickness:2px; text-underline-offset:2px; white-space:nowrap; }
+.bandeau a:hover{ color:var(--rouge); }
+
+/* =========================================================
    NAV
    ========================================================= */
 .nav{

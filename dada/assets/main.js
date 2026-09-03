@@ -2,11 +2,19 @@
    DADA Cafétéria — interactions
    ========================================================= */
 
-/* ⚙️ À CONFIGURER : adresse de réception des demandes de réservation.
-   Remplacer par l'email réel de DADA quand il sera connu. */
-const RESA_EMAIL = "contact@dadacafeteria.fr";
+/* Adresse de réception des demandes de réservation : la boîte depuis laquelle
+   DADA écrit (mails du 06/07/2026). Si DADA prend un jour un domaine, changer ici. */
+const RESA_EMAIL = "dadacafet@gmail.com";
 
 document.addEventListener("DOMContentLoaded", () => {
+
+  /* ---------- Bandeau événement temporaire ----------
+     data-until = premier jour où il ne doit PLUS s'afficher (date locale).
+     Passée cette date le bandeau se cache seul ; à retirer du HTML ensuite. */
+  document.querySelectorAll(".bandeau[data-until]").forEach(b => {
+    const [y, m, d] = b.dataset.until.split("-").map(Number);
+    if (new Date() >= new Date(y, m - 1, d)) b.hidden = true;
+  });
 
   /* ---------- Menu mobile (burger) ---------- */
   const nav = document.querySelector(".nav");
