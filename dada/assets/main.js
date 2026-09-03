@@ -8,10 +8,11 @@ const RESA_EMAIL = "dadacafet@gmail.com";
 
 document.addEventListener("DOMContentLoaded", () => {
 
-  /* ---------- Bandeau événement temporaire ----------
-     data-until = premier jour où il ne doit PLUS s'afficher (date locale).
-     Passée cette date le bandeau se cache seul ; à retirer du HTML ensuite. */
-  document.querySelectorAll(".bandeau[data-until]").forEach(b => {
+  /* ---------- Éléments événementiels temporaires ----------
+     data-until = premier jour où l'élément ne doit PLUS s'afficher (date locale).
+     Passée cette date il se cache seul (bandeau, tampon, ligne horaires) ;
+     à retirer du HTML ensuite. */
+  document.querySelectorAll("[data-until]").forEach(b => {
     const [y, m, d] = b.dataset.until.split("-").map(Number);
     if (new Date() >= new Date(y, m - 1, d)) b.hidden = true;
   });

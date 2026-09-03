@@ -31,25 +31,6 @@ body{
 a{color:inherit}
 img{max-width:100%;display:block}
 
-/* ---------- Fond uni (carreaux retirés) ---------- */
-.grid-bg{
-  background-color:var(--blanc);
-}
-
-/* ---------- Wordmark DADA ---------- */
-.wordmark{
-  font-family:'Rubik',sans-serif;
-  font-weight:900;
-  font-style:italic;
-  color:var(--rouge);
-  letter-spacing:.5px;
-  line-height:.9;
-  text-shadow:3px 3px 0 var(--bleu);
-}
-.wordmark--xl{ font-size:clamp(4.5rem,16vw,11rem); text-shadow:6px 6px 0 var(--bleu); }
-.wordmark--sm{ font-size:1.7rem; text-shadow:2px 2px 0 var(--bleu); }
-.wordmark--light{ color:var(--blanc); text-shadow:2px 2px 0 var(--rouge); }
-
 /* ---------- Typo display (Antonio) ---------- */
 .display{
   font-family:'Antonio',sans-serif;
@@ -130,11 +111,25 @@ img{max-width:100%;display:block}
 .hero{
   position:relative;overflow:hidden;
   text-align:center;
-  padding:clamp(3rem,9vw,6.5rem) 1.5rem clamp(3.5rem,8vw,5.5rem);
+  padding:clamp(3rem,9vw,6.5rem) 1.5rem calc(clamp(3rem,7vw,5rem) + 14px);
 }
 .hero__inner{ position:relative;z-index:1;max-width:860px;margin:0 auto; }
-.hero__logo{ margin:.4rem auto .6rem; }
+.hero__mark{ position:relative;display:inline-block;margin:.4rem auto .6rem; }
+.hero__logo{ margin:0; }
 .hero__logo img{ width:clamp(280px,55vw,560px);height:auto;margin:0 auto;filter:drop-shadow(0 8px 18px rgba(40,32,32,.18)); }
+
+/* ---------- Tampons (la signature DADA : rond, penché, Rubik italique) ---------- */
+.tampon{
+  position:absolute;width:132px;height:132px;border-radius:50%;
+  display:grid;place-items:center;text-align:center;text-decoration:none;
+  font-family:'Rubik';font-weight:900;font-style:italic;text-transform:uppercase;
+  font-size:1.02rem;line-height:1.02;
+  border:4px solid var(--blanc);box-shadow:var(--shadow);
+  transition:transform .2s ease;
+}
+.tampon small{ display:block;font-size:.62rem;font-weight:700;font-style:normal;letter-spacing:.5px;margin-top:.3rem;opacity:.85; }
+.tampon--braderie{ right:-26px;bottom:2px;background:var(--jaune);color:var(--noir);transform:rotate(9deg); }
+.tampon--braderie:hover{ transform:rotate(3deg) scale(1.04); }
 .hero__kicker{
   font-family:'Rubik',sans-serif;font-weight:700;text-transform:uppercase;
   letter-spacing:2px;font-size:.8rem;color:var(--bleu);margin-bottom:.6rem;
@@ -146,8 +141,9 @@ img{max-width:100%;display:block}
 }
 .hero__sub{ max-width:620px;margin:.4rem auto 1.8rem;font-size:1.08rem; }
 .hero__cta{ display:flex;gap:1rem;justify-content:center;flex-wrap:wrap; }
-.hero__swatches{ display:flex;justify-content:center;gap:0;margin-top:3rem; }
-.hero__swatches span{ width:clamp(34px,7vw,58px);height:clamp(34px,7vw,58px);display:block; }
+/* ruban des 6 couleurs V3, pleine largeur, en pied de hero */
+.hero__swatches{ position:absolute;left:0;right:0;bottom:0;display:flex; }
+.hero__swatches span{ flex:1;height:14px;display:block; }
 
 /* =========================================================
    BRUNCH
@@ -173,19 +169,6 @@ img{max-width:100%;display:block}
   font-size:1.05rem;line-height:1;transform:rotate(-12deg);
   border:4px solid var(--blanc);box-shadow:var(--shadow);
 }
-
-/* ---------- Emplacements photo ---------- */
-.photo-slot{
-  border-radius:var(--r);
-  background:
-    repeating-linear-gradient(45deg, rgba(245,214,0,.25) 0 14px, rgba(245,214,0,.4) 14px 28px);
-  border:3px dashed var(--jaune);
-  min-height:260px;
-  display:grid;place-items:center;
-  color:var(--bleu);font-family:'Rubik';font-weight:700;
-}
-.brunch .photo-slot{ background:repeating-linear-gradient(45deg, rgba(255,255,255,.10) 0 14px, rgba(255,255,255,.18) 14px 28px); border-color:var(--jaune); color:var(--jaune); }
-.photo-slot--tall{ min-height:360px; }
 
 /* ---------- Galerie brunch ---------- */
 .brunch__gallery{ display:grid; grid-template-columns:1fr 1fr; gap:.7rem; }
@@ -295,7 +278,7 @@ blockquote{
 .resa textarea{ resize:vertical; }
 .resa__grid{ display:grid;grid-template-columns:1fr 1fr;gap:0 1rem; }
 .resa .btn--block{ margin-top:.4rem; }
-.resa__hint{ font-size:.82rem;color:#6b5d5d;margin-top:.8rem;text-align:center; }
+.resa__hint{ font-size:.88rem;color:#6b5d5d;margin:-.6rem 0 1.1rem; }
 .resa__direct{ display:flex;gap:1.2rem;justify-content:center;margin-top:.8rem;font-family:'Rubik';font-weight:500;font-size:.9rem; }
 .resa__direct a{ color:var(--rouge);text-decoration:none; }
 .resa__direct a:hover{ text-decoration:underline; }
@@ -310,6 +293,8 @@ blockquote{
 .hours{ list-style:none; }
 .hours li{ display:flex;justify-content:space-between;gap:1rem;padding:.3rem 0;border-bottom:1px dotted rgba(40,32,32,.18);max-width:340px; }
 .hours li b{ font-family:'Rubik';font-weight:700;color:var(--bleu); }
+.hours__event{ background:var(--jaune);margin-top:.5rem;padding:.4rem .6rem !important;border-radius:8px;border-bottom:none !important; }
+.hours__event b a{ color:var(--noir);text-decoration:underline;text-underline-offset:2px; }
 .infos__map{ border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow);min-height:340px; }
 .infos__map iframe{ width:100%;height:100%;min-height:340px;border:0; }
 
@@ -334,6 +319,9 @@ blockquote{
      chevauche toujours le coin de la photo, sans sortir de l'ecran. */
   .brunch__stamp{ width:96px;height:96px;font-size:.9rem;left:auto;right:0;bottom:-16px; }
   .soeurs__photo{ order:2; }
+  .tampon{ width:96px;height:96px;font-size:.78rem; }
+  .tampon small{ font-size:.5rem;margin-top:.2rem; }
+  .tampon--braderie{ right:-14px;bottom:auto;top:-10px; }
   .carte-gallery{ grid-template-columns:1fr 1fr; }
 }
 @media (max-width:760px){
@@ -345,7 +333,7 @@ blockquote{
     background:var(--blanc);padding:1.2rem 1.5rem;border-bottom:3px solid var(--bleu);
   }
   .nav.is-open .btn--nav{ display:block;margin:1rem 1.5rem 0; }
-  .hero__swatches{ margin-top:2rem; }
+  .hero__swatches span{ height:10px; }
   .brunch__list{ grid-template-columns:1fr; }
   .resa__grid{ grid-template-columns:1fr; }
 }

@@ -14,7 +14,9 @@
   <meta property="og:site_name" content="DADA Cafeteria">
   <meta name="twitter:card" content="summary_large_image">
   <link rel="canonical" href="https://4zrfphm5ts-del.github.io/atelier/dada/">
+  <meta name="theme-color" content="#DF3221">
   <link rel="icon" type="image/png" href="assets/logo-dada.png">
+  <link rel="preload" as="image" href="assets/logo-dada.png">
   <link rel="apple-touch-icon" href="assets/logo-dada.png">
 
   <script type="application/ld+json">
@@ -50,7 +52,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,400;0,500;0,700;0,900;1,900&family=Antonio:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,400;0,500;0,700;0,900;1,900&family=Antonio:wght@700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/styles.css">
 </head>
 <body>
@@ -82,11 +84,15 @@
   </header>
 
   <!-- ================= HERO ================= -->
-  <section class="hero grid-bg">
+  <section class="hero">
     <div class="hero__inner">
       <p class="hero__kicker">Café · Cafétéria · Bar — au cœur de Lille</p>
-      <h1 class="hero__logo"><img src="assets/logo-dada.png" alt="">
-        <span class="sr-only">DADA — café, cafétéria &amp; bar à Lille</span></h1>
+      <div class="hero__mark">
+        <h1 class="hero__logo"><img src="assets/logo-dada.png" alt="" width="1100" height="647">
+          <span class="sr-only">DADA — café, cafétéria &amp; bar à Lille</span></h1>
+        <!-- tampon temporaire Braderie : se cache seul le 07/09 (data-until) -->
+        <a href="#infos" class="tampon tampon--braderie" data-until="2026-09-07">Braderie<br>5 &amp; 6 sept.<br><small>on est sur<br>le parcours</small></a>
+      </div>
       <p class="hero__tagline">On y <strong class="c-bleu">VIT</strong>, on y <strong class="c-rouge">MANGE</strong>, on y <strong class="c-rouge">CRÉE.</strong></p>
       <p class="hero__sub">Produits frais, pour la majorité locaux et bio, du fait maison et un petit vent de liberté — ouvert du lundi au samedi, 169 rue Pierre Mauroy.</p>
       <div class="hero__cta">
@@ -105,7 +111,7 @@
   </section>
 
   <!-- ================= LE LIEU ================= -->
-  <section class="lieu grid-bg" id="lieu">
+  <section class="lieu" id="lieu">
     <div class="section-head">
       <span class="section-label">Le lieu</span>
       <h2 class="display">DADA, c'est quoi&nbsp;?</h2>
@@ -361,7 +367,7 @@
   </section>
 
   <!-- ================= ATELIERS ================= -->
-  <section class="ateliers grid-bg" id="ateliers">
+  <section class="ateliers" id="ateliers">
     <div class="section-head">
       <span class="section-label">Ateliers &amp; vie du lieu</span>
       <h2 class="display">On y crée, aussi</h2>
@@ -408,6 +414,7 @@
       <div class="evenements__form" id="reserver">
         <form id="resa-form" class="resa" novalidate>
           <h3 class="resa__title">Demande de réservation / privatisation</h3>
+          <p class="resa__hint">Réservations &amp; privatisations le soir, sur demande. Le brunch, c'est le samedi (11h30 – 15h).</p>
 
           <div class="resa__row">
             <label>Nom &amp; prénom
@@ -455,7 +462,6 @@
               </select>
             </label>
           </div>
-          <p class="resa__hint">Réservations &amp; privatisations le soir, sur demande. Le brunch, c'est le samedi (11h30 – 15h).</p>
           <div class="resa__row">
             <label>Votre message
               <textarea name="message" rows="3" placeholder="Dites-nous tout : occasion, envies, budget, besoins particuliers…"></textarea>
@@ -472,7 +478,7 @@
   </section>
 
   <!-- ================= INFOS PRATIQUES ================= -->
-  <section class="infos grid-bg" id="infos">
+  <section class="infos" id="infos">
     <div class="section-head">
       <span class="section-label">Infos pratiques</span>
       <h2 class="display">Venir chez DADA</h2>
@@ -489,6 +495,7 @@
           <li><span>Vendredi</span><b>9h – minuit</b></li>
           <li><span>Samedi (brunch)</span><b>11h30 – 15h</b></li>
           <li><span>Dimanche</span><b>Fermé</b></li>
+          <li class="hours__event" data-until="2026-09-07"><span>Braderie · 5 &amp; 6 sept.</span><b><a href="https://www.instagram.com/dadacafeteria/" target="_blank" rel="noopener">horaires sur Instagram</a></b></li>
         </ul>
         <p class="infos__small"><strong>Ouvert aussi le soir</strong> — surtout les jeudis &amp; vendredis, jusque tard (bar, concerts, spectacles, privatisations). Suivez l'agenda sur Instagram.</p>
 
