@@ -1236,11 +1236,14 @@ function lvlName(k){ const L=LVLDEF.find(x=>x.k===k); return L?L.emo+" "+L.n:k; 
 const degageSplash = (function(){
   const sp=$("#splash"); if(!sp) return function(){};
   let done=false;
-  function go(){ if(done) return; done=true;
-    try{ beep(660,.12); setTimeout(()=>beep(990,.14),95); buzz(20); confetti(); }catch(e){}
+  /* beep/buzz seulement sur un vrai geste : l'auto-retrait (timer, erreur)
+     déclenchait navigator.vibrate sans tap, que Chromium bloque en loggant
+     une erreur console — seul « rouge » du banc audit-app.mjs. */
+  function go(tap){ if(done) return; done=true;
+    try{ if(tap){ beep(660,.12); setTimeout(()=>beep(990,.14),95); buzz(20); } confetti(); }catch(e){}
     sp.classList.add("gone"); setTimeout(()=>{ sp.style.display="none"; }, 620);
   }
-  sp.addEventListener("click", go); sp.addEventListener("touchstart", go, {passive:true});
+  sp.addEventListener("click", ()=>go(true)); sp.addEventListener("touchstart", ()=>go(true), {passive:true});
   setTimeout(go, 2800);
   return go;
 })();

@@ -2,9 +2,11 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#ffd166">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Au Soleil">
 <link rel="apple-touch-icon" href="icon-180.png">
 <title>Au Soleil — terrasses ensoleillées</title>
@@ -33,12 +35,13 @@
   body{font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
     background:var(--bg); color:var(--ink); overflow:hidden;
     display:flex; flex-direction:column}
-  header{flex:none; padding:11px 18px; border-bottom:1px solid var(--line); display:flex; flex-wrap:wrap;
+  header{flex:none; padding:calc(11px + env(safe-area-inset-top,0px)) 18px 11px; border-bottom:1px solid var(--line); display:flex; flex-wrap:wrap;
     align-items:center; gap:11px 20px; background:linear-gradient(180deg,#1a232e,#141b24)}
   .brand{display:flex; align-items:center; gap:10px; min-width:120px}
   .brand b{font-size:19px} .brand .sun-dot{width:13px;height:13px;border-radius:50%;background:var(--sun);box-shadow:0 0 14px var(--sun)}
   .tabs{display:flex; gap:6px; background:#0e141b; border:1px solid var(--line); border-radius:10px; padding:4px}
-  .tab{background:transparent; border:none; color:var(--muted); padding:6px 13px; border-radius:7px; font:inherit; cursor:pointer}
+  .tab{background:transparent; border:none; color:var(--muted); padding:6px 13px; border-radius:7px; font:inherit; cursor:pointer; position:relative}
+  .tab::before{content:""; position:absolute; inset:-5px -3px}
   .tab.active{background:var(--sun); color:#1a1206; font-weight:600}
   .controls{display:flex; flex-wrap:wrap; align-items:center; gap:8px 14px; flex:1}
   .ctl{display:flex; align-items:center; gap:8px}
@@ -56,7 +59,8 @@
   .filters{padding:11px 14px; border-bottom:1px solid var(--line); position:sticky; top:0; background:var(--panel); z-index:5}
   .chips{display:flex; flex-wrap:wrap; gap:6px}
   .chip{background:var(--panel2); border:1px solid var(--line); color:var(--muted); border-radius:20px;
-    padding:5px 11px; font-size:12.5px; cursor:pointer}
+    padding:5px 11px; font-size:12.5px; cursor:pointer; position:relative}
+  .chip::before{content:""; position:absolute; inset:-6px -3px}
   .chip.on{background:var(--sun); color:#1a1206; border-color:var(--sun); font-weight:600}
   .chip.tog.on{background:#243; color:#bdf3c8; border-color:#2e6b3f}
   .sun-readout{padding:10px 14px; color:var(--muted); font-size:13px; border-bottom:1px solid var(--line)}
@@ -350,8 +354,12 @@ function render(){
   });
 }
 
+/* Date LOCALE, pas toISOString() : en heure de Paris, entre minuit et 2h,
+   la date UTC est encore celle de la veille. */
+function ymdLocal(d){return d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2);}
+
 function setNow(){var now=new Date();
-  dateEl.value=now.toISOString().slice(0,10);
+  dateEl.value=ymdLocal(now);
   timeEl.value=Math.round((now.getHours()*60+now.getMinutes())/15)*15; render();}
 
 dateEl.onchange=render; timeEl.oninput=render;
@@ -360,7 +368,7 @@ document.getElementById("now").onclick=setNow;
 if(!Object.keys(CITIES).length){
   listEl.innerHTML='<div class="more">Donnée absente : lance <code>python3 tools/fetch_osm.py</code> pour générer <code>data.js</code>.</div>';
 }else{
-  var n0=new Date(); dateEl.value=n0.toISOString().slice(0,10);
+  var n0=new Date(); dateEl.value=ymdLocal(n0);
   timeEl.value=Math.round((n0.getHours()*60+n0.getMinutes())/15)*15;
   loadCity(Object.keys(CITIES)[0]);
 }
