@@ -317,18 +317,27 @@ blockquote{
 .evenements__cap{ font-size:.92rem;opacity:.85; }
 
 /* form */
-.resa{ background:var(--blanc);color:var(--noir);border-radius:var(--r);padding:clamp(1.5rem,3vw,2.2rem);box-shadow:var(--shadow); }
+.resa{ --field-h:calc(1.35em + 1.3rem + 4px);background:var(--blanc);color:var(--noir);border-radius:var(--r);padding:clamp(1.5rem,3vw,2.2rem);box-shadow:var(--shadow); }
 .resa__title{ font-family:'Antonio';font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--rouge);font-size:1.45rem;margin-bottom:1.2rem;line-height:1.05; }
-.resa label{ display:block;font-family:'Rubik';font-weight:500;font-size:.9rem;color:var(--bleu);margin-bottom:.9rem; }
+.resa label{ display:block;min-width:0;font-family:'Rubik';font-weight:500;font-size:.9rem;color:var(--bleu);margin-bottom:.9rem; }
 .resa input,.resa select,.resa textarea{
-  width:100%;margin-top:.3rem;padding:.65rem .8rem;
-  font-family:'Inter',sans-serif;font-size:.98rem;color:var(--noir);
+  width:100%;max-width:100%;min-width:0;margin-top:.3rem;padding:.65rem .8rem;
+  font-family:'Inter',sans-serif;font-size:.98rem;line-height:1.35;color:var(--noir);
   border:2px solid rgba(47,64,136,.25);border-radius:10px;background:#fff;
   transition:border-color .15s;
 }
+/* hauteur commune à tous les contrôles d'une ligne (input, select, date) */
+.resa input,.resa select{ min-height:var(--field-h); }
+/* iOS : les champs date gardent une largeur intrinsèque qui déborde de la grille */
+.resa input[type="date"]{
+  -webkit-appearance:none;appearance:none;
+  height:var(--field-h);text-align:left;
+}
+.resa input[type="date"]::-webkit-date-and-time-value{ text-align:left;margin:0; }
+.resa input[type="date"]::-webkit-calendar-picker-indicator{ margin-left:auto; }
 .resa input:focus,.resa select:focus,.resa textarea:focus{ outline:none;border-color:var(--rouge); }
 .resa textarea{ resize:vertical; }
-.resa__grid{ display:grid;grid-template-columns:1fr 1fr;gap:0 1rem; }
+.resa__grid{ display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:0 1rem; }
 .resa .btn--block{ margin-top:.4rem; }
 .resa__hint{ font-size:.88rem;color:#6b5d5d;margin:-.6rem 0 1.1rem; }
 .resa__direct{ display:flex;gap:1.2rem;justify-content:center;margin-top:.8rem;font-family:'Rubik';font-weight:500;font-size:.9rem; }
@@ -392,7 +401,7 @@ blockquote{
   .braderie__dates{ gap:.5rem; }
   .braderie__day{ width:92px;padding:.8rem .3rem .9rem; }
   .brunch__list{ grid-template-columns:1fr; }
-  .resa__grid{ grid-template-columns:1fr; }
+  .resa__grid{ grid-template-columns:minmax(0,1fr); }
 }
 
 /* Le h1 ne portait qu'une image : le titre de la page etait vide de texte, seul des
