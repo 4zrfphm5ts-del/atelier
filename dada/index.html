@@ -60,13 +60,8 @@
   <!-- ================= BRADERIE (temporaire) : défilant + section #braderie + ligne horaires.
        Tout ce qui porte data-until="2026-09-07" se cache seul le 7 septembre (cf. main.js).
        À retirer du HTML/CSS après la Braderie. -->
-  <a class="marquee" href="#braderie" data-until="2026-09-07" aria-label="Braderie de Lille, dès vendredi soir : DADA est sur le parcours">
-    <div class="marquee__track" aria-hidden="true">
-      <span>★ Braderie de Lille &nbsp;·&nbsp; dès vendredi soir &nbsp;·&nbsp; DADA est sur le parcours &nbsp;·&nbsp; 169 rue Pierre Mauroy &nbsp;</span>
-      <span>★ Braderie de Lille &nbsp;·&nbsp; dès vendredi soir &nbsp;·&nbsp; DADA est sur le parcours &nbsp;·&nbsp; 169 rue Pierre Mauroy &nbsp;</span>
-      <span>★ Braderie de Lille &nbsp;·&nbsp; dès vendredi soir &nbsp;·&nbsp; DADA est sur le parcours &nbsp;·&nbsp; 169 rue Pierre Mauroy &nbsp;</span>
-      <span>★ Braderie de Lille &nbsp;·&nbsp; dès vendredi soir &nbsp;·&nbsp; DADA est sur le parcours &nbsp;·&nbsp; 169 rue Pierre Mauroy &nbsp;</span>
-    </div>
+  <a class="marquee" href="#braderie" data-until="2026-09-07" aria-label="Braderie de Lille, dès vendredi soir : DADA est sur le parcours, 169 rue Pierre Mauroy">
+    <div class="marquee__track" aria-hidden="true"><span class="marquee__item">★ Tout est braderie&nbsp;!</span><span class="marquee__item">Dès vendredi soir</span><span class="marquee__item">Chiner, c'est bien. Chiner le ventre plein, c'est dada.</span><span class="marquee__item">On est sur le parcours · 169 rue Pierre Mauroy</span><span class="marquee__item">La braderie, oui. Brader le fait maison, jamais.</span><span class="marquee__item">★ Tout est braderie&nbsp;!</span><span class="marquee__item">Dès vendredi soir</span><span class="marquee__item">Chiner, c'est bien. Chiner le ventre plein, c'est dada.</span><span class="marquee__item">On est sur le parcours · 169 rue Pierre Mauroy</span><span class="marquee__item">La braderie, oui. Brader le fait maison, jamais.</span></div>
   </a>
 
   <!-- ================= NAV ================= -->
@@ -80,6 +75,7 @@
       <a href="#brunch">Le brunch</a>
       <a href="#ateliers">Ateliers</a>
       <a href="#evenements">Privatisation</a>
+      <a href="#instagram">Insta</a>
       <a href="#infos">Infos</a>
     </nav>
     <a href="#reserver" class="btn btn--nav">Réserver</a>
@@ -116,8 +112,8 @@
     <div class="braderie__inner">
       <div class="braderie__text">
         <span class="section-label section-label--light">Braderie de Lille · 4 → 6 septembre</span>
-        <h2 class="display display--white">On est sur<br>le parcours</h2>
-        <p class="braderie__lead">Dès <strong>vendredi soir</strong> et tout le week-end, DADA est en plein cœur de la braderie, <strong>169 rue Pierre Mauroy</strong>. Café du matin, cafétéria, bar&nbsp;: la pause qu'il vous faut entre deux stands.</p>
+        <h2 class="display display--white">Tout est<br>braderie.</h2>
+        <p class="braderie__lead">Dès <strong>vendredi soir</strong> et tout le week-end, DADA est sur le parcours, <strong>169 rue Pierre Mauroy</strong>. Entre deux tas de coquilles et trois vinyles rayés&nbsp;: café du matin, cafétéria, bar. Chiner, c'est bien. Chiner le ventre plein, c'est dada.</p>
         <div class="braderie__cta">
           <a href="#carte" class="btn btn--jaune">Voir la carte</a>
           <a href="https://www.google.com/maps/dir/?api=1&amp;destination=169+rue+Pierre+Mauroy,+59800+Lille" target="_blank" rel="noopener" class="btn btn--ghost btn--ghost-light">Itinéraire</a>
@@ -130,7 +126,7 @@
           <span class="braderie__day"><b>Sam.</b><em>5</em><small>toute la journée</small></span>
           <span class="braderie__day"><b>Dim.</b><em>6</em><small>toute la journée</small></span>
         </div>
-        <span class="tampon tampon--big">Vive la<br>braderie&nbsp;!</span>
+        <span class="tampon tampon--big">Chine<br>que<br>chine&nbsp;!</span>
       </div>
     </div>
   </section>
@@ -411,6 +407,42 @@
         <h3>Bar, concerts &amp; spectacles</h3>
         <p>Le soir venu, place au bar : concerts, lives et spectacles, souvent jusque tard. Surtout les jeudis &amp; vendredis.</p>
       </article>
+    </div>
+  </section>
+
+  <!-- ================= INSTAGRAM ================= -->
+  <section class="insta" id="instagram">
+    <div class="section-head">
+      <span class="section-label">@dadacafeteria</span>
+      <h2 class="display">Tout est sur Insta.</h2>
+      <p class="section-intro">La carte de la semaine, les ateliers, les concerts, les horaires du week-end&nbsp;: tout se passe là-bas, avec un cheval super mignon. On y vit aussi.</p>
+    </div>
+    <div class="insta__grid">
+      <div class="insta__embed">
+        <!-- si Instagram refuse l'embed (navigation privée, iOS strict), la citation reste visible dessous -->
+        <blockquote class="insta__quote">
+          <p class="insta__quote-tada">TADAA 🎉</p>
+          <p>Deux sœurs, un cheval super mignon, et bientôt un café.<br>DADA arrive à Lille&nbsp;: café le matin, cantine le midi, apéro le soir… et des surprises.</p>
+          <cite>— @dadacafeteria, premier post</cite>
+        </blockquote>
+        <iframe src="https://www.instagram.com/p/DNLLG1EMqXA/embed/captioned/" title="Post Instagram de DADA — TADAA : deux sœurs, un cheval super mignon, et bientôt un café" loading="lazy" scrolling="no" allowtransparency="true"></iframe>
+        <a class="insta__fallback" href="https://www.instagram.com/p/DNLLG1EMqXA/" target="_blank" rel="noopener">Voir ce post sur Instagram →</a>
+      </div>
+      <div class="insta__side">
+        <div class="insta__tiles" aria-label="Photos de DADA sur Instagram">
+          <a href="https://www.instagram.com/dadacafeteria/" target="_blank" rel="noopener"><img src="assets/brunch-table.jpg" alt="Table de brunch DADA" loading="lazy"></a>
+          <a href="https://www.instagram.com/dadacafeteria/" target="_blank" rel="noopener"><img src="assets/plat-couscous.jpg" alt="Couscous-tagine, plat du jour" loading="lazy"></a>
+          <a href="https://www.instagram.com/dadacafeteria/" target="_blank" rel="noopener"><img src="assets/equipe.jpg" alt="L'équipe DADA devant le café" loading="lazy"></a>
+          <a href="https://www.instagram.com/dadacafeteria/" target="_blank" rel="noopener"><img src="assets/brunch-dessert.jpg" alt="Cheesecake caramel maison" loading="lazy"></a>
+          <a href="https://www.instagram.com/dadacafeteria/" target="_blank" rel="noopener"><img src="assets/plat-chou-fleur.jpg" alt="Chou-fleur rôti" loading="lazy"></a>
+          <a href="https://www.instagram.com/dadacafeteria/" target="_blank" rel="noopener"><img src="assets/brunch-toast.jpg" alt="Tartine d'avocat, brunch" loading="lazy"></a>
+          <a href="https://www.instagram.com/dadacafeteria/" target="_blank" rel="noopener"><img src="assets/plat-curry.jpg" alt="Curry de légumes" loading="lazy"></a>
+          <a href="https://www.instagram.com/dadacafeteria/" target="_blank" rel="noopener"><img src="assets/plat-bourguignon.jpg" alt="Bœuf mijoté façon bourguignon" loading="lazy"></a>
+          <a href="https://www.instagram.com/dadacafeteria/" target="_blank" rel="noopener" class="insta__more">+ la suite<br>sur Insta</a>
+        </div>
+        <a href="https://www.instagram.com/dadacafeteria/" target="_blank" rel="noopener" class="btn btn--primary insta__follow">📷 Suivre @dadacafeteria</a>
+        <p class="insta__hint">Stories, agenda des soirées, menu du jour&nbsp;: c'est là que ça se passe.</p>
+      </div>
     </div>
   </section>
 
