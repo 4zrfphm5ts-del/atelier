@@ -67,18 +67,42 @@ img{max-width:100%;display:block}
 .btn--block{ width:100%; text-align:center; }
 
 /* =========================================================
-   BANDEAU ÉVÉNEMENT (temporaire)
+   BRADERIE (temporaire : défilant + section) — à retirer après le 06/09
    ========================================================= */
-.bandeau{
-  background:var(--jaune); color:var(--noir);
+.marquee{
+  display:block;overflow:hidden;text-decoration:none;
+  background:var(--jaune);color:var(--noir);
   border-bottom:3px solid var(--noir);
-  padding:.55rem clamp(1rem,4vw,2.5rem);
-  font-family:'Rubik'; font-size:.92rem; line-height:1.35; text-align:center;
+  font-family:'Antonio',sans-serif;font-weight:700;text-transform:uppercase;
+  font-size:1.15rem;letter-spacing:1.5px;line-height:1;padding:.6rem 0;
 }
-.bandeau p{ margin:0; }
-.bandeau strong{ font-weight:900; text-transform:uppercase; letter-spacing:.5px; }
-.bandeau a{ color:var(--noir); text-decoration:underline; text-decoration-thickness:2px; text-underline-offset:2px; white-space:nowrap; }
-.bandeau a:hover{ color:var(--rouge); }
+.marquee__track{ display:flex;width:max-content;animation:defile 38s linear infinite; }
+.marquee__track span{ white-space:nowrap;padding-right:.5rem; }
+.marquee:hover .marquee__track{ animation-play-state:paused; }
+@keyframes defile{ from{transform:translateX(0)} to{transform:translateX(-50%)} }
+@media (prefers-reduced-motion:reduce){ .marquee__track{ animation:none; } }
+
+.braderie{ background:var(--rouge);color:var(--blanc);border-bottom:14px solid var(--jaune); }
+.braderie__inner{ max-width:var(--maxw);margin:0 auto;display:grid;grid-template-columns:1.15fr .85fr;gap:clamp(2rem,5vw,4rem);align-items:center; }
+.braderie .section-label--light{ color:var(--jaune); }
+.braderie .display{ margin:.2rem 0 1rem;font-size:clamp(2.6rem,6vw,4.4rem); }
+.braderie__lead{ font-size:1.12rem;max-width:560px;margin-bottom:1.5rem; }
+.braderie__lead strong{ color:var(--jaune); }
+.braderie__cta{ display:flex;gap:1rem;flex-wrap:wrap;align-items:center; }
+.btn--ghost-light{ color:var(--blanc);border-color:var(--blanc); }
+.braderie__note{ font-size:.92rem;opacity:.92;margin-top:1.1rem; }
+.braderie__note a{ color:var(--jaune);font-weight:600; }
+.braderie__visual{ position:relative;display:flex;justify-content:center;padding:5.6rem 0 1rem; }
+.braderie__dates{ display:flex;gap:.7rem; }
+.braderie__day{
+  background:var(--blanc);color:var(--noir);border-radius:var(--r);
+  width:clamp(96px,10vw,130px);padding:1rem .5rem 1.1rem;text-align:center;
+  box-shadow:5px 5px 0 var(--bleu);display:flex;flex-direction:column;align-items:center;
+}
+.braderie__day b{ font-family:'Rubik';font-weight:700;text-transform:uppercase;letter-spacing:1px;font-size:.78rem;color:var(--bleu); }
+.braderie__day em{ font-family:'Antonio';font-style:normal;font-weight:700;font-size:clamp(3rem,5vw,4.4rem);line-height:1;color:var(--rouge);margin:.15rem 0; }
+.braderie__day small{ font-family:'Rubik';font-weight:500;font-size:.68rem;color:#6b5d5d;line-height:1.15; }
+.tampon--big{ width:150px;height:150px;font-size:1.15rem;right:-24px;top:-30px;background:var(--jaune);color:var(--noir);transform:rotate(-10deg); }
 
 /* =========================================================
    NAV
@@ -114,8 +138,7 @@ img{max-width:100%;display:block}
   padding:clamp(3rem,9vw,6.5rem) 1.5rem calc(clamp(3rem,7vw,5rem) + 14px);
 }
 .hero__inner{ position:relative;z-index:1;max-width:860px;margin:0 auto; }
-.hero__mark{ position:relative;display:inline-block;margin:.4rem auto .6rem; }
-.hero__logo{ margin:0; }
+.hero__logo{ margin:.4rem auto .6rem; }
 .hero__logo img{ width:clamp(280px,55vw,560px);height:auto;margin:0 auto;filter:drop-shadow(0 8px 18px rgba(40,32,32,.18)); }
 
 /* ---------- Tampons (la signature DADA : rond, penché, Rubik italique) ---------- */
@@ -128,8 +151,7 @@ img{max-width:100%;display:block}
   transition:transform .2s ease;
 }
 .tampon small{ display:block;font-size:.62rem;font-weight:700;font-style:normal;letter-spacing:.5px;margin-top:.3rem;opacity:.85; }
-.tampon--braderie{ right:-26px;bottom:2px;background:var(--jaune);color:var(--noir);transform:rotate(9deg); }
-.tampon--braderie:hover{ transform:rotate(3deg) scale(1.04); }
+
 .hero__kicker{
   font-family:'Rubik',sans-serif;font-weight:700;text-transform:uppercase;
   letter-spacing:2px;font-size:.8rem;color:var(--bleu);margin-bottom:.6rem;
@@ -319,9 +341,9 @@ blockquote{
      chevauche toujours le coin de la photo, sans sortir de l'ecran. */
   .brunch__stamp{ width:96px;height:96px;font-size:.9rem;left:auto;right:0;bottom:-16px; }
   .soeurs__photo{ order:2; }
-  .tampon{ width:96px;height:96px;font-size:.78rem; }
-  .tampon small{ font-size:.5rem;margin-top:.2rem; }
-  .tampon--braderie{ right:-14px;bottom:auto;top:-10px; }
+  .braderie__inner{ grid-template-columns:1fr; }
+  .braderie__visual{ padding:4.4rem 0 .5rem;justify-content:flex-start; }
+  .tampon--big{ width:110px;height:110px;font-size:.88rem;right:0;top:-18px; }
   .carte-gallery{ grid-template-columns:1fr 1fr; }
 }
 @media (max-width:760px){
@@ -334,6 +356,9 @@ blockquote{
   }
   .nav.is-open .btn--nav{ display:block;margin:1rem 1.5rem 0; }
   .hero__swatches span{ height:10px; }
+  .marquee{ font-size:1rem;padding:.5rem 0; }
+  .braderie__dates{ gap:.5rem; }
+  .braderie__day{ width:92px;padding:.8rem .3rem .9rem; }
   .brunch__list{ grid-template-columns:1fr; }
   .resa__grid{ grid-template-columns:1fr; }
 }

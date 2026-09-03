@@ -57,12 +57,17 @@
 </head>
 <body>
 
-  <!-- ================= BANDEAU TEMPORAIRE — Braderie de Lille 5-6 sept. 2026
-       Se cache seul à partir du 07/09 (data-until, cf. main.js). À retirer ensuite. -->
-  <aside class="bandeau" data-until="2026-09-07" role="note">
-    <p><strong>Braderie de Lille · sam. 5 &amp; dim. 6 sept.</strong> — DADA est en plein cœur du parcours, 169 rue Pierre Mauroy.
-      <a href="https://www.instagram.com/dadacafeteria/" target="_blank" rel="noopener">Horaires du week-end sur Instagram</a></p>
-  </aside>
+  <!-- ================= BRADERIE (temporaire) : défilant + section #braderie + ligne horaires.
+       Tout ce qui porte data-until="2026-09-07" se cache seul le 7 septembre (cf. main.js).
+       À retirer du HTML/CSS après la Braderie. -->
+  <a class="marquee" href="#braderie" data-until="2026-09-07" aria-label="Braderie de Lille, dès vendredi soir : DADA est sur le parcours">
+    <div class="marquee__track" aria-hidden="true">
+      <span>★ Braderie de Lille &nbsp;·&nbsp; dès vendredi soir &nbsp;·&nbsp; DADA est sur le parcours &nbsp;·&nbsp; 169 rue Pierre Mauroy &nbsp;</span>
+      <span>★ Braderie de Lille &nbsp;·&nbsp; dès vendredi soir &nbsp;·&nbsp; DADA est sur le parcours &nbsp;·&nbsp; 169 rue Pierre Mauroy &nbsp;</span>
+      <span>★ Braderie de Lille &nbsp;·&nbsp; dès vendredi soir &nbsp;·&nbsp; DADA est sur le parcours &nbsp;·&nbsp; 169 rue Pierre Mauroy &nbsp;</span>
+      <span>★ Braderie de Lille &nbsp;·&nbsp; dès vendredi soir &nbsp;·&nbsp; DADA est sur le parcours &nbsp;·&nbsp; 169 rue Pierre Mauroy &nbsp;</span>
+    </div>
+  </a>
 
   <!-- ================= NAV ================= -->
   <header class="nav" id="top">
@@ -87,12 +92,8 @@
   <section class="hero">
     <div class="hero__inner">
       <p class="hero__kicker">Café · Cafétéria · Bar — au cœur de Lille</p>
-      <div class="hero__mark">
-        <h1 class="hero__logo"><img src="assets/logo-dada.png" alt="" width="1100" height="647">
-          <span class="sr-only">DADA — café, cafétéria &amp; bar à Lille</span></h1>
-        <!-- tampon temporaire Braderie : se cache seul le 07/09 (data-until) -->
-        <a href="#infos" class="tampon tampon--braderie" data-until="2026-09-07">Braderie<br>5 &amp; 6 sept.<br><small>on est sur<br>le parcours</small></a>
-      </div>
+      <h1 class="hero__logo"><img src="assets/logo-dada.png" alt="" width="1100" height="647">
+        <span class="sr-only">DADA — café, cafétéria &amp; bar à Lille</span></h1>
       <p class="hero__tagline">On y <strong class="c-bleu">VIT</strong>, on y <strong class="c-rouge">MANGE</strong>, on y <strong class="c-rouge">CRÉE.</strong></p>
       <p class="hero__sub">Produits frais, pour la majorité locaux et bio, du fait maison et un petit vent de liberté — ouvert du lundi au samedi, 169 rue Pierre Mauroy.</p>
       <div class="hero__cta">
@@ -107,6 +108,30 @@
       <span style="background:var(--vert)"></span>
       <span style="background:var(--bleu-clair)"></span>
       <span style="background:var(--rose)"></span>
+    </div>
+  </section>
+
+  <!-- ================= BRADERIE (temporaire, data-until) ================= -->
+  <section class="braderie" id="braderie" data-until="2026-09-07">
+    <div class="braderie__inner">
+      <div class="braderie__text">
+        <span class="section-label section-label--light">Braderie de Lille · 4 → 6 septembre</span>
+        <h2 class="display display--white">On est sur<br>le parcours</h2>
+        <p class="braderie__lead">Dès <strong>vendredi soir</strong> et tout le week-end, DADA est en plein cœur de la braderie, <strong>169 rue Pierre Mauroy</strong>. Café du matin, cafétéria, bar&nbsp;: la pause qu'il vous faut entre deux stands.</p>
+        <div class="braderie__cta">
+          <a href="#carte" class="btn btn--jaune">Voir la carte</a>
+          <a href="https://www.google.com/maps/dir/?api=1&amp;destination=169+rue+Pierre+Mauroy,+59800+Lille" target="_blank" rel="noopener" class="btn btn--ghost btn--ghost-light">Itinéraire</a>
+        </div>
+        <p class="braderie__note">Horaires du week-end sur <a href="https://www.instagram.com/dadacafeteria/" target="_blank" rel="noopener">Instagram @dadacafeteria</a>.</p>
+      </div>
+      <div class="braderie__visual" aria-hidden="true">
+        <div class="braderie__dates">
+          <span class="braderie__day"><b>Ven.</b><em>4</em><small>dès le soir</small></span>
+          <span class="braderie__day"><b>Sam.</b><em>5</em><small>toute la journée</small></span>
+          <span class="braderie__day"><b>Dim.</b><em>6</em><small>toute la journée</small></span>
+        </div>
+        <span class="tampon tampon--big">Vive la<br>braderie&nbsp;!</span>
+      </div>
     </div>
   </section>
 
@@ -495,7 +520,7 @@
           <li><span>Vendredi</span><b>9h – minuit</b></li>
           <li><span>Samedi (brunch)</span><b>11h30 – 15h</b></li>
           <li><span>Dimanche</span><b>Fermé</b></li>
-          <li class="hours__event" data-until="2026-09-07"><span>Braderie · 5 &amp; 6 sept.</span><b><a href="https://www.instagram.com/dadacafeteria/" target="_blank" rel="noopener">horaires sur Instagram</a></b></li>
+          <li class="hours__event" data-until="2026-09-07"><span>Braderie · dès ven. 4 soir → dim. 6</span><b><a href="https://www.instagram.com/dadacafeteria/" target="_blank" rel="noopener">horaires sur Instagram</a></b></li>
         </ul>
         <p class="infos__small"><strong>Ouvert aussi le soir</strong> — surtout les jeudis &amp; vendredis, jusque tard (bar, concerts, spectacles, privatisations). Suivez l'agenda sur Instagram.</p>
 
