@@ -2,9 +2,8 @@
    DADA Cafétéria — interactions
    ========================================================= */
 
-/* Adresse de réception des demandes de réservation : la boîte depuis laquelle
-   DADA écrit (mails du 06/07/2026). Si DADA prend un jour un domaine, changer ici. */
-const RESA_EMAIL = "dadacafet@gmail.com";
+/* Le formulaire de réservation a été retiré le 04/09/2026 (décision Benj) : le site
+   renvoie vers un mailto et Instagram. Plus aucun JS de formulaire ici. */
 
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -44,55 +43,4 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  /* ---------- Formulaire de réservation ---------- */
-  const form = document.getElementById("resa-form");
-
-  function buildMailto(data) {
-    const subject = `Demande DADA — ${data.type || "Réservation"}${data.pax ? ` (${data.pax} pers.)` : ""}`;
-    const lines = [
-      `Nom : ${data.nom || "-"}`,
-      `Email : ${data.email || "-"}`,
-      `Téléphone : ${data.tel || "-"}`,
-      `Type d'événement : ${data.type || "-"}`,
-      `Nombre de personnes : ${data.pax || "-"}`,
-      `Date souhaitée : ${data.date || "-"}`,
-      `Créneau : ${data.creneau || "-"}`,
-      "",
-      "Message :",
-      data.message || "-",
-      "",
-      "— Envoyé depuis le site DADA",
-    ];
-    return `mailto:${RESA_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(lines.join("\n"))}`;
-  }
-
-  if (form) {
-    form.addEventListener("submit", (e) => {
-      e.preventDefault();
-      const fd = new FormData(form);
-      const data = Object.fromEntries(fd.entries());
-
-      // validation minimale
-      let ok = true;
-      ["nom", "email", "type"].forEach(name => {
-        const field = form.elements[name];
-        const empty = !data[name] || !String(data[name]).trim();
-        field.classList.toggle("invalid", empty);
-        if (empty) ok = false;
-      });
-      if (!ok) { form.querySelector(".invalid")?.focus(); return; }
-
-      window.location.href = buildMailto(data);
-    });
-
-    // lien "écrire directement"
-    const direct = document.querySelector("[data-resa-mail]");
-    if (direct) {
-      direct.addEventListener("click", (e) => {
-        e.preventDefault();
-        const fd = new FormData(form);
-        window.location.href = buildMailto(Object.fromEntries(fd.entries()));
-      });
-    }
-  }
 });
