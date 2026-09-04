@@ -628,6 +628,43 @@
     </div>
   </footer>
 
+  <!-- ================= MESURE D'AUDIENCE (Google Analytics 4, sur consentement) =================
+       DADA_GA_ID = identifiant de mesure de la propriété GA4 (Admin › Flux de données › « G-… »),
+       propriété créée sous benjamin.fieve@gmail.com. Tant qu'il vaut G-XXXXXXXXXX, rien ne se charge
+       et le bandeau reste caché. gtag.js n'est chargé QU'APRÈS un « Accepter » (CNIL : GA4 n'est pas
+       exempté de consentement) ; le choix est mémorisé 6 mois dans localStorage (dada-consent). -->
+  <div class="consent" id="consent" hidden role="dialog" aria-live="polite" aria-label="Cookies de mesure d'audience">
+    <p>On compte les visites (Google Analytics) pour savoir si le site sert à quelque chose. Pas de pub, pas de revente. Ça vous va&nbsp;?</p>
+    <div class="consent__btns">
+      <button type="button" class="btn btn--primary" id="consent-ok">Accepter</button>
+      <button type="button" class="btn btn--ghost" id="consent-no">Refuser</button>
+    </div>
+  </div>
+  <script>
+  (function () {
+    var DADA_GA_ID = "G-HGW8BGWMVZ";
+    if (!/^G-[A-Z0-9]{6,12}$/.test(DADA_GA_ID) || /^G-X+$/.test(DADA_GA_ID)) return;
+    var KEY = "dada-consent", SIX_MONTHS = 183 * 864e5, choice = null;
+    try { var raw = JSON.parse(localStorage.getItem(KEY) || "null");
+          if (raw && Date.now() - raw.at < SIX_MONTHS) choice = raw.v; } catch (e) {}
+    function arm() {
+      window.dataLayer = window.dataLayer || [];
+      window.gtag = function () { dataLayer.push(arguments); };
+      gtag("js", new Date());
+      gtag("config", DADA_GA_ID, { anonymize_ip: true });
+      var sc = document.createElement("script"); sc.async = true;
+      sc.src = "https://www.googletagmanager.com/gtag/js?id=" + DADA_GA_ID;
+      document.head.appendChild(sc);
+    }
+    function remember(v) { try { localStorage.setItem(KEY, JSON.stringify({ v: v, at: Date.now() })); } catch (e) {} }
+    if (choice === "yes") { arm(); return; }
+    if (choice === "no") return;
+    var box = document.getElementById("consent"); if (!box) return;
+    box.hidden = false;
+    document.getElementById("consent-ok").onclick = function () { remember("yes"); box.hidden = true; arm(); };
+    document.getElementById("consent-no").onclick = function () { remember("no"); box.hidden = true; };
+  })();
+  </script>
   <script src="assets/main.js"></script>
 </body>
 </html>
