@@ -102,7 +102,7 @@ img{max-width:100%;display:block}
 /* encart menu Braderie + photo de l'an dernier (04/09/2026, temporaire comme la section) */
 .braderie__menu{ max-width:var(--maxw);margin:clamp(2rem,4vw,3rem) auto 0;display:grid;grid-template-columns:.8fr 1.2fr;gap:clamp(1.2rem,3vw,2rem);align-items:stretch; }
 .braderie__photo{ margin:0;position:relative;border-radius:var(--r);overflow:hidden;background:var(--bleu);min-height:260px; }
-.braderie__photo img{ width:100%;height:100%;object-fit:cover;position:absolute;inset:0; }
+.braderie__photo img{ width:100%;height:100%;object-fit:cover;object-position:50% 62%;position:absolute;inset:0; }
 .braderie__photo figcaption{ position:absolute;left:0;right:0;bottom:0;padding:1.6rem .9rem .7rem;font-family:'Rubik';font-weight:500;font-size:.8rem;color:var(--blanc);background:linear-gradient(to top,rgba(40,32,32,.75),transparent); }
 .braderie__photo figcaption a{ color:var(--jaune); }
 .braderie__card{ box-shadow:var(--shadow); }
