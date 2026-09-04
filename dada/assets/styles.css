@@ -99,6 +99,17 @@ img{max-width:100%;display:block}
 .braderie__note{ font-size:.92rem;opacity:.92;margin-top:1.1rem; }
 .braderie__note a{ color:var(--jaune);font-weight:600; }
 .braderie__visual{ position:relative;display:flex;justify-content:center;padding:5.6rem 0 1rem; }
+/* encart menu Braderie + photo de l'an dernier (04/09/2026, temporaire comme la section) */
+.braderie__menu{ max-width:var(--maxw);margin:clamp(2rem,4vw,3rem) auto 0;display:grid;grid-template-columns:.8fr 1.2fr;gap:clamp(1.2rem,3vw,2rem);align-items:stretch; }
+.braderie__photo{ margin:0;position:relative;border-radius:var(--r);overflow:hidden;background:var(--bleu);min-height:260px; }
+.braderie__photo img{ width:100%;height:100%;object-fit:cover;position:absolute;inset:0; }
+.braderie__photo figcaption{ position:absolute;left:0;right:0;bottom:0;padding:1.6rem .9rem .7rem;font-family:'Rubik';font-weight:500;font-size:.8rem;color:var(--blanc);background:linear-gradient(to top,rgba(40,32,32,.75),transparent); }
+.braderie__photo figcaption a{ color:var(--jaune); }
+.braderie__card{ box-shadow:var(--shadow); }
+.braderie__cols{ display:grid;grid-template-columns:1.3fr .7fr;gap:0 1.6rem; }
+.braderie__cols .menu-subhead{ margin-top:.2rem; }
+.braderie__cols .menu-col__note{ margin-top:.8rem; }
+.braderie__cols .menu-col__note a{ color:var(--rouge);font-weight:600; }
 .braderie__dates{ display:flex;gap:.7rem; }
 .braderie__day{
   background:var(--blanc);color:var(--noir);border-radius:var(--r);
@@ -384,6 +395,8 @@ blockquote{
   .brunch__stamp{ width:96px;height:96px;font-size:.9rem;left:auto;right:0;bottom:-16px; }
   .soeurs__photo{ order:2; }
   .braderie__inner{ grid-template-columns:1fr; }
+  .braderie__menu{ grid-template-columns:1fr; }
+  .braderie__photo{ min-height:240px; }
   .insta__grid{ grid-template-columns:1fr; }
   .insta__embed{ max-width:440px;margin:0 auto; }
   .braderie__visual{ padding:4.4rem 0 .5rem;justify-content:flex-start; }
@@ -405,7 +418,8 @@ blockquote{
 @media (max-width:760px){
   .hero__swatches span{ height:10px; }
   .marquee__item{ font-size:.88rem;padding:.38rem .8rem; }
-  .braderie__dates{ gap:.5rem; }
+  .braderie__dates{ gap:.5rem;flex-wrap:wrap;justify-content:center; }
+  .braderie__cols{ grid-template-columns:1fr; }
   .braderie__day{ width:92px;padding:.8rem .3rem .9rem; }
   .brunch__list{ grid-template-columns:1fr; }
   .resa__grid{ grid-template-columns:minmax(0,1fr); }

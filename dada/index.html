@@ -58,7 +58,7 @@
 <body>
 
   <!-- ================= BRADERIE (temporaire) : défilant + section #braderie + ligne horaires.
-       Tout ce qui porte data-until="2026-09-07" se cache seul le 7 septembre (cf. main.js).
+       Tout ce qui porte data-until se cache seul à la date indiquée (défilant le 7, section et horaires le 8, fermeture le 10) (cf. main.js).
        À retirer du HTML/CSS après la Braderie. -->
   <a class="marquee" href="#braderie" data-until="2026-09-07" aria-label="Braderie de Lille, dès vendredi soir : DADA est sur le parcours, 169 rue Pierre Mauroy">
     <div class="marquee__track" aria-hidden="true"><span class="marquee__item">★ Tout est braderie&nbsp;!</span><span class="marquee__item">Dès vendredi soir</span><span class="marquee__item">Chiner, c'est bien. Chiner le ventre plein, c'est dada.</span><span class="marquee__item">On est sur le parcours · 169 rue Pierre Mauroy</span><span class="marquee__item">La braderie, oui. Brader le fait maison, jamais.</span><span class="marquee__item">★ Tout est braderie&nbsp;!</span><span class="marquee__item">Dès vendredi soir</span><span class="marquee__item">Chiner, c'est bien. Chiner le ventre plein, c'est dada.</span><span class="marquee__item">On est sur le parcours · 169 rue Pierre Mauroy</span><span class="marquee__item">La braderie, oui. Brader le fait maison, jamais.</span></div>
@@ -110,25 +110,61 @@
   </section>
 
   <!-- ================= BRADERIE (temporaire, data-until) ================= -->
-  <section class="braderie" id="braderie" data-until="2026-09-07">
+  <section class="braderie" id="braderie" data-until="2026-09-08">
     <div class="braderie__inner">
       <div class="braderie__text">
         <span class="section-label section-label--light">Braderie de Lille · 4 → 6 septembre</span>
         <h2 class="display display--white">Tout est<br>braderie.</h2>
-        <p class="braderie__lead">Dès <strong>vendredi soir</strong> et tout le week-end, DADA est sur le parcours, <strong>169 rue Pierre Mauroy</strong>. Entre deux tas de moules et trois cartons de vieilles BD&nbsp;: café du matin, cafétéria, bar. Chiner, c'est bien. Chiner le ventre plein, c'est dada.</p>
+        <p class="braderie__lead">Dès <strong>vendredi</strong> et tout le week-end, DADA est sur le parcours, <strong>169 rue Pierre Mauroy</strong>. Entre deux tas de moules et trois cartons de vieilles BD&nbsp;: café du matin, cafétéria, bar jusqu'à 2h. Chiner, c'est bien. Chiner le ventre plein, c'est dada.</p>
         <div class="braderie__cta">
-          <a href="#carte" class="btn btn--jaune">Voir la carte</a>
+          <a href="#menu-braderie" class="btn btn--jaune">Le menu Braderie</a>
           <a href="https://www.google.com/maps/dir/?api=1&amp;destination=169+rue+Pierre+Mauroy,+59800+Lille" target="_blank" rel="noopener" class="btn btn--ghost btn--ghost-light">Itinéraire</a>
         </div>
-        <p class="braderie__note">Horaires du week-end sur <a href="https://www.instagram.com/dadacafeteria/" target="_blank" rel="noopener">Instagram @dadacafeteria</a>.</p>
+        <p class="braderie__note">Lundi 7, on ouvre de 11h à 15h, puis on récupère&nbsp;: <strong>fermé mardi 8 et mercredi 9</strong>. Un an jour pour jour que DADA existe&nbsp;: on fête ça avec vous.</p>
       </div>
-      <div class="braderie__visual" aria-hidden="true">
-        <div class="braderie__dates">
-          <span class="braderie__day"><b>Ven.</b><em>4</em><small>dès le soir</small></span>
-          <span class="braderie__day"><b>Sam.</b><em>5</em><small>toute la journée</small></span>
-          <span class="braderie__day"><b>Dim.</b><em>6</em><small>toute la journée</small></span>
+      <div class="braderie__visual">
+        <div class="braderie__dates" aria-label="Horaires de la Braderie">
+          <span class="braderie__day"><b>Ven.</b><em>4</em><small>9h → 2h</small></span>
+          <span class="braderie__day"><b>Sam.</b><em>5</em><small>8h → 2h</small></span>
+          <span class="braderie__day"><b>Dim.</b><em>6</em><small>8h → 21h</small></span>
+          <span class="braderie__day"><b>Lun.</b><em>7</em><small>11h → 15h</small></span>
         </div>
-        <span class="tampon tampon--big">Chine<br>que<br>chine&nbsp;!</span>
+        <span class="tampon tampon--big" aria-hidden="true">Chine<br>que<br>chine&nbsp;!</span>
+      </div>
+    </div>
+
+    <div class="braderie__menu" id="menu-braderie">
+      <figure class="braderie__photo">
+        <img src="assets/braderie-2025.jpg" alt="L'équipe de DADA devant le café pendant la Braderie 2025" loading="lazy">
+        <figcaption>Braderie 2025, la première. Photo <a href="https://www.instagram.com/alexandre_ghestem/" target="_blank" rel="noopener">@alexandre_ghestem</a>.</figcaption>
+      </figure>
+      <div class="menu-col braderie__card">
+        <h3 class="menu-col__title">Le menu Braderie</h3>
+        <p class="menu-col__note">Service rapide toute la journée, sur place ou à emporter. Tout est fait maison&nbsp;: végan, végé, carné, sans gluten, sans lactose.</p>
+        <div class="braderie__cols">
+          <div>
+            <h4 class="menu-subhead">Manger</h4>
+            <ul class="menu-list menu-list--compact">
+              <li><span>Gaspacho « vue mer »</span><b>5€</b></li>
+              <li><span>Carbonade flamande, pommes de terre persillées</span><b>16€</b></li>
+              <li><span>Grenailles sautées, crème de maroilles, salade composée, noisettes torréfiées</span><b>15€</b></li>
+              <li><span>Salade betterave-pomme&nbsp;: quinoa, pousses d'épinards, pickles de chioggia, houmous</span><b>14€</b></li>
+              <li><span>Cookies (chicorée, deux chocos, avoine…)</span><b>4€</b></li>
+              <li><span>Cakes (patate douce, spéculoos…)</span><b>4€</b></li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="menu-subhead">Boire</h4>
+            <ul class="menu-list menu-list--compact">
+              <li><span>Bières du Nord</span></li>
+              <li><span>Vins bio</span></li>
+              <li><span>Cocktails</span></li>
+              <li><span>Boissons artisanales</span></li>
+              <li><span>Café &amp; chicorée</span></li>
+            </ul>
+            <p class="menu-col__note">Prix des boissons&nbsp;: voir <a href="#carte">la carte</a>.</p>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -554,7 +590,8 @@
           <li><span>Vendredi</span><b>9h – minuit</b></li>
           <li><span>Samedi (brunch)</span><b>11h30 – 15h</b></li>
           <li><span>Dimanche</span><b>Fermé</b></li>
-          <li class="hours__event" data-until="2026-09-07"><span>Braderie · dès ven. 4 soir → dim. 6</span><b><a href="https://www.instagram.com/dadacafeteria/" target="_blank" rel="noopener">horaires sur Instagram</a></b></li>
+          <li class="hours__event" data-until="2026-09-08"><span>Braderie · ven. 4 → lun. 7</span><b>ven 9h–2h · sam 8h–2h · dim 8h–21h · lun 11h–15h</b></li>
+          <li class="hours__event" data-until="2026-09-10"><span>Après la Braderie</span><b>fermé mar. 8 &amp; mer. 9</b></li>
         </ul>
         <p class="infos__small"><strong>Ouvert aussi le soir</strong> — surtout les jeudis &amp; vendredis, jusque tard (bar, concerts, spectacles, privatisations). Suivez l'agenda sur Instagram.</p>
 
