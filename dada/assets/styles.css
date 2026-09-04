@@ -107,6 +107,7 @@ img{max-width:100%;display:block}
 .strip{ display:grid;grid-template-columns:repeat(3,1fr);gap:.7rem; }
 .strip--soeurs{ grid-template-columns:repeat(2,1fr);margin-top:.8rem; }
 .strip img{ width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:12px;box-shadow:var(--shadow);border:3px solid var(--blanc); }
+.strip--braderie{ grid-template-columns:repeat(4,1fr); }
 .strip--braderie img{ border-color:transparent; }
 .braderie__photo img{ width:100%;height:100%;object-fit:cover;object-position:50% 62%;position:absolute;inset:0; }
 .braderie__photo figcaption{ position:absolute;left:0;right:0;bottom:0;padding:1.6rem .9rem .7rem;font-family:'Rubik';font-weight:500;font-size:.8rem;color:var(--blanc);background:linear-gradient(to top,rgba(40,32,32,.75),transparent); }
@@ -433,6 +434,7 @@ blockquote{
   .hero__swatches span{ height:10px; }
   .marquee__item{ font-size:.88rem;padding:.38rem .8rem; }
   .braderie__dates{ gap:.5rem;flex-wrap:wrap;justify-content:center; }
+  .strip--braderie{ grid-template-columns:repeat(2,1fr); }
   .braderie__cols{ grid-template-columns:1fr; }
   .braderie__day{ width:92px;padding:.8rem .3rem .9rem; }
   .brunch__list{ grid-template-columns:1fr; }
