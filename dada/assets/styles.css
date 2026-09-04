@@ -123,6 +123,9 @@ img{max-width:100%;display:block}
 }
 .nav__logo{ text-decoration:none; flex-shrink:0; display:flex; align-items:center; }
 .nav__logo-img{ height:38px; width:auto; }
+/* display:contents : sur grand ecran le panneau n'existe pas, ses enfants
+   restent des elements directs de la barre flex. */
+.nav__panel{ display:contents; }
 .nav__links{ display:flex; gap:1.4rem; margin-left:auto; flex-wrap:wrap; }
 .nav__links a{
   font-family:'Rubik',sans-serif;font-weight:500;
@@ -387,15 +390,19 @@ blockquote{
   .tampon--big{ width:110px;height:110px;font-size:.88rem;right:0;top:-18px; }
   .carte-gallery{ grid-template-columns:1fr 1fr; }
 }
-@media (max-width:760px){
-  .nav__links,.nav .btn--nav{ display:none; }
+/* le menu complet tenait sur une seule ligne jusqu'a ~900px seulement :
+   en portrait tablette (768-820) il s'enroulait sur deux lignes */
+@media (max-width:900px){
+  .nav__panel{ display:none; }
   .nav__burger{ display:flex;margin-left:auto; }
-  .nav.is-open .nav__links{
-    display:flex;flex-direction:column;gap:.6rem;
-    position:absolute;top:100%;left:0;right:0;
-    background:var(--blanc);padding:1.2rem 1.5rem;border-bottom:3px solid var(--bleu);
+  .nav.is-open .nav__panel{
+    display:block;position:absolute;top:100%;left:0;right:0;
+    background:var(--blanc);padding:1.2rem 1.5rem 1.5rem;border-bottom:3px solid var(--bleu);
   }
-  .nav.is-open .btn--nav{ display:block;margin:1rem 1.5rem 0; }
+  .nav.is-open .nav__links{ display:flex;flex-direction:column;gap:.6rem;margin:0; }
+  .nav.is-open .btn--nav{ display:inline-flex;margin-top:1.1rem; }
+}
+@media (max-width:760px){
   .hero__swatches span{ height:10px; }
   .marquee__item{ font-size:.88rem;padding:.38rem .8rem; }
   .braderie__dates{ gap:.5rem; }

@@ -128,7 +128,11 @@ nav.masquee{transform:translateY(-100%)}
 .cta:active,.btn:active{transform:translate(1px,1px);box-shadow:2px 2px 0 var(--encre)}
 .btn-ghost{background:var(--creme);color:var(--encre)}
 .nav-cta{flex:none}
-.burger{display:none;margin-left:auto;background:none;border:0;cursor:pointer;padding:.5rem;z-index:110}
+.burger{display:none;flex:none;margin-left:auto;background:none;border:0;cursor:pointer;padding:.5rem;z-index:110}
+@media(max-width:380px){
+  /* la baseline en capitales espacées pousse le burger hors de l'écran */
+  .brand small{display:none}
+}
 .burger span{display:block;width:24px;height:2.5px;background:var(--encre);margin:5px 0;border-radius:2px;transition:.3s var(--ease)}
 .burger[aria-expanded="true"] span:nth-child(1){transform:translateY(7px) rotate(45deg)}
 .burger[aria-expanded="true"] span:nth-child(2){opacity:0}

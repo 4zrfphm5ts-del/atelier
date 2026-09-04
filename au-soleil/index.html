@@ -11,6 +11,16 @@
 <link rel="apple-touch-icon" href="icon-180.png">
 <title>Au Soleil — terrasses ensoleillées</title>
 <meta name="description" content="Trouve une terrasse au soleil maintenant : carte des terrasses ensoleillées en temps réel (position du soleil × orientation), au Touquet et à Lille.">
+<link rel="canonical" href="https://4zrfphm5ts-del.github.io/atelier/au-soleil/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Studio BFievé">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:title" content="Au Soleil — terrasses ensoleillées">
+<meta property="og:description" content="Trouve une terrasse au soleil maintenant : carte des terrasses ensoleillées en temps réel (position du soleil × orientation), au Touquet et à Lille.">
+<meta property="og:url" content="https://4zrfphm5ts-del.github.io/atelier/au-soleil/">
+<meta property="og:image" content="https://4zrfphm5ts-del.github.io/atelier/au-soleil/icon-512.png">
+<meta name="twitter:card" content="summary">
+
 <meta property="og:title" content="Au Soleil — terrasses ensoleillées maintenant">
 <meta property="og:description" content="La carte des terrasses au soleil en temps réel, au Touquet et à Lille.">
 <meta property="og:type" content="website">
@@ -44,10 +54,10 @@
   .tab::before{content:""; position:absolute; inset:-5px -3px}
   .tab.active{background:var(--sun); color:#1a1206; font-weight:600}
   .controls{display:flex; flex-wrap:wrap; align-items:center; gap:8px 14px; flex:1}
-  .ctl{display:flex; align-items:center; gap:8px}
+  .ctl{display:flex; align-items:center; gap:8px; flex-wrap:wrap; min-width:0; max-width:100%}
   .ctl label{color:var(--muted); font-size:12px; text-transform:uppercase; letter-spacing:.6px}
   input[type=date]{background:var(--panel); color:var(--ink); border:1px solid var(--line); border-radius:8px; padding:6px 8px; font:inherit}
-  input[type=range]{width:190px; accent-color:var(--sun)}
+  input[type=range]{width:190px; max-width:100%; min-width:0; accent-color:var(--sun)}
   .clock{font-variant-numeric:tabular-nums; font-weight:600; min-width:56px; text-align:center;
     background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:4px 8px}
   button.primary{background:var(--sun); color:#1a1206; border:1px solid var(--sun); border-radius:8px; padding:7px 12px; font:inherit; font-weight:600; cursor:pointer}

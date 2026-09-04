@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://4zrfphm5ts-del.github.io/atelier/sitemap.xml

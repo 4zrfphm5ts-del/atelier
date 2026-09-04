@@ -7,6 +7,16 @@
 <meta name="color-scheme" content="light">
 <title>Penderie</title>
 <meta name="description" content="Penderie — la garde-robe intelligente du foyer. Cataloguez vos pièces, laissez le styliste composer selon la météo. Local, privé, sans compte.">
+<link rel="canonical" href="https://4zrfphm5ts-del.github.io/atelier/penderie/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Studio BFievé">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:title" content="Penderie — la garde-robe du foyer">
+<meta property="og:description" content="Penderie — la garde-robe intelligente du foyer. Cataloguez vos pièces, laissez le styliste composer selon la météo. Local, privé, sans compte.">
+<meta property="og:url" content="https://4zrfphm5ts-del.github.io/atelier/penderie/">
+<meta property="og:image" content="https://4zrfphm5ts-del.github.io/atelier/penderie/icon-512.png">
+<meta name="twitter:card" content="summary">
+
 <meta name="robots" content="noindex, nofollow">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -94,8 +104,13 @@ nav{
 }
 .navin{max-width:560px; margin:0 auto; display:flex; align-items:center; padding:10px 8px calc(10px + var(--sab))}
 nav .tab{
-  flex:1; text-align:center; font-size:10px; font-weight:600; letter-spacing:.12em; text-transform:uppercase;
+  flex:1 1 0; min-width:0; text-align:center; font-size:10px; font-weight:600; letter-spacing:.12em; text-transform:uppercase;
   color:var(--ink2); padding:10px 2px; transition:color .2s, letter-spacing .2s; position:relative;
+}
+/* très petits écrans : l'onglet le plus long débordait de la barre */
+@media (max-width:360px){
+  nav .tab{font-size:9px; letter-spacing:.05em}
+  nav .tab.on{letter-spacing:.06em}
 }
 /* zone tactile étendue à ~44pt sans toucher au rendu */
 nav .tab::before{content:''; position:absolute; inset:-5px 0}
