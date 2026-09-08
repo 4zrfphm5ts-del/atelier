@@ -67,66 +67,13 @@ img{max-width:100%;display:block}
 .btn--block{ width:100%; text-align:center; }
 
 /* =========================================================
-   BRADERIE (temporaire : défilant + section) — à retirer après le 06/09
+   VIGNETTES ÉQUIPE
    ========================================================= */
-/* rayures rouge/rose du visuel « Tout est dada. » + pastilles blanc lait, Rubik 900 bleu */
-.marquee{
-  display:block;overflow:hidden;text-decoration:none;
-  background:repeating-linear-gradient(90deg, var(--rouge) 0 22px, var(--rose) 22px 44px);
-  border-bottom:3px solid var(--bleu);
-  padding:.5rem 0;
-}
-.marquee__track{ display:flex;align-items:center;gap:.7rem;width:max-content;padding-left:.7rem;animation:defile 46s linear infinite; }
-.marquee__item{
-  white-space:nowrap;background:var(--blanc);color:var(--bleu);
-  font-family:'Rubik',sans-serif;font-weight:900;font-size:.98rem;letter-spacing:.2px;line-height:1;
-  padding:.42rem .95rem;border-radius:999px;box-shadow:2px 2px 0 var(--bleu);
-}
-.marquee__item:nth-child(odd){ transform:rotate(-1.2deg); }
-.marquee__item:nth-child(even){ transform:rotate(1deg); }
-.marquee:hover .marquee__track{ animation-play-state:paused; }
-@keyframes defile{ from{transform:translateX(0)} to{transform:translateX(-50%)} }
-@media (prefers-reduced-motion:reduce){ .marquee__track{ animation:none; } }
-
-.braderie{ background:var(--rouge);color:var(--blanc);border-bottom:14px solid var(--jaune); }
-.braderie__inner{ max-width:var(--maxw);margin:0 auto;display:grid;grid-template-columns:1.15fr .85fr;gap:clamp(2rem,5vw,4rem);align-items:center; }
-.braderie .section-label--light{ color:var(--jaune); }
-.braderie .display{ margin:.2rem 0 1rem;font-size:clamp(2.6rem,6vw,4.4rem); }
-.braderie__lead{ font-size:1.12rem;max-width:560px;margin-bottom:1.5rem; }
-.braderie__lead strong{ color:var(--jaune); }
-.braderie__cta{ display:flex;gap:1rem;flex-wrap:wrap;align-items:center; }
-.btn--ghost-light{ color:var(--blanc);border-color:var(--blanc); }
-.braderie__note{ font-size:.92rem;opacity:.92;margin-top:1.1rem; }
-.braderie__note a{ color:var(--jaune);font-weight:600; }
-.braderie__visual{ position:relative;display:flex;justify-content:center;padding:5.6rem 0 1rem; }
-/* encart menu Braderie + photo de l'an dernier (04/09/2026, temporaire comme la section) */
-.braderie__menu{ max-width:var(--maxw);margin:clamp(2rem,4vw,3rem) auto 0;display:grid;grid-template-columns:.8fr 1.2fr;gap:clamp(1.2rem,3vw,2rem);align-items:stretch; }
-.braderie__gallery{ display:flex;flex-direction:column;gap:.7rem; }
-.braderie__photo{ margin:0;position:relative;border-radius:var(--r);overflow:hidden;background:var(--bleu);min-height:260px;flex:1; }
-/* bande de vignettes carrées (équipe + Braderie) */
-.strip{ display:grid;grid-template-columns:repeat(3,1fr);gap:.7rem; }
-.strip--soeurs{ grid-template-columns:repeat(2,1fr);margin-top:.8rem; }
+.strip{ display:grid;grid-template-columns:repeat(2,1fr);gap:.7rem; }
+.strip--soeurs{ margin-top:.8rem; }
 .strip img{ width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:12px;box-shadow:var(--shadow);border:3px solid var(--blanc); }
-.strip--braderie{ grid-template-columns:repeat(4,1fr); }
-.strip--braderie img{ border-color:transparent; }
-.braderie__photo img{ width:100%;height:100%;object-fit:cover;object-position:50% 62%;position:absolute;inset:0; }
-.braderie__photo figcaption{ position:absolute;left:0;right:0;bottom:0;padding:1.6rem .9rem .7rem;font-family:'Rubik';font-weight:500;font-size:.8rem;color:var(--blanc);background:linear-gradient(to top,rgba(40,32,32,.75),transparent); }
-.braderie__photo figcaption a{ color:var(--jaune); }
-.braderie__card{ box-shadow:var(--shadow); }
-.braderie__cols{ display:grid;grid-template-columns:1.3fr .7fr;gap:0 1.6rem; }
-.braderie__cols .menu-subhead{ margin-top:.2rem; }
-.braderie__cols .menu-col__note{ margin-top:.8rem; }
-.braderie__cols .menu-col__note a{ color:var(--rouge);font-weight:600; }
-.braderie__dates{ display:flex;gap:.7rem; }
-.braderie__day{
-  background:var(--blanc);color:var(--noir);border-radius:var(--r);
-  width:clamp(96px,10vw,130px);padding:1rem .5rem 1.1rem;text-align:center;
-  box-shadow:5px 5px 0 var(--bleu);display:flex;flex-direction:column;align-items:center;
-}
-.braderie__day b{ font-family:'Rubik';font-weight:700;text-transform:uppercase;letter-spacing:1px;font-size:.78rem;color:var(--bleu); }
-.braderie__day em{ font-family:'Antonio';font-style:normal;font-weight:700;font-size:clamp(3rem,5vw,4.4rem);line-height:1;color:var(--rouge);margin:.15rem 0; }
-.braderie__day small{ font-family:'Rubik';font-weight:500;font-size:.68rem;color:#6b5d5d;line-height:1.15; }
-.tampon--big{ width:150px;height:150px;font-size:1.15rem;right:-24px;top:-30px;background:var(--jaune);color:var(--noir);transform:rotate(-10deg); }
+
+.btn--ghost-light{ color:var(--blanc);border-color:var(--blanc); }
 
 /* =========================================================
    NAV
@@ -408,14 +355,9 @@ blockquote{
      chevauche toujours le coin de la photo, sans sortir de l'ecran. */
   .brunch__stamp{ width:96px;height:96px;font-size:.9rem;left:auto;right:0;bottom:-16px; }
   .soeurs__photo{ order:2; }
-  .braderie__inner{ grid-template-columns:1fr; }
-  .braderie__menu{ grid-template-columns:1fr; }
-  .braderie__photo{ min-height:240px; }
-  .strip--soeurs{ grid-template-columns:repeat(2,1fr);gap:.5rem; }
+  .strip{ gap:.5rem; }
   .insta__grid{ grid-template-columns:1fr; }
   .insta__embed{ max-width:440px;margin:0 auto; }
-  .braderie__visual{ padding:4.4rem 0 .5rem;justify-content:flex-start; }
-  .tampon--big{ width:110px;height:110px;font-size:.88rem;right:0;top:-18px; }
   .carte-gallery{ grid-template-columns:1fr 1fr; }
 }
 /* le menu complet tenait sur une seule ligne jusqu'a ~900px seulement :
@@ -432,11 +374,6 @@ blockquote{
 }
 @media (max-width:760px){
   .hero__swatches span{ height:10px; }
-  .marquee__item{ font-size:.88rem;padding:.38rem .8rem; }
-  .braderie__dates{ gap:.5rem;flex-wrap:wrap;justify-content:center; }
-  .strip--braderie{ grid-template-columns:repeat(2,1fr); }
-  .braderie__cols{ grid-template-columns:1fr; }
-  .braderie__day{ width:92px;padding:.8rem .3rem .9rem; }
   .brunch__list{ grid-template-columns:1fr; }
   .resa__grid{ grid-template-columns:minmax(0,1fr); }
 }
