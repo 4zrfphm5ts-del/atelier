@@ -1,7 +1,8 @@
 # Plan de l'atelier
 
 Relevé de l'arborescence complète — sources, chaîne de fabrication, dépôt publié
-et sites en ligne. Établi le 19-08-2026 sur `main`, commit `0829d3c`.
+et sites en ligne. Établi le 19-08-2026 sur `main`, commit `0829d3c` ; complété le
+15-09-2026 avec le site entreprise `elan/`.
 
 Version illustrée : [`docs/plan-atelier.html`](plan-atelier.html) (à ouvrir dans un
 navigateur). Les deux fichiers de `docs/` sont en `noindex` mais restent servis par
@@ -24,9 +25,8 @@ GitHub Pages — rien de confidentiel ne doit y être ajouté.
                           ▼                                 ▼
 ③ DÉPÔT          ┌───────────────────────────────────────────────────────┐
                  │ 4zrfphm5ts-del/atelier · branche main                  │
-                 │ 32 fichiers · 2,31 Mo · 8 commits                      │
-                 │ enseigne/ au-soleil/ drink-gamz/ piou-piou-express/    │
-                 │ dada/ · index.html · sitemap.xml · .nojekyll           │
+                 │ elan/ enseigne/ au-soleil/ drink-gamz/                 │
+                 │ piou-piou-express/ dada/ · index.html · sitemap.xml    │
                  └───────────────────────────────────────────────────────┘
                           │ git push origin main
                           ▼
@@ -37,7 +37,7 @@ GitHub Pages — rien de confidentiel ne doit y être ajouté.
           ▼                                ▼
    Référencé                        Lien direct
    (accueil + sitemap.xml)          (noindex, hors accueil et sitemap)
-   enseigne · au-soleil ·           dada
+   elan · enseigne · au-soleil ·    dada
    drink-gamz · piou-piou-express
 ```
 
@@ -72,13 +72,28 @@ Les trois traces qui le prouvent :
 
 ## 3. Sorties — le dépôt publié
 
-32 fichiers, 2,31 Mo, 4 236 lignes de code.
+32 fichiers, 2,31 Mo, 4 236 lignes de code — relevé du 19-08-2026, avant l'ajout
+de `elan/` (10 fichiers, ~220 K).
 
 ```
 atelier/
-├── index.html                    4 K    landing, 4 apps listées (dada absent)
-├── sitemap.xml                   4 K    5 URL, lastmod 2026-07-07
+├── index.html                    4 K    landing ÉLAN + L'Enseigne + 3 produits (dada absent)
+├── sitemap.xml                   4 K    8 URL, lastmod 2026-09-15
 ├── .nojekyll                     0      sert les fichiers tels quels
+│
+├── elan/                                220 K    site entreprise (ajouté le 15-09-2026)
+│   ├── index.html                36 K   accueil : deux pôles, méthode, maison, tarifs
+│   ├── conseil.html              24 K   pôle Conseil — 6 formats, déroulé, livrables
+│   ├── studio.html               24 K   pôle Studio — 6 prestations, façon de faire
+│   ├── mentions-legales.html      8 K
+│   ├── assets/
+│   │   ├── elan.css              12 K   feuille commune aux 4 pages
+│   │   └── elan.js                4 K   nav, révélations, formulaire mailto
+│   └── img/
+│       ├── og-elan.jpg           52 K   image de partage 1200×630
+│       ├── apercu-enseigne.jpg   48 K
+│       ├── apercu-au-soleil.jpg  36 K
+│       └── apercu-drink-gamz.jpg 24 K
 │
 ├── enseigne/                            312 K
 │   ├── index.html                48 K   735 lignes
@@ -122,11 +137,29 @@ atelier/
         └── brunch-dessert.jpg   104 K
 ```
 
-Les médias de DADA pèsent 1,5 Mo, soit 68 % du dépôt pour un seul des cinq sites.
+Les médias de DADA pèsent 1,5 Mo, soit les deux tiers du dépôt pour un seul des six sites.
 
 ---
 
-## 4. Les cinq sites
+## 4. Les six sites
+
+### ◤ ÉLAN — `/elan/` · en ligne, priorité 1.0
+
+Le site d'entreprise. Il réunit les deux façons de vendre — le conseil (data, produit,
+growth, IA) et la prestation design & développement — sous une seule marque, avec le
+fondateur en dirigeant assumé. L'Enseigne en devient l'atelier « commerces de proximité »,
+et lui renvoie désormais un lien.
+
+| | |
+|---|---|
+| Pages | `index.html`, `conseil.html`, `studio.html`, `mentions-legales.html` |
+| Accueil | hero · deux pôles · pour qui · méthode · réalisations · engagements · la maison · tarifs · FAQ · contact |
+| Conseil | diagnostic 2 400 € · mission dès 6 000 € · IA dès 4 800 € · temps partagé dès 1 900 €/mois · journée 650 € |
+| Studio | design dès 3 900 € · produit dès 6 900 € · outils dès 2 400 € · mise en ligne dès 1 200 € · suivi 90 €/h |
+| Balisage | JSON-LD `ProfessionalService` + `Person` fondateur, 2 `Service` avec catalogues, `FAQPage` ×3 |
+| Contact | formulaire validé côté client puis `mailto:` pré-rempli — aucun serveur, aucun cookie |
+| Runtime | Google Fonts (Fraunces + Work Sans) ; CSS et JS communs servis depuis `assets/` |
+| À valider | prix, promesses de délai et plafond micro-entreprise — voir [`elan-a-valider.md`](elan-a-valider.md) |
 
 ### 🪧 L'Enseigne — `/enseigne/` · en ligne, priorité 1.0
 
@@ -205,6 +238,7 @@ l'extérieur, et donc ce qui casse quand un tiers tombe.
 
 | Site | Services tiers | Si le tiers tombe |
 |---|---|---|
+| ÉLAN | `fonts.googleapis.com` | mise en page intacte, polices système |
 | L'Enseigne | `fonts.googleapis.com` | mise en page intacte, polices système |
 | DADA | `fonts.googleapis.com` | mise en page intacte, polices système |
 | Au Soleil | `unpkg.com` (Leaflet), `tile.openstreetmap.org` | sans unpkg : pas de carte du tout |
@@ -225,6 +259,7 @@ l'extérieur, et donc ce qui casse quand un tiers tombe.
 | 06-07-2026 | `6f96f08` | Mentions légales — SIREN et SIRET renseignés, page terminée. |
 | 07-07-2026 | `a5c5435` | DADA — carte à jour et refonte selon retours (ordre carte/brunch, bar, horaires, équipe). |
 | 07-07-2026 | `0829d3c` | SEO et partage — favicon, image OG, canonical, JSON-LD pour DADA ; métas ajoutées aux trois apps. |
+| 15-09-2026 | — | ÉLAN mis en ligne : site entreprise à deux pôles (conseil + studio), accueil du dépôt refondu autour de la marque, sitemap et liens depuis L'Enseigne. |
 
 ---
 
@@ -242,7 +277,7 @@ pendent.
    Piou demande Baloo 2 sans jamais les inclure : les deux tournent en police système.
 4. **Au Soleil dépend d'un CDN.** Leaflet vient d'unpkg ; copier le fichier (~150 K)
    dans `au-soleil/` supprimerait la dépendance.
-5. **Le sitemap est figé.** Les 5 URL portent toutes `lastmod 2026-07-07`, y compris
-   celles qui n'ont pas bougé depuis le 2 juillet.
+5. **Le sitemap se met à jour à la main.** Les `lastmod` sont saisis au moment du
+   commit : rien ne garantit qu'ils suivent les modifications réelles.
 6. **1,5 Mo de photos non optimisées.** Les médias de DADA sont en JPEG et PNG pleine
    taille (`equipe.jpg` 336 K, `logo-dada.png` 176 K) : pas de WebP, pas de vignettes.
