@@ -157,7 +157,7 @@
   }
 
   if(mouvement){
-    preparerCompteurs();
+    // 16/09/2026 : plus d'animation des prix (« 0 € » transitoire, € renvoyé à la ligne).
     // Des conteneurs animés d'un bloc passent en cascade : leurs enfants prennent le relais.
     var enfantsCaches=$$('.faq.rv details,.garanties.rv li');
     $$('.faq.rv,.garanties.rv').forEach(function(el){el.classList.remove('rv')});
@@ -360,6 +360,7 @@
       if(m&&!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(m)){mail.setAttribute('aria-invalid','true');$('#err-email').textContent=tr('mail_incomplet','Adresse mail incomplète.');ok=false}
       if(!m&&t.length<9){mail.setAttribute('aria-invalid','true');$('#err-email').textContent=tr('joindre','Un mail ou un téléphone, pour vous répondre.');ok=false}
       if(!ok){manque.textContent=tr('manque','Il manque une information pour vous répondre.');var inv=$('[aria-invalid="true"]',form);inv&&inv.focus()}
+      else manque.textContent='';
       return ok;
     }
     return true;

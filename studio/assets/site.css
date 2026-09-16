@@ -113,7 +113,7 @@ p{max-width:66ch;text-wrap:pretty}
 .prog{position:absolute;left:0;bottom:0;height:2px;width:100%;background:var(--bleu);transform-origin:left;transform:scaleX(0)}
 @media (max-width:1020px){
   .burger{display:inline-flex}
-  .nav-liens{position:fixed;inset:68px 0 auto 0;flex-direction:column;align-items:stretch;gap:0;background:var(--blanc);padding:.4rem var(--pad) 1.2rem;
+  .nav-liens{position:absolute;inset:100% 0 auto 0;flex-direction:column;align-items:stretch;gap:0;background:var(--blanc);padding:.4rem var(--pad) 1.2rem;
     box-shadow:0 1px 0 var(--ligne),0 24px 40px -16px rgba(11,13,18,.18);transform:translateY(-6px);opacity:0;visibility:hidden;transition:opacity .22s,transform .22s var(--ease),visibility .22s}
   .nav-liens.ouvert{opacity:1;transform:none;visibility:visible}
   .nav-liens a{padding:.95rem .2rem;border-radius:0;border-bottom:1px solid var(--ligne);font-size:1.04rem;color:var(--encre)}
@@ -332,7 +332,7 @@ p{max-width:66ch;text-wrap:pretty}
 .choix.lignes{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
 .opt{position:relative;display:block}
 .opt input{position:absolute;opacity:0;inset:0;width:100%;height:100%;margin:0;cursor:pointer;z-index:1}
-.opt span{position:relative;display:flex;align-items:center;gap:.6em;min-height:50px;padding:.7em 2.1em .7em .9em;border-radius:12px;border:1px solid var(--ligne-2);background:var(--blanc);box-shadow:var(--o-1);
+.opt span{position:relative;display:flex;align-items:center;gap:.6em;min-height:50px;padding:.7em calc(19px + 1.25rem) .7em .9em;hyphens:auto;-webkit-hyphens:auto;overflow-wrap:break-word;border-radius:12px;border:1px solid var(--ligne-2);background:var(--blanc);box-shadow:var(--o-1);
   font:500 .93rem/1.25 var(--ff);color:var(--encre);transition:border-color var(--vite),background-color var(--vite),box-shadow var(--moyen) var(--ease)}
 .opt span::after{content:"";position:absolute;right:.75rem;top:50%;width:16px;height:16px;margin-top:-8px;border-radius:50%;border:1.5px solid var(--gris-3);background:var(--blanc) center/10px no-repeat;transition:border-color var(--vite),background-color var(--vite),transform var(--moyen) var(--ease)}
 .opt span .ico{color:var(--bleu)}
@@ -341,7 +341,7 @@ p{max-width:66ch;text-wrap:pretty}
 .opt input:checked+span::after{border-color:var(--bleu);background-color:var(--bleu);transform:scale(1.05);
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7'/%3E%3C/svg%3E")}
 .opt input:focus-visible+span{outline:2px solid var(--bleu);outline-offset:2px}
-.choix.petits .opt span{min-height:44px;font-size:.9rem;padding:.55em 2.1em .55em .8em;box-shadow:none}
+.choix.petits .opt span{min-height:44px;font-size:.9rem;padding:.55em calc(19px + 1.25rem) .55em .8em;box-shadow:none}
 .champs{display:grid;grid-template-columns:1fr 1fr;gap:.8rem}
 .champ{display:grid;gap:.35rem;align-content:start}
 .champ.plein{grid-column:1/-1}
@@ -382,7 +382,7 @@ p{max-width:66ch;text-wrap:pretty}
 .carte-s p{color:rgba(255,255,255,.82);font-size:.92rem}
 @media (min-width:921px){.formulaire{position:sticky;top:92px}}
 @media (max-width:920px){.devis-grille{grid-template-columns:1fr}}
-@media (max-width:520px){.champs{grid-template-columns:1fr}.choix{grid-template-columns:1fr 1fr}.opt span{font-size:.88rem;padding:.6em 1.9em .6em .7em}.opt span::after{right:.55rem}}
+@media (max-width:520px){.champs{grid-template-columns:1fr}.choix{grid-template-columns:1fr 1fr}.opt span{font-size:.88rem;padding:.6em calc(19px + 1.05rem) .6em .7em}.opt span::after{right:.55rem}}
 
 /* ----------------------------------------------------------------- pages services */
 .atouts{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
@@ -457,6 +457,8 @@ p{max-width:66ch;text-wrap:pretty}
 /* Les appareils ne flottent plus en boucle (image produite en continu) : ils bougent avec le
    défilement, et s'arrêtent avec lui. */
 html .flotte{animation:none}
+/* 16/09/2026 : les délais négatifs de .flotte.d2/.d3 (appareils.css) figeaient l'iPhone et la montre du hero en fin de course. */
+html .hero-scene .flotte.d2,html .hero-scene .flotte.d3{animation-delay:0s}
 
 /* ----------------------------------------------------------------- entrée du hero (au chargement) */
 @media (prefers-reduced-motion:no-preference){
@@ -528,13 +530,13 @@ html .flotte{animation:none}
   .mo .portrait-badge{animation-name:par-badge}
 }
 @media (prefers-reduced-motion:no-preference) and (min-width:981px){
-  /* ordinateur : la scène recule et bascule légèrement en arrière, iPhone et montre montent plus vite (profondeur) */
+  /* ordinateur : la scène descend légèrement, iPhone et montre montent plus vite (profondeur sans flou : translations seules) */
   .mo .hero :is(.scene-app,.visuel-page){animation-name:h-groupe}
   .mo .hero :is(.scene-app,.visuel-page) .p-iph{animation-name:h-avant}
   .mo .hero :is(.scene-app,.visuel-page) .p-awu{animation-name:h-devant}
 }
 @media (prefers-reduced-motion:no-preference) and (max-width:980px){
-  /* téléphone et tablette : la scène est sous le texte, elle se redresse en entrant dans l'écran */
+  /* téléphone et tablette : la scène est sous le texte, elle glisse en place en entrant dans l’écran */
   .mo .hero :is(.scene-app,.visuel-page){animation-name:hm-groupe}
   .mo .hero :is(.scene-app,.visuel-page) :is(.p-iph,.p-awu){animation-name:hm-avant}
 }
@@ -565,10 +567,10 @@ html .flotte{animation:none}
   }
 }
 @keyframes h-lueur{to{translate:0 24%;opacity:.35}}
-@keyframes h-groupe{to{transform:perspective(1800px) translate3d(0,7%,0) rotateX(10deg) scale(.93)}}
+@keyframes h-groupe{to{transform:translate(0,7%)}}
 @keyframes h-avant{to{translate:0 -24%}}
 @keyframes h-devant{to{translate:0 -48%}}
-@keyframes hm-groupe{from{transform:perspective(1200px) translate3d(0,9%,0) rotateX(20deg) scale(.9)}to{transform:perspective(1200px) translate3d(0,0,0) rotateX(0deg) scale(1)}}
+@keyframes hm-groupe{from{transform:translate(0,9%)}to{transform:none}}
 @keyframes hm-avant{from{translate:0 26%}to{translate:0 0}}
 @keyframes par-mac{from{scale:.955}to{scale:1}}
 @keyframes par-doux{from{translate:0 9%}to{translate:0 -9%}}
