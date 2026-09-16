@@ -1,7 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Studio BFievé">
-  <title>Studio BFievé</title>
-  <rect width="64" height="64" rx="14" fill="#12141A"/>
-  <polygon points="15,49 34.1,22.1 41.9,29.9" fill="#C9F73F"/>
-  <path d="M10 42 L17 35" stroke="#C9F73F" stroke-width="4.5" stroke-linecap="round"/>
-  <circle cx="42.5" cy="21.5" r="7.5" fill="#C9F73F"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Ajour">
+  <title>Ajour</title>
+  <rect width="64" height="64" rx="15" fill="#2447F5"/>
+  <circle cx="29" cy="34" r="13" fill="#FFFFFF"/>
+  <circle cx="29" cy="34" r="6.2" fill="#FFB938"/>
+  <rect x="37.5" y="21" width="6.5" height="26" rx="3.25" fill="#FFFFFF"/>
 </svg>

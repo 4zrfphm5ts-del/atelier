@@ -3,55 +3,42 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Mentions légales · Studio BFievé</title>
-<meta name="description" content="Mentions légales et politique de confidentialité du site Studio BFievé : éditeur, hébergement, données personnelles, propriété intellectuelle, conditions d'intervention.">
+<title>Mentions légales · Ajour</title>
+<meta name="description" content="Mentions légales et politique de confidentialité du site Ajour : éditeur, hébergement, données personnelles, propriété intellectuelle, conditions d'intervention.">
 <meta name="robots" content="noindex, follow">
 <link rel="canonical" href="https://4zrfphm5ts-del.github.io/atelier/studio/mentions-legales.html">
-<meta name="theme-color" content="#F4F1EA">
+<meta name="theme-color" content="#FFFFFF">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 <style>
-@font-face{font-family:'Bricolage Grotesque';font-style:normal;font-weight:500 800;font-display:swap;src:url(assets/fonts/bricolage-grotesque-latin.woff2) format('woff2')}
-@font-face{font-family:'Instrument Sans';font-style:normal;font-weight:400 600;font-display:swap;src:url(assets/fonts/instrument-sans-latin.woff2) format('woff2')}
-@font-face{font-family:'IBM Plex Mono';font-style:normal;font-weight:400;font-display:swap;src:url(assets/fonts/ibm-plex-mono-400-latin.woff2) format('woff2')}
-@font-face{font-family:'IBM Plex Mono';font-style:normal;font-weight:500;font-display:swap;src:url(assets/fonts/ibm-plex-mono-500-latin.woff2) format('woff2')}
-:root{
-  --papier:#F4F1EA;--blanc:#FFFFFF;--creme:#FBF9F4;--encre:#12141A;--ardoise:#5A6070;--olive:#4F6A0F;
-  --ligne-clair:rgba(18,20,26,.14);--ombre-franche:3px 3px 0 var(--encre);--ombre-franche-hover:5px 5px 0 var(--encre);
-  --ff-display:'Bricolage Grotesque',system-ui,-apple-system,'Segoe UI',sans-serif;
-  --ff-texte:'Instrument Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
-  --ff-mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
-  --pad:clamp(1.25rem,4vw,3rem);--ease:cubic-bezier(.22,.8,.24,1)
-}
+@font-face{font-family:'Inter Tight';font-style:normal;font-weight:500 800;font-display:swap;src:url(assets/fonts/inter-tight-latin.woff2) format('woff2')}
+@font-face{font-family:'Inter';font-style:normal;font-weight:400 700;font-display:swap;src:url(assets/fonts/inter-latin.woff2) format('woff2')}
+:root{--blanc:#fff;--gris:#F5F7FA;--encre:#0B0D12;--texte:#3E4553;--doux:#5F6675;--bleu:#2447F5;--bleu-fonce:#1A36D6;--ligne:rgba(11,13,18,.08);
+  --ff-d:'Inter Tight',system-ui,-apple-system,'Segoe UI',sans-serif;--ff:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;--pad:clamp(1.25rem,4vw,3rem)}
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{font-family:var(--ff-texte);background:var(--papier);color:var(--encre);line-height:1.65;font-size:1rem;-webkit-font-smoothing:antialiased;overflow-x:clip}
+body{font-family:var(--ff);background:var(--blanc);color:var(--encre);line-height:1.65;font-size:1rem;-webkit-font-smoothing:antialiased;overflow-x:clip}
 main{max-width:760px;margin:0 auto;padding:3.5rem var(--pad) 4rem}
-.kicker{font:500 .72rem var(--ff-mono);letter-spacing:.24em;text-transform:uppercase;color:var(--olive);display:inline-flex;align-items:center;gap:.7em;margin-bottom:1rem}
-.kicker::before{content:"";width:2.6em;height:6px;background:linear-gradient(currentColor,currentColor) 0 50%/2em 1.5px no-repeat,linear-gradient(currentColor,currentColor) 100% 50%/6px 6px no-repeat}
-h1{font-family:var(--ff-display);font-weight:800;font-size:clamp(1.9rem,4.5vw,2.8rem);line-height:1.06;letter-spacing:-.02em;margin-bottom:.5rem}
-h2{font-family:var(--ff-display);font-weight:700;font-size:1.25rem;line-height:1.2;margin:2.4rem 0 .7rem;color:var(--encre)}
-p,li{font-size:.97rem;margin-bottom:.65rem}
+.kicker{font:600 .78rem var(--ff);letter-spacing:.08em;text-transform:uppercase;color:var(--bleu);margin-bottom:.9rem}
+h1{font-family:var(--ff-d);font-weight:700;font-size:clamp(1.9rem,4.5vw,2.8rem);line-height:1.06;letter-spacing:-.03em;margin-bottom:.5rem}
+h2{font-family:var(--ff-d);font-weight:650;font-size:1.25rem;line-height:1.2;letter-spacing:-.018em;margin:2.4rem 0 .7rem}
+p,li{font-size:.97rem;margin-bottom:.65rem;color:var(--texte)}
+strong{color:var(--encre);font-weight:600}
 ul{padding-left:1.2rem}
-a{color:var(--olive);font-weight:600;text-decoration-thickness:1px;text-underline-offset:3px}
-:focus-visible{outline:2px solid var(--olive);outline-offset:3px}
-::selection{background:#C9F73F;color:var(--encre)}
-.btn-primaire{display:inline-flex;align-items:center;gap:.6em;background:var(--encre);color:var(--papier);text-decoration:none;font:600 .95rem var(--ff-texte);padding:.85em 1.4em;border-radius:12px;border:1.5px solid var(--encre);box-shadow:3px 3px 0 var(--olive);margin-bottom:2.5rem;transition:transform .3s var(--ease),box-shadow .3s var(--ease)}
-.btn-primaire:hover{transform:translate(-2px,-2px);box-shadow:5px 5px 0 var(--olive)}
-.btn-primaire:active{transform:translate(1px,1px);box-shadow:2px 2px 0 var(--olive)}
+a{color:var(--bleu);font-weight:500;text-decoration-thickness:1px;text-underline-offset:3px}
+:focus-visible{outline:2px solid var(--bleu);outline-offset:3px;border-radius:6px}
+::selection{background:var(--bleu);color:#fff}
+.btn-primaire{display:inline-flex;align-items:center;gap:.5em;background:var(--blanc);color:var(--encre);text-decoration:none;font:600 .93rem var(--ff);padding:.7em 1.1em;border-radius:10px;border:1px solid rgba(11,13,18,.14);box-shadow:0 1px 2px rgba(11,13,18,.05);transition:box-shadow .3s,transform .18s}
+.btn-primaire:hover{transform:translateY(-1px);box-shadow:0 1px 2px rgba(11,13,18,.04),0 6px 16px -4px rgba(11,13,18,.1)}
 .btn-primaire svg{width:16px;height:16px}
-.skip{position:absolute;left:-999px;top:0;background:var(--encre);color:var(--papier);padding:.6em 1em;z-index:10;font-weight:600;border-radius:0 0 12px 0}
+.skip{position:absolute;left:-999px;top:0;background:var(--encre);color:#fff;padding:.6em 1em;z-index:10;font-weight:600}
 .skip:focus{left:0}
 nav.retour{display:block}
-.maj{font:400 .78rem var(--ff-mono);color:var(--ardoise);margin-bottom:2rem}
-.encart{background:var(--creme);border:1.5px solid var(--encre);border-radius:14px;box-shadow:var(--ombre-franche);padding:1.2rem 1.4rem;margin:.8rem 0 1.2rem}
+.maj{font-size:.86rem;color:var(--doux);margin-bottom:2rem}
+.encart{background:var(--gris);border:1px solid var(--ligne);border-radius:14px;padding:1.2rem 1.4rem;margin:.8rem 0 1.2rem}
 .encart p:last-child{margin-bottom:0}
-footer{border-top:1px solid var(--ligne-clair);padding:1.6rem var(--pad);text-align:center;color:var(--ardoise);font:400 .78rem var(--ff-mono)}
-footer a{color:var(--olive)}
-@media (prefers-reduced-motion:reduce){
-  html{scroll-behavior:auto}
-  .btn-primaire,.btn-primaire:hover,.btn-primaire:active{transition:none!important;transform:none!important}
-}
+footer{border-top:1px solid var(--ligne);background:var(--gris);padding:1.6rem var(--pad);text-align:center;color:var(--doux);font-size:.84rem}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.btn-primaire{transition:none!important}}
 </style>
 </head>
 <body>
@@ -60,13 +47,13 @@ footer a{color:var(--olive)}
   <a class="btn-primaire" href="index.html"><svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3 5 8l5 5"/></svg>Retour au site</a>
 </div></nav>
 <main id="contenu" style="padding-top:0">
-  <p class="kicker">Studio BFievé</p>
+  <p class="kicker">Ajour</p>
   <h1>Mentions légales</h1>
   <p class="maj">Dernière mise à jour&nbsp;: 16 septembre 2026.</p>
 
   <h2>Éditeur du site</h2>
   <div class="encart">
-    <p>Le site «&nbsp;Studio BFievé&nbsp;» est édité par&nbsp;:</p>
+    <p>Le site «&nbsp;Ajour&nbsp;» est édité par&nbsp;:</p>
     <p><strong>Benjamin Fievé</strong>, entrepreneur individuel (micro-entreprise),<br>
     exerçant sous le nom commercial «&nbsp;BFIEVE Consulting&nbsp;»<br>
     SIREN&nbsp;: 943 228 957 (SIRET 943 228 957 00016)<br>
@@ -75,7 +62,7 @@ footer a{color:var(--olive)}
     Téléphone&nbsp;: <a href="tel:+33610126850">06 10 12 68 50</a></p>
   </div>
   <p><strong>Directeur de la publication&nbsp;:</strong> Benjamin Fievé.</p>
-  <p>«&nbsp;Studio BFievé&nbsp;» est le nom sous lequel l'activité est présentée. Les devis et factures sont établis au nom de BFIEVE Consulting.</p>
+  <p>«&nbsp;Ajour&nbsp;» est le nom sous lequel l'activité est présentée. Les devis et factures sont établis au nom de BFIEVE Consulting.</p>
 
   <h2>Hébergement</h2>
   <p>Le site est hébergé par <strong>GitHub, Inc.</strong> (service GitHub Pages),<br>
@@ -84,7 +71,7 @@ footer a{color:var(--olive)}
   <p>Cette mention sera mise à jour si l'hébergement change.</p>
 
   <h2 id="donnees">Données personnelles et cookies</h2>
-  <p>Ce site ne dépose <strong>aucun cookie</strong>, n'utilise <strong>aucun outil de mesure d'audience</strong> et ne garde rien dans votre navigateur. Les polices de caractères (Bricolage Grotesque, Instrument Sans, IBM Plex Mono, sous licence SIL Open Font License) sont hébergées avec le site&nbsp;: aucune ressource n'est chargée chez un tiers pendant la visite. Seul l'hébergeur (GitHub Pages) reçoit, comme tout hébergeur, les données techniques de connexion.</p>
+  <p>Ce site ne dépose <strong>aucun cookie</strong>, n'utilise <strong>aucun outil de mesure d'audience</strong> et ne garde rien dans votre navigateur. Les polices de caractères (Inter et Inter Tight, sous licence SIL Open Font License) sont hébergées avec le site&nbsp;: aucune ressource n'est chargée chez un tiers pendant la visite. Seul l'hébergeur (GitHub Pages) reçoit, comme tout hébergeur, les données techniques de connexion.</p>
   <p><strong>Formulaire de devis.</strong> Les informations que vous saisissez (type de projet, repères de budget et de délai, nom, mail, téléphone, entreprise, message) servent uniquement à vous répondre et à établir un devis. Base légale&nbsp;: mesures précontractuelles prises à votre demande (art. 6.1.b du RGPD).</p>
   <p>Quand vous cliquez sur «&nbsp;Envoyer ma demande&nbsp;», le formulaire transmet ces informations au service d'envoi <strong>FormSubmit</strong> (Devro LABS), qui me les fait suivre par mail. Ce prestataire peut traiter les données hors de l'Union européenne. Si l'envoi échoue, rien n'est transmis&nbsp;: la demande reste affichée pour que vous l'envoyiez vous-même par mail ou WhatsApp.</p>
   <p>Lorsque vous me contactez par mail, téléphone ou WhatsApp, les mêmes règles s'appliquent. Vos informations ne sont jamais vendues, ni utilisées à des fins publicitaires, et sont conservées au maximum 3 ans après le dernier contact.</p>
@@ -100,6 +87,6 @@ footer a{color:var(--olive)}
   <p>Les coûts récurrents liés à un projet (nom de domaine, hébergement, API d'IA) sont réglés par le client en direct auprès des fournisseurs concernés et détaillés dans chaque devis, séparément des prestations du studio.</p>
   <p><strong>TVA non applicable, art. 293 B du CGI</strong>&nbsp;: les prix affichés sont nets, sans TVA à ajouter.</p>
 </main>
-<footer>© 2026 Studio BFievé, BFIEVE Consulting · <a href="index.html">Retour à l'accueil</a></footer>
+<footer>© 2026 Ajour, BFIEVE Consulting. <a href="index.html">Retour à l'accueil</a></footer>
 </body>
 </html>

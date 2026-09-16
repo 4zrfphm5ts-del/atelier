@@ -3,50 +3,50 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Démo : tableau de bord d'un café (données fictives) | Studio BFievé</title>
+<title>Démo : tableau de bord d'un café (données fictives) | Ajour</title>
 <meta name="description" content="Démonstration d'un tableau de bord commerce sur téléphone : marge par produit, factures fournisseurs et compte, pour un café inventé. Données fictives.">
 <meta name="robots" content="noindex, follow">
-<meta name="theme-color" content="#FBF9F4">
+<meta name="theme-color" content="#F5F7FA">
 <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
 <style>
-@font-face{font-family:'Bricolage Grotesque';font-weight:500 800;font-display:swap;src:url(../../assets/fonts/bricolage-grotesque-latin.woff2) format('woff2')}
-@font-face{font-family:'Instrument Sans';font-weight:400 600;font-display:swap;src:url(../../assets/fonts/instrument-sans-latin.woff2) format('woff2')}
-@font-face{font-family:'IBM Plex Mono';font-weight:400;font-display:swap;src:url(../../assets/fonts/ibm-plex-mono-400-latin.woff2) format('woff2')}
-@font-face{font-family:'IBM Plex Mono';font-weight:500;font-display:swap;src:url(../../assets/fonts/ibm-plex-mono-500-latin.woff2) format('woff2')}
-:root{--fond:#FBF9F4;--carte:#fff;--encre:#12141A;--doux:#6B7180;--ligne:rgba(18,20,26,.09);--olive:#4F6A0F;--lime:#C9F73F;--terra:#C1502E;--ambre:#8A5A00;--vert:#23693F}
+@font-face{font-family:'Inter Tight';font-weight:500 800;font-display:swap;src:url(../../assets/fonts/inter-tight-latin.woff2) format('woff2')}
+@font-face{font-family:'Inter';font-weight:400 700;font-display:swap;src:url(../../assets/fonts/inter-latin.woff2) format('woff2')}
+:root{--fond:#F5F7FA;--carte:#fff;--encre:#0B0D12;--doux:#5F6675;--ligne:rgba(11,13,18,.08);--bleu:#2447F5;--rouge:#C0341D;--ambre:#9A5B00;--vert:#0F7A4A;
+  --o:0 1px 2px rgba(11,13,18,.05),0 1px 1px rgba(11,13,18,.02)}
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--fond);color:var(--encre);font:400 15px/1.45 'Instrument Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased;max-width:520px;margin:0 auto;padding:18px 18px 90px}
+body{background:var(--fond);color:var(--encre);font:400 15px/1.45 'Inter',system-ui,sans-serif;-webkit-font-smoothing:antialiased;max-width:520px;margin:0 auto;padding:18px 18px 90px}
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
-.fictif{display:inline-block;font:500 10px 'IBM Plex Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--ambre);background:#F7EDD6;border:1px solid #E8D3A2;padding:4px 9px;border-radius:99px}
+.fictif{display:inline-block;font:600 10.5px 'Inter',sans-serif;letter-spacing:.05em;text-transform:uppercase;color:var(--ambre);background:#FFF4E5;border:1px solid rgba(154,91,0,.25);padding:4px 9px;border-radius:99px}
 header{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin:12px 0 16px}
-h1{font:800 28px/1.05 'Bricolage Grotesque',sans-serif;letter-spacing:-.02em}
-.sous{font:400 12px 'IBM Plex Mono',monospace;color:var(--doux);margin-top:5px}
-.per{display:flex;background:#EFEBE2;border-radius:99px;padding:3px}
-.per button{font:500 12px 'IBM Plex Mono',monospace;padding:6px 11px;border-radius:99px;color:var(--doux)}
-.per button[aria-pressed="true"]{background:var(--encre);color:var(--lime)}
-.resume{background:var(--encre);color:#F4F1EA;border-radius:20px;padding:16px 18px;display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
-.resume .l{font:500 10px 'IBM Plex Mono',monospace;letter-spacing:.1em;text-transform:uppercase;color:#9AA1AD}
-.resume .v{font:700 24px/1.1 'Bricolage Grotesque',sans-serif;margin-top:3px;font-variant-numeric:tabular-nums}
-.resume .v em{font-style:normal;color:var(--lime)}
-.resume .d{font:400 11px 'IBM Plex Mono',monospace;color:#B9E36A;margin-top:2px}
-.onglets{display:grid;grid-template-columns:repeat(3,1fr);background:#EFEBE2;border-radius:14px;padding:4px;margin-bottom:14px}
-.onglets button{padding:9px 0;border-radius:10px;font:600 13.5px 'Instrument Sans',sans-serif;color:var(--doux)}
-.onglets button[aria-selected="true"]{background:#fff;color:var(--encre);box-shadow:0 1px 3px rgba(0,0,0,.08)}
-.carte{background:var(--carte);border:1px solid var(--ligne);border-radius:18px;padding:14px 16px;margin-bottom:12px}
-.carte h2{font:500 10.5px 'IBM Plex Mono',monospace;letter-spacing:.1em;text-transform:uppercase;color:var(--doux);margin-bottom:10px}
+h1{font:700 28px/1.05 'Inter Tight',sans-serif;letter-spacing:-.03em}
+.sous{font:400 12.5px 'Inter',sans-serif;color:var(--doux);margin-top:5px}
+.per{display:flex;background:#E9EDF3;border-radius:10px;padding:3px}
+.per button{font:500 12.5px 'Inter',sans-serif;padding:6px 11px;border-radius:8px;color:var(--doux)}
+.per button[aria-pressed="true"]{background:#fff;color:var(--encre);box-shadow:var(--o)}
+.resume{color:#fff;border-radius:18px;padding:16px 18px;display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;
+  background:radial-gradient(80% 120% at 0% 0%,rgba(255,255,255,.18),transparent 60%),linear-gradient(180deg,#2A4DFF,#1F3FE6);box-shadow:0 1px 2px rgba(20,37,158,.3),0 14px 30px -14px rgba(36,71,245,.6)}
+.resume .l{font:600 10.5px 'Inter',sans-serif;letter-spacing:.05em;text-transform:uppercase;color:rgba(255,255,255,.75)}
+.resume .v{font:700 25px/1.1 'Inter Tight',sans-serif;letter-spacing:-.02em;margin-top:3px;font-variant-numeric:tabular-nums}
+.resume .v em{font-style:normal;color:#fff}
+.resume .d{font:500 11.5px 'Inter',sans-serif;color:#C9D3FF;margin-top:2px}
+.onglets{display:grid;grid-template-columns:repeat(3,1fr);background:#E9EDF3;border-radius:12px;padding:4px;margin-bottom:14px}
+.onglets button{padding:9px 0;border-radius:9px;font:600 13.5px 'Inter',sans-serif;color:var(--doux)}
+.onglets button[aria-selected="true"]{background:#fff;color:var(--encre);box-shadow:var(--o)}
+.carte{background:var(--carte);border:1px solid var(--ligne);border-radius:16px;padding:14px 16px;margin-bottom:12px;box-shadow:var(--o)}
+.carte h2{font:600 11px 'Inter',sans-serif;letter-spacing:.05em;text-transform:uppercase;color:var(--doux);margin-bottom:10px}
 .li{display:grid;grid-template-columns:1fr auto;gap:4px 10px;padding:9px 0;border-bottom:1px solid var(--ligne)}
 .li:last-child{border-bottom:0}
 .li .n{font-weight:600}
-.li .v{font:500 14px 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums}
-.li .bar{grid-column:1/-1;height:7px;border-radius:99px;background:#EFEBE2;overflow:hidden}
-.li .bar i{display:block;height:100%;width:calc(var(--p)*100%);background:var(--olive);border-radius:99px;transition:width .7s cubic-bezier(.22,.8,.24,1)}
-.li .s{grid-column:1/-1;font:400 11.5px 'IBM Plex Mono',monospace;color:var(--doux)}
-.s.due{color:var(--terra)}.s.ok{color:var(--vert)}.s.att{color:var(--ambre)}
+.li .v{font:600 14px 'Inter',sans-serif;font-variant-numeric:tabular-nums}
+.li .bar{grid-column:1/-1;height:7px;border-radius:99px;background:#E6EAF1;overflow:hidden}
+.li .bar i{display:block;height:100%;width:calc(var(--p)*100%);background:var(--bleu);border-radius:99px;transition:width .7s cubic-bezier(.2,.7,.2,1)}
+.li .s{grid-column:1/-1;font:400 12px 'Inter',sans-serif;color:var(--doux)}
+.s.due{color:var(--rouge)}.s.ok{color:var(--vert)}.s.att{color:var(--ambre)}
 .s::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:currentColor;margin-right:6px}
 .tot{display:flex;justify-content:space-between;padding-top:10px;font-weight:600}
-.alerte{background:#FDF1EC;border:1px solid #F2CDBF;color:#8C3417;border-radius:14px;padding:11px 14px;font-size:13.5px;margin-bottom:12px}
-.pied{font:400 11px 'IBM Plex Mono',monospace;color:var(--doux);text-align:center;margin-top:18px}
-.retour{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);font:600 13px 'Instrument Sans',sans-serif;background:var(--encre);color:#F4F1EA;padding:11px 16px;border-radius:12px;text-decoration:none;white-space:nowrap}
+.alerte{background:#FFF4E5;border:1px solid rgba(154,91,0,.2);color:#7A4800;border-radius:14px;padding:11px 14px;font-size:13.5px;margin-bottom:12px}
+.pied{font:400 11.5px 'Inter',sans-serif;color:var(--doux);text-align:center;margin-top:18px}
+.retour{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);font:600 13px 'Inter',sans-serif;background:var(--bleu);color:#fff;padding:11px 16px;border-radius:12px;text-decoration:none;white-space:nowrap;box-shadow:0 10px 24px -8px rgba(36,71,245,.55)}
 body.capture .retour{display:none}
 [hidden]{display:none!important}
 </style>
@@ -97,7 +97,7 @@ body.capture .retour{display:none}
   </div>
 </section>
 <p class="pied">Café, fournisseurs et chiffres inventés pour la démonstration.</p>
-<a class="retour" href="../../#realisations">← Retour au Studio BFievé</a>
+<a class="retour" href="../../#realisations">← Retour au site Ajour</a>
 <script>
 (function(){
   if (/capture/.test(location.search)) document.body.classList.add('capture');
