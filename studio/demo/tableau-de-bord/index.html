@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Démo : tableau de bord d'un réseau de boutiques (données fictives) | Ajour</title>
+<title>Démo : tableau de bord d'un réseau de boutiques (données fictives) | Vasistas</title>
 <meta name="description" content="Démonstration manipulable d'un tableau de bord sur mesure : chiffre d'affaires, marge et évolution d'un réseau de huit boutiques inventées. Données fictives.">
 <meta name="robots" content="noindex, follow">
 <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
@@ -90,7 +90,7 @@ body.capture .retour{display:none}
 <body>
 <div class="app">
   <aside class="nav" aria-label="Menu de la démo">
-    <div class="logo"><i>R</i>Réseau Nord</div>
+    <div class="logo"><i>R</i>Réseau Horizon</div>
     <a class="on" href="#"><svg viewBox="0 0 24 24"><path d="M3 12 12 3l9 9M5 10v10h14V10"/></svg>Vue d'ensemble</a>
     <a href="#"><svg viewBox="0 0 24 24"><path d="M4 10 5 4h14l1 6M4 10h16M6 10v10h12V10"/></svg>Boutiques</a>
     <a href="#"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/></svg>Produits</a>
@@ -139,20 +139,20 @@ body.capture .retour{display:none}
 </div>
 <aside class="fiche" id="fiche" aria-hidden="true" aria-label="Fiche boutique">
   <button class="x" id="fermer" aria-label="Fermer la fiche">✕</button>
-  <div><h3 id="f-nom">Lille</h3><div class="sous" id="f-sous">Centre-ville · Boutique</div></div>
+  <div><h3 id="f-nom">Lyon</h3><div class="sous" id="f-sous">Centre-ville · Boutique</div></div>
   <div class="k"><div><div class="l">CA 12 mois</div><div class="v" id="f-ca"></div></div><div><div class="l">Marge brute</div><div class="v" id="f-m"></div></div><div><div class="l">Sur 1 an</div><div class="v" id="f-e"></div></div><div><div class="l">Part du réseau</div><div class="v" id="f-p"></div></div></div>
   <svg viewBox="0 0 312 120" id="f-mois" role="img" aria-label="CA mensuel de la boutique, données fictives"></svg>
   <p class="note">CA mensuel des 12 derniers mois. Chiffres inventés pour la démonstration : aucune boutique réelle.</p>
 </aside>
-<a class="retour" href="../../#realisations">← Retour au site Ajour</a>
+<a class="retour" href="../../#realisations">← Retour au site Vasistas</a>
 <script>
 (function(){
   if (/capture/.test(location.search)) document.body.classList.add('capture');
   var B=[
-    {n:'Lille',z:'Centre-ville',f:'Boutique',ca:1.24,m:41,e:8},{n:'Arras',z:'Centre-ville',f:'Boutique',ca:1.03,m:44,e:5},
-    {n:'Lens',z:'Zone commerciale',f:'Boutique',ca:.91,m:36,e:3},{n:'Douai',z:'Galerie',f:'Corner',ca:.74,m:39,e:-2},
-    {n:'Béthune',z:'Centre-ville',f:'Boutique',ca:.67,m:38,e:4},{n:'Roubaix',z:'Gare',f:'Corner',ca:.57,m:33,e:11},
-    {n:'Calais',z:'Zone commerciale',f:'Boutique',ca:.53,m:35,e:1},{n:'Dunkerque',z:'Galerie',f:'Corner',ca:.42,m:31,e:-4}];
+    {n:'Lyon',z:'Centre-ville',f:'Boutique',ca:1.24,m:41,e:8},{n:'Nantes',z:'Centre-ville',f:'Boutique',ca:1.03,m:44,e:5},
+    {n:'Bordeaux',z:'Zone commerciale',f:'Boutique',ca:.91,m:36,e:3},{n:'Rennes',z:'Galerie',f:'Corner',ca:.74,m:39,e:-2},
+    {n:'Toulouse',z:'Centre-ville',f:'Boutique',ca:.67,m:38,e:4},{n:'Strasbourg',z:'Gare',f:'Corner',ca:.57,m:33,e:11},
+    {n:'Montpellier',z:'Zone commerciale',f:'Boutique',ca:.53,m:35,e:1},{n:'Annecy',z:'Galerie',f:'Corner',ca:.42,m:31,e:-4}];
   var Q=[['T3 24',1.42],['T4 24',1.53],['T1 25',1.43],['T2 25',1.50],['T3 25',1.47],['T4 25',1.60],['T1 26',1.48],['T2 26',1.56]];
   var fr=function(x,d){return x.toFixed(d).replace('.',',')};
   var filtre='tous',tri='ca',max=1.24,total=6.11;

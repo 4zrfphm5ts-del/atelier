@@ -22,7 +22,8 @@
   --ff-d:'Inter Tight',system-ui,-apple-system,'Segoe UI',sans-serif;
   --ff:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
   --maxw:1240px;--pad:clamp(1.1rem,4vw,3.5rem);--sec:clamp(4rem,8vw,6.5rem);
-  --r:16px;--r-btn:11px;--ease:cubic-bezier(.2,.7,.2,1);--vite:.18s;--moyen:.32s
+  --r:16px;--r-btn:11px;--ease:cubic-bezier(.2,.7,.2,1);--vite:.18s;--moyen:.32s;
+  --sortie:cubic-bezier(.16,1,.3,1);--glisse:cubic-bezier(.65,0,.35,1)
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;scroll-padding-top:84px;interpolate-size:allow-keywords}
@@ -86,12 +87,18 @@ p{max-width:66ch;text-wrap:pretty}
 .lien:hover{text-decoration:underline;text-underline-offset:3px}
 
 /* ----------------------------------------------------------------- navigation */
-#haut{position:sticky;top:0;z-index:100;transition:background-color var(--moyen),box-shadow var(--moyen),transform .4s var(--ease)}
-#haut.fond{background:rgba(255,255,255,.82);backdrop-filter:saturate(1.8) blur(14px);-webkit-backdrop-filter:saturate(1.8) blur(14px);box-shadow:0 1px 0 var(--ligne),0 6px 20px -12px rgba(11,13,18,.12)}
-#haut.cache{transform:translateY(-100%)}
+/* Le fond flouté vit sur un pseudo-élément : il apparaît en fondu d'opacité (composé par le GPU)
+   au lieu de basculer d'un coup. La barre se rétracte au défilement vers le bas (transform). */
+#haut{position:sticky;top:0;z-index:100;transition:transform .5s var(--sortie)}
+#haut::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:rgba(255,255,255,.8);
+  -webkit-backdrop-filter:saturate(1.8) blur(14px);backdrop-filter:saturate(1.8) blur(14px);
+  box-shadow:0 1px 0 var(--ligne),0 6px 20px -12px rgba(11,13,18,.12);opacity:0;transition:opacity .4s var(--ease)}
+#haut.fond::before{opacity:1}
+#haut.cache{transform:translateY(-100%);transition:transform .34s var(--glisse)}
+#haut.cache:has(:focus-visible){transform:none}
 .nav{max-width:var(--maxw);margin-inline:auto;padding:.7rem var(--pad);display:flex;align-items:center;gap:1.2rem;min-height:68px}
 .marque{display:inline-block;text-decoration:none;font:700 1.62rem/1 var(--ff-d);letter-spacing:-.045em;margin-right:auto;color:var(--encre);white-space:nowrap;padding-bottom:.08em}
-.marque svg{display:inline-block;height:.55em;width:auto;vertical-align:-.01em;margin-right:.035em}
+.marque svg{display:inline-block;height:.82em;width:auto;vertical-align:-.12em;margin-right:.16em}
 .nav-liens{display:flex;gap:.3rem;align-items:center}
 .nav-liens a{text-decoration:none;font-size:.94rem;font-weight:500;color:var(--texte);padding:.5rem .75rem;border-radius:8px;transition:color var(--vite),background-color var(--vite)}
 .nav-liens a:hover,.nav-liens a[aria-current]{color:var(--encre);background:var(--gris-2)}
@@ -123,7 +130,7 @@ p{max-width:66ch;text-wrap:pretty}
 .ariane span[aria-hidden]{opacity:.45}
 
 /* ----------------------------------------------------------------- hero */
-.hero{position:relative;padding-block:clamp(1.2rem,2.8vw,2.6rem) clamp(3rem,6vw,5rem);overflow:hidden;isolation:isolate}
+.hero{position:relative;padding-block:clamp(1.2rem,2.8vw,2.6rem) clamp(3rem,6vw,5rem);overflow:hidden;overflow:clip;isolation:isolate}
 .hero::before{content:"";position:absolute;z-index:-1;inset:0 0 0 40%;pointer-events:none;
   background:radial-gradient(42% 40% at 55% 52%,rgba(36,71,245,.12),transparent 72%),radial-gradient(26% 26% at 82% 72%,rgba(120,150,255,.12),transparent 72%)}
 .hero::after{content:"";position:absolute;z-index:-1;left:0;right:0;bottom:0;height:1px;background:var(--ligne)}
@@ -190,7 +197,7 @@ p{max-width:66ch;text-wrap:pretty}
 
 /* ----------------------------------------------------------------- réalisations (bento) */
 .bento{display:grid;grid-template-columns:repeat(12,1fr);gap:1.1rem}
-.projet{grid-column:span 6;position:relative;border-radius:22px;overflow:hidden;background:var(--blanc);border:1px solid var(--ligne);display:flex;flex-direction:column;box-shadow:var(--o-2)}
+.projet{grid-column:span 6;position:relative;border-radius:22px;overflow:hidden;overflow:clip;background:var(--blanc);border:1px solid var(--ligne);display:flex;flex-direction:column;box-shadow:var(--o-2)}
 .projet:hover{box-shadow:var(--o-3);border-color:var(--ligne-2)}
 .projet.large{grid-column:span 12}
 .projet.s5{grid-column:span 5}.projet.s7{grid-column:span 7}
@@ -434,19 +441,184 @@ p{max-width:66ch;text-wrap:pretty}
 /* ----------------------------------------------------------------- appareils : ombres adaptées au fond clair */
 .mbp{filter:drop-shadow(0 .35vw .5vw rgba(15,25,70,.10)) drop-shadow(0 1.8vw 2.4vw rgba(15,25,70,.16))}
 
-/* ----------------------------------------------------------------- apparition */
-.js .rv{opacity:0;transform:translateY(14px);transition:opacity .6s var(--ease),transform .6s var(--ease)}
-.js .rv.vu{opacity:1;transform:none}
-.js .rv.d1{transition-delay:.06s}.js .rv.d2{transition-delay:.12s}.js .rv.d3{transition-delay:.18s}
-.entree{animation:entree .7s var(--ease) both}
-.entree.d1{animation-delay:.06s}.entree.d2{animation-delay:.14s}.entree.d3{animation-delay:.22s}
-@keyframes entree{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
-.hero-scene.entree{animation:scene .9s var(--ease) .12s both}
-@keyframes scene{from{opacity:0;transform:translateY(24px) scale(.985)}to{opacity:1;transform:none}}
+/* ==========================================================================
+   Mouvement (16/09/2026) · défilement natif, jamais détourné ni lissé
+   · Tout ce qui bouge ne touche qu'à opacity et aux transformations (transform, translate,
+     scale), composées par le GPU ; un flou léger seulement sur les titres qui apparaissent.
+   · Aucune animation infinie : au repos, la page ne produit plus aucune image.
+   · Classes posées par site.js sur <html> : .mo (mouvement actif), puis .mo-tl (animations
+     liées au défilement natives, animation-timeline) ou .mo-js (repli : site.js pilote les
+     mêmes animations, en pause, depuis un seul requestAnimationFrame par salve de scroll).
+   · Sans JS : .js n'est jamais posée, rien n'est masqué. JS présent mais site.js en échec :
+     filet de sécurité CSS, tout apparaît à 2,5 s.
+   · prefers-reduced-motion: reduce coupe tout : contenu visible, aucune translation.
+   ========================================================================== */
+
+/* Les appareils ne flottent plus en boucle (image produite en continu) : ils bougent avec le
+   défilement, et s'arrêtent avec lui. */
+html .flotte{animation:none}
+
+/* ----------------------------------------------------------------- entrée du hero (au chargement) */
+@media (prefers-reduced-motion:no-preference){
+  .entree{animation:entree 1s var(--sortie) both}
+  .entree.d1{animation-delay:.08s}.entree.d2{animation-delay:.2s}.entree.d3{animation-delay:.32s}
+  .hero .kicker.entree{animation-delay:0s}
+  .hero h1.entree{animation-delay:.18s}
+  .hero .lead.entree{animation-delay:.42s}
+  .hero .depart.entree{animation-delay:.52s}
+  .hero .btns.entree{animation-delay:.62s}
+  .hero .rassure.entree{animation-delay:.72s}
+  .hero-grille>.entree:last-child{animation:scene 1.5s var(--sortie) .26s both}
+  /* titre découpé en mots par site.js (seulement s'il est encore invisible) */
+  .hero h1.mots{animation:none;opacity:1}
+  .hero h1 .mot{display:inline-block;animation:mot 1.05s var(--sortie) both;animation-delay:calc(.14s + var(--i,0) * 46ms)}
+  .hero h1.mots-fini .mot{animation:none}
+}
+@keyframes entree{from{opacity:0;translate:0 22px}}
+@keyframes scene{from{opacity:0;translate:0 56px;scale:.94}}
+@keyframes mot{from{opacity:0;translate:0 .45em;filter:blur(10px)}}
+
+/* ----------------------------------------------------------------- apparition des sections */
+@media (prefers-reduced-motion:no-preference){
+  .js .rv{opacity:0;translate:0 30px}
+  .js .tete.rv{filter:blur(6px)}
+  .js .rv.vu{opacity:1;translate:none;filter:none;
+    transition:opacity .9s var(--sortie) var(--rv-d,0s),translate 1.15s var(--sortie) var(--rv-d,0s),filter .8s var(--sortie) var(--rv-d,0s),
+      transform var(--moyen) var(--ease),box-shadow var(--moyen) var(--ease),border-color var(--moyen),background-color var(--vite)}
+  .js .rv.rv-anim{will-change:opacity,translate}
+  .js .tete.rv.rv-anim{will-change:opacity,translate,filter}
+  /* filet de sécurité : si site.js ne s'exécute jamais, tout apparaît quand même */
+  html.js:not(.mo) .rv:not(.vu){animation:rv-secours .8s var(--sortie) 2.5s both}
+  /* méthode hors récit épinglé : la pastille du numéro arrive juste après sa carte */
+  .mo .etape.rv .n{scale:.4;opacity:0}
+  .mo .etape.rv.vu .n{scale:1;opacity:1;transition:scale .7s cubic-bezier(.34,1.56,.64,1) calc(var(--rv-d,0s) + .22s),opacity .3s var(--ease) calc(var(--rv-d,0s) + .22s)}
+}
+@keyframes rv-secours{to{opacity:1;translate:none;filter:none}}
+
+/* compteurs du bandeau de preuves : largeur réservée par le nombre final (transparent), le
+   compte défile par-dessus, en chiffres tabulaires ; aucun décalage de mise en page */
+.compte{position:relative;display:inline-block;font:inherit;color:inherit}
+.compte i{font-style:normal}
+.compte-fin{color:transparent}
+.compte-vif{position:absolute;right:0;top:0;font-variant-numeric:tabular-nums;white-space:nowrap}
+
+/* ----------------------------------------------------------------- navigation : section active */
+@media (min-width:1021px){
+  .nav-liens a{position:relative}
+  .nav-liens a:not(.seul-m)::after{content:"";position:absolute;left:.75rem;right:.75rem;bottom:.3rem;height:2px;border-radius:2px;
+    background:var(--bleu);transform:scaleX(0);transition:transform .5s var(--sortie)}
+  .nav-liens a.ici{color:var(--encre)}
+  .nav-liens a.ici::after{transform:scaleX(1)}
+}
+@media (max-width:1020px){.nav-liens a.ici{color:var(--bleu)}}
+
+/* ----------------------------------------------------------------- liées au défilement
+   Mêmes noms d'animation pour les deux moteurs. Durée 1 s : le repli JS règle currentTime
+   (0 à 1000 ms) ; le moteur natif remplace le temps par la position de défilement. */
+@media (prefers-reduced-motion:no-preference){
+  /* propriétés longues seulement : un raccourci « animation » remettrait animation-timeline à auto */
+  .mo .hero::before,.mo .hero :is(.scene-app,.visuel-page),.mo .hero :is(.scene-app,.visuel-page) :is(.p-iph,.p-awu),
+  .mo .projet .visuel :is(.p-mbp,.p-iph,.p-awu),.mo .portrait-badge{animation-duration:1s;animation-timing-function:linear;animation-fill-mode:both}
+  .mo .hero::before{animation-name:h-lueur}
+  .mo .hero :is(.scene-app,.visuel-page){transform-origin:50% 85%}
+  .mo .projet .visuel .p-mbp{animation-name:par-mac}
+  .mo .projet .visuel :is(.c-vigie,.c-duo) .p-iph,.mo .projet .visuel .c-sites .m2,.mo .projet .visuel .c-apps .a2{animation-name:par-doux}
+  .mo .projet .visuel .c-vigie .p-awu{animation-name:par-fort}
+  .mo .projet .visuel .c-apps .a1{animation-name:par-inverse}
+  .mo .portrait-badge{animation-name:par-badge}
+}
+@media (prefers-reduced-motion:no-preference) and (min-width:981px){
+  /* ordinateur : la scène recule et bascule légèrement en arrière, iPhone et montre montent plus vite (profondeur) */
+  .mo .hero :is(.scene-app,.visuel-page){animation-name:h-groupe}
+  .mo .hero :is(.scene-app,.visuel-page) .p-iph{animation-name:h-avant}
+  .mo .hero :is(.scene-app,.visuel-page) .p-awu{animation-name:h-devant}
+}
+@media (prefers-reduced-motion:no-preference) and (max-width:980px){
+  /* téléphone et tablette : la scène est sous le texte, elle se redresse en entrant dans l'écran */
+  .mo .hero :is(.scene-app,.visuel-page){animation-name:hm-groupe}
+  .mo .hero :is(.scene-app,.visuel-page) :is(.p-iph,.p-awu){animation-name:hm-avant}
+}
+/* repli JS : les mêmes animations restent en pause, site.js règle leur currentTime */
+@media (prefers-reduced-motion:no-preference){
+  .mo-js .hero::before,.mo-js .hero :is(.scene-app,.visuel-page),.mo-js .hero :is(.scene-app,.visuel-page) :is(.p-iph,.p-awu),
+  .mo-js .projet .visuel :is(.p-mbp,.p-iph,.p-awu),.mo-js .portrait-badge{animation-play-state:paused}
+}
+/* moteur natif ; view-timeline-inset à 0 : sinon la plage se décale du scroll-padding-top (84 px) */
+@supports (animation-timeline:view()){
+  @media (prefers-reduced-motion:no-preference){
+    .mo-tl .hero::before{animation-timeline:scroll(root);animation-range:0px 100vh}
+    .mo-tl .projet .visuel{view-timeline:--visuel block;view-timeline-inset:0}
+    .mo-tl .projet .visuel :is(.p-mbp,.p-iph,.p-awu){animation-timeline:--visuel;animation-range:cover 0% cover 100%}
+    .mo-tl .projet .visuel .p-mbp:not(.c-sites .m2){animation-range:entry 0% cover 45%}
+    .mo-tl .fondateur .portrait{view-timeline:--portrait block;view-timeline-inset:0}
+    .mo-tl .portrait-badge{animation-timeline:--portrait;animation-range:cover 0% cover 100%}
+    .mo-tl .recit{view-timeline:--recit block;view-timeline-inset:0}
+    .mo-tl .recit .recit-piste i{animation:recit-fil 1s linear both;animation-timeline:--recit;animation-range:contain 0% contain 92%}
+    .mo-tl .prog{animation:prog 1s linear both;animation-timeline:scroll(root)}
+  }
+  @media (prefers-reduced-motion:no-preference) and (min-width:981px){
+    .mo-tl .hero :is(.scene-app,.visuel-page),.mo-tl .hero :is(.scene-app,.visuel-page) :is(.p-iph,.p-awu){animation-timeline:scroll(root);animation-range:0px 90vh}
+  }
+  @media (prefers-reduced-motion:no-preference) and (max-width:980px){
+    .mo-tl .hero :is(.scene-app,.visuel-page){view-timeline:--scene block;view-timeline-inset:0;animation-timeline:--scene;animation-range:entry 0% cover 50%}
+    .mo-tl .hero :is(.scene-app,.visuel-page) :is(.p-iph,.p-awu){animation-timeline:--scene;animation-range:entry 0% cover 50%}
+  }
+}
+@keyframes h-lueur{to{translate:0 24%;opacity:.35}}
+@keyframes h-groupe{to{transform:perspective(1800px) translate3d(0,7%,0) rotateX(10deg) scale(.93)}}
+@keyframes h-avant{to{translate:0 -24%}}
+@keyframes h-devant{to{translate:0 -48%}}
+@keyframes hm-groupe{from{transform:perspective(1200px) translate3d(0,9%,0) rotateX(20deg) scale(.9)}to{transform:perspective(1200px) translate3d(0,0,0) rotateX(0deg) scale(1)}}
+@keyframes hm-avant{from{translate:0 26%}to{translate:0 0}}
+@keyframes par-mac{from{scale:.955}to{scale:1}}
+@keyframes par-doux{from{translate:0 9%}to{translate:0 -9%}}
+@keyframes par-fort{from{translate:0 24%}to{translate:0 -24%}}
+@keyframes par-inverse{from{translate:0 -6%}to{translate:0 6%}}
+@keyframes par-badge{from{translate:0 34px}to{translate:0 -34px}}
+@keyframes recit-fil{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes prog{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+
+/* ----------------------------------------------------------------- récit : la méthode, étape par étape
+   Ordinateur assez haut : la section s'allonge et son contenu reste épinglé (position: sticky)
+   pendant que les étapes s'allument une à une, avec une barre de progression en 4 segments.
+   Ailleurs (téléphone, fenêtre basse, contenu trop haut) : version simple, non épinglée. */
+.recit-rail{display:none}
+@media screen and (prefers-reduced-motion:no-preference) and (min-width:981px) and (min-height:700px){
+  .mo .recit:not(.recit-libre){--recit-long:250vh;position:relative;height:calc(100vh + var(--recit-long));padding-block:0;scroll-margin-top:-84px}
+  .mo .recit:not(.recit-libre)>.wrap{position:sticky;top:0;height:100vh;display:flex;flex-direction:column;justify-content:center;padding-block:4.6rem 2rem}
+  .mo .recit:not(.recit-libre) .etapes .etape.rv{opacity:.3;translate:0 14px;
+    transition:opacity .7s var(--sortie),translate .9s var(--sortie),transform var(--moyen) var(--ease),box-shadow var(--moyen) var(--ease),border-color var(--moyen)}
+  .mo .recit:not(.recit-libre) .etapes .etape.rv.fait,.mo .recit:not(.recit-libre) .etapes .etape.rv.actif{opacity:1;translate:none}
+  .mo .recit:not(.recit-libre) .etape .n{scale:1;opacity:1;transition:none}
+  .mo .recit:not(.recit-libre) .etapes::before{content:none}
+  .mo .recit:not(.recit-libre) .etape::before{content:"";position:absolute;inset:-1px;border-radius:inherit;pointer-events:none;
+    box-shadow:0 0 0 1.5px rgba(36,71,245,.55),0 24px 48px -22px rgba(36,71,245,.5);opacity:0;transition:opacity .6s var(--ease)}
+  .mo .recit:not(.recit-libre) .etape.actif::before{opacity:1}
+  .mo .recit:not(.recit-libre) .recit-rail{display:flex;align-items:center;gap:1.1rem;margin-top:1.6rem}
+  .recit-piste{position:relative;flex:1;height:4px;border-radius:99px;overflow:hidden;background:var(--gris-2);
+    -webkit-mask:linear-gradient(90deg,#000 calc(25% - 3px),transparent 0 calc(25% + 3px),#000 0 calc(50% - 3px),transparent 0 calc(50% + 3px),#000 0 calc(75% - 3px),transparent 0 calc(75% + 3px),#000 0);
+    mask:linear-gradient(90deg,#000 calc(25% - 3px),transparent 0 calc(25% + 3px),#000 0 calc(50% - 3px),transparent 0 calc(50% + 3px),#000 0 calc(75% - 3px),transparent 0 calc(75% + 3px),#000 0)}
+  .recit-piste i{position:absolute;inset:0;background:var(--bleu);transform-origin:0 50%;transform:scaleX(0)}
+  .recit-num{font:600 .8rem/1 var(--ff);letter-spacing:.06em;text-transform:uppercase;color:var(--bleu);font-variant-numeric:tabular-nums;white-space:nowrap;min-width:9.5em;text-align:right}
+  .mo .recit:not(.recit-libre) .garanties{margin-top:1.3rem}
+}
+
+/* ----------------------------------------------------------------- transitions entre pages
+   Fondu court d'une page à l'autre ; la barre du haut est nommée pendant la transition
+   seulement, pour rester en place. Navigateurs sans support : navigation classique. */
+@media (prefers-reduced-motion:no-preference){
+  @view-transition{navigation:auto}
+  html:active-view-transition #haut{view-transition-name:haut}
+  ::view-transition-old(root){animation:vt-sortie .2s var(--ease) both}
+  ::view-transition-new(root){animation:vt-entree .42s var(--sortie) both}
+  ::view-transition-group(haut){animation-duration:.35s;animation-timing-function:var(--sortie)}
+}
+@keyframes vt-sortie{to{opacity:0}}
+@keyframes vt-entree{from{opacity:0;translate:0 12px}}
+
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
-  .js .rv{opacity:1;transform:none;transition:none}
-  .entree,.hero-scene.entree,[role="tabpanel"]:not([hidden]),.formulaire fieldset:not([hidden]),.etat-envoi{animation:none}
+  [role="tabpanel"]:not([hidden]),.formulaire fieldset:not([hidden]),.etat-envoi{animation:none}
   *,*::before,*::after,*::details-content{transition-duration:.01ms!important}
 }
 @media print{#haut,.barre-m,#devis{display:none}}
