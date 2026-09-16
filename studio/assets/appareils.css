@@ -1,0 +1,132 @@
+/* ==========================================================================
+   Studio BFievé · maquettes d'appareils en CSS pur (16/09/2026)
+   MacBook Pro 14 (encoche) · iPhone 17 Pro (Dynamic Island) · Apple Watch Ultra 3
+   Proportions tirées des cotes publiques : écran MacBook 3024 × 1964, iPhone 402 × 874 pt,
+   Watch Ultra 422 × 514 px. Toutes les mesures sont relatives à la largeur de l'appareil :
+   un appareil se dimensionne en donnant une largeur à son conteneur, rien d'autre.
+   ========================================================================== */
+
+.app{position:relative;display:block}
+.app img{display:block;width:100%;height:100%;object-fit:cover;object-position:top center}
+
+/* ---------------------------------------------------------------- MacBook Pro */
+.mbp{--bord:#c3c5c9;--base-1:#eef0f2;--base-2:#d2d4d8;--base-3:#a3a6ab;--base-4:#6f7277;
+  width:100%;filter:drop-shadow(0 2.4vw 2.6vw rgba(8,10,18,.28))}
+.mbp--noir{--bord:#55575c;--base-1:#5b5d62;--base-2:#3a3c40;--base-3:#26272a;--base-4:#131416}
+.mbp-lid{position:relative;margin-inline:6.4%;background:#08080a;
+  border-radius:3.1% 3.1% 0 0 / 4.6% 4.6% 0 0;padding:1.5% 1.5% 2.2%;
+  box-shadow:inset 0 0 0 .12vw #2c2d31,0 0 0 .14vw var(--bord)}
+.mbp-lid::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+  background:linear-gradient(115deg,rgba(255,255,255,.10) 0%,rgba(255,255,255,0) 32%)}
+.mbp-ecran{position:relative;aspect-ratio:1512/982;overflow:hidden;background:#000;
+  border-radius:.45%/.7%;container-type:inline-size}
+.mbp-encoche{position:absolute;left:50%;top:0;width:12.4%;height:3.1cqi;transform:translateX(-50%);
+  background:#08080a;border-radius:0 0 .9cqi .9cqi;z-index:4}
+.mbp-encoche::after{content:"";position:absolute;left:50%;top:38%;width:.55cqi;height:.55cqi;
+  transform:translateX(-50%);border-radius:50%;background:#1b2130;box-shadow:inset 0 0 .15cqi #3a4a6a}
+.mbp-base{position:relative;height:0;padding-bottom:3.3%;
+  background:linear-gradient(180deg,var(--base-1) 0%,var(--base-2) 30%,var(--base-3) 72%,var(--base-4) 100%);
+  border-radius:.3vw .3vw 48% 48% / .3vw .3vw 100% 100%}
+.mbp-base::before{content:"";position:absolute;left:50%;top:0;width:13.5%;height:46%;transform:translateX(-50%);
+  background:linear-gradient(180deg,var(--base-3),var(--base-2));border-radius:0 0 1.1vw 1.1vw / 0 0 .8vw .8vw}
+.mbp-base::after{content:"";position:absolute;left:6%;right:6%;top:100%;height:.5vw;
+  background:radial-gradient(50% 100% at 50% 0,rgba(0,0,0,.28),transparent 70%)}
+
+/* barre de menus macOS, barre Safari */
+.mac-menus{position:absolute;left:0;right:0;top:0;height:3.1cqi;z-index:3;display:flex;align-items:center;
+  gap:1.6cqi;padding-inline:1.6cqi;font:600 1.12cqi/1 -apple-system,BlinkMacSystemFont,'Instrument Sans',sans-serif;
+  color:rgba(255,255,255,.92);background:rgba(10,10,12,.55);backdrop-filter:blur(6px)}
+.mac-menus.clair{color:#1d1d1f;background:rgba(246,246,248,.78)}
+.mac-menus b{font-weight:700}
+.mac-menus span{font-weight:500;opacity:.9}
+.mac-menus .d{margin-left:auto;font-weight:500}
+.mac-menus svg{width:1.25cqi;height:1.25cqi;fill:currentColor}
+.safari{position:absolute;left:0;right:0;top:3.1cqi;height:4.4cqi;z-index:2;display:flex;align-items:center;gap:1cqi;
+  padding-inline:1.4cqi;background:#f4f4f6;border-bottom:1px solid #d9d9de;font:500 1.05cqi/1 -apple-system,BlinkMacSystemFont,sans-serif;color:#3a3a3c}
+.safari i{width:.95cqi;height:.95cqi;border-radius:50%;background:#ff5f57;flex:none}
+.safari i:nth-child(2){background:#febc2e}.safari i:nth-child(3){background:#28c840;margin-right:2cqi}
+.safari .url{flex:0 1 38cqi;margin-inline:auto;height:2.7cqi;border-radius:.8cqi;background:#e6e6ea;display:flex;
+  align-items:center;justify-content:center;gap:.6cqi;color:#48484c;white-space:nowrap;overflow:hidden}
+.safari .url::before{content:"";width:.8cqi;height:.95cqi;border-radius:.15cqi;border:.16cqi solid #8e8e93;border-top-width:.5cqi;box-sizing:border-box}
+.mbp-ecran>img{position:absolute;inset:0;height:100%}
+.mbp-ecran.avec-menus>img{top:3.1cqi;height:calc(100% - 3.1cqi)}
+.mbp-ecran.avec-safari>img{top:7.5cqi;height:calc(100% - 7.5cqi)}
+.mbp-ecran>.vivant{position:absolute;inset:0}
+.mbp-ecran.avec-safari>.vivant{top:7.5cqi}
+
+/* ---------------------------------------------------------------- iPhone 17 Pro */
+.iph{--metal:linear-gradient(90deg,#b9bcc1 0%,#f3f4f6 7%,#c7cace 22%,#e6e8ea 50%,#c2c5c9 78%,#f2f3f5 93%,#aeb1b6 100%);
+  --btn:#b6b9be;position:relative;width:100%;padding:1.45%;border-radius:17.5% / 8.4%;background:var(--metal);
+  box-shadow:0 0 0 .08vw rgba(0,0,0,.25),inset 0 0 0 .1vw rgba(255,255,255,.55),0 2.2vw 3.4vw -1vw rgba(8,10,18,.42)}
+.iph--bleu{--metal:linear-gradient(90deg,#1f2b3e 0%,#5d7090 7%,#2c3a52 22%,#3f5170 50%,#27344a 78%,#5a6d8c 93%,#1b2536 100%);--btn:#34435d}
+.iph--orange{--metal:linear-gradient(90deg,#b44d17 0%,#f59a58 7%,#d0672a 22%,#ec8a45 50%,#c95f24 78%,#f7a266 93%,#a9460f 100%);--btn:#c9652a}
+.iph--noir{--metal:linear-gradient(90deg,#1a1a1c 0%,#58585c 7%,#2a2a2d 22%,#3c3c40 50%,#232326 78%,#55555a 93%,#161618 100%);--btn:#3a3a3e}
+.iph-noir{position:relative;background:#040405;border-radius:16.2% / 7.7%;padding:3.3%}
+.iph-ecran{position:relative;aspect-ratio:402/874;overflow:hidden;background:#000;border-radius:13.2% / 6.1%;container-type:inline-size}
+.iph-ile{position:absolute;left:50%;top:2.8cqi;width:30.5cqi;height:9cqi;transform:translateX(-50%);background:#000;border-radius:99px;z-index:5}
+.iph-ile::after{content:"";position:absolute;right:3.2cqi;top:50%;width:3.1cqi;height:3.1cqi;transform:translateY(-50%);
+  border-radius:50%;background:radial-gradient(circle at 40% 40%,#27324a 0 30%,#0a0d14 60%)}
+.iph-statut{position:absolute;left:0;right:0;top:0;height:13.4cqi;z-index:4;display:flex;align-items:center;justify-content:space-between;
+  padding:0 7.5cqi 0 9.5cqi;font:600 4.1cqi/1 -apple-system,BlinkMacSystemFont,'Instrument Sans',sans-serif;color:var(--sb-c,#fff);background:var(--sb-bg,transparent)}
+.iph-statut .ind{display:flex;align-items:center;gap:1.4cqi}
+.iph-statut .res{display:flex;align-items:flex-end;gap:.55cqi;height:2.8cqi}
+.iph-statut .res i{width:.85cqi;background:currentColor;border-radius:.2cqi}
+.iph-statut .res i:nth-child(1){height:35%}.iph-statut .res i:nth-child(2){height:58%}.iph-statut .res i:nth-child(3){height:80%}.iph-statut .res i:nth-child(4){height:100%}
+.iph-statut .bat{width:6.4cqi;height:3cqi;border:.3cqi solid currentColor;border-radius:.9cqi;position:relative;opacity:.95}
+.iph-statut .bat::before{content:"";position:absolute;inset:.35cqi;right:1.3cqi;background:currentColor;border-radius:.35cqi}
+.iph-statut .bat::after{content:"";position:absolute;right:-.95cqi;top:50%;width:.5cqi;height:1.1cqi;transform:translateY(-50%);background:currentColor;border-radius:0 .3cqi .3cqi 0}
+.iph-ecran>img{position:absolute;left:0;right:0;top:0;height:100%}
+.iph-ecran.sous-statut>img{top:13.4cqi;height:calc(100% - 13.4cqi)}
+.iph-ecran>.vivant{position:absolute;inset:0}
+.iph-barre-accueil{position:absolute;left:50%;bottom:2cqi;width:35cqi;height:1.3cqi;transform:translateX(-50%);border-radius:99px;background:var(--ha,rgba(255,255,255,.85));z-index:5}
+.iph-reflet{position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:6;
+  background:linear-gradient(120deg,rgba(255,255,255,.14) 0%,rgba(255,255,255,0) 28%,rgba(255,255,255,0) 70%,rgba(255,255,255,.05) 100%)}
+.iph-b{position:absolute;width:1.1%;background:var(--btn);box-shadow:inset 0 0 0 .05vw rgba(0,0,0,.25)}
+.iph-b.action{left:-.85%;top:17.5%;height:3.6%;border-radius:.2vw 0 0 .2vw}
+.iph-b.vol1{left:-.85%;top:24.5%;height:6.6%;border-radius:.2vw 0 0 .2vw}
+.iph-b.vol2{left:-.85%;top:33%;height:6.6%;border-radius:.2vw 0 0 .2vw}
+.iph-b.cote{right:-.85%;top:27%;height:10.5%;border-radius:0 .2vw .2vw 0}
+.iph-b.cam{right:-.55%;top:57%;height:5.4%;width:.7%;border-radius:0 .15vw .15vw 0;opacity:.85}
+
+/* ---------------------------------------------------------------- Apple Watch Ultra 3 */
+.awu{--ti:linear-gradient(140deg,#e9e6e0 0%,#b9b4ab 22%,#dcd8d0 44%,#9e998f 70%,#d6d2ca 100%);
+  --ti-bord:#8d887f;--bracelet:#ff7a2e;--bracelet-2:#e2601a;
+  position:relative;width:100%;aspect-ratio:1/1.72}
+.awu--noir{--ti:linear-gradient(140deg,#4b4b4e 0%,#1f1f21 25%,#3a3a3d 48%,#161618 72%,#333336 100%);--ti-bord:#0d0d0e}
+.awu--indigo{--bracelet:#3b4a8c;--bracelet-2:#2c3872}
+.awu--vert{--bracelet:#4d6b3a;--bracelet-2:#3a5429}
+.awu-bracelet{position:absolute;left:19%;right:19%;
+  background:repeating-linear-gradient(0deg,var(--bracelet) 0 .9vw,var(--bracelet-2) .9vw 1.05vw),var(--bracelet);
+  box-shadow:inset .5vw 0 .8vw -.4vw rgba(0,0,0,.35),inset -.5vw 0 .8vw -.4vw rgba(0,0,0,.35)}
+.awu-bracelet.haut{top:0;height:27%;border-radius:.4vw .4vw 0 0;
+  mask:linear-gradient(180deg,transparent 0,#000 30%);-webkit-mask:linear-gradient(180deg,transparent 0,#000 30%)}
+.awu-bracelet.bas{bottom:0;height:27%;border-radius:0 0 .4vw .4vw;
+  mask:linear-gradient(0deg,transparent 0,#000 30%);-webkit-mask:linear-gradient(0deg,transparent 0,#000 30%)}
+.awu-boitier{position:absolute;left:6%;right:10%;top:22.5%;bottom:22.5%;border-radius:25% / 22%;background:var(--ti);
+  box-shadow:inset 0 0 0 .12vw rgba(255,255,255,.45),inset 0 -.6vw 1vw rgba(0,0,0,.25),0 1.6vw 2.4vw -.6vw rgba(8,10,18,.5)}
+.awu-verre{position:absolute;inset:5.2% 6%;border-radius:19% / 16%;background:#050506;
+  box-shadow:0 0 0 .25vw var(--ti-bord),inset 0 0 0 .1vw rgba(255,255,255,.08);padding:3.6% 4%}
+.awu-ecran{position:relative;width:100%;height:100%;overflow:hidden;border-radius:15% / 12.5%;background:#000;container-type:inline-size}
+.awu-ecran>img{position:absolute;inset:0;height:100%}
+.awu-verre::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+  background:linear-gradient(125deg,rgba(255,255,255,.16) 0%,rgba(255,255,255,0) 35%)}
+.awu-garde{position:absolute;right:3.4%;top:31%;height:26%;width:10%;border-radius:0 38% 38% 0 / 0 22% 22% 0;background:var(--ti);
+  box-shadow:inset -.2vw 0 .4vw rgba(0,0,0,.2)}
+.awu-couronne{position:absolute;right:.4%;top:33.5%;height:10.5%;width:6%;border-radius:.3vw;
+  background:repeating-linear-gradient(0deg,#8b867d 0 .16vw,#e2ded6 .16vw .34vw);box-shadow:inset 0 0 0 .08vw rgba(0,0,0,.3)}
+.awu-couronne::after{content:"";position:absolute;left:-10%;top:0;bottom:0;width:22%;background:#ff6a13;border-radius:.1vw;opacity:.0}
+.awu-lateral{position:absolute;right:1.6%;top:47.5%;height:7%;width:4%;border-radius:.2vw;background:linear-gradient(90deg,#8e897f,#d4d0c8)}
+.awu-action{position:absolute;left:3.6%;top:32%;height:15%;width:3.4%;border-radius:.35vw 0 0 .35vw;
+  background:linear-gradient(90deg,#c9480a,#ff7a2a 60%,#e25d12);box-shadow:inset 0 0 0 .06vw rgba(0,0,0,.25)}
+.awu-hp{position:absolute;left:4.6%;width:1.4%;height:6%;border-radius:.2vw;background:#3a3834}
+.awu-hp.h1{top:52%}.awu-hp.h2{top:59.5%}
+
+/* ---------------------------------------------------------------- scènes */
+.scene{position:relative}
+.scene .pose{position:absolute}
+.incline-g{transform:perspective(1600px) rotateY(14deg) rotateX(2deg)}
+.incline-d{transform:perspective(1600px) rotateY(-14deg) rotateX(2deg)}
+.flotte{animation:flotte 7s ease-in-out infinite}
+.flotte.d2{animation-delay:-2.3s}.flotte.d3{animation-delay:-4.6s}
+@keyframes flotte{0%,100%{translate:0 0}50%{translate:0 -1.2%}}
+@media (prefers-reduced-motion:reduce){.flotte{animation:none}}

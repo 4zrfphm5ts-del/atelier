@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Démo : tableau de bord d'un réseau de boutiques (données fictives) | Studio BFievé</title>
+<meta name="description" content="Démonstration manipulable d'un tableau de bord sur mesure : chiffre d'affaires, marge et évolution d'un réseau de huit boutiques inventées. Données fictives.">
+<meta name="robots" content="noindex, follow">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<style>
+@font-face{font-family:'Bricolage Grotesque';font-weight:500 800;font-display:swap;src:url(../../assets/fonts/bricolage-grotesque-latin.woff2) format('woff2')}
+@font-face{font-family:'Instrument Sans';font-weight:400 600;font-display:swap;src:url(../../assets/fonts/instrument-sans-latin.woff2) format('woff2')}
+@font-face{font-family:'IBM Plex Mono';font-weight:400;font-display:swap;src:url(../../assets/fonts/ibm-plex-mono-400-latin.woff2) format('woff2')}
+@font-face{font-family:'IBM Plex Mono';font-weight:500;font-display:swap;src:url(../../assets/fonts/ibm-plex-mono-500-latin.woff2) format('woff2')}
+:root{--fond:#0E1015;--panneau:#161922;--panneau-2:#1C202B;--ligne:rgba(255,255,255,.08);--texte:#EDEAE2;--doux:#9AA1AD;
+  --lime:#C9F73F;--ambre:#F2C14E;--rouge:#FF7A6B;--vert:#7BDC8F;--ff-d:'Bricolage Grotesque',system-ui,sans-serif;--ff:'Instrument Sans',system-ui,sans-serif;--ff-m:'IBM Plex Mono',ui-monospace,monospace}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{background:var(--fond);color:var(--texte);font:400 14px/1.45 var(--ff);-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+.app{display:grid;grid-template-columns:216px 1fr;min-height:100vh}
+aside.nav{background:#0A0C10;border-right:1px solid var(--ligne);padding:22px 14px;display:flex;flex-direction:column;gap:4px}
+.logo{display:flex;align-items:center;gap:10px;font:700 17px var(--ff-d);padding:0 8px 22px}
+.logo i{width:26px;height:26px;border-radius:7px;background:var(--lime);display:grid;place-items:center;color:#0E1015;font:800 14px var(--ff-d);font-style:normal}
+.nav a{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:9px;color:var(--doux);text-decoration:none;font-size:13.5px}
+.nav a.on{background:rgba(201,247,63,.1);color:var(--lime)}
+.nav a svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.nav .bas{margin-top:auto;font:400 11px/1.5 var(--ff-m);color:var(--doux);padding:10px;border:1px dashed rgba(242,193,78,.35);border-radius:9px}
+.nav .bas b{color:var(--ambre);font-weight:500;display:block;letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px}
+main{padding:22px 28px 28px;display:grid;gap:16px;align-content:start;min-width:0}
+.haut{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.haut h1{font:700 23px var(--ff-d);letter-spacing:-.01em}
+.haut h1 small{font:400 13px var(--ff-m);color:var(--doux);margin-left:8px}
+.fictif{font:500 10.5px var(--ff-m);letter-spacing:.12em;text-transform:uppercase;color:var(--ambre);border:1px solid rgba(242,193,78,.4);background:rgba(242,193,78,.08);padding:5px 10px;border-radius:99px}
+.maj{margin-left:auto;font:400 12px var(--ff-m);color:var(--doux);display:flex;align-items:center;gap:8px}
+.maj::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--vert);box-shadow:0 0 0 3px rgba(123,220,143,.18)}
+.seg{display:flex;background:var(--panneau);border:1px solid var(--ligne);border-radius:10px;padding:3px}
+.seg button{font:500 12px var(--ff-m);padding:6px 12px;border-radius:7px;color:var(--doux)}
+.seg button[aria-pressed="true"]{background:var(--panneau-2);color:var(--texte);box-shadow:inset 0 0 0 1px var(--ligne)}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.kpi{background:var(--panneau);border:1px solid var(--ligne);border-radius:14px;padding:14px 16px}
+.kpi .l{font:500 10.5px var(--ff-m);letter-spacing:.1em;text-transform:uppercase;color:var(--doux)}
+.kpi .v{font:600 28px/1.15 var(--ff-d);margin-top:6px;font-variant-numeric:tabular-nums}
+.kpi .d{font:500 12px var(--ff-m);margin-top:4px;color:var(--vert)}
+.kpi .d.neg{color:var(--rouge)}
+.kpi svg{width:100%;height:30px;margin-top:6px}
+.grille2{display:grid;grid-template-columns:1.05fr 1fr;gap:14px}
+.carte{background:var(--panneau);border:1px solid var(--ligne);border-radius:14px;padding:14px 16px;min-width:0;position:relative}
+.carte h2{font:500 10.5px var(--ff-m);letter-spacing:.1em;text-transform:uppercase;color:var(--doux);margin-bottom:12px;display:flex;justify-content:space-between}
+.barres{display:flex;align-items:flex-end;gap:12px;height:170px;padding-top:18px}
+.barre{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end;min-width:0}
+.barre i{width:100%;max-width:46px;border-radius:7px 7px 2px 2px;background:linear-gradient(180deg,var(--lime),#8FB82A);height:calc(var(--p)*100%);position:relative;transition:height .6s cubic-bezier(.22,.8,.24,1),opacity .3s}
+.barre i::after{content:attr(data-v);position:absolute;top:-17px;left:50%;transform:translateX(-50%);font:500 10.5px var(--ff-m);color:var(--texte);white-space:nowrap}
+.barre span{font:400 11px var(--ff-m);color:var(--doux);white-space:nowrap}
+.barre.corner i{background:linear-gradient(180deg,#9FB6FF,#5F79C9)}
+.barre.off{opacity:.18}
+.legende{display:flex;gap:14px;font:400 11px var(--ff-m);color:var(--doux)}
+.legende span::before{content:"";display:inline-block;width:9px;height:9px;border-radius:3px;background:var(--lime);margin-right:6px;vertical-align:-1px}
+.legende span.c::before{background:#9FB6FF}
+.courbe svg{width:100%;height:190px;display:block}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{font:500 10.5px var(--ff-m);letter-spacing:.08em;text-transform:uppercase;color:var(--doux);text-align:left;padding:8px 10px;border-bottom:1px solid var(--ligne)}
+th.n,td.n{text-align:right;font-variant-numeric:tabular-nums}
+td{padding:9px 10px;border-bottom:1px solid var(--ligne)}
+tbody tr{cursor:pointer;transition:background .2s}
+tbody tr:hover,tbody tr.sel{background:rgba(201,247,63,.06)}
+td .nom{font-weight:600;background:none;border:0;color:inherit;font:600 13px var(--ff);cursor:pointer;padding:0}
+.pill{font:500 10.5px var(--ff-m);padding:3px 8px;border-radius:99px;border:1px solid var(--ligne);color:var(--doux)}
+.pos{color:var(--vert)}.neg{color:var(--rouge)}
+.jauge{display:inline-block;width:64px;height:6px;border-radius:99px;background:rgba(255,255,255,.08);vertical-align:middle;margin-left:8px;overflow:hidden}
+.jauge b{display:block;height:100%;background:var(--lime);width:calc(var(--m)*1%)}
+.outils{display:flex;gap:10px;align-items:center;margin-bottom:10px;flex-wrap:wrap}
+.outils .t{font:500 10.5px var(--ff-m);letter-spacing:.1em;text-transform:uppercase;color:var(--doux);margin-right:4px}
+.fiche{position:fixed;top:0;right:0;bottom:0;width:360px;background:#12151C;border-left:1px solid var(--ligne);padding:24px;transform:translateX(100%);transition:transform .45s cubic-bezier(.22,.8,.24,1);z-index:10;display:flex;flex-direction:column;gap:14px;box-shadow:-30px 0 60px rgba(0,0,0,.4)}
+.fiche.ouverte{transform:none}
+.fiche h3{font:700 24px var(--ff-d)}
+.fiche .sous{font:400 12px var(--ff-m);color:var(--doux)}
+.fiche .k{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.fiche .k>div{background:var(--panneau);border:1px solid var(--ligne);border-radius:10px;padding:10px 12px}
+.fiche .k .l{font:500 10px var(--ff-m);letter-spacing:.1em;text-transform:uppercase;color:var(--doux)}
+.fiche .k .v{font:600 20px var(--ff-d);margin-top:3px}
+.fiche svg{width:100%;height:120px}
+.fiche .x{position:absolute;top:18px;right:18px;width:32px;height:32px;border-radius:8px;border:1px solid var(--ligne);display:grid;place-items:center;color:var(--doux)}
+.fiche .note{font:400 11px/1.5 var(--ff-m);color:var(--doux)}
+.retour{position:fixed;left:16px;bottom:16px;z-index:20;font:600 13px var(--ff);background:var(--lime);color:#0E1015;padding:10px 14px;border-radius:10px;text-decoration:none;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+body.capture .retour{display:none}
+@media (max-width:980px){.app{grid-template-columns:1fr}aside.nav{display:none}.kpis{grid-template-columns:1fr 1fr}.grille2{grid-template-columns:1fr}main{padding:16px}.cache-m{display:none}.fiche{width:100%}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="nav" aria-label="Menu de la démo">
+    <div class="logo"><i>R</i>Réseau Nord</div>
+    <a class="on" href="#"><svg viewBox="0 0 24 24"><path d="M3 12 12 3l9 9M5 10v10h14V10"/></svg>Vue d'ensemble</a>
+    <a href="#"><svg viewBox="0 0 24 24"><path d="M4 10 5 4h14l1 6M4 10h16M6 10v10h12V10"/></svg>Boutiques</a>
+    <a href="#"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/></svg>Produits</a>
+    <a href="#"><svg viewBox="0 0 24 24"><path d="M6 2h9l5 5v15H6zM15 2v5h5"/></svg>Factures</a>
+    <a href="#"><svg viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>Exports</a>
+    <div class="bas"><b>Démo</b>Huit boutiques inventées, chiffres fictifs. Filtrez, triez, cliquez une ligne.</div>
+  </aside>
+  <main>
+    <div class="haut">
+      <h1>Vue d'ensemble <small>12 mois glissants · T2 2026</small></h1>
+      <span class="fictif">Données fictives</span>
+      <span class="maj">Rafraîchi ce matin · 07:02 · 8 sources sur 8</span>
+    </div>
+    <section class="kpis" aria-label="Indicateurs clés">
+      <div class="kpi"><div class="l">CA 12 mois</div><div class="v">6,11 M€</div><div class="d">+3,9 % sur un an</div><svg viewBox="0 0 120 30" aria-hidden="true"><polyline fill="none" stroke="#C9F73F" stroke-width="2" points="0,22 17,14 34,21 51,16 68,17 85,8 102,19 120,12"/></svg></div>
+      <div class="kpi"><div class="l">Marge brute</div><div class="v">38,2 %</div><div class="d">+0,6 pt sur un an</div><svg viewBox="0 0 120 30" aria-hidden="true"><polyline fill="none" stroke="#C9F73F" stroke-width="2" points="0,20 17,19 34,17 51,18 68,14 85,13 102,12 120,10"/></svg></div>
+      <div class="kpi"><div class="l">Boutiques</div><div class="v" id="k-n">8</div><div class="d" id="k-n-d">5 boutiques · 3 corners</div><svg viewBox="0 0 120 30" aria-hidden="true"><polyline fill="none" stroke="#9FB6FF" stroke-width="2" points="0,20 40,20 41,12 120,12"/></svg></div>
+      <div class="kpi"><div class="l">Factures à payer</div><div class="v">14</div><div class="d neg">2 échues · 3 870 €</div><svg viewBox="0 0 120 30" aria-hidden="true"><polyline fill="none" stroke="#FF7A6B" stroke-width="2" points="0,12 17,16 34,10 51,18 68,14 85,20 102,15 120,22"/></svg></div>
+    </section>
+    <div class="grille2">
+      <section class="carte">
+        <h2>CA 12 mois par boutique (M€) <span class="legende"><span>Boutique</span><span class="c">Corner</span></span></h2>
+        <div class="barres" id="barres"></div>
+      </section>
+      <section class="carte courbe">
+        <h2>CA du réseau par trimestre (M€)</h2>
+        <svg viewBox="0 0 520 190" aria-label="Courbe du chiffre d'affaires trimestriel, huit trimestres, données fictives" role="img">
+          <defs><linearGradient id="aire" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#C9F73F" stop-opacity=".28"/><stop offset="1" stop-color="#C9F73F" stop-opacity="0"/></linearGradient></defs>
+          <g id="courbe"></g>
+        </svg>
+      </section>
+    </div>
+    <section class="carte">
+      <div class="outils">
+        <span class="t">Filtre</span>
+        <div class="seg" role="group" aria-label="Filtrer par format"><button data-f="tous" aria-pressed="true">Toutes</button><button data-f="Boutique" aria-pressed="false">Boutiques</button><button data-f="Corner" aria-pressed="false">Corners</button></div>
+        <span class="t" style="margin-left:10px">Tri</span>
+        <div class="seg" role="group" aria-label="Trier"><button data-t="ca" aria-pressed="true">CA</button><button data-t="marge" aria-pressed="false">Marge</button><button data-t="evo" aria-pressed="false">Évolution</button></div>
+      </div>
+      <table>
+        <thead><tr><th>Boutique</th><th class="cache-m">Zone</th><th>Format</th><th class="n">CA 12 mois</th><th class="n">Marge brute</th><th class="n">Sur 1 an</th></tr></thead>
+        <tbody id="lignes"></tbody>
+      </table>
+    </section>
+  </main>
+</div>
+<aside class="fiche" id="fiche" aria-hidden="true" aria-label="Fiche boutique">
+  <button class="x" id="fermer" aria-label="Fermer la fiche">✕</button>
+  <div><h3 id="f-nom">Lille</h3><div class="sous" id="f-sous">Centre-ville · Boutique</div></div>
+  <div class="k"><div><div class="l">CA 12 mois</div><div class="v" id="f-ca"></div></div><div><div class="l">Marge brute</div><div class="v" id="f-m"></div></div><div><div class="l">Sur 1 an</div><div class="v" id="f-e"></div></div><div><div class="l">Part du réseau</div><div class="v" id="f-p"></div></div></div>
+  <svg viewBox="0 0 312 120" id="f-mois" role="img" aria-label="CA mensuel de la boutique, données fictives"></svg>
+  <p class="note">CA mensuel des 12 derniers mois. Chiffres inventés pour la démonstration : aucune boutique réelle.</p>
+</aside>
+<a class="retour" href="../../#realisations">← Retour au Studio BFievé</a>
+<script>
+(function(){
+  if (/capture/.test(location.search)) document.body.classList.add('capture');
+  var B=[
+    {n:'Lille',z:'Centre-ville',f:'Boutique',ca:1.24,m:41,e:8},{n:'Arras',z:'Centre-ville',f:'Boutique',ca:1.03,m:44,e:5},
+    {n:'Lens',z:'Zone commerciale',f:'Boutique',ca:.91,m:36,e:3},{n:'Douai',z:'Galerie',f:'Corner',ca:.74,m:39,e:-2},
+    {n:'Béthune',z:'Centre-ville',f:'Boutique',ca:.67,m:38,e:4},{n:'Roubaix',z:'Gare',f:'Corner',ca:.57,m:33,e:11},
+    {n:'Calais',z:'Zone commerciale',f:'Boutique',ca:.53,m:35,e:1},{n:'Dunkerque',z:'Galerie',f:'Corner',ca:.42,m:31,e:-4}];
+  var Q=[['T3 24',1.42],['T4 24',1.53],['T1 25',1.43],['T2 25',1.50],['T3 25',1.47],['T4 25',1.60],['T1 26',1.48],['T2 26',1.56]];
+  var fr=function(x,d){return x.toFixed(d).replace('.',',')};
+  var filtre='tous',tri='ca',max=1.24,total=6.11;
+  function barres(){
+    var h='';B.forEach(function(b){h+='<div class="barre '+(b.f==='Corner'?'corner':'')+(filtre!=='tous'&&b.f!==filtre?' off':'')+'"><i style="--p:'+(b.ca/max)+'" data-v="'+fr(b.ca,2)+'"></i><span>'+b.n+'</span></div>'});
+    document.getElementById('barres').innerHTML=h;
+  }
+  function courbe(){
+    var x0=36,x1=500,y0=20,y1=160,mn=1.3,mx=1.7,pts=Q.map(function(q,i){return [x0+i*(x1-x0)/(Q.length-1), y1-(q[1]-mn)/(mx-mn)*(y1-y0)]});
+    var g='';[1.3,1.4,1.5,1.6,1.7].forEach(function(v){var y=y1-(v-mn)/(mx-mn)*(y1-y0);g+='<line x1="'+x0+'" x2="'+x1+'" y1="'+y+'" y2="'+y+'" stroke="rgba(255,255,255,.07)"/><text x="0" y="'+(y+4)+'" fill="#9AA1AD" font-size="10" font-family="IBM Plex Mono">'+fr(v,1)+'</text>'});
+    var d=pts.map(function(p,i){return (i?'L':'M')+p[0].toFixed(1)+','+p[1].toFixed(1)}).join(' ');
+    g+='<path d="'+d+' L'+x1+','+y1+' L'+x0+','+y1+' Z" fill="url(#aire)"/><path d="'+d+'" fill="none" stroke="#C9F73F" stroke-width="2.5" stroke-linejoin="round"/>';
+    pts.forEach(function(p,i){g+='<circle cx="'+p[0]+'" cy="'+p[1]+'" r="'+(i===pts.length-1?4.5:2.6)+'" fill="#C9F73F"/><text x="'+p[0]+'" y="182" text-anchor="middle" fill="#9AA1AD" font-size="10" font-family="IBM Plex Mono">'+Q[i][0]+'</text>'});
+    g+='<text x="'+(pts[7][0]-6)+'" y="'+(pts[7][1]-12)+'" text-anchor="end" fill="#EDEAE2" font-size="11" font-family="IBM Plex Mono">1,56 M€</text>';
+    document.getElementById('courbe').innerHTML=g;
+  }
+  function lignes(){
+    var l=B.filter(function(b){return filtre==='tous'||b.f===filtre}).sort(function(a,b){return tri==='ca'?b.ca-a.ca:tri==='marge'?b.m-a.m:b.e-a.e});
+    document.getElementById('lignes').innerHTML=l.map(function(b){return '<tr data-n="'+b.n+'"><td><button class="nom">'+b.n+'</button></td><td class="cache-m">'+b.z+'</td><td><span class="pill">'+b.f+'</span></td><td class="n">'+fr(b.ca,2)+' M€</td><td class="n">'+b.m+' %<span class="jauge" style="--m:'+(b.m*2)+'"><b></b></span></td><td class="n '+(b.e<0?'neg':'pos')+'">'+(b.e>0?'+':b.e<0?'−':'')+Math.abs(b.e)+' %</td></tr>'}).join('');
+    var n=l.length;document.getElementById('k-n').textContent=n;
+  }
+  function fiche(nom){
+    var b=B.filter(function(x){return x.n===nom})[0];if(!b)return;
+    document.getElementById('f-nom').textContent=b.n;document.getElementById('f-sous').textContent=b.z+' · '+b.f;
+    document.getElementById('f-ca').textContent=fr(b.ca,2)+' M€';document.getElementById('f-m').textContent=b.m+' %';
+    document.getElementById('f-e').textContent=(b.e>0?'+':'')+b.e+' %';document.getElementById('f-p').textContent=fr(b.ca/total*100,1)+' %';
+    var s=0;for(var i=0;i<b.n.length;i++)s+=b.n.charCodeAt(i);
+    var saison=[.92,.86,.95,1,1.02,1.05,.97,.9,1.03,1.06,1.12,1.22],moy=b.ca*1000/12,vals=saison.map(function(k,i){return moy*k*(1+((s*(i+3))%9-4)/100)});
+    var mx=Math.max.apply(null,vals),g='';
+    vals.forEach(function(v,i){var h=v/mx*96;g+='<rect x="'+(i*26+2)+'" y="'+(104-h)+'" width="18" height="'+h+'" rx="3" fill="'+(i===11?'#C9F73F':'rgba(201,247,63,.45)')+'"/><text x="'+(i*26+11)+'" y="118" text-anchor="middle" font-size="8.5" fill="#9AA1AD" font-family="IBM Plex Mono">'+'jasondjfmamj'[i]+'</text>'});
+    document.getElementById('f-mois').innerHTML=g;
+    var f=document.getElementById('fiche');f.classList.add('ouverte');f.setAttribute('aria-hidden','false');
+    [].forEach.call(document.querySelectorAll('tbody tr'),function(r){r.classList.toggle('sel',r.dataset.n===nom)});
+    document.getElementById('fermer').focus({preventScroll:true});
+  }
+  function presser(sel,btn){[].forEach.call(document.querySelectorAll(sel),function(b){b.setAttribute('aria-pressed',b===btn)})}
+  [].forEach.call(document.querySelectorAll('[data-f]'),function(b){b.onclick=function(){filtre=b.dataset.f;presser('[data-f]',b);barres();lignes()}});
+  [].forEach.call(document.querySelectorAll('[data-t]'),function(b){b.onclick=function(){tri=b.dataset.t;presser('[data-t]',b);lignes()}});
+  document.getElementById('lignes').addEventListener('click',function(e){var r=e.target.closest('tr');if(r)fiche(r.dataset.n)});
+  document.getElementById('fermer').onclick=function(){var f=document.getElementById('fiche');f.classList.remove('ouverte');f.setAttribute('aria-hidden','true')};
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')document.getElementById('fermer').click()});
+  barres();courbe();lignes();
+  var m=/fiche=([^&]+)/.exec(location.search);if(m)fiche(decodeURIComponent(m[1]));
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Démo : tableau de bord d'un café (données fictives) | Studio BFievé</title>
+<meta name="description" content="Démonstration d'un tableau de bord commerce sur téléphone : marge par produit, factures fournisseurs et compte, pour un café inventé. Données fictives.">
+<meta name="robots" content="noindex, follow">
+<meta name="theme-color" content="#FBF9F4">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<style>
+@font-face{font-family:'Bricolage Grotesque';font-weight:500 800;font-display:swap;src:url(../../assets/fonts/bricolage-grotesque-latin.woff2) format('woff2')}
+@font-face{font-family:'Instrument Sans';font-weight:400 600;font-display:swap;src:url(../../assets/fonts/instrument-sans-latin.woff2) format('woff2')}
+@font-face{font-family:'IBM Plex Mono';font-weight:400;font-display:swap;src:url(../../assets/fonts/ibm-plex-mono-400-latin.woff2) format('woff2')}
+@font-face{font-family:'IBM Plex Mono';font-weight:500;font-display:swap;src:url(../../assets/fonts/ibm-plex-mono-500-latin.woff2) format('woff2')}
+:root{--fond:#FBF9F4;--carte:#fff;--encre:#12141A;--doux:#6B7180;--ligne:rgba(18,20,26,.09);--olive:#4F6A0F;--lime:#C9F73F;--terra:#C1502E;--ambre:#8A5A00;--vert:#23693F}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--fond);color:var(--encre);font:400 15px/1.45 'Instrument Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased;max-width:520px;margin:0 auto;padding:18px 18px 90px}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+.fictif{display:inline-block;font:500 10px 'IBM Plex Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--ambre);background:#F7EDD6;border:1px solid #E8D3A2;padding:4px 9px;border-radius:99px}
+header{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin:12px 0 16px}
+h1{font:800 28px/1.05 'Bricolage Grotesque',sans-serif;letter-spacing:-.02em}
+.sous{font:400 12px 'IBM Plex Mono',monospace;color:var(--doux);margin-top:5px}
+.per{display:flex;background:#EFEBE2;border-radius:99px;padding:3px}
+.per button{font:500 12px 'IBM Plex Mono',monospace;padding:6px 11px;border-radius:99px;color:var(--doux)}
+.per button[aria-pressed="true"]{background:var(--encre);color:var(--lime)}
+.resume{background:var(--encre);color:#F4F1EA;border-radius:20px;padding:16px 18px;display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+.resume .l{font:500 10px 'IBM Plex Mono',monospace;letter-spacing:.1em;text-transform:uppercase;color:#9AA1AD}
+.resume .v{font:700 24px/1.1 'Bricolage Grotesque',sans-serif;margin-top:3px;font-variant-numeric:tabular-nums}
+.resume .v em{font-style:normal;color:var(--lime)}
+.resume .d{font:400 11px 'IBM Plex Mono',monospace;color:#B9E36A;margin-top:2px}
+.onglets{display:grid;grid-template-columns:repeat(3,1fr);background:#EFEBE2;border-radius:14px;padding:4px;margin-bottom:14px}
+.onglets button{padding:9px 0;border-radius:10px;font:600 13.5px 'Instrument Sans',sans-serif;color:var(--doux)}
+.onglets button[aria-selected="true"]{background:#fff;color:var(--encre);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.carte{background:var(--carte);border:1px solid var(--ligne);border-radius:18px;padding:14px 16px;margin-bottom:12px}
+.carte h2{font:500 10.5px 'IBM Plex Mono',monospace;letter-spacing:.1em;text-transform:uppercase;color:var(--doux);margin-bottom:10px}
+.li{display:grid;grid-template-columns:1fr auto;gap:4px 10px;padding:9px 0;border-bottom:1px solid var(--ligne)}
+.li:last-child{border-bottom:0}
+.li .n{font-weight:600}
+.li .v{font:500 14px 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums}
+.li .bar{grid-column:1/-1;height:7px;border-radius:99px;background:#EFEBE2;overflow:hidden}
+.li .bar i{display:block;height:100%;width:calc(var(--p)*100%);background:var(--olive);border-radius:99px;transition:width .7s cubic-bezier(.22,.8,.24,1)}
+.li .s{grid-column:1/-1;font:400 11.5px 'IBM Plex Mono',monospace;color:var(--doux)}
+.s.due{color:var(--terra)}.s.ok{color:var(--vert)}.s.att{color:var(--ambre)}
+.s::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:currentColor;margin-right:6px}
+.tot{display:flex;justify-content:space-between;padding-top:10px;font-weight:600}
+.alerte{background:#FDF1EC;border:1px solid #F2CDBF;color:#8C3417;border-radius:14px;padding:11px 14px;font-size:13.5px;margin-bottom:12px}
+.pied{font:400 11px 'IBM Plex Mono',monospace;color:var(--doux);text-align:center;margin-top:18px}
+.retour{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);font:600 13px 'Instrument Sans',sans-serif;background:var(--encre);color:#F4F1EA;padding:11px 16px;border-radius:12px;text-decoration:none;white-space:nowrap}
+body.capture .retour{display:none}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<span class="fictif">Données fictives</span>
+<header>
+  <div><h1>Café Marelle</h1><div class="sous" data-periode>Semaine 27 · 29 juin au 5 juillet</div></div>
+  <div class="per" role="group" aria-label="Période"><button aria-pressed="true" data-p="s">Semaine</button><button aria-pressed="false" data-p="m">Mois</button></div>
+</header>
+<div class="resume">
+  <div><div class="l">Encaissé</div><div class="v" data-v="9 870 €|42 440 €">9 870 €</div><div class="d">+6 % vs période précédente</div></div>
+  <div><div class="l">Marge brute</div><div class="v"><em>66 %</em></div><div class="d">stable</div></div>
+</div>
+<div class="onglets" role="tablist">
+  <button role="tab" aria-selected="true" data-o="marges">Marges</button>
+  <button role="tab" aria-selected="false" data-o="factures">Factures</button>
+  <button role="tab" aria-selected="false" data-o="compte">Compte</button>
+</div>
+<section data-pan="marges">
+  <div class="carte"><h2>Marge par produit</h2>
+    <div class="li"><span class="n">Café et boissons chaudes</span><span class="v">78 %</span><span class="bar"><i style="--p:.78"></i></span></div>
+    <div class="li"><span class="n">Jus et softs</span><span class="v">70 %</span><span class="bar"><i style="--p:.70"></i></span></div>
+    <div class="li"><span class="n">Brunch</span><span class="v">62 %</span><span class="bar"><i style="--p:.62"></i></span></div>
+    <div class="li"><span class="n">Sandwichs</span><span class="v">58 %</span><span class="bar"><i style="--p:.58"></i></span></div>
+    <div class="li"><span class="n">Pâtisseries</span><span class="v">55 %</span><span class="bar"><i style="--p:.55"></i></span></div>
+    <div class="tot"><span>Marge brute moyenne</span><span>66 %</span></div>
+  </div>
+  <div class="alerte">Pâtisseries : le prix d'achat du beurre a pris 9 % ce mois-ci. Marge en baisse de 3 points.</div>
+</section>
+<section data-pan="factures" hidden>
+  <div class="carte"><h2>Factures fournisseurs</h2>
+    <div class="li"><span class="n">Brasseur</span><span class="v">530 €</span><span class="s due">Échue depuis 3 jours</span></div>
+    <div class="li"><span class="n">Boulangerie</span><span class="v">286 €</span><span class="s att">À payer le 8 juillet</span></div>
+    <div class="li"><span class="n">Primeur</span><span class="v">174 €</span><span class="s att">À payer le 10 juillet</span></div>
+    <div class="li"><span class="n">Torréfacteur</span><span class="v">412 €</span><span class="s ok">Payée</span></div>
+    <div class="tot"><span>Reste à payer</span><span>990 €</span></div>
+  </div>
+</section>
+<section data-pan="compte" hidden>
+  <div class="carte"><h2>Mouvements du compte</h2>
+    <div class="li"><span class="n">Encaissements carte</span><span class="v">+ 8 240 €</span><span class="s ok">Rapprochés avec la caisse</span></div>
+    <div class="li"><span class="n">Espèces déposées</span><span class="v">+ 1 630 €</span><span class="s ok">Rapprochées</span></div>
+    <div class="li"><span class="n">Loyer</span><span class="v">− 2 380 €</span><span class="s">Charge fixe</span></div>
+    <div class="li"><span class="n">Salaires</span><span class="v">− 3 400 €</span><span class="s">Charge fixe</span></div>
+    <div class="li"><span class="n">Fournisseurs</span><span class="v">− 1 402 €</span><span class="s">Charge variable</span></div>
+    <div class="tot"><span>Solde de la semaine</span><span>+ 2 688 €</span></div>
+  </div>
+</section>
+<p class="pied">Café, fournisseurs et chiffres inventés pour la démonstration.</p>
+<a class="retour" href="../../#realisations">← Retour au Studio BFievé</a>
+<script>
+(function(){
+  if (/capture/.test(location.search)) document.body.classList.add('capture');
+  var tabs=document.querySelectorAll('[data-o]');
+  [].forEach.call(tabs,function(t){t.onclick=function(){[].forEach.call(tabs,function(x){x.setAttribute('aria-selected',x===t)});
+    [].forEach.call(document.querySelectorAll('[data-pan]'),function(p){p.hidden=p.dataset.pan!==t.dataset.o})}});
+  var per=document.querySelectorAll('[data-p]');
+  [].forEach.call(per,function(b){b.onclick=function(){[].forEach.call(per,function(x){x.setAttribute('aria-pressed',x===b)});
+    var m=b.dataset.p==='m';var v=document.querySelector('[data-v]');v.textContent=v.dataset.v.split('|')[m?1:0];
+    document.querySelector('[data-periode]').textContent=m?'Juin 2026':'Semaine 27 · 29 juin au 5 juillet'}});
+})();
+</script>
+</body>
+</html>
