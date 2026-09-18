@@ -58,6 +58,13 @@ git status --porcelain cerveau/prive/
 # ne doit lister que LISEZMOI.md et les *.exemple.md
 ```
 
+Rendez le script de capture exécutable — le bit `+x` ne survit pas toujours à
+un transfert :
+
+```sh
+chmod +x outils/capture.sh
+```
+
 Enfin, lancez `claude` depuis le dossier `atelier`. Le fichier `CLAUDE.md` est
 lu automatiquement.
 

@@ -68,7 +68,7 @@ fabrique du site : *« Ce que nous construisons pour vous . »*,
 ```
 
 Quatre niveaux d'ombre, `--o-1` à `--o-4`, plus `--o-bleu` pour les boutons
-principaux. Les ombres sont doubles (un liseré net + une diffusion large) et
+principaux. Les ombres sont doubles (un liseré net + une diffusion large) et
 très peu opaques. Ne pas inventer de `box-shadow` : réutiliser les variables.
 
 Le mouvement est discret et court. Rien ne rebondit. Rien ne clignote.
