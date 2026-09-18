@@ -21,6 +21,18 @@ Charge la ou les fiches utiles **avant** d'écrire quoi que ce soit :
 Les informations confidentielles (clients réels, pipeline, tarifs négociés) ne
 sont **pas** dans ce dépôt : il est public. Voir `cerveau/prive/LISEZMOI.md`.
 
+## Mise en route — à vérifier au démarrage
+
+Au premier message d'une session, regarde si `cerveau/prive/` contient autre
+chose que `LISEZMOI.md` et les `*.exemple.md`.
+
+**S'il est vide, dis-le en une phrase avant de travailler.** Le système est
+installé mais son cerveau privé ne l'est pas : l'agent commercial et le brief
+du matin tourneront à vide. La marche à suivre est dans `INSTALLATION.md`,
+section « Installation », puis « Ce qui reste à faire ».
+
+Ne le répète pas à chaque message : une fois par session suffit.
+
 ## Le dépôt
 
 Pages statiques publiées sur GitHub Pages depuis la racine. `.nojekyll` : les
