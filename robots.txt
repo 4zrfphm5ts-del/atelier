@@ -1,4 +1,11 @@
 User-agent: *
 Allow: /
 
+# Notes internes du studio : lisibles, mais pas à indexer
+Disallow: /cerveau/
+Disallow: /journal/
+Disallow: /outils/
+Disallow: /CLAUDE.md
+Disallow: /INSTALLATION.md
+
 Sitemap: https://4zrfphm5ts-del.github.io/atelier/sitemap.xml
