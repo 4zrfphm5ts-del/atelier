@@ -1,0 +1,19 @@
+# Cerveau privé — jamais publié (le dépôt est servi par GitHub Pages)
+cerveau/prive/*
+!cerveau/prive/LISEZMOI.md
+!cerveau/prive/*.exemple.md
+
+# Sorties des agents — brouillons de travail
+sorties/
+
+# Secrets
+.env
+.env.*
+*.key
+*.pem
+.claude/settings.local.json
+
+# Système
+.DS_Store
+Thumbs.db
+node_modules/
