@@ -69,9 +69,9 @@ img{max-width:100%;display:block}
 /* =========================================================
    VIGNETTES ÉQUIPE
    ========================================================= */
-.strip{ display:grid;grid-template-columns:repeat(2,1fr);gap:.7rem; }
-.strip--soeurs{ margin-top:.8rem; }
-.strip img{ width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:12px;box-shadow:var(--shadow);border:3px solid var(--blanc); }
+/* grille 2×2 : seul visuel de la section équipe */
+.strip{ display:grid;grid-template-columns:repeat(2,1fr);gap:clamp(.6rem,1.4vw,1rem); }
+.strip img{ display:block;width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:var(--r);box-shadow:var(--shadow);border:3px solid var(--blanc); }
 
 .btn--ghost-light{ color:var(--blanc);border-color:var(--blanc); }
 
@@ -172,11 +172,6 @@ img{max-width:100%;display:block}
 .brunch__gallery .bg-main{ grid-column:1 / -1; aspect-ratio:16/10; }
 .brunch__gallery img:not(.bg-main){ aspect-ratio:1/1; }
 
-/* ---------- Photo des sœurs / équipe ---------- */
-.soeurs__figure{ margin:0; }
-.soeurs__figure img{ width:100%; border-radius:var(--r); box-shadow:var(--shadow); }
-.soeurs__figure figcaption{ font-family:'Rubik';font-weight:500;font-size:.85rem;color:var(--bleu);margin-top:.7rem;text-align:center; }
-
 /* ---------- Galerie de la carte ---------- */
 .carte-gallery{ max-width:var(--maxw); margin:2.5rem auto 0; display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; }
 .carte-gallery figure{ margin:0; }
@@ -274,7 +269,9 @@ blockquote{
 .insta__tiles a{ display:block;aspect-ratio:1/1;border-radius:12px;overflow:hidden;box-shadow:var(--shadow);transition:transform .15s ease; }
 .insta__tiles a:hover{ transform:rotate(-2deg) scale(1.03); }
 .insta__tiles img{ width:100%;height:100%;object-fit:cover; }
+/* 7 photos + cette tuile sur 2 colonnes = 3 rangées pleines */
 .insta__more{
+  grid-column:span 2;aspect-ratio:auto !important;
   display:grid !important;place-items:center;text-align:center;text-decoration:none;
   background:var(--jaune);color:var(--noir);font-family:'Rubik';font-weight:900;font-style:italic;font-size:1.05rem;line-height:1.1;
 }
@@ -354,7 +351,7 @@ blockquote{
      ecran de 390 : la page entiere se decalait de 3 px horizontalement. Il
      chevauche toujours le coin de la photo, sans sortir de l'ecran. */
   .brunch__stamp{ width:96px;height:96px;font-size:.9rem;left:auto;right:0;bottom:-16px; }
-  .soeurs__photo{ order:2; }
+  .soeurs__photo{ order:2;width:100%;max-width:520px;margin:0 auto; }
   .strip{ gap:.5rem; }
   .insta__grid{ grid-template-columns:1fr; }
   .insta__embed{ max-width:440px;margin:0 auto; }
