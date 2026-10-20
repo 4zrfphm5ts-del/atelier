@@ -1,0 +1,1958 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="auto">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#F6F1E9" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#171311" media="(prefers-color-scheme: dark)">
+<meta name="color-scheme" content="light dark">
+<title>Vignolo</title>
+<meta name="description" content="Vignolo — la cave du restaurant qui sait où elle en est : inventaire des bouteilles, familles d'accords mets et vins, tâches du jour et analyse d'un plat pour trouver l'accord le plus juste. Local, sans compte.">
+<meta name="robots" content="noindex, nofollow">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Vignolo">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23F6F1E9'/%3E%3Cpath d='M26 8h12v10c0 4 7 8 7 16v18a4 4 0 0 1-4 4H23a4 4 0 0 1-4-4V34c0-8 7-12 7-16z' fill='%237B1E3C'/%3E%3Cpath d='M22 40h20v12a2 2 0 0 1-2 2H24a2 2 0 0 1-2-2z' fill='%23B98A3C'/%3E%3C/svg%3E">
+<style>
+/* ================= VIGNOLO — la cave qui sait où elle en est =================
+   Papier crème et encre chaude en salle, cave sombre en mode nuit.
+   Serif seulement pour les titres (émotion), sans pour les chiffres et l'usage. */
+:root{
+  --bg:#F6F1E9; --surface:#FFFDF9; --surface-2:#F1EAE0; --surface-3:#EADFD0;
+  --line:#E3DACB; --line-2:#D2C6B4;
+  --ink:#231C19; --ink-2:#6B5F58; --ink-3:#9A8F86;
+  --wine:#7B1E3C; --wine-2:#9E2E52; --wine-soft:#F3DDE4; --wine-ink:#FFF7FA;
+  --gold:#B98A3C; --gold-soft:#F2E5C8;
+  --good:#2E7D4F; --good-soft:#DDEFE3; --warn:#B8770F; --warn-soft:#F7E9C8; --bad:#C2403A; --bad-soft:#F8DCD9;
+  --c-rouge:#7B1E3C; --c-blanc:#CDB84A; --c-rose:#E39AA9; --c-bulles:#C9A84C; --c-doux:#C9792C;
+  --sans:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,Inter,Helvetica,Arial,sans-serif;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --r:16px; --r-s:10px; --shadow:0 1px 2px rgba(35,28,25,.06),0 8px 24px -12px rgba(35,28,25,.18);
+  --tab-h:64px; --safe-b:env(safe-area-inset-bottom,0px); --safe-t:env(safe-area-inset-top,0px);
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#171311; --surface:#211B18; --surface-2:#2A2320; --surface-3:#342B27;
+    --line:#3A302B; --line-2:#4A3E38;
+    --ink:#F1EAE2; --ink-2:#BDB0A6; --ink-3:#8A7D74;
+    --wine:#C9527A; --wine-2:#DC6A90; --wine-soft:#3D2230; --wine-ink:#1A0F14;
+    --gold:#D7A64C; --gold-soft:#3B3020;
+    --good:#5BBF86; --good-soft:#1E3A2A; --warn:#E0A63A; --warn-soft:#3E3217; --bad:#E36A63; --bad-soft:#44221F;
+    --c-rouge:#C9527A; --c-blanc:#D9C65C; --c-rose:#EBA7B5; --c-bulles:#D7B45A; --c-doux:#DB8C3C;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 28px -14px rgba(0,0,0,.6);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#171311; --surface:#211B18; --surface-2:#2A2320; --surface-3:#342B27;
+  --line:#3A302B; --line-2:#4A3E38;
+  --ink:#F1EAE2; --ink-2:#BDB0A6; --ink-3:#8A7D74;
+  --wine:#C9527A; --wine-2:#DC6A90; --wine-soft:#3D2230; --wine-ink:#1A0F14;
+  --gold:#D7A64C; --gold-soft:#3B3020;
+  --good:#5BBF86; --good-soft:#1E3A2A; --warn:#E0A63A; --warn-soft:#3E3217; --bad:#E36A63; --bad-soft:#44221F;
+  --c-rouge:#C9527A; --c-blanc:#D9C65C; --c-rose:#EBA7B5; --c-bulles:#D7B45A; --c-doux:#DB8C3C;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 28px -14px rgba(0,0,0,.6);
+  color-scheme:dark;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{height:100%;-webkit-text-size-adjust:100%}
+body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.45;overscroll-behavior-y:none;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none;padding:0}
+a{color:var(--wine)}
+h1,h2,h3{margin:0;font-weight:600;letter-spacing:-.01em}
+h1{font-family:var(--serif);font-weight:500;font-size:28px;line-height:1.1}
+h2{font-size:17px}
+h3{font-size:15px}
+p{margin:0}
+.muted{color:var(--ink-2)}
+.tiny{font-size:12px;color:var(--ink-3)}
+.num{font-variant-numeric:tabular-nums}
+.hidden{display:none!important}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* ---------- Coque : en-tête, vues, barre d'onglets ---------- */
+#app{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column}
+.topbar{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:saturate(1.4) blur(14px);-webkit-backdrop-filter:saturate(1.4) blur(14px);padding:calc(10px + var(--safe-t)) 16px 10px;border-bottom:1px solid var(--line)}
+.topbar-in{max-width:760px;margin:0 auto;display:flex;align-items:center;gap:12px}
+.brand{display:flex;align-items:center;gap:10px;min-width:0}
+.brand .logo{width:34px;height:34px;flex:none}
+.brand b{font-family:var(--serif);font-weight:500;font-size:22px;letter-spacing:.01em}
+.brand small{display:block;font-size:11px;color:var(--ink-3);margin-top:-3px;white-space:nowrap}
+.who{margin-left:auto;display:flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:6px 12px 6px 8px;font-size:14px;font-weight:600;box-shadow:var(--shadow)}
+.who .av{width:22px;height:22px;border-radius:50%;background:var(--wine);color:var(--wine-ink);display:grid;place-items:center;font-size:11px;font-weight:700}
+main{flex:1;width:100%;max-width:760px;margin:0 auto;padding:16px 16px calc(var(--tab-h) + var(--safe-b) + 24px)}
+.view{display:none;animation:fade .22s ease}
+.view.on{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:30;background:color-mix(in srgb,var(--surface) 92%,transparent);backdrop-filter:saturate(1.4) blur(16px);-webkit-backdrop-filter:saturate(1.4) blur(16px);border-top:1px solid var(--line);padding-bottom:var(--safe-b)}
+.tabbar-in{max-width:760px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);height:var(--tab-h)}
+.tab{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:var(--ink-3);font-size:11px;font-weight:600;letter-spacing:.02em;position:relative;transition:color .15s}
+.tab svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.tab.on{color:var(--wine)}
+.tab.on::after{content:"";position:absolute;top:0;width:28px;height:3px;border-radius:0 0 3px 3px;background:var(--wine)}
+.tab .dot{position:absolute;top:10px;right:calc(50% - 20px);min-width:16px;height:16px;padding:0 4px;border-radius:8px;background:var(--bad);color:#fff;font-size:10px;line-height:16px;text-align:center;font-weight:700}
+@media (min-width:900px){
+  .tabbar{position:sticky;top:0;bottom:auto;border-top:0;border-bottom:1px solid var(--line);order:-1}
+  .tabbar-in{height:52px}
+  .tab{flex-direction:row;gap:8px;font-size:13px}
+  .tab.on::after{top:auto;bottom:0;border-radius:3px 3px 0 0}
+  .tab .dot{top:8px;right:calc(50% - 56px)}
+  main{padding-bottom:40px}
+}
+
+/* ---------- Blocs ---------- */
+.section{margin:0 0 22px}
+.section-h{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:0 0 10px;padding:0 2px}
+.section-h h2{font-family:var(--serif);font-weight:500;font-size:20px}
+.section-h .link{font-size:13px;font-weight:600;color:var(--wine)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;box-shadow:var(--shadow)}
+.card + .card{margin-top:10px}
+.card.flat{box-shadow:none}
+.card.wine{background:linear-gradient(135deg,var(--wine) 0%,#5A1530 100%);color:#FFF7FA;border-color:transparent}
+:root[data-theme="dark"] .card.wine{background:linear-gradient(135deg,#6E1E3C 0%,#3D1222 100%)}
+.row{display:flex;align-items:center;gap:10px}
+.row.between{justify-content:space-between}
+.row.wrap{flex-wrap:wrap}
+.grow{flex:1;min-width:0}
+.stack{display:grid;gap:10px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media (max-width:380px){.grid-3{grid-template-columns:1fr 1fr}}
+.ellip{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* ---------- Tuiles de chiffres (stat tiles) ---------- */
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;box-shadow:var(--shadow);min-width:0}
+.tile .lbl{font-size:12px;color:var(--ink-2);font-weight:500}
+.tile .val{font-size:26px;font-weight:650;line-height:1.15;margin-top:2px;letter-spacing:-.02em}
+.tile .sub{font-size:12px;color:var(--ink-3);margin-top:2px}
+.tile.alert .val{color:var(--bad)}
+.hero-num{font-size:48px;font-weight:650;line-height:1;letter-spacing:-.03em}
+
+/* ---------- Anneau de progression ---------- */
+.ring{position:relative;width:132px;height:132px;flex:none}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring circle{fill:none;stroke-width:11;stroke-linecap:round}
+.ring .track{stroke:var(--wine-soft)}
+.ring .fill{stroke:var(--wine);transition:stroke-dashoffset .8s cubic-bezier(.2,.8,.2,1)}
+.ring .ctr{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.ring .ctr b{font-size:30px;font-weight:650;letter-spacing:-.03em;line-height:1}
+.ring .ctr span{font-size:11px;color:var(--ink-2);margin-top:3px}
+.ring.done .fill{stroke:var(--good)}
+.ring.done .track{stroke:var(--good-soft)}
+
+/* ---------- Boutons, puces, champs ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 16px;border-radius:12px;background:var(--surface-2);color:var(--ink);font-weight:600;font-size:15px;border:1px solid var(--line);transition:transform .08s,background .15s;white-space:nowrap}
+.btn:active{transform:scale(.97)}
+.btn.primary{background:var(--wine);color:var(--wine-ink);border-color:transparent}
+.btn.primary:hover{background:var(--wine-2)}
+.btn.gold{background:var(--gold);color:#1F1708;border-color:transparent}
+.btn.ghost{background:transparent;border-color:var(--line-2)}
+.btn.danger{background:var(--bad-soft);color:var(--bad);border-color:transparent}
+.btn.sm{min-height:36px;padding:0 12px;font-size:13px;border-radius:10px}
+.btn.xs{min-height:30px;padding:0 10px;font-size:12px;border-radius:8px}
+.btn.block{width:100%}
+.btn.icon{width:44px;padding:0}
+.btn svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.btn[disabled]{opacity:.5;pointer-events:none}
+.chip{display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 11px;border-radius:999px;background:var(--surface-2);border:1px solid var(--line);font-size:13px;font-weight:600;color:var(--ink-2);white-space:nowrap}
+.chip.on{background:var(--wine);color:var(--wine-ink);border-color:transparent}
+.chip .sw{width:10px;height:10px;border-radius:50%;flex:none}
+.chip.sm{height:24px;padding:0 8px;font-size:11px}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chips.scroll{flex-wrap:nowrap;overflow-x:auto;padding:2px 2px 6px;margin:0 -2px;scrollbar-width:none}
+.chips.scroll::-webkit-scrollbar{display:none}
+.field{display:grid;gap:5px}
+.field label{font-size:12px;font-weight:600;color:var(--ink-2)}
+.input,select.input,textarea.input{width:100%;min-height:44px;padding:9px 12px;border-radius:12px;background:var(--surface);border:1px solid var(--line-2);outline:none;transition:border .15s,box-shadow .15s}
+.input:focus{border-color:var(--wine);box-shadow:0 0 0 3px var(--wine-soft)}
+textarea.input{min-height:88px;resize:vertical;line-height:1.4}
+select.input{appearance:none;-webkit-appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--ink-3) 50%),linear-gradient(135deg,var(--ink-3) 50%,transparent 50%);background-position:calc(100% - 18px) 50%,calc(100% - 13px) 50%;background-size:5px 5px;background-repeat:no-repeat;padding-right:34px}
+.search{position:relative}
+.search .input{padding-left:40px}
+.search svg{position:absolute;left:13px;top:50%;transform:translateY(-50%);width:18px;height:18px;stroke:var(--ink-3);fill:none;stroke-width:2;stroke-linecap:round}
+.seg{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:3px;gap:3px}
+.seg button{min-height:36px;border-radius:9px;font-size:13px;font-weight:600;color:var(--ink-2)}
+.seg button.on{background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
+.toggle{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:44px}
+.sw-t{width:48px;height:28px;border-radius:14px;background:var(--line-2);position:relative;flex:none;transition:background .2s}
+.sw-t::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.sw-t.on{background:var(--good)}
+.sw-t.on::after{transform:translateX(20px)}
+
+/* ---------- Pas-à-pas (stepper) ---------- */
+.stepper{display:inline-flex;align-items:center;background:var(--surface-2);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.stepper button{width:44px;height:44px;font-size:22px;font-weight:500;color:var(--ink);display:grid;place-items:center}
+.stepper button:active{background:var(--surface-3)}
+.stepper .v{min-width:52px;text-align:center;font-size:20px;font-weight:650;letter-spacing:-.02em}
+.stepper.big button{width:64px;height:64px;font-size:30px}
+.stepper.big .v{min-width:96px;font-size:44px}
+.stepper .v.pop{animation:pop .25s ease}
+@keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.25)}100%{transform:scale(1)}}
+
+/* ---------- Bouteilles (cartes de la cave) ---------- */
+.bottle{display:grid;grid-template-columns:6px 1fr auto;gap:0 12px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px 12px 12px;box-shadow:var(--shadow);align-items:center;position:relative}
+.bottle .bar{width:6px;align-self:stretch;border-radius:3px;background:var(--c-rouge)}
+.bottle .bar.blanc{background:var(--c-blanc)}.bottle .bar.rose{background:var(--c-rose)}.bottle .bar.bulles{background:var(--c-bulles)}.bottle .bar.doux{background:var(--c-doux)}
+.bottle .nm{font-weight:650;font-size:15px;line-height:1.25}
+.bottle .meta{font-size:12.5px;color:var(--ink-2);margin-top:2px}
+.bottle .tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:7px}
+.bottle .tags .chip{height:22px;padding:0 8px;font-size:11px}
+.bottle .stock{text-align:right;min-width:62px}
+.bottle .stock b{display:block;font-size:30px;font-weight:650;line-height:1;letter-spacing:-.03em}
+.bottle .stock b.pop{animation:pop .25s ease}
+.bottle .stock span{font-size:11px;color:var(--ink-3)}
+.bottle .meter{grid-column:2/4;margin-top:9px;height:6px;border-radius:3px;background:var(--wine-soft);overflow:hidden}
+.bottle .meter i{display:block;height:100%;border-radius:3px;background:var(--wine);transition:width .4s}
+.bottle .meter.warn{background:var(--warn-soft)}.bottle .meter.warn i{background:var(--warn)}
+.bottle .meter.bad{background:var(--bad-soft)}.bottle .meter.bad i{background:var(--bad)}
+.bottle .meter.good{background:var(--good-soft)}.bottle .meter.good i{background:var(--good)}
+.bottle .acts{grid-column:2/4;display:flex;gap:6px;margin-top:10px}
+.bottle .acts .btn{flex:1;min-height:36px;padding:0 6px;font-size:12.5px}
+.bottle.counted::before{content:"✓";position:absolute;top:10px;right:12px;width:18px;height:18px;border-radius:50%;background:var(--good);color:#fff;font-size:11px;font-weight:700;display:grid;place-items:center}
+.bottle.counted .stock{padding-top:12px}
+.st{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;padding:0 8px;height:22px;border-radius:999px}
+.st.bad{background:var(--bad-soft);color:var(--bad)}.st.warn{background:var(--warn-soft);color:var(--warn)}.st.good{background:var(--good-soft);color:var(--good)}.st.neutral{background:var(--surface-2);color:var(--ink-2)}
+.st svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+
+/* ---------- Tâches, journal, badges ---------- */
+.task{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow)}
+.task + .task{margin-top:8px}
+.task .ck{width:26px;height:26px;border-radius:50%;border:2px solid var(--line-2);flex:none;margin-top:1px;display:grid;place-items:center;transition:all .15s}
+.task .ck svg{width:14px;height:14px;stroke:#fff;fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;opacity:0}
+.task.done .ck{background:var(--good);border-color:var(--good)}
+.task.done .ck svg{opacity:1}
+.task.done .t{text-decoration:line-through;color:var(--ink-3)}
+.task .t{font-weight:600;font-size:14.5px;line-height:1.3}
+.task .d{font-size:12.5px;color:var(--ink-2);margin-top:2px}
+.task .pri{width:8px;height:8px;border-radius:50%;flex:none;margin-top:9px}
+.task .pri.bad{background:var(--bad)}.task .pri.warn{background:var(--warn)}.task .pri.ok{background:var(--line-2)}
+.jl{display:flex;gap:10px;padding:9px 0;border-bottom:1px solid var(--line);font-size:13.5px;align-items:baseline}
+.jl:last-child{border-bottom:0}
+.jl time{flex:none;width:46px;color:var(--ink-3);font-variant-numeric:tabular-nums;font-size:12.5px}
+.jl .q{flex:none;min-width:34px;text-align:right;font-weight:700;font-variant-numeric:tabular-nums}
+.jl .q.minus{color:var(--bad)}.jl .q.plus{color:var(--good)}
+.badges{display:flex;gap:8px;flex-wrap:wrap}
+.badge{display:flex;align-items:center;gap:8px;padding:8px 12px 8px 8px;border-radius:12px;background:var(--surface-2);border:1px solid var(--line);font-size:12.5px;font-weight:600;color:var(--ink-3)}
+.badge .ic{width:28px;height:28px;border-radius:50%;background:var(--line);display:grid;place-items:center;font-size:14px;filter:grayscale(1);opacity:.5}
+.badge.won{color:var(--ink);background:var(--gold-soft);border-color:transparent}
+.badge.won .ic{background:var(--gold);filter:none;opacity:1}
+.streak{display:flex;align-items:center;gap:10px}
+.streak b{font-size:22px;font-weight:650}
+
+/* ---------- Accords ---------- */
+.fam{display:grid;grid-template-columns:40px 1fr;gap:12px;align-items:start}
+.fam .sw{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-size:18px;color:#fff;font-weight:700;font-family:var(--serif)}
+.sw.rouge{background:var(--c-rouge)}.sw.blanc{background:var(--c-blanc);color:#2E2A14}.sw.rose{background:var(--c-rose);color:#4A1F28}.sw.bulles{background:var(--c-bulles);color:#2E2410}.sw.doux{background:var(--c-doux)}
+.score{display:grid;grid-template-columns:1fr auto;align-items:center;gap:10px;margin-top:6px}
+.score .trk{height:10px;border-radius:0 4px 4px 0;background:var(--surface-3);overflow:hidden}
+.score .trk i{display:block;height:100%;border-radius:0 4px 4px 0;background:var(--wine);transition:width .6s cubic-bezier(.2,.8,.2,1)}
+.score .pct{font-size:12.5px;font-weight:600;color:var(--ink-2);font-variant-numeric:tabular-nums;min-width:36px;text-align:right}
+.pick{display:grid;grid-template-columns:6px 1fr auto;gap:0 10px;align-items:center;padding:10px 12px 10px 10px;border-radius:12px;background:var(--surface-2);border:1px solid var(--line)}
+.pick + .pick{margin-top:6px}
+.pick .bar{width:6px;align-self:stretch;border-radius:3px;background:var(--c-rouge)}
+.pick .bar.blanc{background:var(--c-blanc)}.pick .bar.rose{background:var(--c-rose)}.pick .bar.bulles{background:var(--c-bulles)}.pick .bar.doux{background:var(--c-doux)}
+.pick .nm{font-weight:650;font-size:14.5px}
+.pick .why{font-size:12.5px;color:var(--ink-2);margin-top:2px}
+.pick .q{font-weight:700;font-size:16px;text-align:right;font-variant-numeric:tabular-nums}
+.pick .q small{display:block;font-size:10.5px;color:var(--ink-3);font-weight:600}
+.pick.best{border-color:var(--gold);background:var(--gold-soft)}
+.alim{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 10px;border-radius:999px;background:var(--surface-2);border:1px solid var(--line);font-size:12.5px;font-weight:600}
+.alim .k{color:var(--ink-3);font-weight:500}
+.alim.main{border-color:var(--wine);color:var(--wine)}
+.course{display:flex;align-items:center;gap:10px;margin:18px 0 8px}
+.course .n{width:28px;height:28px;border-radius:50%;background:var(--wine);color:var(--wine-ink);display:grid;place-items:center;font-weight:700;font-size:13px;flex:none}
+.course h3{font-family:var(--serif);font-weight:500;font-size:19px}
+.course .line{flex:1;height:1px;background:var(--line)}
+.dropzone{border:2px dashed var(--line-2);border-radius:var(--r);padding:22px 16px;text-align:center;color:var(--ink-2);background:var(--surface)}
+.dropzone.hot{border-color:var(--wine);background:var(--wine-soft)}
+.preview{width:100%;max-height:260px;object-fit:cover;border-radius:12px;display:block}
+.scan-anim{position:relative;overflow:hidden;border-radius:12px}
+.scan-anim::after{content:"";position:absolute;left:0;right:0;top:-40%;height:40%;background:linear-gradient(to bottom,transparent,rgba(255,255,255,.55),transparent);animation:scan 1.6s linear infinite}
+@keyframes scan{to{top:120%}}
+.plan-row{display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:center}
+
+/* ---------- Feuilles (sheets), dialogues, toasts, confettis ---------- */
+.veil{position:fixed;inset:0;z-index:40;background:rgba(20,12,10,.45);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);opacity:0;pointer-events:none;transition:opacity .2s}
+.veil.on{opacity:1;pointer-events:auto}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:41;max-height:92vh;max-height:92dvh;background:var(--bg);border-radius:22px 22px 0 0;transform:translateY(102%);transition:transform .28s cubic-bezier(.2,.8,.2,1);display:flex;flex-direction:column;box-shadow:0 -10px 40px rgba(0,0,0,.25)}
+.sheet.on{transform:none}
+.sheet .grip{width:40px;height:5px;border-radius:3px;background:var(--line-2);margin:10px auto 4px;flex:none}
+.sheet .sh{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:6px 18px 10px;flex:none}
+.sheet .sh h2{font-family:var(--serif);font-weight:500;font-size:22px}
+.sheet .sb{overflow:auto;padding:4px 18px calc(18px + var(--safe-b));-webkit-overflow-scrolling:touch}
+.sheet .sf{flex:none;padding:10px 18px calc(12px + var(--safe-b));border-top:1px solid var(--line);background:var(--bg);display:flex;gap:8px}
+@media (min-width:700px){.sheet{left:50%;right:auto;width:640px;transform:translate(-50%,102%)}.sheet.on{transform:translate(-50%,0)}}
+.x{width:36px;height:36px;border-radius:50%;background:var(--surface-2);display:grid;place-items:center;color:var(--ink-2)}
+.x svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.4;stroke-linecap:round}
+.toast{position:fixed;left:50%;bottom:calc(var(--tab-h) + var(--safe-b) + 14px);transform:translate(-50%,20px);z-index:60;background:var(--ink);color:var(--bg);padding:11px 16px;border-radius:12px;font-size:14px;font-weight:600;opacity:0;transition:all .25s;pointer-events:none;max-width:calc(100% - 32px);text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.3)}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+@media (min-width:900px){.toast{bottom:28px}}
+#confetti{position:fixed;inset:0;z-index:70;pointer-events:none}
+.banner{display:flex;gap:12px;align-items:center;padding:12px 14px;border-radius:var(--r);background:var(--gold-soft);border:1px solid color-mix(in srgb,var(--gold) 40%,transparent);font-size:13.5px}
+.banner .btn{flex:none}
+.empty{text-align:center;padding:28px 16px;color:var(--ink-2)}
+.empty b{display:block;font-family:var(--serif);font-weight:500;font-size:20px;color:var(--ink);margin-bottom:6px}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:13.5px}
+.kv dt{color:var(--ink-3)}
+.kv dd{margin:0;font-weight:600}
+details.help{border:1px solid var(--line);border-radius:12px;padding:0 14px;background:var(--surface)}
+details.help summary{cursor:pointer;padding:12px 0;font-weight:600;font-size:14px;list-style:none;display:flex;justify-content:space-between}
+details.help summary::after{content:"+";color:var(--ink-3)}
+details.help[open] summary::after{content:"−"}
+details.help .body{padding:0 0 14px;font-size:13.5px;color:var(--ink-2);line-height:1.5}
+.fab{position:fixed;right:16px;bottom:calc(var(--tab-h) + var(--safe-b) + 16px);z-index:25;width:56px;height:56px;border-radius:18px;background:var(--wine);color:var(--wine-ink);display:grid;place-items:center;box-shadow:0 10px 24px -8px rgba(123,30,60,.6)}
+.fab svg{width:26px;height:26px;stroke:currentColor;fill:none;stroke-width:2.4;stroke-linecap:round}
+@media (min-width:900px){.fab{bottom:28px;right:calc(50% - 380px + 16px)}}
+.shake{animation:shake .3s}
+@keyframes shake{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-today" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+  <symbol id="i-cave" viewBox="0 0 24 24"><path d="M10 3h4v3.5c0 1.5 3 3 3 6V19a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2v-6.5c0-3 3-4.5 3-6z"/><path d="M7 15h10"/></symbol>
+  <symbol id="i-accord" viewBox="0 0 24 24"><path d="M8 3v7a3 3 0 0 0 6 0V3"/><path d="M11 13v8M8.5 21h5"/><path d="M18 3v18"/><path d="M18 3c-2 0-3 2-3 4.5S16 11 18 11"/></symbol>
+  <symbol id="i-set" viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-cam" viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12l5 5 9-10"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 4l9 16H3z"/><path d="M12 10v4M12 17v.5"/></symbol>
+  <symbol id="i-box" viewBox="0 0 24 24"><path d="M3 8l9-4 9 4v9l-9 4-9-4z"/><path d="M3 8l9 4 9-4M12 12v9"/></symbol>
+  <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 3l2 6 6 2-6 2-2 6-2-6-6-2 6-2z"/></symbol>
+  <symbol id="i-list" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/></symbol>
+</svg>
+
+<div id="app">
+  <header class="topbar">
+    <div class="topbar-in">
+      <div class="brand">
+        <svg class="logo" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="var(--wine)"/><path d="M26 8h12v10c0 4 7 8 7 16v18a4 4 0 0 1-4 4H23a4 4 0 0 1-4-4V34c0-8 7-12 7-16z" fill="var(--bg)"/><path d="M22 40h20v12a2 2 0 0 1-2 2H24a2 2 0 0 1-2-2z" fill="var(--gold)"/></svg>
+        <div><b>Vignolo</b><small id="brand-sub">La cave qui sait où elle en est</small></div>
+      </div>
+      <button class="who" data-action="who" title="Qui tient la cave en ce moment ?"><span class="av" id="who-av">M</span><span id="who-name">Moi</span></button>
+    </div>
+  </header>
+
+  <main>
+    <section class="view on" id="view-today" aria-label="Aujourd'hui"></section>
+    <section class="view" id="view-cave" aria-label="Cave"></section>
+    <section class="view" id="view-accords" aria-label="Accords"></section>
+    <section class="view" id="view-reglages" aria-label="Réglages"></section>
+  </main>
+
+  <nav class="tabbar" aria-label="Navigation">
+    <div class="tabbar-in">
+      <button class="tab on" data-action="go" data-view="today"><svg><use href="#i-today"/></svg>Aujourd'hui<span class="dot hidden" id="dot-today"></span></button>
+      <button class="tab" data-action="go" data-view="cave"><svg><use href="#i-cave"/></svg>Cave<span class="dot hidden" id="dot-cave"></span></button>
+      <button class="tab" data-action="go" data-view="accords"><svg><use href="#i-accord"/></svg>Accords</button>
+      <button class="tab" data-action="go" data-view="reglages"><svg><use href="#i-set"/></svg>Réglages</button>
+    </div>
+  </nav>
+</div>
+
+<button class="fab hidden" id="fab" data-action="add-ref" title="Ajouter une référence"><svg><use href="#i-plus"/></svg></button>
+
+<div class="veil" id="veil"></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true">
+  <div class="grip"></div>
+  <div class="sh"><h2 id="sheet-title">Titre</h2><button class="x" data-action="close-sheet" aria-label="Fermer"><svg><use href="#i-x"/></svg></button></div>
+  <div class="sb" id="sheet-body"></div>
+  <div class="sf hidden" id="sheet-foot"></div>
+</div>
+<div class="toast" id="toast" role="status"></div>
+<canvas id="confetti" class="hidden"></canvas>
+<input type="file" accept="image/*" capture="environment" id="f-cam" hidden>
+<input type="file" accept="image/*" id="f-lib" hidden>
+<input type="file" accept=".json,application/json" id="f-json" hidden>
+<input type="file" accept=".csv,text/csv,text/plain" id="f-csv" hidden>
+
+<script>
+/* =====================================================================
+   VIGNOLO — MOTEUR (pur, sans DOM : testable dans node)
+   Familles d'accords, vocabulaire des aliments, règles de sommellerie,
+   scoring et composition d'un menu. Tout est explicable : chaque score
+   vient d'une règle lisible ci-dessous, jamais d'une boîte noire.
+   ===================================================================== */
+/*ENGINE-START*/
+const VIG = (() => {
+"use strict";
+
+/* ---------- 1. Les familles d'accords (les « catégories » de la cave) ---------- */
+const FAMILLES = [
+ {k:"bulles", nom:"Bulles", long:"Champagnes et effervescents", couleur:"bulles", puissance:1, temp:"6 à 8 °C", glyph:"B",
+  ideal:"apéritif, huîtres, fritures, poissons crus, desserts peu sucrés (demi-sec)", eviter:"viandes rouges en sauce, plats très épicés",
+  mots:["champagne","cremant","cava","prosecco","franciacorta","petillant","pet nat","blanquette","clairette de die","lambrusco","spumante","sekt","bulles","effervescent","mousseux","brut nature","extra brut"]},
+ {k:"blanc_vif", nom:"Blancs vifs", long:"Blancs secs, vifs et minéraux", couleur:"blanc", puissance:1.5, temp:"8 à 10 °C", glyph:"V",
+  ideal:"huîtres et coquillages, poissons grillés ou crus, chèvres frais, salades, asperges", eviter:"viandes rouges, plats crémeux lourds, desserts",
+  mots:["muscadet","sancerre","pouilly fume","chablis","petit chablis","picpoul","entre deux mers","albarino","vinho verde","riesling","menetou","quincy","reuilly","aligote","sylvaner","sauvignon","cheverny","saint bris","bourgogne blanc","macon","saint veran","pouilly fuisse","gros plant","cotes de gascogne","gruner","assyrtiko","vermentino","rolle","chenin sec","vouvray sec","savennieres","jurancon sec","limoux","gaillac","bergerac sec","graves blanc","txakoli","pinot blanc","auxerrois","soave","verdicchio","gavi","chardonnay non boise","sauvignon blanc","muscadet sevre"]},
+ {k:"blanc_ample", nom:"Blancs amples", long:"Blancs amples, riches ou boisés", couleur:"blanc", puissance:3, temp:"10 à 12 °C", glyph:"A",
+  ideal:"poissons en sauce, volailles à la crème, homard, risotto, champignons, comté", eviter:"huîtres nature, plats très acides",
+  mots:["meursault","puligny","chassagne","corton charlemagne","montrachet","pessac leognan blanc","hermitage blanc","saint joseph blanc","crozes blanc","chateauneuf blanc","chardonnay","marsanne","roussanne","savagnin","vin jaune","chateau chalon","arbois blanc","saint aubin","rully","mercurey blanc","pernand","ladoix","beaune blanc","fume blanc","vin de paille","chardonnay boise","cote de beaune blanc"]},
+ {k:"blanc_aromatique", nom:"Blancs aromatiques", long:"Blancs aromatiques et épicés", couleur:"blanc", puissance:2.5, temp:"9 à 11 °C", glyph:"R",
+  ideal:"cuisine asiatique et épicée, curry doux, munster et pâtes lavées, foie gras (gewurztraminer)", eviter:"poissons délicats nature, plats très acides",
+  mots:["gewurztraminer","gewurz","viognier","condrieu","pinot gris","tokay","muscat sec","muscat d alsace","torrontes","alsace","chateau grillet","malvasia","malvoisie","moschofilero","sauvignon gris","clairette","bourboulenc","grenache blanc"]},
+ {k:"rose", nom:"Rosés", long:"Rosés", couleur:"rose", puissance:2, temp:"8 à 10 °C", glyph:"O",
+  ideal:"grillades, cuisine méditerranéenne, salades composées, tapas, tomates", eviter:"desserts, viandes rouges en sauce",
+  mots:["rose","provence","tavel","bandol rose","cotes de provence","coteaux d aix","coteaux varois","sable de camargue","gris de gris","rose de loire","marsannay rose","sancerre rose","clairet","rosato","rosado"]},
+ {k:"rouge_leger", nom:"Rouges légers", long:"Rouges légers et fruités", couleur:"rouge", puissance:3, temp:"13 à 15 °C", glyph:"L",
+  ideal:"charcuteries, volailles rôties, poissons gras (thon, saumon), plats végétariens, tomates, brie et camembert", eviter:"gibier, plats très puissants, desserts",
+  mots:["beaujolais","gamay","morgon","fleurie","brouilly","chiroubles","julienas","moulin a vent","saint amour","regnie","chenas","pinot noir","bourgogne rouge","hautes cotes","marsannay","savigny","santenay","monthelie","sancerre rouge","alsace pinot noir","bardolino","valpolicella","trousseau","poulsard","ploussard","arbois rouge","cote roannaise","saint pourcain","cheverny rouge","touraine gamay","bourgueil","saint nicolas de bourgueil","anjou rouge","frappato","schiava","zweigelt","blaufrankisch","mencia","cinsault","pineau d aunis","grolleau","dolcetto","bourgogne passetoutgrain","cotes d auvergne"]},
+ {k:"rouge_souple", nom:"Rouges souples", long:"Rouges souples et gourmands", couleur:"rouge", puissance:4, temp:"15 à 17 °C", glyph:"S",
+  ideal:"viandes blanches, plats mijotés, pâtes et pizzas, canard, fromages à pâte molle", eviter:"desserts, huîtres, poissons crus",
+  mots:["cotes du rhone","chinon","saumur champigny","cabernet franc","bordeaux superieur","bordeaux","cotes de bourg","cotes de blaye","blaye","fronsac","castillon","chianti","sangiovese","montepulciano","merlot","rioja","tempranillo","bergerac rouge","pecharmant","buzet","cotes du marmandais","cote de beaune","volnay","pommard","chambolle","nuits saint georges","vosne","gevrey","morey","givry","mercurey","rully rouge","cote chalonnaise","ventoux","luberon","costieres de nimes","lirac","barbera","nero d avola","cotes du roussillon","valpolicella ripasso","crozes hermitage","saint joseph","cotes du vivarais","cotes du forez","vin de savoie rouge","mondeuse","cotes du jura rouge","lalande de pomerol","montagne saint emilion","lussac","graves rouge","medoc","haut medoc","moulis","listrac"]},
+ {k:"rouge_puissant", nom:"Rouges puissants", long:"Rouges puissants et tanniques", couleur:"rouge", puissance:6, temp:"16 à 18 °C", glyph:"P",
+  ideal:"viandes rouges grillées ou rôties, gibier, agneau, truffe, fromages affinés à pâte dure", eviter:"poissons, plats épicés, desserts, artichaut",
+  mots:["pauillac","saint estephe","saint julien","margaux","pessac leognan","saint emilion grand cru","saint emilion","pomerol","cahors","malbec","madiran","tannat","barolo","barbaresco","nebbiolo","brunello","cote rotie","hermitage","cornas","syrah","shiraz","bandol","mourvedre","ribera del duero","priorat","cabernet sauvignon","toro","bierzo","douro","aglianico","taurasi","sagrantino","amarone","cote de nuits","corton","clos de vougeot","richebourg","romanee","echezeaux","chambertin","bonnes mares","musigny","grand cru classe","irouleguy","marcillac","fronton","pecharmant","bordeaux grand cru","napa","super toscan","bolgheri"]},
+ {k:"rouge_solaire", nom:"Rouges solaires", long:"Rouges solaires et épicés", couleur:"rouge", puissance:5, temp:"15 à 17 °C", glyph:"E",
+  ideal:"agneau, tajines et plats épicés doux, grillades au feu de bois, cuisine du sud, ratatouille", eviter:"poissons délicats, desserts, huîtres",
+  mots:["chateauneuf du pape","chateauneuf","gigondas","vacqueyras","rasteau","cairanne","languedoc","minervois","corbieres","faugeres","saint chinian","fitou","pic saint loup","terrasses du larzac","la clape","cotes du roussillon villages","collioure","maury sec","montsant","zinfandel","primitivo","grenache","carignan","pays d oc","igp oc","cannonau","garnacha","jumilla","monastrell","rhone sud","cotes du rhone villages","plan de dieu","seguret","visan","valreas","sablet","beaumes de venise rouge","vinsobres","malepere","cabardes","saint georges d orques","pic saint loup rouge"]},
+ {k:"blanc_doux", nom:"Moelleux et liquoreux", long:"Blancs moelleux et liquoreux", couleur:"doux", puissance:7, temp:"8 à 10 °C", glyph:"M",
+  ideal:"foie gras, roquefort, desserts aux fruits jaunes, tartes, cuisine sucrée-salée", eviter:"viandes rouges, plats salés classiques, chocolat noir",
+  mots:["sauternes","barsac","monbazillac","jurancon","coteaux du layon","layon","quarts de chaume","bonnezeaux","vouvray moelleux","vouvray demi sec","montlouis moelleux","vendanges tardives","selection de grains nobles","grains nobles","tokaji","aszu","moelleux","liquoreux","loupiac","sainte croix du mont","cadillac","cerons","pacherenc","gaillac doux","muscat de beaumes","beaumes de venise","muscat de rivesaltes","passito","vin de glace","icewine","eiswein","recioto","trockenbeerenauslese","beerenauslese","spatlese","auslese","demi sec","muscat de frontignan","muscat de lunel","muscat de mireval","muscat du cap corse"]},
+ {k:"vdn", nom:"Vins doux naturels", long:"Vins doux naturels, mutés et portos", couleur:"doux", puissance:8, temp:"12 à 16 °C", glyph:"D",
+  ideal:"chocolat, bleus, desserts au caramel et aux fruits secs, digestif", eviter:"poissons, salades, plats légers",
+  mots:["porto","port","banyuls","maury","rivesaltes","madere","xeres","sherry","jerez","pedro ximenez","oloroso","marsala","pineau des charentes","pineau","floc de gascogne","macvin","ratafia","rasteau vdn","vin doux naturel","malaga","commandaria","mistelle","tawny","ruby","lbv","vintage port","rancio","rivesaltes ambre","maury rouge","banyuls grand cru"]},
+];
+const FAM = Object.fromEntries(FAMILLES.map(f => [f.k, f]));
+const FAM_KEYS = FAMILLES.map(f => f.k);
+const COULEURS = {rouge:"Rouge", blanc:"Blanc", rose:"Rosé", bulles:"Bulles", doux:"Doux"};
+const TEMPS = [["aperitif","Apéritif"],["entree","Entrée"],["plat","Plat"],["fromage","Fromage"],["dessert","Dessert"]];
+const TEMPS_NOM = Object.fromEntries(TEMPS);
+const ZONES = [["cave","Cave"],["frigo","Frigo"],["bar","Bar"],["reserve","Réserve"]];
+const ZONES_NOM = Object.fromEntries(ZONES);
+
+/* ---------- 2. Vocabulaire des aliments : étiquettes, poids, et le « pourquoi » ---------- */
+const TAGS = {
+ huitre:{l:"huîtres",w:2,why:"l'iode et la salinité appellent un blanc sec et tendu"},
+ coquillage:{l:"coquillages",w:2,why:"la chair iodée veut un blanc minéral ou des bulles"},
+ crustace:{l:"crustacés",w:2,why:"une chair fine et sucrée qui aime la rondeur d'un blanc ample"},
+ poisson_maigre:{l:"poisson maigre",w:2,why:"un poisson délicat demande un blanc vif, jamais de tanins"},
+ poisson_gras:{l:"poisson gras",w:2,why:"le gras du poisson supporte un blanc ample ou un rouge léger servi frais"},
+ poisson_cru:{l:"poisson cru",w:2,why:"le cru réclame de la fraîcheur et de la tension"},
+ viande_rouge:{l:"viande rouge",w:2,why:"les protéines et le gras adoucissent les tanins d'un rouge structuré"},
+ viande_blanche:{l:"viande blanche",w:2,why:"une chair douce : rouge souple ou blanc ample, au choix"},
+ volaille:{l:"volaille",w:2,why:"la volaille est un terrain neutre, rouge léger ou blanc ample"},
+ canard:{l:"canard",w:2,why:"une viande rouge de volaille : rouge souple à puissant"},
+ agneau:{l:"agneau",w:2,why:"la puissance de l'agneau appelle un rouge solaire ou tannique"},
+ porc:{l:"porc",w:2,why:"le porc est accommodant : rouge souple ou léger"},
+ gibier:{l:"gibier",w:2,why:"le gibier exige un rouge puissant et évolué"},
+ charcuterie:{l:"charcuterie",w:2,why:"gras et sel : un rouge léger et fruité ou un rosé font la fête"},
+ abats:{l:"abats",w:2,why:"les abats aiment les rouges souples et les blancs amples"},
+ foie_gras:{l:"foie gras",w:2,why:"le gras onctueux appelle un liquoreux ou un blanc aromatique"},
+ oeuf:{l:"œuf",w:1.5,why:"l'œuf tapisse le palais : des bulles ou un blanc nettoient"},
+ legumes:{l:"légumes",w:1.5,why:"les légumes veulent de la fraîcheur, pas de tanins"},
+ champignon:{l:"champignons",w:1.5,why:"le côté terreux aime un blanc ample ou un rouge souple évolué"},
+ truffe:{l:"truffe",w:2,why:"la truffe veut un vin ample, évolué, jamais trop fruité"},
+ fromage_frais:{l:"fromage frais",w:2,why:"l'acidité lactée veut un blanc vif"},
+ fromage_chevre:{l:"chèvre",w:2,why:"chèvre et sauvignon : l'accord classique de la Loire"},
+ fromage_molle:{l:"pâte molle",w:2,why:"brie, camembert : un rouge léger ou des bulles"},
+ fromage_dure:{l:"pâte dure",w:2,why:"comté, beaufort : blanc ample, vin jaune ou rouge souple"},
+ fromage_bleu:{l:"bleu",w:2,why:"le sel du bleu s'apaise dans un liquoreux ou un vin doux"},
+ fromage_lave:{l:"pâte lavée",w:2,why:"munster, époisses : seul un blanc aromatique tient tête"},
+ cru:{l:"cru",w:1,why:"le cru veut de la fraîcheur"},
+ grille:{l:"grillé",w:1,why:"le grillé supporte un peu de tanin et de puissance"},
+ roti:{l:"rôti",w:1,why:"le rôti aime les rouges mûrs"},
+ mijote:{l:"mijoté",w:1,why:"un plat mijoté veut un rouge souple ou chaleureux"},
+ frit:{l:"frit",w:0.7,why:"la friture est tranchée par des bulles ou un blanc vif"},
+ vapeur:{l:"vapeur, poché",w:1,why:"une cuisson douce veut un vin délicat"},
+ fume:{l:"fumé",w:1,why:"le fumé aime un blanc aromatique ou un rouge léger"},
+ creme:{l:"crème, beurre",w:1.5,why:"la crème appelle un blanc ample et rond"},
+ beurre_citron:{l:"beurre citronné",w:1.5,why:"beurre blanc, citron : un blanc vif ou ample"},
+ tomate:{l:"tomate",w:1.5,why:"l'acidité de la tomate veut un rosé ou un rouge léger"},
+ epice_douce:{l:"épices douces",w:1.5,why:"les épices douces aiment les blancs aromatiques et les rouges solaires"},
+ piquant:{l:"piquant",w:1.5,why:"le piment brûle avec les tanins : blanc aromatique ou rosé, légèrement doux"},
+ sucre_sale:{l:"sucré-salé",w:1.5,why:"le sucré-salé veut un vin aromatique, parfois un peu de sucre"},
+ acide:{l:"acidulé",w:1.5,why:"l'acidité du plat veut un vin au moins aussi vif"},
+ amer:{l:"amer",w:1,why:"l'amertume durcit les tanins : rester souple"},
+ herbes:{l:"herbes",w:1,why:"les herbes fraîches répondent au sauvignon et aux rosés"},
+ asiatique:{l:"asiatique",w:1.5,why:"soja, gingembre, citronnelle : blanc aromatique ou bulles"},
+ mediterraneen:{l:"méditerranéen",w:1,why:"huile d'olive, ail, soleil : rosé ou rouge du sud"},
+ sauce_vin_rouge:{l:"sauce au vin rouge",w:1.5,why:"on sert le vin de la sauce, ou son cousin"},
+ curry:{l:"curry",w:1.5,why:"le curry appelle un blanc aromatique, gewurztraminer en tête"},
+ vinaigre:{l:"vinaigrette",w:1.5,why:"le vinaigre écrase les vins fins : bulles ou blanc simple"},
+ chocolat:{l:"chocolat",w:2,why:"le chocolat n'aime que les vins doux naturels"},
+ fruits_rouges:{l:"fruits rouges",w:2,why:"fruits rouges : bulles rosées, vin doux ou rouge léger frais"},
+ fruits_jaunes:{l:"fruits jaunes",w:2,why:"pêche, abricot, pomme : un moelleux aux mêmes arômes"},
+ agrumes:{l:"agrumes",w:2,why:"les agrumes veulent un vin doux vif ou des bulles"},
+ caramel:{l:"caramel, café",w:2,why:"caramel et café : porto, banyuls, rivesaltes"},
+ cremeux:{l:"dessert crémeux",w:2,why:"l'onctuosité aime un liquoreux ou un demi-sec"},
+ patisserie:{l:"pâtisserie",w:1.5,why:"pâte et beurre : moelleux ou bulles demi-sec"},
+ fruits_exotiques:{l:"fruits exotiques",w:2,why:"mangue, passion : moelleux ou blanc aromatique"},
+ noix:{l:"fruits secs",w:1.5,why:"noix, amande : vins mutés et vin jaune"},
+ glace:{l:"glace, sorbet",w:1.5,why:"le froid anesthésie : bulles ou vin doux très frais"},
+ artichaut:{l:"artichaut",w:1.5,why:"l'artichaut rend le vin sucré et dur : rester simple et vif"},
+ asperge:{l:"asperge",w:1.5,why:"l'asperge n'aime que le sauvignon et le muscat sec"},
+};
+const TAG_KEYS = Object.keys(TAGS);
+
+/* ---------- 3. Les règles : chaque aliment note chaque famille de −3 à +3 ---------- */
+const R = {
+ huitre:{bulles:2,blanc_vif:3,blanc_ample:-1,blanc_aromatique:-1,rouge_leger:-2,rouge_souple:-3,rouge_puissant:-3,rouge_solaire:-3,blanc_doux:-3,vdn:-3},
+ coquillage:{blanc_vif:3,bulles:2,blanc_ample:1,rose:1,rouge_leger:-1,rouge_souple:-2,rouge_puissant:-3,rouge_solaire:-3,blanc_doux:-2,vdn:-3},
+ crustace:{blanc_ample:3,blanc_vif:2,bulles:2,rose:1,blanc_aromatique:1,rouge_leger:-1,rouge_souple:-2,rouge_puissant:-3,rouge_solaire:-2,blanc_doux:-1,vdn:-3},
+ poisson_maigre:{blanc_vif:3,blanc_ample:2,bulles:1,rose:1,rouge_leger:-1,rouge_souple:-2,rouge_puissant:-3,rouge_solaire:-3,blanc_doux:-2,vdn:-3},
+ poisson_gras:{blanc_vif:2,blanc_ample:2,rouge_leger:2,rose:1.5,bulles:1,blanc_aromatique:1,rouge_puissant:-2,rouge_solaire:-2,blanc_doux:-2,vdn:-3},
+ poisson_cru:{blanc_vif:3,bulles:2,blanc_aromatique:1,rose:1,rouge_leger:-1,rouge_souple:-3,rouge_puissant:-3,rouge_solaire:-3,blanc_doux:-2,vdn:-3},
+ viande_rouge:{rouge_puissant:3,rouge_souple:2,rouge_solaire:1.5,rose:-1,blanc_ample:-2,blanc_vif:-3,bulles:-2,blanc_aromatique:-3,blanc_doux:-3,vdn:-3},
+ viande_blanche:{rouge_souple:2,blanc_ample:2,rouge_leger:2,rose:1,blanc_doux:-2,vdn:-3},
+ volaille:{rouge_leger:2,blanc_ample:2,rouge_souple:1.5,rose:1,bulles:1,rouge_puissant:-1,blanc_doux:-2,vdn:-3},
+ canard:{rouge_souple:2,rouge_puissant:2,rouge_solaire:1.5,rouge_leger:1,blanc_vif:-2,bulles:-1,blanc_aromatique:-1,vdn:-1},
+ agneau:{rouge_solaire:3,rouge_puissant:3,rouge_souple:1.5,blanc_ample:-2,blanc_vif:-3,bulles:-2,blanc_aromatique:-2,blanc_doux:-3,vdn:-3},
+ porc:{rouge_souple:2,rouge_leger:2,blanc_ample:1,rose:1,blanc_aromatique:1,rouge_solaire:1,blanc_doux:-1,vdn:-3},
+ gibier:{rouge_puissant:3,rouge_solaire:2,rouge_souple:1,rouge_leger:-1,rose:-2,blanc_ample:-2,blanc_vif:-3,bulles:-2,blanc_aromatique:-2,blanc_doux:-2,vdn:-1},
+ charcuterie:{rouge_leger:3,rose:2,rouge_souple:1.5,bulles:1,blanc_vif:1,blanc_ample:-1,rouge_puissant:-1,blanc_doux:-2,vdn:-3},
+ abats:{rouge_souple:2,rouge_leger:1.5,rouge_puissant:1,blanc_ample:1,rouge_solaire:1,blanc_vif:-1,bulles:-1,blanc_doux:-2,vdn:-3},
+ foie_gras:{blanc_doux:3,blanc_aromatique:2,bulles:1.5,blanc_ample:1,vdn:1,rouge_leger:-1,rose:-1,blanc_vif:-1,rouge_solaire:-1},
+ oeuf:{bulles:1.5,blanc_vif:1,blanc_ample:1,rouge_leger:1,rose:0.5,rouge_souple:-1,rouge_puissant:-2,rouge_solaire:-1,blanc_doux:-2,vdn:-3},
+ legumes:{blanc_vif:2,rose:1.5,rouge_leger:1,blanc_aromatique:1,blanc_ample:0.5,bulles:0.5,rouge_puissant:-2,rouge_solaire:-1,blanc_doux:-2,vdn:-3},
+ champignon:{blanc_ample:2,rouge_souple:2,rouge_leger:1.5,rouge_puissant:1,rouge_solaire:0.5,blanc_vif:-1,rose:-1,bulles:-1,blanc_doux:-2,vdn:-2},
+ truffe:{blanc_ample:2,rouge_puissant:2,rouge_souple:2,bulles:1,rouge_solaire:1,rouge_leger:0.5,blanc_vif:-1,rose:-2,blanc_aromatique:-1,blanc_doux:-2,vdn:-2},
+ fromage_frais:{blanc_vif:3,rose:2,bulles:1,rouge_leger:1,rouge_souple:-1,rouge_puissant:-3,rouge_solaire:-2,blanc_doux:-1,vdn:-3},
+ fromage_chevre:{blanc_vif:3,rose:1,rouge_leger:1,bulles:1,rouge_souple:-1,rouge_puissant:-3,rouge_solaire:-2,vdn:-2},
+ fromage_molle:{rouge_leger:2,bulles:2,rouge_souple:1.5,blanc_ample:1,rouge_puissant:-1,rouge_solaire:-1,blanc_doux:-1,vdn:-2},
+ fromage_dure:{blanc_ample:2,rouge_souple:2,rouge_puissant:1.5,vdn:1,rouge_leger:1,bulles:1,rouge_solaire:1,blanc_vif:0.5,blanc_aromatique:0.5},
+ fromage_bleu:{blanc_doux:3,vdn:3,blanc_aromatique:0.5,rouge_puissant:-1,rouge_souple:-1,rouge_leger:-2,blanc_vif:-2,rose:-2,bulles:-1,blanc_ample:-1,rouge_solaire:-1},
+ fromage_lave:{blanc_aromatique:3,blanc_doux:1,bulles:0.5,blanc_ample:0.5,rouge_souple:-1,rouge_puissant:-2,rouge_solaire:-1,blanc_vif:-1,rose:-1},
+ cru:{blanc_vif:1,bulles:1,rose:0.5,rouge_puissant:-1,rouge_solaire:-1,blanc_doux:-1,vdn:-2},
+ grille:{rouge_puissant:1.5,rouge_solaire:1,rouge_souple:0.5,rose:0.5,blanc_ample:0.5,bulles:-0.5,blanc_doux:-1,vdn:-1},
+ roti:{rouge_souple:1,rouge_puissant:1,blanc_ample:0.5,rouge_leger:0.5,blanc_doux:-1,vdn:-1},
+ mijote:{rouge_souple:1.5,rouge_puissant:1,rouge_solaire:1,blanc_ample:0.5,blanc_vif:-1,bulles:-1,rose:-0.5,blanc_doux:-1,vdn:-1},
+ frit:{bulles:2,blanc_vif:1.5,rose:1,rouge_puissant:-1.5,rouge_solaire:-1,blanc_doux:-1,vdn:-2},
+ vapeur:{blanc_vif:1.5,blanc_ample:0.5,bulles:0.5,rouge_puissant:-1,rouge_solaire:-1,vdn:-2},
+ fume:{blanc_ample:1,blanc_aromatique:1,rouge_leger:1,rouge_solaire:0.5,bulles:0.5,blanc_doux:-0.5,vdn:-1},
+ creme:{blanc_ample:2.5,bulles:1,blanc_aromatique:0.5,rouge_souple:0.5,rouge_leger:0.5,blanc_vif:-1,rose:-0.5,rouge_puissant:-0.5,rouge_solaire:-1,blanc_doux:-1,vdn:-2},
+ beurre_citron:{blanc_vif:2,blanc_ample:1.5,bulles:1,rouge_puissant:-2,rouge_solaire:-2,rouge_souple:-1,blanc_doux:-1,vdn:-3},
+ tomate:{rose:2,rouge_leger:2,rouge_souple:1.5,rouge_solaire:1,blanc_vif:0.5,blanc_ample:-1,bulles:-0.5,rouge_puissant:-0.5,blanc_aromatique:-0.5,blanc_doux:-2,vdn:-3},
+ epice_douce:{blanc_aromatique:2,rouge_solaire:1.5,rose:1,blanc_doux:1,rouge_souple:0.5,blanc_vif:-0.5},
+ piquant:{blanc_aromatique:2,rose:1.5,blanc_doux:1.5,bulles:0.5,rouge_leger:0.5,blanc_ample:-0.5,rouge_souple:-1,rouge_puissant:-3,rouge_solaire:-1.5,vdn:-1},
+ sucre_sale:{blanc_aromatique:2,blanc_doux:1.5,rose:1,rouge_solaire:1,rouge_souple:0.5,blanc_ample:0.5,bulles:0.5,blanc_vif:-0.5,rouge_puissant:-1.5,vdn:0.5},
+ acide:{blanc_vif:2,bulles:1.5,rose:1,blanc_ample:-1,rouge_souple:-1,rouge_puissant:-2,rouge_solaire:-2,blanc_doux:-1,vdn:-2},
+ amer:{blanc_ample:0.5,rouge_leger:0.5,blanc_aromatique:0.5,rouge_puissant:-1.5,blanc_doux:-1,vdn:-1},
+ herbes:{blanc_vif:1.5,rose:1,rouge_leger:0.5,blanc_aromatique:0.5,rouge_solaire:0.5,blanc_doux:-1,vdn:-2},
+ asiatique:{blanc_aromatique:2.5,blanc_vif:1,rose:1,bulles:1,blanc_doux:0.5,rouge_leger:0.5,rouge_puissant:-2.5,rouge_solaire:-1,rouge_souple:-1,blanc_ample:-0.5,vdn:-2},
+ mediterraneen:{rose:2,rouge_solaire:1.5,rouge_leger:1,blanc_vif:1,rouge_souple:1,blanc_doux:-2,vdn:-2},
+ sauce_vin_rouge:{rouge_puissant:2,rouge_souple:2,rouge_solaire:1,rouge_leger:0.5,blanc_vif:-3,blanc_ample:-2,bulles:-2,rose:-2,blanc_aromatique:-3,blanc_doux:-3,vdn:-2},
+ curry:{blanc_aromatique:3,blanc_doux:1,rose:1,bulles:0.5,rouge_souple:-1,rouge_puissant:-3,rouge_solaire:-1,vdn:-1},
+ vinaigre:{bulles:1,blanc_vif:1,rose:0.5,blanc_ample:-1,rouge_souple:-1.5,rouge_puissant:-2.5,rouge_solaire:-2,rouge_leger:-0.5,blanc_doux:-1.5,vdn:-2},
+ chocolat:{vdn:3,rouge_puissant:0.5,rouge_solaire:0.5,bulles:-1,blanc_vif:-3,blanc_ample:-3,blanc_aromatique:-2,rose:-2,rouge_leger:-1,rouge_souple:-1},
+ fruits_rouges:{bulles:2,blanc_doux:1,vdn:1.5,rose:1,rouge_leger:0.5,blanc_vif:-1,blanc_ample:-2,blanc_aromatique:-1,rouge_souple:-1,rouge_puissant:-2,rouge_solaire:-1},
+ fruits_jaunes:{blanc_doux:3,blanc_aromatique:1.5,bulles:1,vdn:0.5,blanc_vif:-1,rouge_leger:-1.5,rouge_souple:-2,rouge_puissant:-3,rouge_solaire:-2},
+ agrumes:{blanc_doux:2,bulles:2,blanc_vif:0.5,blanc_aromatique:1,blanc_ample:-1,rouge_leger:-1.5,rouge_souple:-2,rouge_puissant:-3,rouge_solaire:-2},
+ caramel:{vdn:3,blanc_doux:2,blanc_vif:-2,blanc_ample:-1,rose:-2,rouge_leger:-2,rouge_souple:-2,rouge_puissant:-2,rouge_solaire:-1},
+ cremeux:{blanc_doux:2.5,bulles:1.5,vdn:1,blanc_aromatique:0.5,blanc_vif:-1.5,rose:-1,rouge_leger:-2,rouge_souple:-2,rouge_puissant:-3,rouge_solaire:-2},
+ patisserie:{blanc_doux:2.5,bulles:1.5,vdn:1,blanc_aromatique:0.5,blanc_vif:-1,blanc_ample:-1,rose:-1,rouge_leger:-2,rouge_souple:-2,rouge_puissant:-3,rouge_solaire:-2},
+ fruits_exotiques:{blanc_doux:2.5,blanc_aromatique:2,bulles:1,vdn:0.5,blanc_vif:-0.5,blanc_ample:-1,rouge_leger:-2,rouge_souple:-2,rouge_puissant:-3,rouge_solaire:-2},
+ noix:{vdn:3,blanc_doux:1.5,blanc_ample:1,blanc_vif:-1,rose:-1,rouge_leger:-1,rouge_souple:-0.5,rouge_puissant:-0.5},
+ glace:{bulles:1,blanc_doux:1,vdn:0.5,blanc_vif:-1.5,blanc_ample:-1.5,blanc_aromatique:-1,rose:-1.5,rouge_leger:-1.5,rouge_souple:-2,rouge_puissant:-3,rouge_solaire:-2},
+ artichaut:{blanc_vif:0.5,bulles:0.5,blanc_ample:-1,rouge_leger:-1,rouge_souple:-2,rouge_puissant:-3,rouge_solaire:-2,blanc_doux:-2,vdn:-3},
+ asperge:{blanc_vif:1.5,blanc_aromatique:1,bulles:0.5,blanc_ample:-1,rouge_leger:-1,rouge_souple:-2,rouge_puissant:-3,rouge_solaire:-2,blanc_doux:-2,vdn:-3},
+};
+
+/* ---------- 4. Le temps du repas pèse aussi (a priori par service) ---------- */
+const PRIOR = {
+ aperitif:{bulles:2,blanc_vif:1.5,rose:1,blanc_aromatique:0.5,rouge_leger:0.5,rouge_souple:-1,rouge_puissant:-2,rouge_solaire:-1.5,blanc_doux:-0.5,vdn:-1},
+ entree:{blanc_vif:1,bulles:0.5,rose:0.5,rouge_leger:0.5,blanc_ample:0.5,blanc_aromatique:0.5,rouge_puissant:-1.5,rouge_solaire:-1,blanc_doux:-0.5,vdn:-2},
+ plat:{rouge_souple:0.5,rouge_puissant:0.5,rouge_solaire:0.5,blanc_ample:0.5,bulles:-0.5,blanc_doux:-1,vdn:-2},
+ fromage:{rouge_souple:0.5,blanc_ample:0.5,blanc_doux:0.5,rouge_leger:0.5,bulles:0.5,vdn:0.5,blanc_vif:0.5,blanc_aromatique:0.5,rose:-0.5},
+ dessert:{blanc_doux:2.5,vdn:2.5,bulles:1,blanc_vif:-2,blanc_ample:-2,rose:-1.5,rouge_leger:-2,rouge_souple:-3,rouge_puissant:-3,rouge_solaire:-3},
+};
+
+/* ---------- 5. Lexique : mot repéré dans l'assiette → étiquettes ----------
+   Format : motif | étiquettes | nom affiché. Motifs sans accents (le texte est
+   normalisé), reconnus en début de mot (« huitre » couvre « huîtres ») ; un « ! »
+   final impose le mot entier (« bar! » ne prend pas « barbecue »). Le motif le
+   plus long consomme ses mots en premier : « creme brulee » passe avant « creme ». */
+const LEXIQUE_TXT = `
+huitre | huitre coquillage cru | huîtres
+moule | coquillage | moules
+saint jacques | coquillage | Saint-Jacques
+coquille | coquillage | coquillages
+palourde | coquillage | palourdes
+coque! | coquillage | coques
+couteau | coquillage | couteaux
+bulot | coquillage | bulots
+bigorneau | coquillage | bigorneaux
+ormeau | coquillage | ormeaux
+oursin | coquillage | oursins
+calamar | coquillage grille | calamars
+calmar | coquillage | calmars
+encornet | coquillage | encornets
+seiche | coquillage | seiche
+poulpe | coquillage | poulpe
+pieuvre | coquillage | pieuvre
+supion | coquillage | supions
+chipiron | coquillage | chipirons
+homard | crustace | homard
+langouste | crustace | langouste
+langoustine | crustace | langoustines
+gambas | crustace | gambas
+crevette | crustace | crevettes
+crabe | crustace | crabe
+tourteau | crustace | tourteau
+araignee de boeuf | viande_rouge grille | araignée de bœuf
+araignee | crustace | araignée de mer
+ecrevisse | crustace | écrevisses
+scampi | crustace frit | scampi
+fruits de mer | coquillage crustace huitre | fruits de mer
+bouillabaisse | poisson_maigre crustace mediterraneen | bouillabaisse
+paella | crustace volaille mediterraneen epice_douce | paella
+fish and chips | poisson_maigre frit | fish and chips
+brandade | poisson_maigre creme | brandade
+tartare de saumon | poisson_gras poisson_cru | tartare de saumon
+tartare de thon | poisson_gras poisson_cru | tartare de thon
+tartare de boeuf | viande_rouge cru | tartare de bœuf
+tartare de daurade | poisson_maigre poisson_cru | tartare de daurade
+tartare de dorade | poisson_maigre poisson_cru | tartare de dorade
+carpaccio de boeuf | viande_rouge cru | carpaccio de bœuf
+carpaccio de saint jacques | coquillage cru | carpaccio de Saint-Jacques
+carpaccio | cru | carpaccio
+tartare | cru | tartare
+ceviche | poisson_cru poisson_maigre acide | ceviche
+sashimi | poisson_cru | sashimi
+sushi | poisson_cru asiatique | sushis
+maki | poisson_cru asiatique | makis
+poke | poisson_cru asiatique | poke bowl
+tataki | poisson_gras cru asiatique | tataki
+gravlax | poisson_gras cru | gravlax
+saumon fume | poisson_gras fume | saumon fumé
+saumon | poisson_gras | saumon
+thon | poisson_gras | thon
+maquereau | poisson_gras | maquereau
+sardine | poisson_gras grille | sardines
+anchois | poisson_gras | anchois
+hareng | poisson_gras | hareng
+truite | poisson_gras | truite
+anguille | poisson_gras | anguille
+espadon | poisson_gras grille | espadon
+bar! | poisson_maigre | bar
+loup de mer | poisson_maigre | loup de mer
+loup! | poisson_maigre | loup
+dorade | poisson_maigre | dorade
+daurade | poisson_maigre | daurade
+sole! | poisson_maigre | sole
+turbot | poisson_maigre | turbot
+cabillaud | poisson_maigre | cabillaud
+morue | poisson_maigre | morue
+lieu jaune | poisson_maigre | lieu jaune
+lieu noir | poisson_maigre | lieu noir
+merlu | poisson_maigre | merlu
+colin | poisson_maigre | colin
+lotte | poisson_maigre | lotte
+rouget | poisson_maigre mediterraneen | rouget
+saint pierre | poisson_maigre | saint-pierre
+eglefin | poisson_maigre | églefin
+aiglefin | poisson_maigre | aiglefin
+haddock | poisson_maigre fume | haddock
+limande | poisson_maigre | limande
+raie! | poisson_maigre beurre_citron | raie
+fletan | poisson_maigre | flétan
+sandre | poisson_maigre | sandre
+brochet | poisson_maigre | brochet
+perche | poisson_maigre | perche
+omble | poisson_maigre | omble
+fera! | poisson_maigre | féra
+merlan | poisson_maigre | merlan
+barbue | poisson_maigre | barbue
+poisson | poisson_maigre | poisson
+boeuf bourguignon | viande_rouge mijote sauce_vin_rouge | bœuf bourguignon
+bourguignon | viande_rouge mijote sauce_vin_rouge | bourguignon
+pot au feu | viande_rouge mijote | pot-au-feu
+daube | viande_rouge mijote sauce_vin_rouge | daube
+joue de boeuf | viande_rouge mijote | joue de bœuf
+cote de boeuf | viande_rouge grille | côte de bœuf
+filet de boeuf | viande_rouge | filet de bœuf
+pave de boeuf | viande_rouge grille | pavé de bœuf
+faux filet | viande_rouge grille | faux-filet
+entrecote | viande_rouge grille | entrecôte
+bavette | viande_rouge grille | bavette
+onglet | viande_rouge grille | onglet
+hampe | viande_rouge grille | hampe
+rumsteck | viande_rouge grille | rumsteck
+rumsteak | viande_rouge grille | rumsteak
+steak | viande_rouge grille | steak
+tournedos | viande_rouge | tournedos
+chateaubriand | viande_rouge | chateaubriand
+rosbif | viande_rouge roti | rosbif
+burger | viande_rouge grille | burger
+wagyu | viande_rouge | wagyu
+bison | viande_rouge | bison
+boeuf | viande_rouge | bœuf
+blanquette | viande_blanche creme mijote | blanquette
+osso buco | viande_blanche tomate mijote | osso buco
+cote de veau | viande_blanche | côte de veau
+escalope | viande_blanche | escalope
+veau | viande_blanche | veau
+lapin | viande_blanche | lapin
+ris de veau | abats creme | ris de veau
+rognon | abats | rognons
+foie de veau | abats | foie de veau
+cervelle | abats | cervelle
+tripes | abats | tripes
+andouillette | abats charcuterie | andouillette
+tete de veau | abats | tête de veau
+langue de boeuf | abats | langue de bœuf
+boudin noir | charcuterie abats | boudin noir
+boudin blanc | charcuterie | boudin blanc
+cochon de lait | porc roti | cochon de lait
+poitrine de porc | porc | poitrine de porc
+porcini | champignon | porcini
+porc | porc | porc
+cochon | porc | cochon
+echine | porc | échine
+travers | porc grille | travers
+ribs | porc sucre_sale grille | ribs
+pluma | porc grille | pluma
+secreto | porc grille | secreto
+iberico | porc | ibérique
+jambon cru | charcuterie | jambon cru
+jambon | porc charcuterie | jambon
+lardon | charcuterie | lardons
+saucisse | charcuterie | saucisse
+saucisson | charcuterie | saucisson
+chorizo | charcuterie piquant | chorizo
+pate! | charcuterie | pâté
+terrine | charcuterie | terrine
+rillettes | charcuterie | rillettes
+charcuterie | charcuterie | charcuterie
+coppa | charcuterie | coppa
+lomo | charcuterie | lomo
+prosciutto | charcuterie | prosciutto
+mortadelle | charcuterie | mortadelle
+bresaola | charcuterie | bresaola
+choucroute | porc charcuterie acide | choucroute
+cassoulet | porc charcuterie canard mijote | cassoulet
+poulet roti | volaille roti | poulet rôti
+poulet | volaille | poulet
+volaille | volaille | volaille
+pintade | volaille | pintade
+dinde | volaille | dinde
+chapon | volaille | chapon
+coquelet | volaille | coquelet
+poularde | volaille | poularde
+caille | volaille | caille
+coq au vin | volaille sauce_vin_rouge mijote | coq au vin
+confit de canard | canard mijote | confit de canard
+magret | canard | magret
+canard | canard | canard
+pigeon | canard | pigeon
+foie gras | foie_gras | foie gras
+faisan | gibier | faisan
+perdreau | gibier | perdreau
+perdrix | gibier | perdrix
+colvert | gibier | colvert
+becasse | gibier | bécasse
+cerf! | gibier | cerf
+cerfeuil | herbes | cerfeuil
+chevreuil | gibier | chevreuil
+biche | gibier | biche
+sanglier | gibier | sanglier
+marcassin | gibier | marcassin
+lievre | gibier | lièvre
+civet | gibier mijote sauce_vin_rouge | civet
+gibier | gibier | gibier
+carre d agneau | agneau roti | carré d'agneau
+souris d agneau | agneau mijote | souris d'agneau
+gigot | agneau roti | gigot
+navarin | agneau mijote | navarin
+agneau | agneau | agneau
+mouton | agneau | mouton
+merguez | agneau piquant grille | merguez
+kebab | agneau grille epice_douce | kebab
+tajine | mijote epice_douce sucre_sale | tajine
+couscous | epice_douce mijote | couscous
+quiche lorraine | oeuf creme charcuterie | quiche lorraine
+quiche | oeuf creme | quiche
+omelette | oeuf | omelette
+oeuf | oeuf | œuf
+salade | legumes | salade
+crudite | legumes cru | crudités
+legume | legumes | légumes
+ratatouille | legumes mediterraneen tomate | ratatouille
+asperge | asperge legumes | asperges
+artichaut | artichaut legumes | artichaut
+epinard | legumes | épinards
+poireau | legumes | poireaux
+courgette | legumes | courgettes
+aubergine | legumes mediterraneen | aubergines
+poivron | legumes mediterraneen | poivrons
+fenouil | legumes herbes | fenouil
+betterave | legumes | betterave
+carotte | legumes | carottes
+potiron | legumes | potiron
+courge | legumes | courge
+butternut | legumes | butternut
+chou | legumes | chou
+haricot | legumes | haricots
+lentille | legumes | lentilles
+pois chiche | legumes | pois chiches
+houmous | legumes mediterraneen | houmous
+falafel | legumes frit epice_douce | falafels
+tofu | legumes asiatique | tofu
+avocat | legumes | avocat
+champignon | champignon | champignons
+cepe | champignon | cèpes
+girolle | champignon | girolles
+morille | champignon creme | morilles
+chanterelle | champignon | chanterelles
+pleurote | champignon | pleurotes
+shiitake | champignon asiatique | shiitakés
+trompette | champignon | trompettes de la mort
+truffe | truffe | truffe
+risotto | creme | risotto
+carbonara | creme charcuterie oeuf | carbonara
+bolognaise | viande_rouge tomate mijote | bolognaise
+lasagne | viande_rouge tomate creme | lasagnes
+pizza | tomate fromage_frais mediterraneen | pizza
+margherita | tomate fromage_frais mediterraneen | margherita
+caprese | tomate fromage_frais herbes | caprese
+gratin | creme | gratin
+dauphinois | creme | gratin dauphinois
+frite | frit | frites
+tempura | frit asiatique | tempura
+beignet | frit | beignets
+nem! | frit asiatique | nems
+samosa | frit epice_douce | samosas
+veloute | creme | velouté
+gaspacho | tomate acide cru legumes | gaspacho
+flammekueche | creme charcuterie | flammekueche
+tarte flambee | creme charcuterie | tarte flambée
+raclette | fromage_dure porc charcuterie | raclette
+fondue savoyarde | fromage_dure | fondue savoyarde
+tartiflette | fromage_lave charcuterie creme | tartiflette
+croque monsieur | fromage_dure charcuterie | croque-monsieur
+burrata | fromage_frais | burrata
+mozzarella | fromage_frais | mozzarella
+feta | fromage_frais | feta
+ricotta | fromage_frais | ricotta
+fromage blanc | fromage_frais | fromage blanc
+fromage frais | fromage_frais | fromage frais
+faisselle | fromage_frais | faisselle
+chevre | fromage_chevre | chèvre
+crottin | fromage_chevre | crottin
+sainte maure | fromage_chevre | Sainte-Maure
+rocamadour | fromage_chevre | rocamadour
+picodon | fromage_chevre | picodon
+pelardon | fromage_chevre | pélardon
+valencay | fromage_chevre | valençay
+selles sur cher | fromage_chevre | Selles-sur-Cher
+brie | fromage_molle | brie
+camembert | fromage_molle | camembert
+coulommiers | fromage_molle | coulommiers
+chaource | fromage_molle | chaource
+neufchatel | fromage_molle | neufchâtel
+brillat | fromage_molle | brillat-savarin
+saint nectaire | fromage_molle | saint-nectaire
+morbier | fromage_molle | morbier
+comte | fromage_dure | comté
+beaufort | fromage_dure | beaufort
+gruyere | fromage_dure | gruyère
+emmental | fromage_dure | emmental
+parmesan | fromage_dure | parmesan
+pecorino | fromage_dure | pecorino
+manchego | fromage_dure | manchego
+cantal | fromage_dure | cantal
+salers | fromage_dure | salers
+tomme | fromage_dure | tomme
+mimolette | fromage_dure | mimolette
+abondance | fromage_dure | abondance
+cheddar | fromage_dure | cheddar
+gouda | fromage_dure | gouda
+ossau iraty | fromage_dure | ossau-iraty
+laguiole | fromage_dure | laguiole
+roquefort | fromage_bleu | roquefort
+bleu! | fromage_bleu | bleu
+bleu d auvergne | fromage_bleu | bleu d'Auvergne
+gorgonzola | fromage_bleu | gorgonzola
+fourme | fromage_bleu | fourme
+stilton | fromage_bleu | stilton
+munster | fromage_lave | munster
+epoisses | fromage_lave | époisses
+maroilles | fromage_lave | maroilles
+reblochon | fromage_lave | reblochon
+livarot | fromage_lave | livarot
+pont l eveque | fromage_lave | pont-l'évêque
+vacherin | fromage_lave | vacherin
+mont d or | fromage_lave | mont d'or
+langres | fromage_lave | langres
+taleggio | fromage_lave | taleggio
+plateau de fromages | fromage_dure fromage_molle fromage_bleu | plateau de fromages
+fromages | fromage_dure fromage_molle | fromages
+fromage | fromage_dure | fromage
+creme brulee | cremeux caramel | crème brûlée
+creme caramel | cremeux caramel | crème caramel
+creme | creme | crème
+beurre blanc | beurre_citron | beurre blanc
+beurre citron | beurre_citron | beurre citronné
+meuniere | beurre_citron | meunière
+hollandaise | beurre_citron | hollandaise
+bearnaise | beurre_citron herbes | béarnaise
+beurre | creme | beurre
+tarte au citron | agrumes patisserie | tarte au citron
+citron | acide | citron
+au poivre | epice_douce | au poivre
+poivre | epice_douce | poivre
+moutarde | epice_douce | moutarde
+curry | curry epice_douce | curry
+massaman | curry epice_douce | massaman
+korma | curry creme | korma
+thai | asiatique piquant | thaï
+citronnelle | asiatique herbes | citronnelle
+lait de coco | asiatique creme | lait de coco
+soja | asiatique | soja
+teriyaki | asiatique sucre_sale | teriyaki
+yakitori | asiatique sucre_sale grille | yakitori
+wok | asiatique | wok
+gingembre | asiatique epice_douce | gingembre
+miso | asiatique | miso
+wasabi | asiatique piquant | wasabi
+sesame | asiatique | sésame
+nuoc mam | asiatique | nuoc-mâm
+pad thai | asiatique sucre_sale | pad thaï
+ramen | asiatique | ramen
+bo bun | asiatique herbes | bo bun
+dim sum | asiatique vapeur | dim sum
+pho! | asiatique herbes | pho
+sichuan | piquant asiatique | sichuan
+kimchi | piquant acide asiatique | kimchi
+miel | sucre_sale | miel
+aigre doux | sucre_sale acide | aigre-doux
+a l orange | sucre_sale agrumes | à l'orange
+piment | piquant | piment
+harissa | piquant | harissa
+chili | piquant | chili
+sriracha | piquant | sriracha
+jalapeno | piquant | jalapeño
+pimente | piquant | pimenté
+piquant | piquant | piquant
+epice | epice_douce | épices
+paprika | epice_douce | paprika
+cumin | epice_douce | cumin
+cannelle | epice_douce | cannelle
+ras el hanout | epice_douce | ras el-hanout
+garam masala | epice_douce | garam masala
+tandoori | epice_douce | tandoori
+safran | epice_douce | safran
+tomate | tomate | tomate
+basilic | herbes | basilic
+pesto | herbes mediterraneen | pesto
+huile d olive | mediterraneen | huile d'olive
+olive | mediterraneen | olives
+tapenade | mediterraneen | tapenade
+aioli | mediterraneen | aïoli
+ail! | mediterraneen | ail
+persil | herbes | persil
+coriandre | herbes | coriandre
+estragon | herbes | estragon
+aneth | herbes | aneth
+menthe | herbes | menthe
+thym | herbes | thym
+romarin | herbes | romarin
+herbe | herbes | herbes
+bordelaise | sauce_vin_rouge | bordelaise
+au vin rouge | sauce_vin_rouge | au vin rouge
+vin rouge | sauce_vin_rouge | sauce au vin rouge
+marchand de vin | sauce_vin_rouge | marchand de vin
+barbecue | grille sucre_sale | barbecue
+bbq | grille sucre_sale | barbecue
+vinaigrette | vinaigre | vinaigrette
+vinaigre | vinaigre | vinaigre
+balsamique | vinaigre sucre_sale | balsamique
+a la braise | grille | à la braise
+brais | mijote | braisé
+grill | grille | grillé
+plancha | grille | plancha
+poele | grille | poêlé
+saisi | grille | saisi
+snack | grille | snacké
+roti | roti | rôti
+mijot | mijote | mijoté
+confiture | sucre_sale fruits_jaunes | confiture
+confit | mijote | confit
+ragout | mijote | ragoût
+cocotte | mijote | en cocotte
+fricassee | creme mijote | fricassée
+frit | frit | frit
+pane | frit | pané
+croustillant | frit | croustillant
+friture | frit | friture
+vapeur | vapeur | vapeur
+poche | vapeur | poché
+nage | vapeur | à la nage
+papillote | vapeur | papillote
+cru! | cru | cru
+fume | fume | fumé
+chocolat | chocolat | chocolat
+brownie | chocolat | brownie
+fondant au chocolat | chocolat | fondant au chocolat
+cacao | chocolat | cacao
+ganache | chocolat | ganache
+profiterole | chocolat cremeux patisserie | profiteroles
+tiramisu | cremeux caramel | tiramisu
+fraise | fruits_rouges | fraises
+framboise | fruits_rouges | framboises
+cerise | fruits_rouges | cerises
+griotte | fruits_rouges | griottes
+fruits rouges | fruits_rouges | fruits rouges
+myrtille | fruits_rouges | myrtilles
+cassis | fruits_rouges | cassis
+mure! | fruits_rouges | mûres
+groseille | fruits_rouges | groseilles
+pomme | fruits_jaunes | pomme
+poire | fruits_jaunes | poire
+peche | fruits_jaunes | pêche
+abricot | fruits_jaunes | abricot
+mirabelle | fruits_jaunes | mirabelles
+prune | fruits_jaunes | prunes
+coing | fruits_jaunes | coing
+tatin | fruits_jaunes patisserie caramel | tatin
+rhubarbe | fruits_jaunes acide | rhubarbe
+figue | fruits_jaunes | figues
+fruits jaunes | fruits_jaunes | fruits jaunes
+orange | agrumes | orange
+pamplemousse | agrumes | pamplemousse
+yuzu | agrumes | yuzu
+clementine | agrumes | clémentine
+mandarine | agrumes | mandarine
+agrume | agrumes | agrumes
+bergamote | agrumes | bergamote
+caramel | caramel | caramel
+cafe | caramel | café
+praline | caramel noix | praliné
+noisette d agneau | agneau | noisettes d'agneau
+noisettes d agneau | agneau | noisettes d'agneau
+noisette | noix | noisette
+dulce de leche | caramel | dulce de leche
+toffee | caramel | toffee
+moka | caramel | moka
+panna cotta | cremeux | panna cotta
+riz au lait | cremeux | riz au lait
+cheesecake | cremeux | cheesecake
+ile flottante | cremeux | île flottante
+flan | cremeux | flan
+vanille | cremeux | vanille
+pudding | cremeux | pudding
+clafoutis | cremeux fruits_rouges | clafoutis
+entremets | cremeux | entremets
+mousse! | cremeux | mousse
+mousseline | creme beurre_citron | mousseline
+mousse de foie | charcuterie | mousse de foie
+millefeuille | patisserie cremeux | millefeuille
+paris brest | patisserie caramel noix | paris-brest
+eclair | patisserie | éclair
+tarte | patisserie | tarte
+gateau | patisserie | gâteau
+cake | patisserie | cake
+madeleine | patisserie | madeleines
+financier | patisserie noix | financier
+macaron | patisserie | macarons
+chou a la creme | patisserie cremeux | chou à la crème
+choux a la creme | patisserie cremeux | choux à la crème
+choux de bruxelles | legumes | choux de Bruxelles
+baba | patisserie | baba
+kouign amann | patisserie caramel | kouign-amann
+crumble | patisserie | crumble
+mangue | fruits_exotiques | mangue
+passion | fruits_exotiques | fruit de la passion
+ananas | fruits_exotiques | ananas
+noix de coco | fruits_exotiques | noix de coco
+coco | fruits_exotiques | coco
+litchi | fruits_exotiques | litchis
+papaye | fruits_exotiques | papaye
+banane | fruits_exotiques | banane
+exotique | fruits_exotiques | fruits exotiques
+glace! | glace | glace
+sorbet | glace | sorbet
+noix! | noix | noix
+amande | noix | amandes
+pistache | noix | pistache
+fruits secs | noix | fruits secs
+datte | noix sucre_sale | dattes
+marron | noix | marrons
+chataigne | noix | châtaignes
+dessert | patisserie | dessert
+`;
+
+/* ---------- 6. Outils de texte ---------- */
+const norm = s => (s || "").toString().toLowerCase().replace(/œ/g, "oe").replace(/æ/g, "ae")
+  .normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[''`\-_/,;:()!?.]/g, " ").replace(/\s+/g, " ").trim();
+const escRe = s => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+const LEX = LEXIQUE_TXT.split("\n").map(l => l.trim()).filter(Boolean).map(l => {
+  const [p, t, n] = l.split("|").map(x => x.trim());
+  const exact = p.endsWith("!"); const pat = exact ? p.slice(0, -1) : p;
+  return {pat, exact, tags: t.split(/\s+/).filter(Boolean), nom: n || pat,
+    re: new RegExp("(^|[^a-z])(" + escRe(pat) + ")" + (exact ? "(?![a-z])" : "[a-z]*"), "g")};
+}).sort((a, b) => b.pat.length - a.pat.length);
+
+/* Repère les aliments d'une description. Le motif le plus long consomme ses mots,
+   puis les plus courts passent sur ce qui reste : « crème brûlée » ne donne jamais
+   l'étiquette « crème (sauce) ». */
+function detecterAliments(texte) {
+  let t = " " + norm(texte) + " ";
+  const aliments = []; const tags = {};
+  for (const e of LEX) {
+    if (!e.re.test(t)) { e.re.lastIndex = 0; continue; }
+    e.re.lastIndex = 0;
+    t = t.replace(e.re, (m, pre) => pre + " ".repeat(m.length - pre.length));
+    aliments.push({nom: e.nom, tags: e.tags});
+    e.tags.forEach(k => { tags[k] = (tags[k] || 0) + 1; });
+  }
+  return {aliments, tags: Object.keys(tags), reste: t.trim()};
+}
+
+const TAGS_DESSERT = ["chocolat", "fruits_rouges", "fruits_jaunes", "agrumes", "caramel", "cremeux", "patisserie", "fruits_exotiques", "glace"];
+const TAGS_FROMAGE = ["fromage_frais", "fromage_chevre", "fromage_molle", "fromage_dure", "fromage_bleu", "fromage_lave"];
+const TAGS_LOURDS = ["viande_rouge", "viande_blanche", "volaille", "canard", "agneau", "porc", "gibier", "poisson_maigre", "poisson_gras", "crustace", "abats"];
+const TAGS_ENTREE = ["huitre", "charcuterie", "oeuf", "foie_gras", "poisson_cru", "legumes", "coquillage", "fromage_chevre", "fromage_frais"];
+
+/* Devine le temps du repas quand il n'est pas donné. */
+function devinerTemps(tags, texte) {
+  const t = norm(texte || "");
+  if (/\b(amuse bouche|aperitif|apero|tapas|mise en bouche|gougere|olives)\b/.test(t)) return "aperitif";
+  if (/\bdessert\b/.test(t)) return "dessert";
+  if (/\bentree\b/.test(t)) return "entree";
+  const has = k => tags.includes(k);
+  const viandes = ["viande_rouge", "viande_blanche", "volaille", "canard", "agneau", "porc", "gibier"];
+  if (has("poisson_cru") && !viandes.some(has)) return "entree";
+  const sale = ["tomate", "legumes", "creme", "charcuterie", "oeuf", "champignon", "poisson_maigre", "poisson_gras", "crustace", "coquillage"].concat(TAGS_FROMAGE, TAGS_LOURDS);
+  const sucre = TAGS_DESSERT.filter(k => k !== "patisserie");
+  if (sucre.some(has) && !TAGS_LOURDS.some(has)) return "dessert";
+  if (has("patisserie") && !sale.some(has)) return "dessert";
+  if (TAGS_FROMAGE.some(has) && !TAGS_LOURDS.some(has) && !TAGS_ENTREE.slice(0, 7).some(has) && !has("creme") && !has("tomate")) return "fromage";
+  if (TAGS_ENTREE.some(has) && !TAGS_LOURDS.some(has)) return "entree";
+  return "plat";
+}
+
+/* ---------- 7. Le score : moyenne pondérée des règles + a priori du service ---------- */
+const toPct = s => Math.round(Math.max(0, Math.min(100, (s + 3) / 6 * 100)));
+function scoreFamilles(tags, temps) {
+  tags = (tags || []).filter(k => TAGS[k]);
+  const s = {}, contrib = {}; let W = 0;
+  FAM_KEYS.forEach(k => { s[k] = 0; contrib[k] = []; });
+  for (const tag of tags) {
+    const w = TAGS[tag].w; W += w; const r = R[tag] || {};
+    FAM_KEYS.forEach(k => { const v = w * (r[k] || 0); s[k] += v; if (v) contrib[k].push({tag, v}); });
+  }
+  const pri = PRIOR[temps] || {};
+  return FAM_KEYS.map(k => {
+    const base = W ? s[k] / W : 0;
+    const sc = base + (pri[k] || 0) * (W ? 1 : 1.5);
+    const c = contrib[k].sort((a, b) => b.v - a.v);
+    return {k, s: sc, pct: toPct(sc), pour: c.filter(x => x.v > 0).slice(0, 3).map(x => x.tag),
+            contre: c.filter(x => x.v <= -1.5 * (TAGS[x.tag].w)).map(x => x.tag)};
+  }).sort((a, b) => b.s - a.s);
+}
+
+/* Phrases d'explication pour une famille classée. */
+function expliquer(f, temps) {
+  const pour = f.pour.map(t => TAGS[t].why);
+  const pri = (PRIOR[temps] || {})[f.k] || 0;
+  if (pri >= 1) pour.push(`c'est le réflexe du moment « ${TEMPS_NOM[temps]} »`);
+  if (!pour.length && f.s >= 0) pour.push("rien ne s'y oppose dans l'assiette");
+  const contre = f.contre.map(t => TAGS[t].l);
+  return {pour, contre};
+}
+
+/* Mises en garde : les ingrédients qui compliquent tout accord. */
+function avertissements(tags) {
+  const out = [];
+  if (tags.includes("artichaut")) out.push("L'artichaut (cynarine) rend n'importe quel vin sucré et dur : rester sur un blanc simple et vif, ou de l'eau.");
+  if (tags.includes("asperge")) out.push("L'asperge est l'ennemie des vins boisés et tanniques : sauvignon ou muscat sec, servis frais.");
+  if (tags.includes("vinaigre")) out.push("Une vinaigrette marquée écrase les vins fins : viser simple, vif, ou des bulles.");
+  if (tags.includes("piquant") && (tags.includes("viande_rouge") || tags.includes("agneau"))) out.push("Piment et tanins se battent : un rouge souple et fruité, servi un peu frais, passe mieux qu'un rouge puissant.");
+  if (tags.includes("chocolat")) out.push("Le chocolat noir n'aime que les vins doux naturels (Banyuls, Maury, Porto). Les blancs liquoreux paraissent maigres.");
+  if (tags.includes("glace")) out.push("Le froid anesthésie le palais : bulles ou vin doux, mais très frais, et surtout pas un grand vin.");
+  if (tags.includes("oeuf") && !tags.includes("creme")) out.push("Le jaune d'œuf tapisse la bouche : un vin vif ou des bulles font le nettoyage.");
+  return out;
+}
+
+/* ---------- 8. De la famille à LA bouteille, dans le stock réel ---------- */
+const actif = r => r && !r.archive;
+const enStock = r => actif(r) && (Number(r.stock) || 0) > 0;
+function rotation(r) {
+  const stock = Number(r.stock) || 0, cible = Number(r.cible) || Number(r.par) || 0, par = Number(r.par) || 0;
+  let v = stock - cible;                 /* au-dessus de la cible : à écouler en priorité */
+  if (par && stock <= par) v -= 5;       /* dernières bouteilles : on propose, mais moins */
+  return v;
+}
+function raisonBouteille(r, f, temps) {
+  const bits = [`famille ${FAM[f.k].nom} (${f.pct} %)`];
+  const stock = Number(r.stock) || 0, cible = Number(r.cible) || 0, par = Number(r.par) || 0;
+  if (cible && stock > cible) bits.push(`${stock} en ${ZONES_NOM[r.zone] || "cave"}, à écouler`);
+  else if (par && stock <= par) bits.push(`plus que ${stock}, bientôt à recommander`);
+  else bits.push(`${stock} en ${ZONES_NOM[r.zone] || "cave"}`);
+  if ((temps === "aperitif" || temps === "entree") && r.prixVente) bits.push(`${r.prixVente} € la bouteille`);
+  return bits.join(" · ");
+}
+function proposerBouteilles(refs, ranked, opts) {
+  opts = opts || {}; const n = opts.n || 4; const temps = opts.temps || "plat";
+  const used = new Set(opts.exclude ? Array.from(opts.exclude) : []);
+  const out = [];
+  for (const f of ranked.slice(0, 5)) {
+    if (out.length && f.pct < 45) break;
+    if (!out.length && f.pct < 25) break;
+    const cands = refs.filter(r => enStock(r) && r.famille === f.k && !used.has(r.id));
+    const prix = r => (temps === "aperitif" || temps === "entree") ? (Number(r.prixVente) || Number(r.prixAchat) || 0) : 0;
+    cands.sort((a, b) => (rotation(b) - rotation(a)) || (prix(a) - prix(b)) || norm(a.nom).localeCompare(norm(b.nom)));
+    for (const r of cands.slice(0, out.length ? 1 : 2)) {
+      out.push({ref: r, fam: f, raison: raisonBouteille(r, f, temps)}); used.add(r.id);
+      if (out.length >= n) return out;
+    }
+  }
+  return out;
+}
+/* Les familles qui iraient bien mais dont la cave est vide : de quoi passer commande. */
+function manques(refs, ranked) {
+  return ranked.filter(f => f.pct >= 60 && !refs.some(r => enStock(r) && r.famille === f.k)).slice(0, 2);
+}
+
+/* ---------- 9. Un menu entier : progression du léger au puissant, jamais deux fois la même bouteille ---------- */
+function composerMenu(plats, refs) {
+  let prev = null; const used = new Set();
+  return plats.map(p => {
+    let ranked = scoreFamilles(p.tags, p.temps);
+    if (prev) {
+      ranked = ranked.map(f => {
+        let s = f.s; const pf = FAM[f.k].puissance;
+        if (f.k !== "bulles" && pf < prev.puissance - 1.5) s -= 0.5 * (prev.puissance - 1.5 - pf); /* retour en arrière */
+        if (f.k === prev.k) s -= 0.3;                                                         /* un peu de variété */
+        return Object.assign({}, f, {s, pct: toPct(s)});
+      }).sort((a, b) => b.s - a.s);
+    }
+    const picks = proposerBouteilles(refs, ranked, {temps: p.temps, exclude: used, n: 3});
+    picks.forEach(x => used.add(x.ref.id));
+    const top = FAM[picks.length ? picks[0].fam.k : ranked[0].k];
+    prev = {k: top.k, puissance: top.puissance};
+    return {plat: p, ranked, picks, manques: manques(refs, ranked), avert: avertissements(p.tags)};
+  });
+}
+
+/* ---------- 10. Deviner la famille d'une bouteille depuis son nom et son appellation ---------- */
+const DEFAUT_PAR_COULEUR = {rouge: "rouge_souple", blanc: "blanc_vif", rose: "rose", bulles: "bulles", doux: "blanc_doux"};
+function matchFamille(texte) {
+  const t = " " + norm(texte) + " "; let best = null;
+  for (const f of FAMILLES) for (const m of f.mots) {
+    const re = new RegExp("(^|[^a-z])" + escRe(m) + "[a-z]*");
+    if (re.test(t) && (!best || m.length > best.m.length)) best = {f, m};
+  }
+  return best ? best.f : null;
+}
+function suggestFamille(texte, couleur) {
+  const f = matchFamille(texte);
+  if (f && (!couleur || f.couleur === couleur || (couleur === "blanc" && f.couleur === "doux") || (couleur === "doux" && f.couleur === "blanc"))) return f.k;
+  return DEFAUT_PAR_COULEUR[couleur] || (f ? f.k : null);
+}
+function suggestCouleur(texte) { const f = matchFamille(texte); return f ? f.couleur : null; }
+
+return {FAMILLES, FAM, FAM_KEYS, COULEURS, TEMPS, TEMPS_NOM, ZONES, ZONES_NOM, TAGS, TAG_KEYS, R, PRIOR, LEX,
+        norm, detecterAliments, devinerTemps, scoreFamilles, expliquer, avertissements, proposerBouteilles, manques,
+        composerMenu, suggestFamille, suggestCouleur, toPct, rotation, enStock, actif};
+})();
+/*ENGINE-END*/
+if (typeof module !== "undefined" && module.exports) module.exports = VIG;
+
+/* =====================================================================
+   VIGNOLO — APPLICATION (état, stockage local, tâches, série, badges)
+   ===================================================================== */
+const KEY = "vignolo.v1";
+const DEMO_VERSION = 2;   /* numéro de la cave de démonstration, lu au chargement de l'état */
+/* Ouvert depuis la Bibliothèque de VIGIE, Vignolo tourne dans un cadre isolé (CSP sandbox, origine opaque) :
+   ni localStorage ni service worker. On le détecte UNE fois, on le dit clairement à l'écran, et on ne fait
+   plus croire à un « stockage plein » à chaque geste. */
+const STOCKAGE_OK = (() => { try { const k = "vignolo.test"; localStorage.setItem(k, "1"); localStorage.removeItem(k); return true; } catch (e) { return false; } })();
+const $ = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const h = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const nowIso = () => new Date().toISOString();
+const localDate = d => { d = d ? new Date(d) : new Date(); return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 10); };
+const today = () => localDate();
+const joursEntre = (a, b) => Math.round((new Date(b + "T12:00") - new Date(a + "T12:00")) / 86400000);
+const fmtJour = iso => new Date(iso).toLocaleDateString("fr-FR", {weekday: "long", day: "numeric", month: "long"});
+const fmtCourt = iso => new Date(iso).toLocaleDateString("fr-FR", {day: "numeric", month: "short"});
+const fmtHeure = iso => new Date(iso).toLocaleTimeString("fr-FR", {hour: "2-digit", minute: "2-digit"});
+const eur = n => (Number(n) || 0).toLocaleString("fr-FR", {style: "currency", currency: "EUR", maximumFractionDigits: 0});
+const plur = (n, s, p) => n + " " + (n > 1 ? (p || s + "s") : s);
+const vibre = ms => { try { navigator.vibrate && navigator.vibrate(ms || 10); } catch (e) {} };
+
+/* ---------- État ---------- */
+function etatDefaut() {
+  return {version: 1, meta: {demo: false, createdAt: nowIso(), restaurant: ""}, team: ["Moi"], who: "Moi",
+    refs: [], moves: [], tasks: [], accords: [], autoDone: {},
+    settings: {apiKey: "", model: "claude-opus-5-5", effort: "medium", theme: "auto", rythme: {bar: 1, frigo: 2, cave: 7, reserve: 7}, tolerance: 1},
+    badges: {won: {}, scans: 0}, streak: {current: 0, best: 0, last: null}};
+}
+let S = charger();
+function charger() {
+  try { const j = JSON.parse(localStorage.getItem(KEY) || "null"); if (j && j.refs) { const s = Object.assign(etatDefaut(), j, {settings: Object.assign(etatDefaut().settings, j.settings || {})}); migrerDemo(s); return s; } } catch (e) {}
+  const s = etatDefaut(); semerDemo(s); return s;
+}
+let saveT = null;
+function save() { if (!STOCKAGE_OK) return; clearTimeout(saveT); saveT = setTimeout(() => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { toast("Stockage plein ou indisponible : l'export JSON reste possible"); } }, 60); }
+
+/* ---------- Références ---------- */
+const refsActives = () => S.refs.filter(r => !r.archive);
+const refById = id => S.refs.find(r => r.id === id);
+function refSub(r) { return [r.domaine, r.appellation, r.millesime].filter(Boolean).join(" · "); }
+function statut(r) {
+  const st = Number(r.stock) || 0, par = Number(r.par) || 0, cible = Number(r.cible) || 0;
+  if (st <= 0) return {cls: "bad", txt: "Rupture"};
+  if (par && st <= par) return {cls: "warn", txt: "À commander"};
+  if (cible && st >= cible) return {cls: "good", txt: "Au complet"};
+  return {cls: "neutral", txt: "OK"};
+}
+function rythme(r) { return (S.settings.rythme || {})[r.zone] || 7; }
+function joursDepuisComptage(r) { return r.lastCount ? joursEntre(localDate(r.lastCount), today()) : null; }
+function compteAujourdhui(r) { return !!r.lastCount && localDate(r.lastCount) === today(); }
+function aCompter(r) { if (compteAujourdhui(r)) return false; const j = joursDepuisComptage(r); return j === null || j >= rythme(r); }
+function progressionJour() {
+  const a = refsActives(); const faits = a.filter(compteAujourdhui).length; const reste = a.filter(aCompter).length;
+  const total = faits + reste; return {faits, reste, total, pct: total ? Math.round(faits / total * 100) : 100};
+}
+function valeurCave() { return refsActives().reduce((s, r) => s + (Number(r.stock) || 0) * (Number(r.prixAchat) || 0), 0); }
+function bouteilles() { return refsActives().reduce((s, r) => s + (Number(r.stock) || 0), 0); }
+
+/* ---------- Mouvements (le journal) ---------- */
+const TYPES_MVT = {vente: ["Vente", -1], casse: ["Casse", -1], offert: ["Offert", -1], livraison: ["Livraison", 1], retour: ["Retour", 1], inventaire: ["Comptage", 0], correction: ["Correction", 0]};
+function mouvement(refId, type, qty, note) {
+  const r = refById(refId); if (!r) return null;
+  const before = Number(r.stock) || 0; let after = before + qty; if (after < 0) { after = 0; qty = -before; }
+  const m = {id: uid(), refId, type, qty, before, after, who: S.who, at: nowIso(), note: note || ""};
+  r.stock = after; S.moves.push(m); if (S.moves.length > 5000) S.moves.splice(0, S.moves.length - 5000);
+  save(); return m;
+}
+function compter(refId, nouveau) {
+  const r = refById(refId); if (!r) return;
+  const delta = nouveau - (Number(r.stock) || 0);
+  mouvement(refId, "inventaire", delta, delta ? "écart constaté au comptage" : "conforme");
+  r.lastCount = nowIso(); save();
+  const p = progressionJour(); if (p.reste === 0 && p.total > 0) finInventaire();
+}
+function finInventaire() {
+  const t = today(), st = S.streak;
+  if (st.last !== t) {
+    const ecart = st.last ? joursEntre(st.last, t) : null;
+    st.current = (ecart !== null && ecart <= 1 + (S.settings.tolerance || 0)) ? st.current + 1 : 1;
+    st.best = Math.max(st.best, st.current); st.last = t; save();
+    confetti(); toast(st.current > 1 ? `Inventaire complet · ${st.current} jours d'affilée` : "Inventaire du jour terminé");
+    vibre([20, 40, 20]); majBadges();
+  }
+}
+function mouvementsDuJour() { const t = today(); return S.moves.filter(m => localDate(m.at) === t).reverse(); }
+
+/* ---------- Tâches : automatiques (déduites de la cave) + manuelles ---------- */
+function tachesAuto() {
+  const out = [], t = today(), rh = S.settings.rythme || {};
+  for (const r of refsActives()) {
+    const st = Number(r.stock) || 0, par = Number(r.par) || 0, cible = Number(r.cible) || 0;
+    if (st <= 0) out.push({k: "rupture:" + r.id, pri: "bad", t: `Rupture : ${r.nom}`, d: `0 en stock. Retirer de la carte${cible ? ` ou commander ${cible}` : ""}.`, refId: r.id});
+    else if (par && st <= par) out.push({k: "commander:" + r.id, pri: "warn", t: `Commander ${r.nom}`, d: `${plur(st, "restante")}, mini ${par}${cible > st ? ` · suggestion : +${cible - st}` : ""}.`, refId: r.id});
+  }
+  for (const [z, nomZ] of VIG.ZONES) {
+    const dus = refsActives().filter(r => r.zone === z && aCompter(r));
+    if (!dus.length) continue;
+    const retard = dus.some(r => { const j = joursDepuisComptage(r); return j === null || j >= 2 * (rh[z] || 7); });
+    out.push({k: "compter:" + z, pri: retard ? "warn" : "ok", t: `Compter la zone ${nomZ}`, d: `${plur(dus.length, "référence")} à vérifier (rythme : ${plur(rh[z] || 7, "jour")}).`, zone: z});
+  }
+  for (const m of S.moves.filter(m => m.type === "inventaire" && m.qty !== 0 && localDate(m.at) === t)) {
+    const r = refById(m.refId); if (r) out.push({k: "ecart:" + m.id, pri: "warn", t: `Vérifier l'écart sur ${r.nom}`, d: `${m.qty > 0 ? "+" : ""}${m.qty} constaté au comptage de ${fmtHeure(m.at)}.`, refId: r.id});
+  }
+  const ordre = {bad: 0, warn: 1, ok: 2};
+  return out.map(x => Object.assign(x, {done: S.autoDone[x.k] === t})).sort((a, b) => a.done - b.done || ordre[a.pri] - ordre[b.pri]);
+}
+function tachesManuelles() { return S.tasks.slice().sort((a, b) => a.done - b.done || (a.due || "9").localeCompare(b.due || "9") || b.createdAt.localeCompare(a.createdAt)); }
+function nbAlertes() { return tachesAuto().filter(x => !x.done && x.pri !== "ok").length; }
+
+/* ---------- Badges (ludique, sans pression) ---------- */
+const BADGES = [
+ {k: "premiere", nom: "Première bouteille", d: "Votre cave a sa première référence réelle", ic: "1", test: () => !S.meta.demo && S.refs.length >= 1},
+ {k: "inventaire", nom: "Cave comptée", d: "Un inventaire du jour terminé", ic: "✓", test: () => !!S.streak.last},
+ {k: "serie7", nom: "Sept d'affilée", d: "Sept jours d'inventaire complet", ic: "7", test: () => S.streak.best >= 7},
+ {k: "sommelier", nom: "Sommelier", d: "Dix accords composés", ic: "S", test: () => S.accords.length >= 10},
+ {k: "oeil", nom: "L'œil", d: "Un plat analysé en photo", ic: "◉", test: () => (S.badges.scans || 0) >= 1},
+ {k: "rangee", nom: "Cave rangée", d: "Zone et minimum renseignés partout", ic: "R", test: () => !S.meta.demo && refsActives().length >= 5 && refsActives().every(r => r.zone && Number(r.par) > 0)},
+];
+function majBadges() {
+  S.badges.won = S.badges.won || {};
+  for (const b of BADGES) if (!S.badges.won[b.k] && b.test()) { S.badges.won[b.k] = today(); toast(`Badge débloqué : ${b.nom}`); save(); }
+}
+
+/* ---------- Cave de démonstration (112 références inventées, à remplacer par la vôtre) ---------- */
+function semerDemo(s) {
+  /* nom, domaine, appellation, région, couleur, millésime, prix d'achat, prix carte, stock, mini, cible, zone, famille */
+  const D = [
+   ["Champagne Brut Réserve", "Billecart-Salmon", "Champagne", "Champagne", "bulles", null, 36, 95, 11, 6, 12, "frigo", "bulles"],
+   ["Champagne Brut Rosé", "Laurent-Perrier", "Champagne", "Champagne", "bulles", null, 52, 130, 4, 2, 6, "frigo", "bulles"],
+   ["Champagne Blanc de Blancs Grand Cru", "Pierre Gimonnet", "Champagne", "Champagne", "bulles", 2018, 44, 110, 5, 2, 6, "cave", "bulles"],
+   ["Champagne Extra Brut Les Vignes de Vrigny", "Egly-Ouriet", "Champagne", "Champagne", "bulles", null, 58, 140, 2, 1, 3, "cave", "bulles"],
+   ["Crémant d'Alsace Brut", "Domaine Rieflé", "Crémant d'Alsace", "Alsace", "bulles", null, 9, 32, 14, 6, 18, "frigo", "bulles"],
+   ["Crémant de Bourgogne Blanc de Noirs", "Maison Parigot", "Crémant de Bourgogne", "Bourgogne", "bulles", null, 10, 34, 8, 4, 12, "frigo", "bulles"],
+   ["Crémant de Loire Brut", "Domaine de la Taille aux Loups", "Crémant de Loire", "Loire", "bulles", null, 12, 38, 9, 6, 12, "frigo", "bulles"],
+   ["Prosecco Superiore Brut", "Nino Franco", "Valdobbiadene", "Vénétie", "bulles", null, 9, 30, 12, 6, 12, "reserve", "bulles"],
+   ["Cava Brut Nature Reserva", "Raventós", "Cava", "Catalogne", "bulles", 2021, 12, 36, 6, 3, 8, "reserve", "bulles"],
+   ["Pét'Nat Bulles de Roche", "Domaine Les Capriades", "Vin de France", "Loire", "bulles", 2023, 13, 40, 5, 2, 6, "frigo", "bulles"],
+   ["Muscadet Sèvre-et-Maine sur lie", "Domaine de la Haute Févrie", "Muscadet", "Loire", "blanc", 2023, 7.5, 28, 14, 4, 12, "frigo", "blanc_vif"],
+   ["Sancerre Les Caillottes", "Domaine Perrault", "Sancerre", "Loire", "blanc", 2023, 14, 46, 6, 3, 8, "frigo", "blanc_vif"],
+   ["Sancerre Les Monts Damnés", "Pascal Cotat", "Sancerre", "Loire", "blanc", 2022, 32, 85, 2, 1, 3, "cave", "blanc_vif"],
+   ["Pouilly-Fumé", "Domaine Jonathan Pabiot", "Pouilly-Fumé", "Loire", "blanc", 2023, 15, 48, 7, 3, 8, "frigo", "blanc_vif"],
+   ["Chablis", "Domaine Moreau-Naudet", "Chablis", "Bourgogne", "blanc", 2023, 16, 48, 10, 4, 12, "frigo", "blanc_vif"],
+   ["Chablis 1er cru Montmains", "Domaine Vallon", "Chablis", "Bourgogne", "blanc", 2022, 22, 68, 2, 2, 6, "cave", "blanc_vif"],
+   ["Petit Chablis", "Domaine Vocoret", "Petit Chablis", "Bourgogne", "blanc", 2023, 11, 36, 9, 4, 12, "frigo", "blanc_vif"],
+   ["Picpoul de Pinet", "Cave de l'Ormarine", "Picpoul de Pinet", "Languedoc", "blanc", 2024, 6, 24, 18, 6, 18, "frigo", "blanc_vif"],
+   ["Entre-deux-Mers", "Château Turcaud", "Entre-deux-Mers", "Bordeaux", "blanc", 2023, 7, 26, 11, 4, 12, "reserve", "blanc_vif"],
+   ["Riesling Grand Cru Schlossberg", "Domaine Weinbach", "Alsace Grand Cru", "Alsace", "blanc", 2021, 34, 88, 3, 1, 4, "cave", "blanc_vif"],
+   ["Riesling Tradition", "Domaine Ostertag", "Alsace", "Alsace", "blanc", 2022, 13, 42, 8, 3, 8, "frigo", "blanc_vif"],
+   ["Albariño Rías Baixas", "Pazo de Señoráns", "Rías Baixas", "Galice", "blanc", 2023, 12, 40, 6, 3, 6, "frigo", "blanc_vif"],
+   ["Vinho Verde Loureiro", "Quinta do Ameal", "Vinho Verde", "Portugal", "blanc", 2023, 8, 28, 7, 3, 8, "frigo", "blanc_vif"],
+   ["Menetou-Salon", "Domaine Pellé", "Menetou-Salon", "Loire", "blanc", 2023, 12, 38, 9, 3, 8, "frigo", "blanc_vif"],
+   ["Saint-Véran", "Domaine des Deux Roches", "Saint-Véran", "Bourgogne", "blanc", 2022, 12, 40, 8, 3, 8, "frigo", "blanc_vif"],
+   ["Mâcon-Villages", "Domaine Guillemot-Michel", "Mâcon-Villages", "Bourgogne", "blanc", 2023, 11, 36, 10, 4, 12, "reserve", "blanc_vif"],
+   ["Bourgogne Aligoté", "Domaine Sylvain Pataille", "Bourgogne Aligoté", "Bourgogne", "blanc", 2022, 14, 42, 5, 2, 6, "frigo", "blanc_vif"],
+   ["Savennières Roche aux Moines", "Domaine aux Moines", "Savennières", "Loire", "blanc", 2020, 20, 60, 4, 2, 4, "cave", "blanc_vif"],
+   ["Vouvray sec Le Haut-Lieu", "Domaine Huet", "Vouvray", "Loire", "blanc", 2022, 20, 55, 4, 2, 4, "frigo", "blanc_vif"],
+   ["Jurançon sec", "Domaine Cauhapé", "Jurançon", "Sud-Ouest", "blanc", 2022, 11, 36, 6, 2, 6, "frigo", "blanc_vif"],
+   ["Txakoli", "Ameztoi", "Getariako Txakolina", "Pays basque", "blanc", 2023, 11, 36, 5, 2, 6, "frigo", "blanc_vif"],
+   ["Meursault Les Narvaux", "Domaine Lamy-Fontaine", "Meursault", "Bourgogne", "blanc", 2021, 48, 125, 3, 1, 3, "cave", "blanc_ample"],
+   ["Meursault 1er cru Charmes", "Domaine Rémi Jobard", "Meursault", "Bourgogne", "blanc", 2020, 78, 190, 2, 1, 2, "cave", "blanc_ample"],
+   ["Puligny-Montrachet", "Domaine Jean-Louis Chavy", "Puligny-Montrachet", "Bourgogne", "blanc", 2021, 55, 140, 2, 1, 3, "cave", "blanc_ample"],
+   ["Chassagne-Montrachet", "Domaine Bachelet-Monnot", "Chassagne-Montrachet", "Bourgogne", "blanc", 2021, 52, 135, 3, 1, 3, "cave", "blanc_ample"],
+   ["Pessac-Léognan blanc", "Château Larrivet Haut-Brion", "Pessac-Léognan", "Bordeaux", "blanc", 2020, 30, 80, 3, 1, 4, "cave", "blanc_ample"],
+   ["Hermitage blanc", "Domaine Jean-Louis Chave", "Hermitage", "Rhône", "blanc", 2019, 120, 290, 1, 1, 1, "cave", "blanc_ample"],
+   ["Saint-Joseph blanc", "Domaine Gonon", "Saint-Joseph", "Rhône", "blanc", 2021, 36, 95, 2, 1, 3, "cave", "blanc_ample"],
+   ["Arbois Savagnin ouillé", "Domaine Tissot", "Arbois", "Jura", "blanc", 2021, 24, 68, 4, 2, 4, "cave", "blanc_ample"],
+   ["Vin Jaune", "Domaine Berthet-Bondet", "Château-Chalon", "Jura", "blanc", 2015, 45, 120, 2, 1, 2, "cave", "blanc_ample"],
+   ["Limoux Chardonnay Toques et Clochers", "Sieur d'Arques", "Limoux", "Languedoc", "blanc", 2022, 14, 42, 6, 2, 6, "reserve", "blanc_ample"],
+   ["Corton-Charlemagne Grand Cru", "Domaine Bonneau du Martray", "Corton-Charlemagne", "Bourgogne", "blanc", 2019, 140, 340, 1, 1, 1, "cave", "blanc_ample"],
+   ["Gewurztraminer Réserve", "Domaine Zind-Humbrecht", "Alsace", "Alsace", "blanc", 2022, 18, 52, 5, 2, 6, "frigo", "blanc_aromatique"],
+   ["Pinot Gris Les Princes Abbés", "Domaines Schlumberger", "Alsace", "Alsace", "blanc", 2022, 13, 40, 6, 2, 6, "frigo", "blanc_aromatique"],
+   ["Condrieu Terrasses de l'Empire", "Maison Delas", "Condrieu", "Rhône", "blanc", 2022, 42, 110, 1, 1, 2, "cave", "blanc_aromatique"],
+   ["Viognier Collines Rhodaniennes", "Domaine Yves Cuilleron", "IGP Collines Rhodaniennes", "Rhône", "blanc", 2023, 12, 38, 7, 3, 8, "frigo", "blanc_aromatique"],
+   ["Muscat d'Alsace sec", "Domaine Barmès-Buecher", "Alsace", "Alsace", "blanc", 2022, 14, 42, 4, 2, 4, "frigo", "blanc_aromatique"],
+   ["Torrontés", "Bodega Colomé", "Salta", "Argentine", "blanc", 2023, 9, 30, 5, 2, 6, "reserve", "blanc_aromatique"],
+   ["Côtes de Provence Rosé", "Château Sainte-Roseline", "Côtes de Provence", "Provence", "rose", 2024, 11, 36, 0, 6, 18, "frigo", "rose"],
+   ["Côtes de Provence Rosé Cuvée Prestige", "Domaine de la Sanglière", "Côtes de Provence", "Provence", "rose", 2024, 13, 40, 12, 6, 18, "frigo", "rose"],
+   ["Bandol Rosé", "Domaine Tempier", "Bandol", "Provence", "rose", 2023, 26, 70, 4, 2, 6, "frigo", "rose"],
+   ["Tavel", "Domaine de la Mordorée", "Tavel", "Rhône", "rose", 2023, 13, 40, 5, 3, 6, "frigo", "rose"],
+   ["Rosé de Loire", "Domaine de la Noblaie", "Rosé de Loire", "Loire", "rose", 2024, 8, 28, 9, 4, 12, "frigo", "rose"],
+   ["Coteaux d'Aix-en-Provence Rosé", "Château Vignelaure", "Coteaux d'Aix-en-Provence", "Provence", "rose", 2024, 10, 34, 8, 4, 12, "reserve", "rose"],
+   ["Beaujolais-Villages", "Domaine Chermette", "Beaujolais-Villages", "Beaujolais", "rouge", 2023, 9, 30, 12, 4, 12, "cave", "rouge_leger"],
+   ["Morgon Côte du Py", "Jean Foillard", "Morgon", "Beaujolais", "rouge", 2022, 19, 54, 3, 3, 6, "cave", "rouge_leger"],
+   ["Fleurie", "Domaine Métrat", "Fleurie", "Beaujolais", "rouge", 2022, 14, 44, 6, 3, 6, "cave", "rouge_leger"],
+   ["Moulin-à-Vent", "Château du Moulin-à-Vent", "Moulin-à-Vent", "Beaujolais", "rouge", 2021, 18, 52, 5, 2, 6, "cave", "rouge_leger"],
+   ["Bourgogne Pinot Noir", "Domaine Bouchard", "Bourgogne", "Bourgogne", "rouge", 2022, 16, 48, 8, 3, 8, "cave", "rouge_leger"],
+   ["Sancerre rouge", "Domaine Vacheron", "Sancerre", "Loire", "rouge", 2022, 24, 65, 3, 2, 4, "cave", "rouge_leger"],
+   ["Alsace Pinot Noir", "Domaine Muré", "Alsace", "Alsace", "rouge", 2022, 15, 46, 5, 2, 6, "cave", "rouge_leger"],
+   ["Bourgueil Les Perrières", "Domaine de la Chevalerie", "Bourgueil", "Loire", "rouge", 2020, 16, 48, 6, 2, 6, "cave", "rouge_leger"],
+   ["Arbois Trousseau", "Domaine de la Pinte", "Arbois", "Jura", "rouge", 2022, 19, 55, 4, 2, 4, "cave", "rouge_leger"],
+   ["Valpolicella Classico", "Allegrini", "Valpolicella", "Vénétie", "rouge", 2022, 10, 34, 7, 3, 8, "reserve", "rouge_leger"],
+   ["Côtes-du-Rhône", "Domaine Gramenon", "Côtes-du-Rhône", "Rhône", "rouge", 2022, 13, 39, 16, 4, 12, "cave", "rouge_souple"],
+   ["Côtes-du-Rhône Les Cailloux", "Domaine Charvin", "Côtes-du-Rhône", "Rhône", "rouge", 2021, 12, 38, 9, 3, 8, "reserve", "rouge_souple"],
+   ["Chinon Les Picasses", "Domaine Olga Raffault", "Chinon", "Loire", "rouge", 2021, 15, 45, 6, 3, 6, "cave", "rouge_souple"],
+   ["Saumur-Champigny Terres Chaudes", "Domaine des Roches Neuves", "Saumur-Champigny", "Loire", "rouge", 2022, 17, 50, 7, 3, 8, "cave", "rouge_souple"],
+   ["Bordeaux Supérieur", "Château Penin", "Bordeaux Supérieur", "Bordeaux", "rouge", 2021, 8, 28, 14, 4, 12, "reserve", "rouge_souple"],
+   ["Côtes de Bourg", "Château Falfas", "Côtes de Bourg", "Bordeaux", "rouge", 2020, 12, 36, 6, 2, 6, "cave", "rouge_souple"],
+   ["Fronsac", "Château Dalem", "Fronsac", "Bordeaux", "rouge", 2019, 15, 44, 5, 2, 6, "cave", "rouge_souple"],
+   ["Chianti Classico Riserva", "Fontodi", "Chianti Classico", "Toscane", "rouge", 2020, 24, 64, 4, 2, 6, "cave", "rouge_souple"],
+   ["Rioja Crianza", "Bodegas Muga", "Rioja", "Espagne", "rouge", 2020, 13, 40, 8, 3, 8, "cave", "rouge_souple"],
+   ["Volnay", "Domaine Nicolas Rossignol", "Volnay", "Bourgogne", "rouge", 2020, 45, 115, 2, 1, 3, "cave", "rouge_souple"],
+   ["Mercurey", "Domaine Faiveley", "Mercurey", "Bourgogne", "rouge", 2021, 22, 60, 4, 2, 4, "cave", "rouge_souple"],
+   ["Crozes-Hermitage", "Domaine Alain Graillot", "Crozes-Hermitage", "Rhône", "rouge", 2021, 20, 56, 6, 2, 6, "cave", "rouge_souple"],
+   ["Ventoux", "Domaine de Fondrèche", "Ventoux", "Rhône", "rouge", 2022, 9, 30, 11, 4, 12, "reserve", "rouge_souple"],
+   ["Lalande-de-Pomerol", "Château Siaurac", "Lalande-de-Pomerol", "Bordeaux", "rouge", 2019, 18, 52, 5, 2, 6, "cave", "rouge_souple"],
+   ["Saint-Émilion Grand Cru", "Château Fonroque", "Saint-Émilion Grand Cru", "Bordeaux", "rouge", 2019, 34, 88, 5, 2, 6, "cave", "rouge_puissant"],
+   ["Pauillac", "Château Pibran", "Pauillac", "Bordeaux", "rouge", 2018, 38, 98, 2, 2, 4, "cave", "rouge_puissant"],
+   ["Saint-Julien", "Château Gloria", "Saint-Julien", "Bordeaux", "rouge", 2018, 45, 115, 3, 1, 4, "cave", "rouge_puissant"],
+   ["Margaux", "Château Siran", "Margaux", "Bordeaux", "rouge", 2017, 42, 110, 2, 1, 3, "cave", "rouge_puissant"],
+   ["Pessac-Léognan rouge", "Château de Fieuzal", "Pessac-Léognan", "Bordeaux", "rouge", 2018, 36, 92, 3, 1, 4, "cave", "rouge_puissant"],
+   ["Cahors Malbec", "Clos Triguedina", "Cahors", "Sud-Ouest", "rouge", 2020, 14, 42, 10, 3, 6, "cave", "rouge_puissant"],
+   ["Cahors Le Combal", "Domaine Cosse-Maisonneuve", "Cahors", "Sud-Ouest", "rouge", 2020, 12, 38, 7, 3, 8, "reserve", "rouge_puissant"],
+   ["Madiran Vieilles Vignes", "Château Montus", "Madiran", "Sud-Ouest", "rouge", 2018, 24, 66, 4, 2, 4, "cave", "rouge_puissant"],
+   ["Cornas", "Domaine Vincent Paris", "Cornas", "Rhône", "rouge", 2020, 40, 105, 1, 1, 3, "cave", "rouge_puissant"],
+   ["Côte-Rôtie", "Domaine Jamet", "Côte-Rôtie", "Rhône", "rouge", 2019, 85, 210, 2, 1, 2, "cave", "rouge_puissant"],
+   ["Barolo", "Giacomo Fenocchio", "Barolo", "Piémont", "rouge", 2019, 38, 98, 3, 1, 4, "cave", "rouge_puissant"],
+   ["Ribera del Duero Crianza", "Bodegas Emilio Moro", "Ribera del Duero", "Espagne", "rouge", 2020, 20, 56, 5, 2, 6, "cave", "rouge_puissant"],
+   ["Bandol rouge", "Domaine Tempier", "Bandol", "Provence", "rouge", 2019, 32, 85, 3, 1, 4, "cave", "rouge_puissant"],
+   ["Châteauneuf-du-Pape", "Domaine du Vieux Télégraphe", "Châteauneuf-du-Pape", "Rhône", "rouge", 2020, 45, 115, 3, 2, 4, "cave", "rouge_solaire"],
+   ["Châteauneuf-du-Pape Tradition", "Domaine de la Janasse", "Châteauneuf-du-Pape", "Rhône", "rouge", 2021, 38, 98, 4, 2, 4, "cave", "rouge_solaire"],
+   ["Gigondas", "Domaine Santa Duc", "Gigondas", "Rhône", "rouge", 2021, 22, 58, 7, 3, 6, "cave", "rouge_solaire"],
+   ["Vacqueyras", "Domaine Le Sang des Cailloux", "Vacqueyras", "Rhône", "rouge", 2021, 18, 52, 6, 2, 6, "cave", "rouge_solaire"],
+   ["Minervois La Livinière", "Château Coupe-Roses", "Minervois", "Languedoc", "rouge", 2021, 12, 36, 9, 3, 8, "reserve", "rouge_solaire"],
+   ["Corbières Boutenac", "Château Ollieux Romanis", "Corbières", "Languedoc", "rouge", 2020, 11, 34, 8, 3, 8, "reserve", "rouge_solaire"],
+   ["Pic Saint-Loup", "Domaine de l'Hortus", "Pic Saint-Loup", "Languedoc", "rouge", 2021, 15, 44, 6, 2, 6, "cave", "rouge_solaire"],
+   ["Faugères Jadis", "Domaine Léon Barral", "Faugères", "Languedoc", "rouge", 2019, 26, 70, 3, 1, 4, "cave", "rouge_solaire"],
+   ["Sauternes", "Château Laville", "Sauternes", "Bordeaux", "doux", 2018, 25, 62, 4, 2, 4, "frigo", "blanc_doux"],
+   ["Sauternes 1er cru classé", "Château Guiraud", "Sauternes", "Bordeaux", "doux", 2016, 42, 105, 2, 1, 2, "cave", "blanc_doux"],
+   ["Monbazillac", "Domaine de l'Ancienne Cure", "Monbazillac", "Sud-Ouest", "doux", 2019, 12, 36, 5, 2, 4, "frigo", "blanc_doux"],
+   ["Coteaux du Layon Saint-Lambert", "Domaine Ogereau", "Coteaux du Layon", "Loire", "doux", 2020, 14, 42, 4, 2, 4, "frigo", "blanc_doux"],
+   ["Jurançon moelleux Symphonie de Novembre", "Domaine Cauhapé", "Jurançon", "Sud-Ouest", "doux", 2019, 22, 60, 3, 1, 3, "frigo", "blanc_doux"],
+   ["Gewurztraminer Vendanges Tardives", "Domaine Weinbach", "Alsace", "Alsace", "doux", 2019, 30, 72, 2, 1, 3, "cave", "blanc_doux"],
+   ["Vouvray demi-sec", "Domaine Huet", "Vouvray", "Loire", "blanc", 2022, 20, 55, 4, 2, 4, "frigo", "blanc_doux"],
+   ["Banyuls Rimage", "Domaine La Tour Vieille", "Banyuls", "Roussillon", "doux", 2021, 18, 48, 4, 1, 3, "bar", "vdn"],
+   ["Maury Grenat", "Mas Amiel", "Maury", "Roussillon", "doux", 2021, 16, 44, 3, 1, 3, "bar", "vdn"],
+   ["Rivesaltes Ambré 10 ans", "Domaine Cazes", "Rivesaltes", "Roussillon", "doux", null, 20, 52, 2, 1, 2, "bar", "vdn"],
+   ["Porto Tawny 10 ans", "Graham's", "Porto", "Douro", "doux", null, 24, 60, 2, 1, 2, "bar", "vdn"],
+   ["Porto LBV", "Taylor's", "Porto", "Douro", "doux", 2018, 20, 52, 3, 1, 3, "bar", "vdn"],
+   ["Pineau des Charentes", "Maison Guy Pinard", "Pineau des Charentes", "Charentes", "doux", null, 14, 36, 3, 1, 2, "bar", "vdn"],
+  ];
+  const now = Date.now(), jours = [0, 0, 0, 1, 1, 2, 3, 4, 6, 8, 9, 12, null];
+  const base = nowIso();
+  s.refs = D.map((d, i) => {
+    const [nom, domaine, appellation, region, couleur, millesime, prixAchat, prixVente, stock, par, cible, zone, famille] = d;
+    const j = jours[(i * 7) % jours.length];
+    return {id: uid() + i, nom, domaine, appellation, region, couleur, millesime, prixAchat, prixVente, stock, par, cible, zone,
+      famille: famille || VIG.suggestFamille(nom + " " + appellation, couleur), format: 75, fournisseur: "", notes: "", demo: true,
+      lastCount: j === null ? null : new Date(now - j * 86400000 - 3600000).toISOString(), createdAt: base, archive: false};
+  });
+  const r = s.refs, par = n => r.find(x => x.nom === n) || r[0];
+  const mv = (nom, type, qty, joursAvant, heure, who) => { const ref = par(nom); const at = new Date(now - joursAvant * 86400000); at.setHours(heure, (Math.abs(qty) * 7 + heure) % 55, 0, 0); s.moves.push({id: uid(), refId: ref.id, type, qty, before: ref.stock - qty, after: ref.stock, who: who || "Moi", at: at.toISOString(), note: ""}); };
+  mv("Picpoul de Pinet", "livraison", 12, 2, 11); mv("Côtes-du-Rhône", "livraison", 12, 2, 11); mv("Chablis", "vente", -2, 2, 20, "Léa"); mv("Morgon Côte du Py", "vente", -1, 2, 21);
+  mv("Sancerre Les Caillottes", "vente", -2, 1, 20); mv("Champagne Brut Réserve", "vente", -1, 1, 20, "Léa"); mv("Côtes-du-Rhône", "vente", -3, 1, 21); mv("Crémant de Loire Brut", "casse", -1, 1, 22, "Léa");
+  mv("Côtes de Provence Rosé", "vente", -1, 1, 13, "Léa"); mv("Cahors Malbec", "vente", -2, 1, 21); mv("Gigondas", "vente", -1, 1, 22, "Léa"); mv("Sauternes", "vente", -1, 1, 23);
+  s.moves.sort((a, b) => a.at.localeCompare(b.at));
+  s.team = ["Moi", "Léa"]; s.who = "Moi"; s.meta.demo = true; s.meta.demoVersion = DEMO_VERSION; s.meta.createdAt = base;
+  s.tasks.push({id: uid(), titre: "Appeler le caviste pour le rosé de l'été", done: false, createdAt: nowIso(), due: today()});
+}
+/* Une démo déjà posée dans ce navigateur se met à jour toute seule, sauf si des bouteilles
+   à soi ont été ajoutées entre-temps (créées après la graine) : on ne touche alors à rien. */
+function migrerDemo(s) {
+  if (!s.meta || !s.meta.demo || s.meta.demoVersion === DEMO_VERSION) return;
+  const t0 = new Date(s.meta.createdAt || 0).getTime();
+  const perso = s.refs.filter(r => !r.demo && new Date(r.createdAt || 0).getTime() - t0 > 60000);
+  s.meta.demoVersion = DEMO_VERSION;
+  if (perso.length) { s.meta.demoMaj = "manuel"; return; }
+  const ns = etatDefaut(); ns.settings = s.settings; semerDemo(ns);
+  if (s.team && s.team.length) { ns.team = s.team; ns.who = s.team.includes(s.who) ? s.who : s.team[0]; }
+  Object.assign(s, ns); s.meta.demoMaj = "auto";
+}
+function viderCave() { const ns = etatDefaut(); ns.settings = S.settings; ns.team = S.team; ns.who = S.who; S = ns; save(); }
+
+/* ---------- Petites briques d'interface ---------- */
+let toastT = null;
+function toast(msg) { const el = $("#toast"); el.textContent = msg; el.classList.add("on"); clearTimeout(toastT); toastT = setTimeout(() => el.classList.remove("on"), 2600); }
+function confetti() {
+  const cv = $("#confetti"); cv.classList.remove("hidden"); const ctx = cv.getContext("2d");
+  cv.width = innerWidth * devicePixelRatio; cv.height = innerHeight * devicePixelRatio; ctx.scale(devicePixelRatio, devicePixelRatio);
+  const cols = ["#7B1E3C", "#B98A3C", "#E39AA9", "#CDB84A", "#2E7D4F"]; const P = [];
+  for (let i = 0; i < 120; i++) P.push({x: innerWidth / 2 + (Math.random() - .5) * 120, y: innerHeight * .45, vx: (Math.random() - .5) * 14, vy: -Math.random() * 14 - 4, r: 4 + Math.random() * 5, c: cols[i % cols.length], a: Math.random() * 6, s: (Math.random() - .5) * .3});
+  const t0 = performance.now();
+  (function f(t) { const dt = (t - t0) / 1000; ctx.clearRect(0, 0, innerWidth, innerHeight);
+    for (const p of P) { p.vy += .35; p.x += p.vx; p.y += p.vy; p.vx *= .99; p.a += p.s; ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.a); ctx.fillStyle = p.c; ctx.globalAlpha = Math.max(0, 1 - dt / 1.8); ctx.fillRect(-p.r / 2, -p.r / 2, p.r, p.r * .6); ctx.restore(); }
+    if (dt < 1.9) requestAnimationFrame(f); else { ctx.clearRect(0, 0, innerWidth, innerHeight); cv.classList.add("hidden"); } })(t0);
+}
+function openSheet(titre, corps, pied) {
+  $("#sheet-title").textContent = titre; $("#sheet-body").innerHTML = corps; const f = $("#sheet-foot"); f.innerHTML = pied || ""; f.classList.toggle("hidden", !pied);
+  $("#veil").classList.add("on"); $("#sheet").classList.add("on"); $("#sheet-body").scrollTop = 0; document.body.style.overflow = "hidden";
+}
+function closeSheet() { $("#veil").classList.remove("on"); $("#sheet").classList.remove("on"); document.body.style.overflow = ""; sheetCtx = null; }
+let sheetCtx = null;
+function applyTheme() { const t = S.settings.theme || "auto"; document.documentElement.setAttribute("data-theme", t); }
+function initiales(n) { return (n || "?").trim().split(/\s+/).map(x => x[0]).join("").slice(0, 2).toUpperCase(); }
+
+/* =====================================================================
+   VUES : Aujourd'hui · Cave (liste, comptage, fiche)
+   ===================================================================== */
+const ICON = n => `<svg><use href="#i-${n}"/></svg>`;
+const stChip = r => { const s = statut(r); return `<span class="st ${s.cls}">${s.cls === "bad" || s.cls === "warn" ? ICON("alert") : ICON("check")}${s.txt}</span>`; };
+const famChip = r => { const f = VIG.FAM[r.famille]; return f ? `<span class="chip sm"><i class="sw" style="background:var(--c-${f.couleur})"></i>${h(f.nom)}</span>` : ""; };
+const zoneChip = r => `<span class="chip sm">${h(VIG.ZONES_NOM[r.zone] || "Sans zone")}</span>`;
+const ringSvg = (pct, done) => { const C = 2 * Math.PI * 58; return `<div class="ring ${done ? "done" : ""}"><svg viewBox="0 0 132 132"><circle class="track" cx="66" cy="66" r="58"/><circle class="fill" cx="66" cy="66" r="58" stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${(C * (1 - pct / 100)).toFixed(1)}"/></svg><div class="ctr"><b>${pct}<small style="font-size:16px">%</small></b><span>${done ? "cave à jour" : "inventaire"}</span></div></div>`; };
+
+function renderToday() {
+  const p = progressionJour(), auto = tachesAuto(), man = tachesManuelles(), mv = mouvementsDuJour(), st = S.streak;
+  const done = p.total > 0 && p.reste === 0; const alertes = auto.filter(x => !x.done && x.pri !== "ok").length;
+  const heure = new Date().getHours(); const salut = heure < 12 ? "Bonjour" : heure < 18 ? "Bon après-midi" : "Bonsoir";
+  let H = "";
+  if (!STOCKAGE_OK) H += `<div class="banner section" style="background:var(--bad-soft);border-color:transparent"><div class="grow"><b>Aperçu sans enregistrement.</b> Ouvert dans un cadre isolé (la Bibliothèque de VIGIE, par exemple), Vignolo ne peut rien garder : ventes et comptages disparaissent à la fermeture. Pour tenir la cave, ouvre l'app par son propre lien.</div></div>`;
+  if (S.meta.demo) H += `<div class="banner section"><div class="grow"><b>Cave de démonstration.</b> Les bouteilles, prix et stocks sont inventés, à remplacer par les vôtres.</div><button class="btn sm" data-action="demo-vider">Vider et commencer</button></div>`;
+  H += `<div class="card wine section"><div class="row" style="gap:16px">${ringSvg(p.pct, done)}<div class="grow"><div style="opacity:.85;font-size:13px">${h(fmtJour(nowIso()))}</div><h1 style="margin:2px 0 8px">${salut}, ${h(S.who)}.</h1>
+    <p style="font-size:14px;opacity:.92">${done ? "Tout est compté pour aujourd'hui. La cave est à jour." : p.total ? `<b>${p.faits}</b> compté${p.faits > 1 ? "es" : "e"} sur <b>${p.total}</b> à vérifier aujourd'hui.` : "Aucune référence à compter aujourd'hui."}</p>
+    <div class="row wrap" style="margin-top:12px">${p.reste ? `<button class="btn gold sm" data-action="count-start">Compter maintenant (${p.reste})</button>` : ""}<button class="btn sm" style="background:rgba(255,255,255,.14);color:#fff;border-color:rgba(255,255,255,.25)" data-action="go" data-view="cave">Voir la cave</button></div></div></div></div>`;
+  H += `<div class="grid-3 section"><div class="tile"><div class="lbl">Références</div><div class="val">${refsActives().length}</div><div class="sub">${plur(bouteilles(), "bouteille")}</div></div>
+    <div class="tile ${alertes ? "alert" : ""}"><div class="lbl">Alertes</div><div class="val">${alertes}</div><div class="sub">${alertes ? "ruptures, commandes" : "rien à signaler"}</div></div>
+    <div class="tile"><div class="lbl">Valeur de cave</div><div class="val" style="font-size:22px">${eur(valeurCave())}</div><div class="sub">au prix d'achat</div></div></div>`;
+  const badges = BADGES.map(b => `<div class="badge ${S.badges.won[b.k] ? "won" : ""}" title="${h(b.d)}"><span class="ic">${b.ic}</span>${h(b.nom)}</div>`).join("");
+  H += `<div class="card section"><div class="row between"><div class="streak"><b>${st.current}</b><div><div style="font-weight:600;font-size:14px">${st.current > 1 ? "jours d'affilée" : "jour d'affilée"}</div><div class="tiny">record : ${st.best} · un inventaire complet par jour</div></div></div></div><div class="badges" style="margin-top:12px">${badges}</div></div>`;
+  H += `<div class="section"><div class="section-h"><h2>À faire</h2><span class="tiny">${plur(auto.filter(x => !x.done).length + man.filter(x => !x.done).length, "tâche")}</span></div>`;
+  const tache = (x, manuel) => `<div class="task ${x.done ? "done" : ""}" data-action="task-toggle" data-k="${h(x.k || x.id)}" data-manuel="${manuel ? 1 : 0}"><span class="pri ${x.pri || "ok"}"></span><div class="grow"><div class="t">${h(x.t || x.titre)}</div>${x.d || x.due ? `<div class="d">${h(x.d || ("pour le " + fmtCourt(x.due)))}</div>` : ""}</div><span class="ck">${ICON("check")}</span></div>`;
+  H += auto.map(x => tache(x, false)).join("") + man.map(x => tache(x, true)).join("");
+  if (!auto.length && !man.length) H += `<div class="empty"><b>Rien à faire</b>Les tâches apparaissent ici toutes seules : ruptures, commandes, zones à compter.</div>`;
+  H += `<form class="row" style="margin-top:10px" data-form="task-add"><input class="input grow" name="titre" placeholder="Ajouter une tâche (ex. : ranger la livraison)" autocomplete="off"><button class="btn primary icon" type="submit" aria-label="Ajouter">${ICON("plus")}</button></form></div>`;
+  H += `<div class="section"><div class="section-h"><h2>Journal du jour</h2><span class="tiny">${plur(mv.length, "mouvement")}</span></div><div class="card">`;
+  H += mv.length ? mv.slice(0, 30).map(m => { const r = refById(m.refId); const lab = TYPES_MVT[m.type] ? TYPES_MVT[m.type][0] : m.type; return `<div class="jl"><time>${fmtHeure(m.at)}</time><div class="grow"><b>${h(m.who)}</b> · ${h(lab.toLowerCase())} · ${h(r ? r.nom : "?")}${m.note ? ` <span class="tiny">(${h(m.note)})</span>` : ""}</div><span class="q ${m.qty < 0 ? "minus" : m.qty > 0 ? "plus" : ""}">${m.qty > 0 ? "+" : ""}${m.qty}</span></div>`; }).join("")
+    : `<div class="empty" style="padding:14px"><b style="font-size:16px">Journal vide</b>Chaque vente, casse, livraison ou comptage s'inscrit ici avec son auteur.</div>`;
+  H += `</div></div>`;
+  $("#view-today").innerHTML = H;
+}
+
+/* ---------- Cave ---------- */
+const F = {q: "", couleur: "", zone: "", only: ""};
+function refsFiltrees() {
+  const q = VIG.norm(F.q);
+  return refsActives().filter(r => (!F.couleur || r.couleur === F.couleur) && (!F.zone || r.zone === F.zone)
+    && (F.only !== "acompter" || aCompter(r)) && (F.only !== "alerte" || ["bad", "warn"].includes(statut(r).cls))
+    && (!q || VIG.norm([r.nom, r.domaine, r.appellation, r.region, r.millesime, VIG.FAM[r.famille] && VIG.FAM[r.famille].nom].join(" ")).includes(q)))
+    .sort((a, b) => (VIG.ZONES.findIndex(z => z[0] === a.zone) - VIG.ZONES.findIndex(z => z[0] === b.zone)) || VIG.norm(a.nom).localeCompare(VIG.norm(b.nom)));
+}
+function meterCls(r) { const s = statut(r).cls; return s === "neutral" ? "" : s; }
+function meterPct(r) { const st = Number(r.stock) || 0, cible = Number(r.cible) || 0, par = Number(r.par) || 0; const ref = cible || (par ? par * 2 : 6); return Math.max(0, Math.min(100, Math.round(st / ref * 100))); }
+function bottleCard(r) {
+  return `<div class="bottle ${compteAujourdhui(r) ? "counted" : ""}" data-id="${r.id}"><div class="bar ${h(r.couleur)}"></div>
+    <div class="grow" data-action="ref-open" data-id="${r.id}"><div class="nm">${h(r.nom)}</div><div class="meta">${h(refSub(r)) || "&nbsp;"}</div><div class="tags">${famChip(r)}${zoneChip(r)}${stChip(r)}</div></div>
+    <div class="stock" data-action="ref-open" data-id="${r.id}"><b>${Number(r.stock) || 0}</b><span>${r.cible ? `cible ${r.cible}` : "en stock"}</span></div>
+    <div class="meter ${meterCls(r)}"><i style="width:${meterPct(r)}%"></i></div>
+    <div class="acts"><button class="btn" data-action="mvt" data-id="${r.id}" data-type="vente" data-qty="-1">− 1 vente</button><button class="btn" data-action="mvt" data-id="${r.id}" data-type="livraison" data-qty="1">+ 1 reçue</button><button class="btn" data-action="count-one" data-id="${r.id}">Compter</button><button class="btn" data-action="ref-open" data-id="${r.id}" aria-label="Plus">⋯</button></div></div>`;
+}
+function renderCave() {
+  const L = refsFiltrees(); const total = refsActives().length; const nbC = refsActives().filter(aCompter).length, nbA = refsActives().filter(r => ["bad", "warn"].includes(statut(r).cls)).length;
+  let H = `<div class="section"><div class="search"><svg><use href="#i-search"/></svg><input class="input" id="q" placeholder="Chercher une bouteille, une appellation, une famille" value="${h(F.q)}" autocomplete="off"></div>
+    <div class="chips scroll" style="margin-top:10px">${[["", "Toutes"]].concat(Object.entries(VIG.COULEURS)).map(([k, v]) => `<button class="chip ${F.couleur === k ? "on" : ""}" data-action="filt" data-f="couleur" data-v="${k}">${k ? `<i class="sw" style="background:var(--c-${k})"></i>` : ""}${v}</button>`).join("")}</div>
+    <div class="chips scroll">${[["", "Partout"]].concat(VIG.ZONES).map(([k, v]) => `<button class="chip ${F.zone === k ? "on" : ""}" data-action="filt" data-f="zone" data-v="${k}">${v}</button>`).join("")}<button class="chip ${F.only === "acompter" ? "on" : ""}" data-action="filt" data-f="only" data-v="acompter">À compter · ${nbC}</button><button class="chip ${F.only === "alerte" ? "on" : ""}" data-action="filt" data-f="only" data-v="alerte">Alertes · ${nbA}</button></div></div>`;
+  H += `<div class="row between section" style="margin-bottom:10px"><span class="tiny">${L.length === total ? plur(total, "référence") : `${L.length} sur ${total}`} · ${plur(L.reduce((s, r) => s + (Number(r.stock) || 0), 0), "bouteille")}</span><div class="row"><button class="btn xs ghost" data-action="count-start" ${nbC ? "" : "disabled"}>Mode comptage</button><button class="btn xs ghost" data-action="import-csv">Importer un CSV</button></div></div>`;
+  if (!total) H += `<div class="empty"><b>La cave est vide</b>Ajoutez votre première référence avec le bouton +, ou importez un fichier CSV (nom ; appellation ; couleur ; millésime ; stock ; mini ; prix).</div>`;
+  else if (!L.length) H += `<div class="empty"><b>Rien ne correspond</b>Essayez un autre mot, ou retirez un filtre.</div>`;
+  else { let z = null; for (const r of L) { if (!F.zone && r.zone !== z) { z = r.zone; H += `<div class="section-h" style="margin-top:14px"><h2 style="font-size:17px">${h(VIG.ZONES_NOM[z] || "Sans zone")}</h2><span class="tiny">${plur(L.filter(x => x.zone === z).length, "référence")}</span></div>`; } H += bottleCard(r) + `<div style="height:8px"></div>`; } }
+  $("#view-cave").innerHTML = H;
+}
+
+/* ---------- Mode comptage : une bouteille à la fois ---------- */
+let CPT = null;
+function ouvrirComptage(zone, ids) {
+  let file = ids ? ids.map(refById).filter(Boolean) : refsActives().filter(r => aCompter(r) && (!zone || r.zone === zone));
+  file.sort((a, b) => (VIG.ZONES.findIndex(z => z[0] === a.zone) - VIG.ZONES.findIndex(z => z[0] === b.zone)) || VIG.norm(a.nom).localeCompare(VIG.norm(b.nom)));
+  if (!file.length) { toast("Rien à compter pour le moment"); return; }
+  CPT = {file, i: 0, val: 0, faits: 0}; renderComptage();
+}
+function renderComptage() {
+  const r = CPT.file[CPT.i]; if (!r) { finComptage(); return; }
+  CPT.val = Number(r.stock) || 0;
+  const corps = `<div class="tiny" style="text-align:center">${CPT.i + 1} / ${CPT.file.length} · ${h(VIG.ZONES_NOM[r.zone] || "")}</div>
+    <div style="text-align:center;margin:10px 0 4px"><div style="font-family:var(--serif);font-size:24px;line-height:1.15">${h(r.nom)}</div><div class="muted" style="font-size:14px;margin-top:4px">${h(refSub(r))}</div><div class="chips" style="justify-content:center;margin-top:8px">${famChip(r)}${stChip(r)}</div></div>
+    <div class="card flat" style="text-align:center;margin-top:14px"><div class="tiny">Stock théorique : <b>${Number(r.stock) || 0}</b> · dernier comptage ${r.lastCount ? "il y a " + plur(joursDepuisComptage(r), "jour") : "jamais"}</div>
+    <div class="stepper big" style="margin:12px auto 10px"><button data-action="cpt-step" data-d="-1" aria-label="Moins">−</button><span class="v" id="cpt-val">${CPT.val}</span><button data-action="cpt-step" data-d="1" aria-label="Plus">+</button></div>
+    <input class="input num" id="cpt-input" type="number" inputmode="numeric" min="0" step="1" value="${CPT.val}" style="max-width:140px;margin:0 auto;text-align:center;font-size:18px"></div>`;
+  const pied = `<button class="btn ghost" data-action="cpt-skip">Passer</button><button class="btn primary grow" data-action="cpt-ok">Confirmer ${CPT.val === (Number(r.stock) || 0) ? "(conforme)" : ""}</button>`;
+  openSheet("Comptage", corps, pied); sheetCtx = "comptage";
+}
+function finComptage() { closeSheet(); toast(CPT.faits ? `${plur(CPT.faits, "bouteille comptée", "bouteilles comptées")}` : "Comptage interrompu"); CPT = null; render(); majBadges(); }
+
+/* ---------- Fiche d'une référence ---------- */
+function ouvrirRef(id) {
+  const r = refById(id); if (!r) return; const f = VIG.FAM[r.famille]; const s = statut(r);
+  const hist = S.moves.filter(m => m.refId === id).slice(-6).reverse();
+  const corps = `<div class="row" style="align-items:flex-start"><div class="grow"><div style="font-family:var(--serif);font-size:24px;line-height:1.15">${h(r.nom)}</div><div class="muted" style="margin-top:3px">${h(refSub(r))}</div><div class="chips" style="margin-top:8px">${famChip(r)}${zoneChip(r)}${stChip(r)}</div></div><div style="text-align:right"><div class="hero-num">${Number(r.stock) || 0}</div><div class="tiny">en stock</div></div></div>
+    <dl class="kv" style="margin-top:14px"><dt>Mini / cible</dt><dd>${r.par || "–"} / ${r.cible || "–"}</dd><dt>Prix</dt><dd>${r.prixAchat ? eur(r.prixAchat) + " achat" : "–"}${r.prixVente ? " · " + eur(r.prixVente) + " carte" : ""}</dd><dt>Dernier comptage</dt><dd>${r.lastCount ? fmtCourt(r.lastCount) + " à " + fmtHeure(r.lastCount) : "jamais"}</dd>${r.fournisseur ? `<dt>Fournisseur</dt><dd>${h(r.fournisseur)}</dd>` : ""}${r.notes ? `<dt>Notes</dt><dd>${h(r.notes)}</dd>` : ""}</dl>
+    <div class="grid-3" style="margin-top:14px"><button class="btn" data-action="mvt" data-id="${id}" data-type="vente" data-qty="-1">− 1 vente</button><button class="btn" data-action="mvt" data-id="${id}" data-type="casse" data-qty="-1">− 1 casse</button><button class="btn" data-action="mvt" data-id="${id}" data-type="offert" data-qty="-1">− 1 offert</button>
+      <button class="btn" data-action="mvt-qty" data-id="${id}" data-type="livraison">+ livraison</button><button class="btn" data-action="mvt" data-id="${id}" data-type="retour" data-qty="1">+ 1 retour</button><button class="btn gold" data-action="count-one" data-id="${id}">Compter</button></div>
+    ${f ? `<div class="card flat" style="margin-top:14px"><div class="fam"><span class="sw ${f.couleur}">${f.glyph}</span><div><b>${h(f.long)}</b> · ${h(f.temp)}<div class="tiny" style="margin-top:4px"><b>Idéal :</b> ${h(f.ideal)}<br><b>Éviter :</b> ${h(f.eviter)}</div></div></div></div>` : ""}
+    <div class="section-h" style="margin-top:16px"><h2 style="font-size:16px">Derniers mouvements</h2></div><div class="card flat">${hist.length ? hist.map(m => `<div class="jl"><time>${fmtCourt(m.at)}</time><div class="grow">${h(m.who)} · ${h((TYPES_MVT[m.type] || [m.type])[0].toLowerCase())}${m.note ? ` <span class="tiny">(${h(m.note)})</span>` : ""}</div><span class="q ${m.qty < 0 ? "minus" : m.qty > 0 ? "plus" : ""}">${m.qty > 0 ? "+" : ""}${m.qty}</span></div>`).join("") : `<div class="tiny">Aucun mouvement.</div>`}</div>`;
+  const pied = `<button class="btn ghost" data-action="ref-archive" data-id="${id}">Archiver</button><button class="btn primary grow" data-action="ref-edit" data-id="${id}">Modifier la fiche</button>`;
+  openSheet("Fiche", corps, pied); sheetCtx = "ref";
+}
+
+/* ---------- Formulaire (nouvelle référence ou modification) ---------- */
+function ouvrirFiche(id) {
+  const r = id ? refById(id) : {couleur: "rouge", zone: "cave", format: 75, stock: 0, par: 2, cible: 6};
+  const opt = (list, v) => list.map(([k, n]) => `<option value="${k}" ${k === v ? "selected" : ""}>${n}</option>`).join("");
+  const famOpts = `<option value="">Automatique (d'après le nom)</option>` + VIG.FAMILLES.map(f => `<option value="${f.k}" ${f.k === r.famille ? "selected" : ""}>${f.nom} · ${f.long}</option>`).join("");
+  const corps = `<form id="f-ref" class="stack" data-form="ref-save" data-id="${id || ""}">
+    ${!id ? `<button type="button" class="btn ghost block" data-action="scan-etiquette">${ICON("cam")} Photographier l'étiquette (remplit la fiche)</button>` : ""}
+    <div class="field"><label>Nom sur la carte *</label><input class="input" name="nom" required value="${h(r.nom || "")}" placeholder="Ex. : Sancerre Les Caillottes"></div>
+    <div class="grid-2"><div class="field"><label>Domaine</label><input class="input" name="domaine" value="${h(r.domaine || "")}"></div><div class="field"><label>Appellation</label><input class="input" name="appellation" value="${h(r.appellation || "")}" placeholder="Ex. : Sancerre"></div></div>
+    <div class="grid-2"><div class="field"><label>Région</label><input class="input" name="region" value="${h(r.region || "")}"></div><div class="field"><label>Millésime</label><input class="input num" name="millesime" type="number" inputmode="numeric" value="${h(r.millesime || "")}" placeholder="2022"></div></div>
+    <div class="field"><label>Couleur</label><div class="seg" id="seg-couleur">${Object.entries(VIG.COULEURS).map(([k, v]) => `<button type="button" class="${r.couleur === k ? "on" : ""}" data-action="seg" data-name="couleur" data-v="${k}">${v}</button>`).join("")}</div><input type="hidden" name="couleur" value="${h(r.couleur)}"></div>
+    <div class="field"><label>Famille d'accord</label><select class="input" name="famille">${famOpts}</select><span class="tiny" id="fam-hint"></span></div>
+    <div class="grid-3"><div class="field"><label>Stock</label><input class="input num" name="stock" type="number" inputmode="numeric" min="0" value="${Number(r.stock) || 0}"></div><div class="field"><label>Mini (alerte)</label><input class="input num" name="par" type="number" inputmode="numeric" min="0" value="${Number(r.par) || 0}"></div><div class="field"><label>Cible</label><input class="input num" name="cible" type="number" inputmode="numeric" min="0" value="${Number(r.cible) || 0}"></div></div>
+    <div class="field"><label>Zone de stockage</label><div class="seg">${VIG.ZONES.map(([k, v]) => `<button type="button" class="${r.zone === k ? "on" : ""}" data-action="seg" data-name="zone" data-v="${k}">${v}</button>`).join("")}</div><input type="hidden" name="zone" value="${h(r.zone)}"></div>
+    <div class="grid-3"><div class="field"><label>Format (cl)</label><select class="input" name="format">${opt([["37.5", "37,5"], ["50", "50"], ["75", "75"], ["150", "150"]], String(r.format || 75))}</select></div><div class="field"><label>Prix d'achat €</label><input class="input num" name="prixAchat" type="number" inputmode="decimal" step="0.5" min="0" value="${h(r.prixAchat || "")}"></div><div class="field"><label>Prix carte €</label><input class="input num" name="prixVente" type="number" inputmode="decimal" step="0.5" min="0" value="${h(r.prixVente || "")}"></div></div>
+    <div class="grid-2"><div class="field"><label>Fournisseur</label><input class="input" name="fournisseur" value="${h(r.fournisseur || "")}"></div><div class="field"><label>Notes</label><input class="input" name="notes" value="${h(r.notes || "")}" placeholder="Carte des vins, accord maison…"></div></div></form>`;
+  const pied = `<button class="btn ghost" data-action="close-sheet">Annuler</button><button class="btn primary grow" data-action="ref-submit">${id ? "Enregistrer" : "Ajouter à la cave"}</button>`;
+  openSheet(id ? "Modifier" : "Nouvelle référence", corps, pied); sheetCtx = "fiche"; majHintFamille();
+}
+function majHintFamille() {
+  const f = $("#f-ref"); if (!f) return; const txt = f.nom.value + " " + f.appellation.value; const sel = f.famille;
+  const g = VIG.suggestFamille(txt, f.couleur.value);
+  $("#fam-hint").textContent = sel.value ? "" : (g ? `Proposé : ${VIG.FAM[g].nom} (${VIG.FAM[g].long})` : "Choisissez une couleur pour une proposition");
+}
+function lireFiche() {
+  const f = $("#f-ref"); if (!f || !f.nom.value.trim()) { f && f.nom.classList.add("shake"); toast("Il manque le nom"); return null; }
+  const num = n => f[n].value === "" ? null : Number(f[n].value);
+  const o = {nom: f.nom.value.trim(), domaine: f.domaine.value.trim(), appellation: f.appellation.value.trim(), region: f.region.value.trim(), millesime: num("millesime"), couleur: f.couleur.value, zone: f.zone.value,
+    format: Number(f.format.value), stock: num("stock") || 0, par: num("par") || 0, cible: num("cible") || 0, prixAchat: num("prixAchat"), prixVente: num("prixVente"), fournisseur: f.fournisseur.value.trim(), notes: f.notes.value.trim()};
+  o.famille = f.famille.value || VIG.suggestFamille(o.nom + " " + o.appellation, o.couleur) || "rouge_souple";
+  return o;
+}
+
+/* =====================================================================
+   VUE : Accords (décrire ou photographier, menu entier, guide, carte)
+   ===================================================================== */
+const ACC = {plats: [], photo: null, source: "texte", enCours: false, erreur: ""};
+const EXEMPLES = ["Huîtres creuses, beurre citronné", "Entrée : tartare de saumon, avocat, citron\nPlat : entrecôte grillée, sauce au poivre, frites\nDessert : tarte tatin", "Risotto aux cèpes et truffe", "Curry de poulet au lait de coco", "Plateau de fromages affinés"];
+function parsePlats(txt) {
+  return txt.split(/\n|;|\bpuis\b/i).map(l => l.trim()).filter(Boolean).map(l => {
+    let temps = null; const m = l.match(/^(ap[ée]ritif|ap[ée]ro|entr[ée]e|plat|fromages?|dessert)\s*[:\-–]\s*/i);
+    if (m) { const k = VIG.norm(m[1]); temps = k.startsWith("ap") ? "aperitif" : k.startsWith("en") ? "entree" : k.startsWith("fr") ? "fromage" : k.startsWith("de") ? "dessert" : "plat"; l = l.slice(m[0].length); }
+    const d = VIG.detecterAliments(l);
+    return {nom: l, temps: temps || VIG.devinerTemps(d.tags, l), tags: d.tags, aliments: d.aliments.map(a => ({nom: a.nom, tags: a.tags}))};
+  });
+}
+function renderAccords() {
+  const famGuide = VIG.FAMILLES.map(f => { const b = refsActives().filter(r => r.famille === f.k && VIG.enStock(r)); return `<details class="help"><summary><span class="row"><span class="sw ${f.couleur}" style="width:26px;height:26px;border-radius:8px;font-size:12px;display:grid;place-items:center">${f.glyph}</span>${h(f.nom)} <span class="tiny">· ${plur(b.length, "bouteille")}</span></span></summary><div class="body"><b>${h(f.long)}</b> · servir à ${h(f.temp)}<br><b>Idéal :</b> ${h(f.ideal)}<br><b>Éviter :</b> ${h(f.eviter)}${b.length ? `<br><b>En cave :</b> ${b.map(r => h(r.nom) + " (" + (Number(r.stock) || 0) + ")").join(", ")}` : "<br><i>Rien en stock dans cette famille.</i>"}</div></details>`; }).join("");
+  const carte = S.accords.slice().reverse().slice(0, 12).map(a => `<div class="task" data-action="acc-open" data-id="${a.id}"><div class="grow"><div class="t">${h(a.titre)}</div><div class="d">${h(a.resume)}</div></div><span class="tiny">${fmtCourt(a.at)}</span></div>`).join("");
+  let H = `<div class="card wine section"><h1 style="font-size:24px">Trouver l'accord</h1><p style="opacity:.9;margin:6px 0 12px;font-size:14px">Photographiez l'assiette ou décrivez-la, temps par temps. Vignolo lit les aliments, note chaque famille de vins et choisit dans <b>votre</b> cave.</p>
+    <div class="row"><button class="btn gold grow" data-action="scan-plat">${ICON("cam")} Photographier le plat</button><button class="btn grow" style="background:rgba(255,255,255,.14);color:#fff;border-color:rgba(255,255,255,.25)" data-action="focus-plats">Décrire</button></div></div>`;
+  H += `<div class="section"><textarea class="input" id="plats" placeholder="Un plat par ligne. Ex. : Entrée : huîtres, beurre citronné" rows="3">${h(ACC.texte || "")}</textarea>
+    <div class="chips scroll" style="margin-top:8px">${EXEMPLES.map((e, i) => `<button class="chip" data-action="ex-plat" data-i="${i}">${h(e.split("\n")[0].replace(/^.*?:\s*/, "")).slice(0, 34)}${e.includes("\n") ? " + menu" : ""}</button>`).join("")}</div>
+    <button class="btn primary block" style="margin-top:10px" data-action="accords-go">Composer les accords</button></div>`;
+  H += `<div id="acc-result" class="section">${renderResultat()}</div>`;
+  H += `<div class="section"><div class="section-h"><h2>Les familles d'accords</h2><span class="tiny">${VIG.FAMILLES.length} catégories</span></div><div class="stack">${famGuide}</div></div>`;
+  H += `<div class="section"><div class="section-h"><h2>Carte des accords</h2><span class="tiny">${plur(S.accords.length, "accord enregistré", "accords enregistrés")}</span></div>${carte || `<div class="empty"><b>Encore vide</b>Enregistrez un accord réussi pour le retrouver en service.</div>`}</div>`;
+  $("#view-accords").innerHTML = H;
+}
+function renderResultat() {
+  if (ACC.enCours) return `<div class="card"><div class="scan-anim">${ACC.photo ? `<img class="preview" src="${ACC.photo}" alt="">` : `<div class="dropzone">Analyse…</div>`}</div><p class="muted" style="text-align:center;margin-top:10px">Lecture de l'assiette en cours…</p></div>`;
+  if (ACC.erreur) return `<div class="card" style="border-color:var(--bad)"><b>Analyse impossible.</b> <span class="muted">${h(ACC.erreur)}</span></div>`;
+  if (!ACC.plats.length) return "";
+  const menu = VIG.composerMenu(ACC.plats, S.refs); const multi = menu.length > 1;
+  let H = ACC.photo ? `<img class="preview" src="${ACC.photo}" alt="Photo du plat" style="margin-bottom:12px">` : "";
+  if (ACC.notesIA) H += `<p class="tiny" style="margin-bottom:8px">Lecture de la photo : ${h(ACC.notesIA)}</p>`;
+  menu.forEach((m, i) => {
+    const p = m.plat; const sel = `<select class="input" style="min-height:32px;padding:3px 30px 3px 10px;font-size:12.5px;width:auto" data-change="temps" data-i="${i}">${VIG.TEMPS.map(([k, n]) => `<option value="${k}" ${p.temps === k ? "selected" : ""}>${n}</option>`).join("")}</select>`;
+    H += `<div class="course"><span class="n">${i + 1}</span><h3 class="grow ellip">${h(p.nom)}</h3>${sel}</div>`;
+    H += `<div class="chips" style="margin-bottom:10px">${p.aliments.length ? p.aliments.map((a, j) => `<span class="alim ${j === 0 ? "main" : ""}">${h(a.nom)}<span class="k">${a.tags.filter(t => VIG.TAGS[t]).slice(0, 2).map(t => VIG.TAGS[t].l).join(", ")}</span></span>`).join("") : `<span class="tiny">Aucun aliment reconnu : précisez (ex. « saumon grillé, crème d'aneth »).</span>`}</div>`;
+    m.avert.forEach(a => { H += `<div class="banner" style="margin-bottom:10px">${h(a)}</div>`; });
+    H += `<div class="card">`;
+    m.ranked.slice(0, 3).forEach((f, k) => { const F = VIG.FAM[f.k]; const ex = VIG.expliquer(f, p.temps); const pour = ex.pour.slice(0, k ? 2 : 3); H += `<div class="fam" style="${k ? "margin-top:12px" : ""}"><span class="sw ${F.couleur}">${F.glyph}</span><div class="grow"><div class="row between"><b>${h(F.nom)}</b></div><div class="score"><div class="trk"><i style="width:${f.pct}%"></i></div><span class="pct">${f.pct} %</span></div><div class="tiny" style="margin-top:4px">${pour.map(x => "• " + h(x)).join("<br>")}${ex.contre.length ? `<br><span style="color:var(--bad)">− freins : ${h(ex.contre.join(", "))}</span>` : ""}</div></div></div>`; });
+    H += `</div><div style="margin-top:10px">`;
+    if (m.picks.length) H += m.picks.map((q, k) => `<div class="pick ${k === 0 ? "best" : ""}" data-action="ref-open" data-id="${q.ref.id}"><div class="bar ${h(q.ref.couleur)}"></div><div><div class="nm">${k === 0 ? "★ " : ""}${h(q.ref.nom)}</div><div class="why">${h(refSub(q.ref))}${refSub(q.ref) ? " · " : ""}${h(q.raison)}</div></div><div class="q">${Number(q.ref.stock) || 0}<small>en stock</small></div></div>`).join("");
+    else H += `<div class="card flat"><b>Rien d'ouvert dans les bonnes familles.</b> <span class="muted">La cave n'a pas de bouteille disponible qui colle à ce plat.</span></div>`;
+    if (m.manques.length) H += `<div class="tiny" style="margin-top:8px">À commander pour ce plat : ${m.manques.map(f => `<b>${h(VIG.FAM[f.k].nom)}</b> (${f.pct} %)`).join(", ")}.</div>`;
+    H += `</div>`;
+  });
+  H += `<div class="row" style="margin-top:14px"><button class="btn primary grow" data-action="acc-save">Enregistrer dans la carte des accords</button><button class="btn ghost" data-action="acc-clear">Effacer</button></div>`;
+  return H;
+}
+function lancerAccords() {
+  const t = ($("#plats") || {}).value || ""; ACC.texte = t; ACC.photo = null; ACC.notesIA = ""; ACC.erreur = ""; ACC.source = "texte";
+  ACC.plats = parsePlats(t); if (!ACC.plats.length) { toast("Décrivez au moins un plat"); return; }
+  ACC.plats.forEach((p, i) => { if (ACC.plats.length > 1 && !/^(ap|en|pl|fr|de)/.test(p.temps)) p.temps = "plat"; });
+  $("#acc-result").innerHTML = renderResultat(); $("#acc-result").scrollIntoView({behavior: "smooth", block: "start"});
+}
+function sauverAccord() {
+  if (!ACC.plats.length) return; const menu = VIG.composerMenu(ACC.plats, S.refs);
+  const a = {id: uid(), at: nowIso(), titre: ACC.plats.map(p => p.nom).join(" · ").slice(0, 90), texte: ACC.texte || ACC.plats.map(p => `${VIG.TEMPS_NOM[p.temps]} : ${p.nom}`).join("\n"),
+    resume: menu.map(m => `${VIG.TEMPS_NOM[m.plat.temps]} → ${m.picks[0] ? m.picks[0].ref.nom : VIG.FAM[m.ranked[0].k].nom}`).join(" · "), plats: ACC.plats};
+  S.accords.push(a); save(); toast("Accord enregistré"); majBadges(); renderAccords();
+}
+
+/* ---------- L'œil : photographier l'assiette (ou l'étiquette), via l'API Claude ---------- */
+const SCHEMA_PLAT = {type: "object", additionalProperties: false, required: ["plats", "confiance", "notes"], properties: {
+  plats: {type: "array", items: {type: "object", additionalProperties: false, required: ["nom", "temps", "aliments"], properties: {
+    nom: {type: "string"}, temps: {type: "string", enum: ["aperitif", "entree", "plat", "fromage", "dessert", "inconnu"]},
+    aliments: {type: "array", items: {type: "object", additionalProperties: false, required: ["nom", "role", "tags"], properties: {
+      nom: {type: "string"}, role: {type: "string", enum: ["principal", "garniture", "sauce", "assaisonnement"]}, tags: {type: "array", items: {type: "string", enum: VIG.TAG_KEYS}}}}}}}},
+  confiance: {type: "string", enum: ["haute", "moyenne", "basse"]}, notes: {type: "string"}}};
+const SCHEMA_ETIQ = {type: "object", additionalProperties: false, required: ["nom", "domaine", "appellation", "region", "couleur", "millesime", "lisible"], properties: {
+  nom: {type: "string"}, domaine: {type: "string"}, appellation: {type: "string"}, region: {type: "string"}, couleur: {type: "string", enum: ["rouge", "blanc", "rose", "bulles", "doux", "inconnue"]}, millesime: {type: ["integer", "null"]}, lisible: {type: "boolean"}}};
+const VOCAB = () => VIG.TAG_KEYS.map(k => `${k} = ${VIG.TAGS[k].l}`).join(" ; ");
+const SYS_PLAT = () => `Tu es le sommelier d'un restaurant français. On te montre la photo d'une ou plusieurs assiettes. Pour chaque plat : nomme-le en français, devine le temps du repas, puis liste chaque aliment visible ou très probable (protéine principale d'abord, puis garnitures, sauce, assaisonnements) avec son rôle et ses étiquettes prises UNIQUEMENT dans ce vocabulaire : ${VOCAB()}. Les étiquettes de cuisson (cru, grille, roti, mijote, frit, vapeur, fume) et de sauce (creme, beurre_citron, tomate, epice_douce, piquant, sucre_sale, acide, asiatique, mediterraneen, sauce_vin_rouge, curry, vinaigre) comptent autant que la protéine : mets-les quand tu les reconnais. Le champ notes : une phrase courte en français sur ce qui pèse dans l'accord. Si l'image n'est pas une assiette, confiance = basse et notes l'explique.`;
+const SYS_ETIQ = () => `Tu lis l'étiquette d'une bouteille de vin pour l'inventaire d'un restaurant. Donne le nom tel qu'on l'écrirait sur une carte (cuvée comprise), le domaine ou producteur, l'appellation, la région, la couleur (bulles pour un effervescent, doux pour un moelleux, liquoreux, porto ou vin muté) et le millésime (null si absent). lisible = false si l'étiquette n'est pas exploitable. Champs inconnus : chaîne vide.`;
+async function appelClaude(system, content, schema) {
+  const key = (S.settings.apiKey || "").trim(); if (!key) throw new Error("NOKEY");
+  const model = S.settings.model || "claude-opus-5-5";
+  const body = {model, max_tokens: 8000, system, messages: [{role: "user", content}], output_config: {effort: S.settings.effort || "medium", format: {type: "json_schema", schema}}};
+  const headers = {"content-type": "application/json", "x-api-key": key, "anthropic-version": "2023-06-01", "anthropic-dangerous-direct-browser-access": "true"};
+  if (/opus|sonnet|fable/.test(model)) { body.fallbacks = "default"; headers["anthropic-beta"] = "server-side-fallback-2026-07-01"; }
+  const res = await fetch("https://api.anthropic.com/v1/messages", {method: "POST", headers, body: JSON.stringify(body)});
+  if (!res.ok) { let msg = "HTTP " + res.status; try { const j = await res.json(); if (j.error && j.error.message) msg += " · " + j.error.message; } catch (e) {} throw new Error(msg); }
+  const j = await res.json();
+  if (j.stop_reason === "refusal") throw new Error("La demande a été refusée par le modèle.");
+  if (j.stop_reason === "max_tokens") throw new Error("Réponse trop longue, réessayez.");
+  return JSON.parse((j.content || []).filter(b => b.type === "text").map(b => b.text).join(""));
+}
+function redimensionner(file, max) {
+  return new Promise((ok, ko) => { const url = URL.createObjectURL(file); const im = new Image();
+    im.onload = () => { const k = Math.min(1, (max || 1280) / Math.max(im.naturalWidth, im.naturalHeight)); const cv = document.createElement("canvas"); cv.width = Math.round(im.naturalWidth * k); cv.height = Math.round(im.naturalHeight * k);
+      cv.getContext("2d").drawImage(im, 0, 0, cv.width, cv.height); URL.revokeObjectURL(url); const dataUrl = cv.toDataURL("image/jpeg", .82); ok({dataUrl, b64: dataUrl.split(",")[1]}); };
+    im.onerror = () => { URL.revokeObjectURL(url); ko(new Error("Image illisible")); }; im.src = url; });
+}
+let imgPour = "plat";
+function demanderImage(pour) { imgPour = pour; if (!(S.settings.apiKey || "").trim()) { toast("Ajoutez d'abord une clé API dans Réglages"); go("reglages"); return; }
+  openSheet(pour === "plat" ? "Photographier le plat" : "Photographier l'étiquette", `<div class="stack"><button class="btn primary block" data-action="img-cam">${ICON("cam")} Prendre une photo</button><button class="btn block" data-action="img-lib">Choisir dans la galerie</button><p class="tiny">La photo est réduite (1 280 px) puis envoyée à l'API Claude avec votre clé. Rien n'est stocké en ligne par Vignolo.</p></div>`); }
+async function traiterImage(file) {
+  if (!file) return; closeSheet();
+  try {
+    const im = await redimensionner(file, 1280); const img = {type: "image", source: {type: "base64", media_type: "image/jpeg", data: im.b64}};
+    if (imgPour === "plat") {
+      go("accords"); ACC.enCours = true; ACC.erreur = ""; ACC.photo = im.dataUrl; ACC.plats = []; $("#acc-result").innerHTML = renderResultat(); $("#acc-result").scrollIntoView({behavior: "smooth"});
+      const j = await appelClaude(SYS_PLAT(), [img, {type: "text", text: "Analyse cette assiette pour un accord mets et vins."}], SCHEMA_PLAT);
+      ACC.enCours = false; ACC.source = "photo"; ACC.notesIA = (j.notes || "") + (j.confiance === "basse" ? " (lecture incertaine)" : "");
+      ACC.plats = (j.plats || []).map(p => { const tags = new Set(); const aliments = (p.aliments || []).map(a => { const loc = VIG.detecterAliments(a.nom); const t = Array.from(new Set((a.tags || []).concat(loc.tags))).filter(k => VIG.TAGS[k]); t.forEach(k => tags.add(k)); return {nom: a.nom, tags: t}; });
+        const nomTags = VIG.detecterAliments(p.nom).tags; nomTags.forEach(k => tags.add(k)); const T = Array.from(tags);
+        return {nom: p.nom || "Plat", temps: p.temps && p.temps !== "inconnu" ? p.temps : VIG.devinerTemps(T, p.nom), tags: T, aliments}; });
+      ACC.texte = ACC.plats.map(p => `${VIG.TEMPS_NOM[p.temps]} : ${p.nom}`).join("\n"); const ta = $("#plats"); if (ta) ta.value = ACC.texte;
+      if (!ACC.plats.length) ACC.erreur = "Aucun plat reconnu sur la photo."; else { S.badges.scans = (S.badges.scans || 0) + 1; save(); majBadges(); }
+      $("#acc-result").innerHTML = renderResultat();
+    } else {
+      toast("Lecture de l'étiquette…");
+      const j = await appelClaude(SYS_ETIQ(), [img, {type: "text", text: "Lis cette étiquette."}], SCHEMA_ETIQ);
+      if (!$("#f-ref")) ouvrirFiche(null); const f = $("#f-ref");
+      if (!j.lisible) { toast("Étiquette illisible, remplissez à la main"); return; }
+      f.nom.value = j.nom || f.nom.value; f.domaine.value = j.domaine || ""; f.appellation.value = j.appellation || ""; f.region.value = j.region || ""; if (j.millesime) f.millesime.value = j.millesime;
+      const c = j.couleur && j.couleur !== "inconnue" ? j.couleur : (VIG.suggestCouleur(j.nom + " " + j.appellation) || f.couleur.value); f.couleur.value = c; $$("#seg-couleur button").forEach(b => b.classList.toggle("on", b.dataset.v === c)); majHintFamille(); toast("Fiche remplie, vérifiez avant d'enregistrer");
+    }
+  } catch (e) { ACC.enCours = false; const msg = e.message === "NOKEY" ? "Aucune clé API enregistrée." : e.message; if (imgPour === "plat") { ACC.erreur = msg; const el = $("#acc-result"); if (el) el.innerHTML = renderResultat(); } else toast("Lecture impossible : " + msg); }
+}
+
+/* =====================================================================
+   VUE : Réglages · export / import
+   ===================================================================== */
+function renderReglages() {
+  const st = S.settings, rh = st.rythme || {};
+  let H = `<div class="section"><div class="section-h"><h2>Équipe</h2><span class="tiny">qui signe les mouvements</span></div><div class="card"><div class="chips">${S.team.map(n => `<span class="chip ${n === S.who ? "on" : ""}" data-action="who-set" data-n="${h(n)}">${h(n)} <button data-action="team-del" data-n="${h(n)}" aria-label="Retirer" style="margin-left:4px;opacity:.7">×</button></span>`).join("")}</div>
+    <form class="row" style="margin-top:10px" data-form="team-add"><input class="input grow" name="n" placeholder="Prénom" autocomplete="off"><button class="btn primary icon" type="submit" aria-label="Ajouter">${ICON("plus")}</button></form></div></div>`;
+  H += `<div class="section"><div class="section-h"><h2>Rythme de comptage</h2><span class="tiny">en jours, par zone</span></div><div class="card"><div class="grid-2">${VIG.ZONES.map(([k, n]) => `<div class="field"><label>${n}</label><input class="input num" type="number" inputmode="numeric" min="1" max="60" value="${rh[k] || 7}" data-change="rythme" data-z="${k}"></div>`).join("")}</div>
+    <div class="field" style="margin-top:10px"><label>Tolérance de la série (jours de fermeture entre deux inventaires)</label><input class="input num" type="number" inputmode="numeric" min="0" max="7" value="${st.tolerance ?? 1}" data-change="tolerance"></div></div></div>`;
+  H += `<div class="section"><div class="section-h"><h2>Apparence</h2></div><div class="seg">${[["auto", "Auto"], ["light", "Clair"], ["dark", "Sombre"]].map(([k, n]) => `<button class="${(st.theme || "auto") === k ? "on" : ""}" data-action="theme" data-v="${k}">${n}</button>`).join("")}</div></div>`;
+  H += `<div class="section"><div class="section-h"><h2>Analyse photo (API Claude)</h2><span class="tiny">facultatif</span></div><div class="card stack">
+    <p class="tiny">La photo d'une assiette ou d'une étiquette part directement de ce téléphone vers l'API d'Anthropic, avec votre clé. La clé reste dans ce navigateur. Sans clé, tout le reste de Vignolo fonctionne (la description écrite suffit au moteur d'accords).</p>
+    <div class="field"><label>Clé API Anthropic</label><input class="input" type="password" value="${h(st.apiKey || "")}" placeholder="sk-ant-…" data-change="apiKey" autocomplete="off"></div>
+    <div class="grid-2"><div class="field"><label>Modèle</label><select class="input" data-change="model">${[["claude-opus-5-5", "Claude Opus 5.5 (conseillé)"], ["claude-sonnet-5-5", "Claude Sonnet 5.5 (moins cher)"], ["claude-haiku-5-5", "Claude Haiku 5.5 (le plus rapide)"]].map(([k, n]) => `<option value="${k}" ${(st.model || "claude-opus-5-5") === k ? "selected" : ""}>${n}</option>`).join("")}</select></div>
+    <div class="field"><label>Effort</label><select class="input" data-change="effort">${[["low", "Rapide"], ["medium", "Équilibré"], ["high", "Soigné"]].map(([k, n]) => `<option value="${k}" ${(st.effort || "medium") === k ? "selected" : ""}>${n}</option>`).join("")}</select></div></div></div></div>`;
+  H += `<div class="section"><div class="section-h"><h2>Données</h2><span class="tiny">tout est dans ce navigateur</span></div><div class="card stack">
+    <div class="grid-2"><button class="btn" data-action="export-json">Sauvegarde JSON</button><button class="btn" data-action="import-json">Restaurer un JSON</button><button class="btn" data-action="export-csv">Export CSV de la cave</button><button class="btn" data-action="import-csv">Importer un CSV</button></div>
+    <p class="tiny">CSV attendu (séparateur ; ou ,) avec une ligne d'en-tête : nom ; domaine ; appellation ; région ; couleur ; millésime ; stock ; mini ; cible ; prix achat ; prix carte ; zone. Les colonnes absentes sont ignorées, la famille d'accord est déduite du nom.</p>
+    <div class="grid-2"><button class="btn ghost" data-action="demo-reload">Recharger la démo</button><button class="btn danger" data-action="vider-cave">Vider la cave</button></div></div></div>`;
+  H += `<div class="section"><details class="help"><summary>À propos de Vignolo</summary><div class="body">Vignolo est une application locale : références, mouvements, tâches et accords vivent dans ce navigateur (aucun compte, aucun serveur). Faites une sauvegarde JSON de temps en temps. Le moteur d'accords repose sur des règles de sommellerie lisibles (chaque score s'explique) et choisit uniquement parmi vos bouteilles en stock.<br><br>Version 1.0 · ${refsActives().length} références · ${S.moves.length} mouvements.</div></details></div>`;
+  $("#view-reglages").innerHTML = H;
+}
+function telecharger(nom, contenu, type) {
+  const file = new File([contenu], nom, {type});
+  if (navigator.canShare && navigator.canShare({files: [file]})) { navigator.share({files: [file], title: nom}).catch(() => {}); return; }
+  const a = document.createElement("a"); a.href = URL.createObjectURL(file); a.download = nom; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
+}
+function exporterCSV() {
+  const cols = ["nom", "domaine", "appellation", "region", "couleur", "millesime", "stock", "par", "cible", "prixAchat", "prixVente", "zone", "famille", "fournisseur", "notes"];
+  const esc = v => { v = v == null ? "" : String(v); return /[;"\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; };
+  const lignes = [cols.join(";")].concat(refsActives().map(r => cols.map(c => esc(r[c])).join(";")));
+  telecharger(`vignolo-cave-${today()}.csv`, "﻿" + lignes.join("\n"), "text/csv");
+}
+function importerCSV(txt) {
+  const lignes = txt.replace(/^﻿/, "").split(/\r?\n/).filter(l => l.trim()); if (!lignes.length) return 0;
+  const sep = [";", ",", "\t"].sort((a, b) => lignes[0].split(b).length - lignes[0].split(a).length)[0];
+  const split = l => { const out = []; let cur = "", q = false; for (const c of l) { if (c === '"') q = !q; else if (c === sep && !q) { out.push(cur); cur = ""; } else cur += c; } out.push(cur); return out.map(x => x.trim().replace(/^"|"$/g, "").replace(/""/g, '"')); };
+  const alias = {nom: "nom", vin: "nom", cuvee: "nom", domaine: "domaine", producteur: "domaine", appellation: "appellation", aoc: "appellation", region: "region", couleur: "couleur", type: "couleur", millesime: "millesime", annee: "millesime", stock: "stock", quantite: "stock", qte: "stock", mini: "par", par: "par", minimum: "par", seuil: "par", cible: "cible", prixachat: "prixAchat", achat: "prixAchat", pa: "prixAchat", prixvente: "prixVente", vente: "prixVente", carte: "prixVente", prixcarte: "prixVente", pv: "prixVente", zone: "zone", emplacement: "zone", famille: "famille", fournisseur: "fournisseur", notes: "notes", note: "notes"};
+  const head = split(lignes[0]).map(c => alias[VIG.norm(c).replace(/\s/g, "")] || null);
+  const avecEntete = head.some(Boolean); const ordre = avecEntete ? head : ["nom", "appellation", "couleur", "millesime", "stock", "par", "prixAchat"];
+  const coul = v => { v = VIG.norm(v); if (/champ|bulle|effer|cremant|mousseux|petill/.test(v)) return "bulles"; if (/rose/.test(v)) return "rose"; if (/doux|liquor|moell|porto|mute|sucre/.test(v)) return "doux"; if (/blanc|white/.test(v)) return "blanc"; if (/rouge|red/.test(v)) return "rouge"; return null; };
+  const zone = v => { v = VIG.norm(v); return VIG.ZONES.find(z => v.startsWith(z[0]))?.[0] || (v.includes("reserve") ? "reserve" : "cave"); };
+  let n = 0;
+  for (const l of lignes.slice(avecEntete ? 1 : 0)) { const c = split(l); const o = {}; ordre.forEach((k, i) => { if (k && c[i] != null) o[k] = c[i]; }); if (!o.nom) continue;
+    const num = v => { if (v == null || v === "") return null; const x = Number(String(v).replace(",", ".").replace(/[^\d.\-]/g, "")); return isNaN(x) ? null : x; };
+    const couleur = coul(o.couleur || "") || VIG.suggestCouleur(o.nom + " " + (o.appellation || "")) || "rouge";
+    const r = {id: uid(), nom: o.nom, domaine: o.domaine || "", appellation: o.appellation || "", region: o.region || "", couleur, millesime: num(o.millesime), stock: num(o.stock) || 0, par: num(o.par) || 0, cible: num(o.cible) || 0, prixAchat: num(o.prixAchat), prixVente: num(o.prixVente), zone: zone(o.zone || ""), format: 75, fournisseur: o.fournisseur || "", notes: o.notes || "", lastCount: null, createdAt: nowIso(), archive: false};
+    r.famille = (o.famille && VIG.FAM[o.famille]) ? o.famille : VIG.suggestFamille(r.nom + " " + r.appellation, couleur); S.refs.push(r); n++; }
+  if (n) { S.meta.demo = false; save(); }
+  return n;
+}
+
+/* =====================================================================
+   ACTIONS, ÉVÉNEMENTS, NAVIGATION, DÉMARRAGE
+   ===================================================================== */
+let VUE = "today";
+function render(v) { v = v || VUE; if (v === "today") renderToday(); else if (v === "cave") renderCave(); else if (v === "accords") renderAccords(); else renderReglages(); majTete(); }
+function majTete() {
+  $("#who-name").textContent = S.who; $("#who-av").textContent = initiales(S.who);
+  const n = nbAlertes(); const d = $("#dot-today"); d.textContent = n; d.classList.toggle("hidden", !n);
+  const c = refsActives().filter(aCompter).length; const dc = $("#dot-cave"); dc.textContent = c; dc.classList.toggle("hidden", !c);
+  $("#fab").classList.toggle("hidden", VUE !== "cave");
+}
+function go(v) { VUE = v; $$(".view").forEach(x => x.classList.toggle("on", x.id === "view-" + v)); $$(".tab").forEach(t => t.classList.toggle("on", t.dataset.view === v)); render(v); window.scrollTo({top: 0}); }
+function animerStock(id) { const b = document.querySelector(`.bottle[data-id="${id}"] .stock b`); if (b) { b.classList.remove("pop"); void b.offsetWidth; b.classList.add("pop"); } }
+function majBoutonCpt() { if (!CPT) return; const r = CPT.file[CPT.i]; const b = $("#sheet-foot .primary"); if (!r || !b) return; const d = CPT.val - (Number(r.stock) || 0); b.textContent = "Confirmer" + (d === 0 ? " (conforme)" : d > 0 ? ` (+${d})` : ` (${d})`); }
+function renderCaveListe() { const q = $("#q"); const pos = q ? q.selectionStart : 0; renderCave(); const q2 = $("#q"); if (q2 && q) { q2.focus(); try { q2.setSelectionRange(pos, pos); } catch (e) {} } }
+function lireFichier(input, cb) { const f = input.files && input.files[0]; input.value = ""; if (!f) return; const rd = new FileReader(); rd.onload = () => cb(String(rd.result || "")); rd.readAsText(f); }
+
+const ACTIONS = {
+  go: el => go(el.dataset.view),
+  who: () => openSheet("Qui tient la cave ?", `<div class="chips">${S.team.map(n => `<button class="chip ${n === S.who ? "on" : ""}" data-action="who-set" data-n="${h(n)}">${h(n)}</button>`).join("")}</div><p class="tiny" style="margin-top:10px">Chaque vente, casse ou comptage est signé par la personne active. L'équipe se gère dans Réglages.</p>`),
+  "who-set": el => { S.who = el.dataset.n; save(); closeSheet(); render(); toast(`${S.who} tient la cave`); },
+  "close-sheet": () => closeSheet(),
+  "demo-vider": () => { if (confirm("Supprimer la cave de démonstration (bouteilles, mouvements, tâches) pour commencer la vôtre ?")) { viderCave(); render(); toast("Cave vide. Ajoutez votre première bouteille avec +"); } },
+  "demo-reload": () => { if (confirm("Remplacer la cave actuelle par la démonstration ?")) { const s = etatDefaut(); s.settings = S.settings; semerDemo(s); S = s; save(); render(); toast("Démo rechargée"); } },
+  "vider-cave": () => { if (confirm("Vider toute la cave ? Pensez à exporter un JSON avant.")) { viderCave(); render(); toast("Cave vidée"); } },
+  "count-start": el => ouvrirComptage(el.dataset.zone || null),
+  "count-one": el => ouvrirComptage(null, [el.dataset.id]),
+  "cpt-step": el => { CPT.val = Math.max(0, CPT.val + Number(el.dataset.d)); const v = $("#cpt-val"); v.textContent = CPT.val; v.classList.remove("pop"); void v.offsetWidth; v.classList.add("pop"); $("#cpt-input").value = CPT.val; vibre(8); majBoutonCpt(); },
+  "cpt-skip": () => { CPT.i++; renderComptage(); },
+  "cpt-ok": () => { const r = CPT.file[CPT.i]; const v = Math.max(0, Math.round(Number($("#cpt-input").value) || 0)); compter(r.id, v); CPT.faits++; CPT.i++; vibre(12); if (CPT) renderComptage(); },
+  "task-toggle": el => { const k = el.dataset.k; if (el.dataset.manuel === "1") { const t = S.tasks.find(x => x.id === k); if (t) { t.done = !t.done; t.doneAt = t.done ? nowIso() : null; } } else { if (S.autoDone[k] === today()) delete S.autoDone[k]; else S.autoDone[k] = today(); } save(); vibre(8); render(); },
+  filt: el => { const f = el.dataset.f, v = el.dataset.v; F[f] = (f === "only" && F.only === v) ? "" : v; renderCave(); },
+  mvt: el => { const r = refById(el.dataset.id); if (!r) return; const q = Number(el.dataset.qty); if (q < 0 && (Number(r.stock) || 0) <= 0) { toast("Déjà à zéro"); return; } mouvement(r.id, el.dataset.type, q); vibre(8); toast(`${TYPES_MVT[el.dataset.type][0]} · ${r.nom} → ${r.stock}`); if (sheetCtx === "ref") ouvrirRef(r.id); render(); animerStock(r.id); },
+  "mvt-qty": el => { const r = refById(el.dataset.id); const type = el.dataset.type; openSheet(`${TYPES_MVT[type][0]} · ${r.nom}`, `<div class="card flat" style="text-align:center"><div class="tiny">Combien de bouteilles ?</div><div class="stepper big" style="margin:12px auto"><button data-action="qty-step" data-d="-1" aria-label="Moins">−</button><span class="v" id="qty-val">6</span><button data-action="qty-step" data-d="1" aria-label="Plus">+</button></div><input class="input num" id="qty-input" type="number" inputmode="numeric" min="1" value="6" style="max-width:140px;margin:0 auto;text-align:center"></div>`, `<button class="btn ghost" data-action="ref-open" data-id="${r.id}">Annuler</button><button class="btn primary grow" data-action="qty-ok" data-id="${r.id}" data-type="${type}">Valider</button>`); },
+  "qty-step": el => { const i = $("#qty-input"); i.value = Math.max(1, (Number(i.value) || 0) + Number(el.dataset.d)); $("#qty-val").textContent = i.value; },
+  "qty-ok": el => { const q = Math.max(1, Math.round(Number($("#qty-input").value) || 1)); const r = refById(el.dataset.id); mouvement(r.id, el.dataset.type, q); toast(`+${q} · ${r.nom} → ${r.stock}`); ouvrirRef(r.id); render(); },
+  "ref-open": el => ouvrirRef(el.dataset.id),
+  "ref-edit": el => ouvrirFiche(el.dataset.id),
+  "add-ref": () => ouvrirFiche(null),
+  "ref-archive": el => { const r = refById(el.dataset.id); if (r && confirm(`Archiver « ${r.nom} » ? La référence sort de la cave, l'historique reste.`)) { r.archive = true; save(); closeSheet(); render(); toast("Archivée"); } },
+  "ref-submit": () => { const f = $("#f-ref"); const o = lireFiche(); if (!o) return; const id = f.dataset.id;
+    if (id) { const r = refById(id); const avant = Number(r.stock) || 0; Object.assign(r, o); if (o.stock !== avant) { r.stock = avant; mouvement(id, "correction", o.stock - avant, "corrigé dans la fiche"); } }
+    else S.refs.push(Object.assign({id: uid(), createdAt: nowIso(), lastCount: null, archive: false}, o));
+    save(); closeSheet(); render(); toast(id ? "Fiche enregistrée" : `${o.nom} ajouté à la cave`); majBadges(); },
+  seg: el => { const f = $("#f-ref"); if (!f) return; el.parentElement.querySelectorAll("button").forEach(b => b.classList.toggle("on", b === el)); f[el.dataset.name].value = el.dataset.v; if (el.dataset.name === "couleur") majHintFamille(); },
+  "scan-etiquette": () => demanderImage("etiquette"),
+  "scan-plat": () => demanderImage("plat"),
+  "img-cam": () => $("#f-cam").click(),
+  "img-lib": () => $("#f-lib").click(),
+  "focus-plats": () => { const t = $("#plats"); t.focus(); t.scrollIntoView({behavior: "smooth", block: "center"}); },
+  "ex-plat": el => { $("#plats").value = EXEMPLES[Number(el.dataset.i)]; lancerAccords(); },
+  "accords-go": () => lancerAccords(),
+  "acc-save": () => sauverAccord(),
+  "acc-clear": () => { ACC.plats = []; ACC.photo = null; ACC.erreur = ""; ACC.texte = ""; ACC.notesIA = ""; renderAccords(); },
+  "acc-open": el => { const a = S.accords.find(x => x.id === el.dataset.id); if (!a) return; ACC.plats = a.plats.map(p => Object.assign({}, p)); ACC.texte = a.texte; ACC.photo = null; ACC.erreur = ""; ACC.notesIA = ""; renderAccords(); $("#acc-result").scrollIntoView({behavior: "smooth"}); },
+  "team-del": (el, e) => { e.stopPropagation(); const n = el.dataset.n; if (S.team.length <= 1) { toast("Il faut au moins une personne"); return; } S.team = S.team.filter(x => x !== n); if (S.who === n) S.who = S.team[0]; save(); render(); },
+  theme: el => { S.settings.theme = el.dataset.v; save(); applyTheme(); renderReglages(); },
+  "export-json": () => telecharger(`vignolo-${today()}.json`, JSON.stringify(S, null, 1), "application/json"),
+  "import-json": () => $("#f-json").click(),
+  "export-csv": () => exporterCSV(),
+  "import-csv": () => $("#f-csv").click(),
+};
+
+document.addEventListener("click", e => { const el = e.target.closest("[data-action]"); if (!el) return; const fn = ACTIONS[el.dataset.action]; if (fn) { e.preventDefault(); fn(el, e); } });
+$("#veil").addEventListener("click", closeSheet);
+document.addEventListener("keydown", e => { if (e.key === "Escape") closeSheet(); });
+document.addEventListener("submit", e => { const f = e.target.closest("[data-form]"); if (!f) return; e.preventDefault(); const k = f.dataset.form;
+  if (k === "task-add") { const t = f.titre.value.trim(); if (!t) return; S.tasks.push({id: uid(), titre: t, done: false, createdAt: nowIso(), due: null}); save(); render(); toast("Tâche ajoutée"); }
+  else if (k === "team-add") { const n = f.n.value.trim(); if (!n || S.team.includes(n)) return; S.team.push(n); save(); render(); }
+  else if (k === "ref-save") ACTIONS["ref-submit"](); });
+document.addEventListener("input", e => { const t = e.target;
+  if (t.id === "q") { F.q = t.value; renderCaveListe(); }
+  else if (t.id === "cpt-input" && CPT) { CPT.val = Math.max(0, Number(t.value) || 0); $("#cpt-val").textContent = CPT.val; majBoutonCpt(); }
+  else if (t.id === "qty-input") $("#qty-val").textContent = t.value;
+  else if (t.form && t.form.id === "f-ref" && (t.name === "nom" || t.name === "appellation")) majHintFamille(); });
+document.addEventListener("change", e => { const t = e.target; const k = t.dataset.change;
+  if (!k) {
+    if (t.id === "f-cam" || t.id === "f-lib") { const f = t.files && t.files[0]; t.value = ""; traiterImage(f); }
+    else if (t.id === "f-json") lireFichier(t, txt => { try { const j = JSON.parse(txt); if (!j || !Array.isArray(j.refs)) throw 0; if (!confirm(`Restaurer cette sauvegarde (${j.refs.length} références) à la place de la cave actuelle ?`)) return; S = Object.assign(etatDefaut(), j, {settings: Object.assign(etatDefaut().settings, j.settings || {})}); save(); applyTheme(); render(); toast("Sauvegarde restaurée"); } catch (x) { toast("Fichier JSON invalide"); } });
+    else if (t.id === "f-csv") lireFichier(t, txt => { if (S.meta.demo && S.refs.length && confirm("Retirer la cave de démonstration avant d'importer ?")) viderCave(); const n = importerCSV(txt); toast(n ? `${plur(n, "référence importée", "références importées")}` : "Aucune ligne lisible"); go("cave"); });
+    else if (t.form && t.form.id === "f-ref" && t.name === "famille") majHintFamille();
+    return; }
+  if (k === "temps") { ACC.plats[Number(t.dataset.i)].temps = t.value; $("#acc-result").innerHTML = renderResultat(); }
+  else if (k === "rythme") { S.settings.rythme = S.settings.rythme || {}; S.settings.rythme[t.dataset.z] = Math.max(1, Number(t.value) || 7); save(); majTete(); }
+  else if (k === "tolerance") { S.settings.tolerance = Math.max(0, Number(t.value) || 0); save(); }
+  else if (k === "apiKey" || k === "model" || k === "effort") { S.settings[k] = String(t.value).trim(); save(); toast("Réglage enregistré"); } });
+document.addEventListener("visibilitychange", () => { if (!document.hidden) render(); });
+
+/* ---------- Démarrage ---------- */
+applyTheme(); go("today"); majBadges(); save();   /* la cave du premier lancement est gardée telle quelle, d'une ouverture à l'autre */
+if (S.meta.demoMaj) { const m = S.meta.demoMaj; delete S.meta.demoMaj; save(); setTimeout(() => toast(m === "auto" ? `Cave de démonstration mise à jour : ${S.refs.length} références` : "Nouvelle démo disponible : Réglages › Recharger la démo"), 600); }
+try { if (STOCKAGE_OK && "serviceWorker" in navigator && isSecureContext && location.protocol !== "file:") navigator.serviceWorker.register("./sw.js").catch(() => {}); } catch (e) {}
+</script>
+</body>
+</html>

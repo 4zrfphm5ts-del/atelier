@@ -1,0 +1,32 @@
+{
+  "name": "Vignolo",
+  "short_name": "Vignolo",
+  "orientation": "portrait",
+  "lang": "fr",
+  "background_color": "#F6F1E9",
+  "theme_color": "#F6F1E9",
+  "description": "La cave du restaurant qui sait où elle en est : inventaire, familles d'accords mets et vins, tâches du jour, analyse d'un plat. Local, sans compte.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
