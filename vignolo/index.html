@@ -90,7 +90,7 @@ main{flex:1;width:100%;max-width:760px;margin:0 auto;padding:16px 16px calc(var(
 .view.on{display:block}
 @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
 .tabbar{position:fixed;left:0;right:0;bottom:0;z-index:30;background:color-mix(in srgb,var(--surface) 92%,transparent);backdrop-filter:saturate(1.4) blur(16px);-webkit-backdrop-filter:saturate(1.4) blur(16px);border-top:1px solid var(--line);padding-bottom:var(--safe-b)}
-.tabbar-in{max-width:760px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);height:var(--tab-h)}
+.tabbar-in{max-width:760px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr);height:var(--tab-h)}
 .tab{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:var(--ink-3);font-size:11px;font-weight:600;letter-spacing:.02em;position:relative;transition:color .15s}
 .tab svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .tab.on{color:var(--wine)}
@@ -310,6 +310,59 @@ details.help .body{padding:0 0 14px;font-size:13.5px;color:var(--ink-2);line-hei
 @media (min-width:900px){.fab{bottom:28px;right:calc(50% - 380px + 16px)}}
 .shake{animation:shake .3s}
 @keyframes shake{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+
+/* ---------- Atlas : carte des vignobles, catalogue, quiz ---------- */
+.carte{position:relative;background:#0E1A24;border-radius:var(--r);overflow:hidden;border:1px solid var(--line);height:min(60vh,520px);touch-action:none;user-select:none;-webkit-user-select:none}
+.carte svg.schema{width:100%;height:100%;display:block;cursor:grab}
+.carte svg.schema:active{cursor:grabbing}
+.carte .terre{fill:#1B2A36;stroke:#2F4656;stroke-width:1;vector-effect:non-scaling-stroke}
+.carte .pt circle{stroke:#0E1A24;stroke-width:1.2;vector-effect:non-scaling-stroke;cursor:pointer}
+.carte .pt.encave circle{stroke:#FFFFFF;stroke-width:2}
+.carte text{font-family:var(--sans);fill:#DCE7EF;paint-order:stroke;stroke:#0E1A24;stroke-linejoin:round;pointer-events:none;font-weight:600}
+.carte text.pays{fill:#9FB3C2;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.carte .reg circle{fill:rgba(201,168,76,.22);stroke:#C9A84C;stroke-width:1.2;vector-effect:non-scaling-stroke;cursor:pointer}
+.carte .ctl{position:absolute;right:10px;top:10px;display:flex;flex-direction:column;gap:6px;z-index:5}
+.carte .ctl button,.carte .vues button{height:34px;min-width:34px;padding:0 10px;border-radius:10px;background:rgba(14,26,36,.86);color:#E8F0F5;border:1px solid rgba(255,255,255,.16);font-size:13px;font-weight:600;backdrop-filter:blur(6px)}
+.carte .vues{position:absolute;left:10px;top:10px;display:flex;gap:6px;z-index:5}
+.carte .ctl svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;display:block;margin:0 auto}
+.carte .leg{position:absolute;left:10px;bottom:10px;max-width:calc(100% - 110px);display:flex;gap:9px;flex-wrap:wrap;font-size:11px;color:#C9D5DD;z-index:5;background:rgba(14,26,36,.7);padding:5px 9px;border-radius:9px}
+@media (max-width:460px){.filtres-atlas{grid-template-columns:1fr}}
+.carte .leg i{width:9px;height:9px;border-radius:50%;display:inline-block;margin-right:4px;vertical-align:-1px}
+.carte .attrib{position:absolute;right:8px;bottom:6px;font-size:10px;color:#93A6B2;z-index:5;background:rgba(14,26,36,.7);padding:2px 6px;border-radius:6px}
+.carte .attrib a{color:#C9D5DD}
+#fond-leaflet{position:absolute;inset:0;z-index:1;display:none}
+.carte.detail #fond-leaflet{display:block}
+.carte.detail svg.schema{visibility:hidden}.carte.detail .leg{display:none}   /* le svg garde sa boîte : vbSet, centre() et synchroVersSvg le mesurent encore */
+.carte .vide{position:absolute;inset:0;display:grid;place-items:center;color:#C9D5DD;font-size:14px;text-align:center;padding:24px}
+.vin{display:grid;grid-template-columns:6px 1fr auto;gap:0 12px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:11px 14px 11px 12px;box-shadow:var(--shadow);cursor:pointer;width:100%;text-align:left}
+.vin + .vin{margin-top:8px}
+.vin .bar{width:6px;align-self:stretch;border-radius:3px;background:var(--c-rouge)}
+.vin .bar.blanc{background:var(--c-blanc)}.vin .bar.rose{background:var(--c-rose)}.vin .bar.bulles{background:var(--c-bulles)}.vin .bar.doux{background:var(--c-doux)}
+.vin .nm{font-weight:650;font-size:14.5px;line-height:1.25}
+.vin .meta{font-size:12.5px;color:var(--ink-2);margin-top:2px}
+.vin .niv{font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-3);font-weight:700;text-align:right;white-space:nowrap}
+.vin .niv b{display:block;font-size:14px;letter-spacing:0;color:var(--ink);text-transform:none}
+.vin.encave .niv{color:var(--good)}
+.pick.ideal{background:var(--surface);border-style:dashed}
+.pick.ideal .q{font-size:13px}
+.pick .acts{grid-column:2/4;display:flex;gap:6px;margin-top:8px}
+.pick .acts .btn{min-height:30px;padding:0 10px;font-size:12px;border-radius:8px}
+.quiz-opt{display:block;width:100%;text-align:left;padding:12px 14px;border-radius:12px;background:var(--surface);border:1px solid var(--line);font-weight:600;font-size:14.5px;margin-top:8px;transition:background .15s}
+.quiz-opt.good{background:var(--good-soft);border-color:var(--good)}
+.quiz-opt.bad{background:var(--bad-soft);border-color:var(--bad)}
+.quiz-opt[disabled]{pointer-events:none}
+.quiz-q{font-family:var(--serif);font-weight:500;font-size:21px;line-height:1.25;margin:4px 0 10px}
+.lecon{counter-increment:lecon}
+.lecon h3{display:flex;gap:10px;align-items:baseline;font-size:15px}
+.lecon h3::before{content:counter(lecon);width:26px;height:26px;border-radius:50%;background:var(--gold-soft);color:var(--gold);font-size:12px;font-weight:700;display:inline-grid;place-items:center;flex:none;font-family:var(--sans)}
+.lecon p{font-size:13.5px;color:var(--ink-2);margin-top:6px;line-height:1.5}
+.lecon .ex{margin-top:8px;font-size:13px;padding:8px 10px;border-radius:10px;background:var(--surface-2)}
+.lecons{counter-reset:lecon}
+.stat-row{display:flex;gap:14px;flex-wrap:wrap}
+.stat-row b{font-size:22px;font-weight:650}
+.stat-row span{display:block;font-size:11.5px;color:var(--ink-3)}
+.tabbar-in{grid-template-columns:repeat(5,1fr)}
+.tab .dot{right:calc(50% - 18px)}
 </style>
 </head>
 <body>
@@ -327,6 +380,8 @@ details.help .body{padding:0 0 14px;font-size:13.5px;color:var(--ink-2);line-hei
   <symbol id="i-box" viewBox="0 0 24 24"><path d="M3 8l9-4 9 4v9l-9 4-9-4z"/><path d="M3 8l9 4 9-4M12 12v9"/></symbol>
   <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 3l2 6 6 2-6 2-2 6-2-6-6-2 6-2z"/></symbol>
   <symbol id="i-list" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/></symbol>
+  <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.5 3 14.5 0 18M12 3c-3 3.5-3 14.5 0 18"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s-6-5.3-6-11a6 6 0 0 1 12 0c0 5.7-6 11-6 11z"/><circle cx="12" cy="10" r="2.2"/></symbol>
 </svg>
 
 <div id="app">
@@ -344,6 +399,7 @@ details.help .body{padding:0 0 14px;font-size:13.5px;color:var(--ink-2);line-hei
     <section class="view on" id="view-today" aria-label="Aujourd'hui"></section>
     <section class="view" id="view-cave" aria-label="Cave"></section>
     <section class="view" id="view-accords" aria-label="Accords"></section>
+    <section class="view" id="view-atlas" aria-label="Atlas du vin"></section>
     <section class="view" id="view-reglages" aria-label="Réglages"></section>
   </main>
 
@@ -352,6 +408,7 @@ details.help .body{padding:0 0 14px;font-size:13.5px;color:var(--ink-2);line-hei
       <button class="tab on" data-action="go" data-view="today"><svg><use href="#i-today"/></svg>Aujourd'hui<span class="dot hidden" id="dot-today"></span></button>
       <button class="tab" data-action="go" data-view="cave"><svg><use href="#i-cave"/></svg>Cave<span class="dot hidden" id="dot-cave"></span></button>
       <button class="tab" data-action="go" data-view="accords"><svg><use href="#i-accord"/></svg>Accords</button>
+      <button class="tab" data-action="go" data-view="atlas"><svg><use href="#i-globe"/></svg>Atlas</button>
       <button class="tab" data-action="go" data-view="reglages"><svg><use href="#i-set"/></svg>Réglages</button>
     </div>
   </nav>
@@ -391,34 +448,34 @@ const FAMILLES = [
   mots:["champagne","cremant","cava","prosecco","franciacorta","petillant","pet nat","blanquette","clairette de die","lambrusco","spumante","sekt","bulles","effervescent","mousseux","brut nature","extra brut"]},
  {k:"blanc_vif", nom:"Blancs vifs", long:"Blancs secs, vifs et minéraux", couleur:"blanc", puissance:1.5, temp:"8 à 10 °C", glyph:"V",
   ideal:"huîtres et coquillages, poissons grillés ou crus, chèvres frais, salades, asperges", eviter:"viandes rouges, plats crémeux lourds, desserts",
-  mots:["muscadet","sancerre","pouilly fume","chablis","petit chablis","picpoul","entre deux mers","albarino","vinho verde","riesling","menetou","quincy","reuilly","aligote","sylvaner","sauvignon","cheverny","saint bris","bourgogne blanc","macon","saint veran","pouilly fuisse","gros plant","cotes de gascogne","gruner","assyrtiko","vermentino","rolle","chenin sec","vouvray sec","savennieres","jurancon sec","limoux","gaillac","bergerac sec","graves blanc","txakoli","pinot blanc","auxerrois","soave","verdicchio","gavi","chardonnay non boise","sauvignon blanc","muscadet sevre"]},
+  mots:["muscadet","sancerre","pouilly fume","chablis","petit chablis","picpoul","entre deux mers","albarino","vinho verde","riesling","menetou","quincy","reuilly","aligote","sylvaner","sauvignon","cheverny","saint bris","bourgogne blanc","macon","saint veran","gros plant","cotes de gascogne","gruner","assyrtiko","vermentino","rolle","chenin sec","vouvray sec","limoux","gaillac","bergerac sec","graves blanc","txakoli","pinot blanc","auxerrois","soave","verdicchio","gavi","chardonnay non boise","sauvignon blanc","muscadet sevre","saint aubin","rully","manzanilla","fino"]},
  {k:"blanc_ample", nom:"Blancs amples", long:"Blancs amples, riches ou boisés", couleur:"blanc", puissance:3, temp:"10 à 12 °C", glyph:"A",
   ideal:"poissons en sauce, volailles à la crème, homard, risotto, champignons, comté", eviter:"huîtres nature, plats très acides",
-  mots:["meursault","puligny","chassagne","corton charlemagne","montrachet","pessac leognan blanc","hermitage blanc","saint joseph blanc","crozes blanc","chateauneuf blanc","chardonnay","marsanne","roussanne","savagnin","vin jaune","chateau chalon","arbois blanc","saint aubin","rully","mercurey blanc","pernand","ladoix","beaune blanc","fume blanc","vin de paille","chardonnay boise","cote de beaune blanc"]},
+  mots:["meursault","puligny","chassagne","corton charlemagne","montrachet","pessac leognan blanc","hermitage blanc","saint joseph blanc","crozes blanc","chateauneuf blanc","chardonnay","marsanne","roussanne","savagnin","vin jaune","chateau chalon","arbois blanc","mercurey blanc","pernand","ladoix","beaune blanc","fume blanc","chardonnay boise","cote de beaune blanc","pouilly fuisse","savennieres"]},
  {k:"blanc_aromatique", nom:"Blancs aromatiques", long:"Blancs aromatiques et épicés", couleur:"blanc", puissance:2.5, temp:"9 à 11 °C", glyph:"R",
   ideal:"cuisine asiatique et épicée, curry doux, munster et pâtes lavées, foie gras (gewurztraminer)", eviter:"poissons délicats nature, plats très acides",
-  mots:["gewurztraminer","gewurz","viognier","condrieu","pinot gris","tokay","muscat sec","muscat d alsace","torrontes","alsace","chateau grillet","malvasia","malvoisie","moschofilero","sauvignon gris","clairette","bourboulenc","grenache blanc"]},
+  mots:["gewurztraminer","gewurz","viognier","condrieu","pinot gris","tokay","muscat sec","muscat d alsace","torrontes","alsace","chateau grillet","malvasia","malvoisie","moschofilero","sauvignon gris","clairette","bourboulenc","grenache blanc","jurancon sec"]},
  {k:"rose", nom:"Rosés", long:"Rosés", couleur:"rose", puissance:2, temp:"8 à 10 °C", glyph:"O",
   ideal:"grillades, cuisine méditerranéenne, salades composées, tapas, tomates", eviter:"desserts, viandes rouges en sauce",
   mots:["rose","provence","tavel","bandol rose","cotes de provence","coteaux d aix","coteaux varois","sable de camargue","gris de gris","rose de loire","marsannay rose","sancerre rose","clairet","rosato","rosado"]},
  {k:"rouge_leger", nom:"Rouges légers", long:"Rouges légers et fruités", couleur:"rouge", puissance:3, temp:"13 à 15 °C", glyph:"L",
   ideal:"charcuteries, volailles rôties, poissons gras (thon, saumon), plats végétariens, tomates, brie et camembert", eviter:"gibier, plats très puissants, desserts",
-  mots:["beaujolais","gamay","morgon","fleurie","brouilly","chiroubles","julienas","moulin a vent","saint amour","regnie","chenas","pinot noir","bourgogne rouge","hautes cotes","marsannay","savigny","santenay","monthelie","sancerre rouge","alsace pinot noir","bardolino","valpolicella","trousseau","poulsard","ploussard","arbois rouge","cote roannaise","saint pourcain","cheverny rouge","touraine gamay","bourgueil","saint nicolas de bourgueil","anjou rouge","frappato","schiava","zweigelt","blaufrankisch","mencia","cinsault","pineau d aunis","grolleau","dolcetto","bourgogne passetoutgrain","cotes d auvergne"]},
+  mots:["beaujolais","gamay","fleurie","brouilly","chiroubles","saint amour","regnie","pinot noir","bourgogne rouge","hautes cotes","marsannay","savigny","monthelie","sancerre rouge","alsace pinot noir","bardolino","valpolicella","trousseau","poulsard","ploussard","arbois rouge","cote roannaise","saint pourcain","cheverny rouge","touraine gamay","bourgueil","saint nicolas de bourgueil","frappato","schiava","zweigelt","blaufrankisch","mencia","cinsault","pineau d aunis","grolleau","dolcetto","bourgogne passetoutgrain","cotes d auvergne","volnay","givry","cotes du forez","marcillac"]},
  {k:"rouge_souple", nom:"Rouges souples", long:"Rouges souples et gourmands", couleur:"rouge", puissance:4, temp:"15 à 17 °C", glyph:"S",
   ideal:"viandes blanches, plats mijotés, pâtes et pizzas, canard, fromages à pâte molle", eviter:"desserts, huîtres, poissons crus",
-  mots:["cotes du rhone","chinon","saumur champigny","cabernet franc","bordeaux superieur","bordeaux","cotes de bourg","cotes de blaye","blaye","fronsac","castillon","chianti","sangiovese","montepulciano","merlot","rioja","tempranillo","bergerac rouge","pecharmant","buzet","cotes du marmandais","cote de beaune","volnay","pommard","chambolle","nuits saint georges","vosne","gevrey","morey","givry","mercurey","rully rouge","cote chalonnaise","ventoux","luberon","costieres de nimes","lirac","barbera","nero d avola","cotes du roussillon","valpolicella ripasso","crozes hermitage","saint joseph","cotes du vivarais","cotes du forez","vin de savoie rouge","mondeuse","cotes du jura rouge","lalande de pomerol","montagne saint emilion","lussac","graves rouge","medoc","haut medoc","moulis","listrac"]},
+  mots:["cotes du rhone","chinon","saumur champigny","cabernet franc","bordeaux superieur","bordeaux","cotes de bourg","cotes de blaye","blaye","castillon","chianti","sangiovese","montepulciano","merlot","rioja","tempranillo","bergerac rouge","buzet","cotes du marmandais","cote de beaune","pommard","chambolle","nuits saint georges","vosne","gevrey","morey","mercurey","rully rouge","cote chalonnaise","ventoux","luberon","costieres de nimes","barbera","valpolicella ripasso","crozes hermitage","saint joseph","cotes du vivarais","vin de savoie rouge","mondeuse","cotes du jura rouge","lalande de pomerol","montagne saint emilion","lussac","graves rouge","moulis","listrac","morgon","julienas","moulin a vent","chenas","santenay","anjou rouge","saint emilion","bierzo","corton","echezeaux","musigny","fronton","minervois","cotes du rhone villages","malepere","cabardes"]},
  {k:"rouge_puissant", nom:"Rouges puissants", long:"Rouges puissants et tanniques", couleur:"rouge", puissance:6, temp:"16 à 18 °C", glyph:"P",
   ideal:"viandes rouges grillées ou rôties, gibier, agneau, truffe, fromages affinés à pâte dure", eviter:"poissons, plats épicés, desserts, artichaut",
-  mots:["pauillac","saint estephe","saint julien","margaux","pessac leognan","saint emilion grand cru","saint emilion","pomerol","cahors","malbec","madiran","tannat","barolo","barbaresco","nebbiolo","brunello","cote rotie","hermitage","cornas","syrah","shiraz","bandol","mourvedre","ribera del duero","priorat","cabernet sauvignon","toro","bierzo","douro","aglianico","taurasi","sagrantino","amarone","cote de nuits","corton","clos de vougeot","richebourg","romanee","echezeaux","chambertin","bonnes mares","musigny","grand cru classe","irouleguy","marcillac","fronton","pecharmant","bordeaux grand cru","napa","super toscan","bolgheri"]},
+  mots:["pauillac","saint estephe","saint julien","margaux","pessac leognan","saint emilion grand cru","pomerol","cahors","malbec","madiran","tannat","barolo","barbaresco","nebbiolo","brunello","cote rotie","hermitage","cornas","syrah","shiraz","bandol","mourvedre","ribera del duero","priorat","cabernet sauvignon","toro","douro","aglianico","taurasi","sagrantino","amarone","cote de nuits","clos de vougeot","richebourg","romanee","chambertin","bonnes mares","grand cru classe","irouleguy","pecharmant","bordeaux grand cru","napa","super toscan","bolgheri","fronsac","medoc","haut medoc","fitou","pic saint loup","cotes du roussillon villages"]},
  {k:"rouge_solaire", nom:"Rouges solaires", long:"Rouges solaires et épicés", couleur:"rouge", puissance:5, temp:"15 à 17 °C", glyph:"E",
   ideal:"agneau, tajines et plats épicés doux, grillades au feu de bois, cuisine du sud, ratatouille", eviter:"poissons délicats, desserts, huîtres",
-  mots:["chateauneuf du pape","chateauneuf","gigondas","vacqueyras","rasteau","cairanne","languedoc","minervois","corbieres","faugeres","saint chinian","fitou","pic saint loup","terrasses du larzac","la clape","cotes du roussillon villages","collioure","maury sec","montsant","zinfandel","primitivo","grenache","carignan","pays d oc","igp oc","cannonau","garnacha","jumilla","monastrell","rhone sud","cotes du rhone villages","plan de dieu","seguret","visan","valreas","sablet","beaumes de venise rouge","vinsobres","malepere","cabardes","saint georges d orques","pic saint loup rouge"]},
+  mots:["chateauneuf du pape","chateauneuf","gigondas","vacqueyras","rasteau","cairanne","languedoc","corbieres","faugeres","saint chinian","terrasses du larzac","la clape","collioure","maury sec","montsant","zinfandel","primitivo","grenache","carignan","pays d oc","igp oc","cannonau","garnacha","jumilla","monastrell","rhone sud","plan de dieu","seguret","visan","valreas","sablet","beaumes de venise rouge","vinsobres","saint georges d orques","pic saint loup rouge","lirac","nero d avola","cotes du roussillon"]},
  {k:"blanc_doux", nom:"Moelleux et liquoreux", long:"Blancs moelleux et liquoreux", couleur:"doux", puissance:7, temp:"8 à 10 °C", glyph:"M",
   ideal:"foie gras, roquefort, desserts aux fruits jaunes, tartes, cuisine sucrée-salée", eviter:"viandes rouges, plats salés classiques, chocolat noir",
-  mots:["sauternes","barsac","monbazillac","jurancon","coteaux du layon","layon","quarts de chaume","bonnezeaux","vouvray moelleux","vouvray demi sec","montlouis moelleux","vendanges tardives","selection de grains nobles","grains nobles","tokaji","aszu","moelleux","liquoreux","loupiac","sainte croix du mont","cadillac","cerons","pacherenc","gaillac doux","muscat de beaumes","beaumes de venise","muscat de rivesaltes","passito","vin de glace","icewine","eiswein","recioto","trockenbeerenauslese","beerenauslese","spatlese","auslese","demi sec","muscat de frontignan","muscat de lunel","muscat de mireval","muscat du cap corse"]},
+  mots:["sauternes","barsac","monbazillac","jurancon","coteaux du layon","layon","quarts de chaume","bonnezeaux","vouvray moelleux","vouvray demi sec","montlouis moelleux","vendanges tardives","selection de grains nobles","grains nobles","tokaji","aszu","moelleux","liquoreux","loupiac","sainte croix du mont","cadillac","cerons","pacherenc","gaillac doux","muscat de beaumes","beaumes de venise","passito","vin de glace","icewine","eiswein","recioto","trockenbeerenauslese","beerenauslese","spatlese","auslese","demi sec","vin de paille"]},
  {k:"vdn", nom:"Vins doux naturels", long:"Vins doux naturels, mutés et portos", couleur:"doux", puissance:8, temp:"12 à 16 °C", glyph:"D",
   ideal:"chocolat, bleus, desserts au caramel et aux fruits secs, digestif", eviter:"poissons, salades, plats légers",
-  mots:["porto","port","banyuls","maury","rivesaltes","madere","xeres","sherry","jerez","pedro ximenez","oloroso","marsala","pineau des charentes","pineau","floc de gascogne","macvin","ratafia","rasteau vdn","vin doux naturel","malaga","commandaria","mistelle","tawny","ruby","lbv","vintage port","rancio","rivesaltes ambre","maury rouge","banyuls grand cru"]},
+  mots:["porto","port","banyuls","maury","rivesaltes","madere","xeres","sherry","jerez","pedro ximenez","oloroso","marsala","pineau des charentes","pineau","floc de gascogne","macvin","ratafia","rasteau vdn","vin doux naturel","malaga","commandaria","mistelle","tawny","ruby","lbv","vintage port","rancio","rivesaltes ambre","maury rouge","banyuls grand cru","muscat de rivesaltes","muscat de frontignan","muscat de lunel","muscat de mireval","muscat du cap corse"]},
 ];
 const FAM = Object.fromEntries(FAMILLES.map(f => [f.k, f]));
 const FAM_KEYS = FAMILLES.map(f => f.k);
@@ -460,7 +517,9 @@ const TAGS = {
  grille:{l:"grillé",w:1,why:"le grillé supporte un peu de tanin et de puissance"},
  roti:{l:"rôti",w:1,why:"le rôti aime les rouges mûrs"},
  mijote:{l:"mijoté",w:1,why:"un plat mijoté veut un rouge souple ou chaleureux"},
- frit:{l:"frit",w:0.7,why:"la friture est tranchée par des bulles ou un blanc vif"},
+ frit:{l:"frit",w:1,why:"la friture est tranchée par des bulles ou un blanc vif"},
+ choucroute:{l:"choucroute",w:4,why:"la choucroute est alsacienne : riesling, sylvaner ou bulles, jamais un rouge tannique"},
+ cassoulet:{l:"cassoulet",w:4,why:"le cassoulet veut un rouge du Sud-Ouest, charpenté, qui tient tête au gras"},
  vapeur:{l:"vapeur, poché",w:1,why:"une cuisson douce veut un vin délicat"},
  fume:{l:"fumé",w:1,why:"le fumé aime un blanc aromatique ou un rouge léger"},
  creme:{l:"crème, beurre",w:1.5,why:"la crème appelle un blanc ample et rond"},
@@ -524,12 +583,14 @@ const R = {
  grille:{rouge_puissant:1.5,rouge_solaire:1,rouge_souple:0.5,rose:0.5,blanc_ample:0.5,bulles:-0.5,blanc_doux:-1,vdn:-1},
  roti:{rouge_souple:1,rouge_puissant:1,blanc_ample:0.5,rouge_leger:0.5,blanc_doux:-1,vdn:-1},
  mijote:{rouge_souple:1.5,rouge_puissant:1,rouge_solaire:1,blanc_ample:0.5,blanc_vif:-1,bulles:-1,rose:-0.5,blanc_doux:-1,vdn:-1},
- frit:{bulles:2,blanc_vif:1.5,rose:1,rouge_puissant:-1.5,rouge_solaire:-1,blanc_doux:-1,vdn:-2},
+ frit:{bulles:2.5,blanc_vif:1.5,rose:1,rouge_puissant:-1.5,rouge_solaire:-1,blanc_doux:-1,vdn:-2},
  vapeur:{blanc_vif:1.5,blanc_ample:0.5,bulles:0.5,rouge_puissant:-1,rouge_solaire:-1,vdn:-2},
  fume:{blanc_ample:1,blanc_aromatique:1,rouge_leger:1,rouge_solaire:0.5,bulles:0.5,blanc_doux:-0.5,vdn:-1},
  creme:{blanc_ample:2.5,bulles:1,blanc_aromatique:0.5,rouge_souple:0.5,rouge_leger:0.5,blanc_vif:-1,rose:-0.5,rouge_puissant:-0.5,rouge_solaire:-1,blanc_doux:-1,vdn:-2},
  beurre_citron:{blanc_vif:2,blanc_ample:1.5,bulles:1,rouge_puissant:-2,rouge_solaire:-2,rouge_souple:-1,blanc_doux:-1,vdn:-3},
- tomate:{rose:2,rouge_leger:2,rouge_souple:1.5,rouge_solaire:1,blanc_vif:0.5,blanc_ample:-1,bulles:-0.5,rouge_puissant:-0.5,blanc_aromatique:-0.5,blanc_doux:-2,vdn:-3},
+ choucroute:{blanc_vif:3.5,blanc_aromatique:3,bulles:2.5,rose:0.5,rouge_leger:-0.5,rouge_souple:-1,rouge_puissant:-2.5,rouge_solaire:-2,blanc_ample:-0.5,blanc_doux:-2,vdn:-3},
+ cassoulet:{rouge_puissant:3.5,rouge_solaire:3,rouge_souple:0.5,rouge_leger:-1,rose:-0.5,blanc_vif:-2,blanc_ample:-1,blanc_aromatique:-1.5,bulles:-1.5,blanc_doux:-2.5,vdn:-3},
+ tomate:{rose:2.5,rouge_leger:2,rouge_souple:1.5,rouge_solaire:1,blanc_vif:0.5,blanc_ample:-1,bulles:-0.5,rouge_puissant:-0.5,blanc_aromatique:-0.5,blanc_doux:-2,vdn:-3},
  epice_douce:{blanc_aromatique:2,rouge_solaire:1.5,rose:1,blanc_doux:1,rouge_souple:0.5,blanc_vif:-0.5},
  piquant:{blanc_aromatique:2,rose:1.5,blanc_doux:1.5,bulles:0.5,rouge_leger:0.5,blanc_ample:-0.5,rouge_souple:-1,rouge_puissant:-3,rouge_solaire:-1.5,vdn:-1},
  sucre_sale:{blanc_aromatique:2,blanc_doux:1.5,rose:1,rouge_solaire:1,rouge_souple:0.5,blanc_ample:0.5,bulles:0.5,blanc_vif:-0.5,rouge_puissant:-1.5,vdn:0.5},
@@ -726,8 +787,8 @@ lomo | charcuterie | lomo
 prosciutto | charcuterie | prosciutto
 mortadelle | charcuterie | mortadelle
 bresaola | charcuterie | bresaola
-choucroute | porc charcuterie acide | choucroute
-cassoulet | porc charcuterie canard mijote | cassoulet
+choucroute | choucroute porc | choucroute
+cassoulet | cassoulet porc canard | cassoulet
 poulet roti | volaille roti | poulet rôti
 poulet | volaille | poulet
 volaille | volaille | volaille
@@ -1081,7 +1142,7 @@ dessert | patisserie | dessert
 
 /* ---------- 6. Outils de texte ---------- */
 const norm = s => (s || "").toString().toLowerCase().replace(/œ/g, "oe").replace(/æ/g, "ae")
-  .normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[''`\-_/,;:()!?.]/g, " ").replace(/\s+/g, " ").trim();
+  .normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[''`\-_/,;:()!?.\u2018\u2019\u201b\u02bc]/g, " ").replace(/\s+/g, " ").trim();
 const escRe = s => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 const LEX = LEXIQUE_TXT.split("\n").map(l => l.trim()).filter(Boolean).map(l => {
   const [p, t, n] = l.split("|").map(x => x.trim());
@@ -1241,18 +1302,125 @@ function matchFamille(texte) {
     const re = new RegExp("(^|[^a-z])" + escRe(m) + "[a-z]*");
     if (re.test(t) && (!best || m.length > best.m.length)) best = {f, m};
   }
-  return best ? best.f : null;
+  return best ? Object.assign({}, best.f, {mot: best.m}) : null;
 }
-function suggestFamille(texte, couleur) {
+let suggestFamille = function (texte, couleur) {
   const f = matchFamille(texte);
   if (f && (!couleur || f.couleur === couleur || (couleur === "blanc" && f.couleur === "doux") || (couleur === "doux" && f.couleur === "blanc"))) return f.k;
   return DEFAUT_PAR_COULEUR[couleur] || (f ? f.k : null);
+};
+let suggestCouleur = function (texte) { const f = matchFamille(texte); return f ? f.couleur : null; };
+
+/* ---------- 11. Le catalogue mondial (vins.js) : recommander hors cave, apprendre, deviner une famille ----------
+   Chaque vin du catalogue porte une famille (pour sa couleur principale), des variantes (autres couleurs), ses
+   accords classiques et ses « à éviter » dans le MÊME vocabulaire que les plats. Le score d'un vin pour un plat =
+   le score de sa famille (règles ci-dessus) + un bonus par accord classique présent dans l'assiette, − un malus
+   par « à éviter » présent. Le catalogue sert aussi à deviner la famille d'une bouteille qu'on saisit. */
+let CATALOGUE = [], CAT_INDEX = [];
+function setCatalogue(liste) {
+  CATALOGUE = (liste || []).filter(v => v && v.id && v.nom && FAM[v.famille] && COULEURS[v.couleur] && Number.isFinite(Number(v.lat)) && Number.isFinite(Number(v.lon)));
+  CATALOGUE.forEach(v => {                                  /* une variante qui répète la couleur et la famille principales n'apporte rien */
+    v.variantes = (Array.isArray(v.variantes) ? v.variantes : []).filter(x => x && FAM[x.famille] && COULEURS[x.couleur] && !(x.couleur === v.couleur && x.famille === v.famille));
+    v.accords = Array.isArray(v.accords) ? v.accords : []; v.eviter = Array.isArray(v.eviter) ? v.eviter : []; v.cepages = Array.isArray(v.cepages) ? v.cepages : [];
+  });
+  /* index des noms : le nom entier et, s'il porte une parenthèse, sa partie nue (« Nero d'Avola (Sicilia DOC) » répond à « Nero d'Avola ») */
+  CAT_INDEX = [];
+  const alias = v => (v.nom.match(/\(([^)]*)\)/g) || []).flatMap(m => m.slice(1, -1).split(/,| et /)).map(norm).filter(n => n.length >= 4);
+  const disputes = new Map(); CATALOGUE.forEach(v => alias(v).forEach(n => disputes.set(n, (disputes.get(n) || 0) + 1)));   /* « Xérès » désigne deux fiches : pas d'alias, le lexique tranche */
+  for (const v of CATALOGUE) { const noms = new Set([norm(v.nom), norm(v.nom.replace(/\s*\(.*?\)\s*/g, " "))]); alias(v).forEach(n => { if (disputes.get(n) === 1) noms.add(n); }); for (const n of noms) if (n.length >= 3) CAT_INDEX.push({v, n}); }
+  CAT_INDEX.sort((a, b) => b.n.length - a.n.length);
 }
-function suggestCouleur(texte) { const f = matchFamille(texte); return f ? f.couleur : null; }
+function catalogue() { return CATALOGUE; }
+function vinParId(id) { return CATALOGUE.find(v => v.id === id) || null; }
+function variantesDe(v) {
+  const out = [{couleur: v.couleur, famille: v.famille, note: ""}];
+  (v.variantes || []).forEach(x => { if (x && FAM[x.famille] && COULEURS[x.couleur]) out.push(x); });
+  return out;
+}
+function scoreCatalogue(v, tags, ranked) {
+  const parFam = {}; ranked.forEach(f => { parFam[f.k] = f; });
+  let best = null; const vars = variantesDe(v);
+  vars.forEach((va, i) => {
+    const f = parFam[va.famille]; if (!f) return;
+    const principale = i === 0;                              /* la couleur principale porte les accords classiques ; une variante (le blanc d'un rouge) n'est pas la référence emblématique */
+    const plus = principale ? (v.accords || []).filter(t => tags.includes(t)) : [], moins = (v.eviter || []).filter(t => tags.includes(t));
+    const s = f.s + plus.length * 0.25 - moins.length * 0.6 + ((v.importance || 3) - 3) * 0.12 + (v.niveau === "incontournable" ? 0.1 : v.niveau === "decouverte" ? -0.08 : 0) - (principale ? 0 : 0.2);
+    if (!best || s > best.s) best = {s, variante: va, fam: f, plus, moins, principale};
+  });
+  return best;
+}
+/* Les références idéales pour un plat, dans le monde : les meilleures familles, puis dans chacune les appellations
+   dont les accords classiques collent à l'assiette ; variées (pas deux fois la même région, deux par famille au plus). */
+function recommanderCatalogue(tags, temps, ranked, opts) {
+  opts = opts || {}; const n = opts.n || 4; const exclude = opts.exclude || new Set();
+  if (!(tags || []).some(t => TAGS[t])) return [];        /* « Spécialité du chef » : aucun aliment reconnu, aucune référence inventée */
+  const out = [];
+  for (const v of CATALOGUE) {
+    if (exclude.has(v.id)) continue;
+    const b = scoreCatalogue(v, tags, ranked); if (!b || b.moins.length) continue;
+    if (b.fam.s < ranked[0].s - 1.6) continue;             /* une famille nettement moins bonne n'est pas « idéale », même bien classée */
+    out.push(Object.assign({vin: v, pct: toPct(b.s)}, b));
+  }
+  out.sort((a, b) => b.s - a.s || (b.vin.importance || 0) - (a.vin.importance || 0) || norm(a.vin.nom).localeCompare(norm(b.vin.nom)));
+  const pick = [], parFam = {}, parRegion = {};
+  for (const x of out) {
+    if (x.pct < 50 && pick.length) break;
+    const k = x.variante.famille, r = x.vin.pays + "|" + x.vin.region;
+    if ((parFam[k] || 0) >= 3 || parRegion[r]) continue;
+    parFam[k] = (parFam[k] || 0) + 1; parRegion[r] = 1; pick.push(x);
+    if (pick.length >= n) break;
+  }
+  return pick;
+}
+function raisonCatalogue(x) {
+  const bits = [`${FAM[x.variante.famille].nom} (${x.fam.pct} %)`];
+  if (x.plus.length) bits.push("fait pour " + x.plus.map(t => TAGS[t].l).join(", "));
+  if (x.vin.classique && x.principale !== false) bits.push(x.vin.classique);   /* le blanc d'un rouge n'hérite pas de l'accord emblématique du rouge */
+  return bits.join(" · ");
+}
+/* Un nom de bouteille contient-il une appellation du catalogue ? (le plus long nom qui s'y trouve) */
+function matchCatalogue(texte) {
+  const t = " " + norm(texte) + " ";                       /* mot entier seulement : « Toronto » ne répond pas à « Toro » */
+  for (const x of CAT_INDEX) { if (t.includes(" " + x.n + " ") || t.includes(" " + x.n + "s ")) return x.v; }
+  return null;
+}
+function familleCatalogue(v, couleur) {
+  if (!v) return null;
+  if (!couleur) return v.famille;
+  const vars = variantesDe(v);                             /* la couleur exacte d'abord (le demi-sec de Vouvray), le cousinage blanc/doux ensuite */
+  const va = vars.find(x => x.couleur === couleur) || vars.find(x => (couleur === "blanc" && x.couleur === "doux") || (couleur === "doux" && x.couleur === "blanc"));
+  return va ? va.famille : null;
+}
+/* Les appellations emblématiques d'une famille (pour apprendre) */
+function emblemes(famille, n) {
+  const tri = (a, b) => (b.importance || 0) - (a.importance || 0) || norm(a.nom).localeCompare(norm(b.nom));
+  const principaux = CATALOGUE.filter(v => v.famille === famille).sort(tri);
+  const autres = CATALOGUE.filter(v => v.famille !== famille && variantesDe(v).some(x => x.famille === famille)).sort(tri);
+  return principaux.concat(autres).slice(0, n || 8);
+}
+const _suggestFamilleLexique = suggestFamille;
+suggestFamille = function (texte, couleur) {
+  const v = matchCatalogue(texte); const f = familleCatalogue(v, couleur);
+  const lex = matchFamille(texte);
+  if (f && lex && couleur && lex.couleur !== couleur && !(couleur === "blanc" && lex.couleur === "doux")) return f;
+  if (f && (!lex || norm(v.nom).length >= (lex.mot || "").length)) return f;
+  return _suggestFamilleLexique(texte, couleur) || f;
+};
+const _suggestCouleurLexique = suggestCouleur;
+suggestCouleur = function (texte) {
+  const t = norm(texte); const v = matchCatalogue(texte), lex = matchFamille(texte);
+  const explicite = /\brose\b|\brosado\b|\brosato\b/.test(t) ? "rose" : /\bmoelleux\b|\bliquoreux\b/.test(t) ? "doux" : /\brouge\b|\btinto\b|\brosso\b/.test(t) ? "rouge" : /\bblanc\b|\bblanco\b|\bbianco\b/.test(t) ? "blanc" : null;
+  const bulles = (lex && lex.couleur === "bulles") || (v && v.couleur === "bulles");   /* « Champagne Blanc de Blancs », « Crémant rosé » : les bulles gagnent sur le mot de couleur */
+  if (bulles) return "bulles";
+  if (explicite) return explicite;
+  if (v && (!lex || norm(v.nom).length >= (lex.mot || "").length)) return v.couleur;
+  return _suggestCouleurLexique(texte) || (v ? v.couleur : null);
+};
 
 return {FAMILLES, FAM, FAM_KEYS, COULEURS, TEMPS, TEMPS_NOM, ZONES, ZONES_NOM, TAGS, TAG_KEYS, R, PRIOR, LEX,
         norm, detecterAliments, devinerTemps, scoreFamilles, expliquer, avertissements, proposerBouteilles, manques,
-        composerMenu, suggestFamille, suggestCouleur, toPct, rotation, enStock, actif};
+        composerMenu, suggestFamille: (t, c) => suggestFamille(t, c), suggestCouleur: t => suggestCouleur(t), toPct, rotation, enStock, actif,
+        setCatalogue, catalogue, vinParId, variantesDe, scoreCatalogue, recommanderCatalogue, raisonCatalogue, matchCatalogue, familleCatalogue, emblemes};
 })();
 /*ENGINE-END*/
 if (typeof module !== "undefined" && module.exports) module.exports = VIG;
@@ -1284,7 +1452,7 @@ const vibre = ms => { try { navigator.vibrate && navigator.vibrate(ms || 10); } 
 /* ---------- État ---------- */
 function etatDefaut() {
   return {version: 1, meta: {demo: false, createdAt: nowIso(), restaurant: ""}, team: ["Moi"], who: "Moi",
-    refs: [], moves: [], tasks: [], accords: [], autoDone: {},
+    refs: [], moves: [], tasks: [], accords: [], autoDone: {}, souhaits: [], quiz: {bonnes: 0, total: 0, serie: 0, meilleure: 0},
     settings: {apiKey: "", model: "claude-opus-5-5", effort: "medium", theme: "auto", rythme: {bar: 1, frigo: 2, cave: 7, reserve: 7}, tolerance: 1},
     badges: {won: {}, scans: 0}, streak: {current: 0, best: 0, last: null}};
 }
@@ -1376,6 +1544,7 @@ const BADGES = [
  {k: "serie7", nom: "Sept d'affilée", d: "Sept jours d'inventaire complet", ic: "7", test: () => S.streak.best >= 7},
  {k: "sommelier", nom: "Sommelier", d: "Dix accords composés", ic: "S", test: () => S.accords.length >= 10},
  {k: "oeil", nom: "L'œil", d: "Un plat analysé en photo", ic: "◉", test: () => (S.badges.scans || 0) >= 1},
+ {k: "quiz10", nom: "Sommelier en herbe", d: "Dix bonnes réponses au quiz de l'atlas", ic: "?", test: () => ((S.quiz && S.quiz.bonnes) || 0) >= 10},
  {k: "rangee", nom: "Cave rangée", d: "Zone et minimum renseignés partout", ic: "R", test: () => !S.meta.demo && refsActives().length >= 5 && refsActives().every(r => r.zone && Number(r.par) > 0)},
 ];
 function majBadges() {
@@ -1406,7 +1575,7 @@ function semerDemo(s) {
    ["Petit Chablis", "Domaine Vocoret", "Petit Chablis", "Bourgogne", "blanc", 2023, 11, 36, 9, 4, 12, "frigo", "blanc_vif"],
    ["Picpoul de Pinet", "Cave de l'Ormarine", "Picpoul de Pinet", "Languedoc", "blanc", 2024, 6, 24, 18, 6, 18, "frigo", "blanc_vif"],
    ["Entre-deux-Mers", "Château Turcaud", "Entre-deux-Mers", "Bordeaux", "blanc", 2023, 7, 26, 11, 4, 12, "reserve", "blanc_vif"],
-   ["Riesling Grand Cru Schlossberg", "Domaine Weinbach", "Alsace Grand Cru", "Alsace", "blanc", 2021, 34, 88, 3, 1, 4, "cave", "blanc_vif"],
+   ["Riesling Grand Cru Schlossberg", "Domaine Weinbach", "Alsace Grand Cru", "Alsace", "blanc", 2021, 34, 88, 3, 1, 4, "cave", null],
    ["Riesling Tradition", "Domaine Ostertag", "Alsace", "Alsace", "blanc", 2022, 13, 42, 8, 3, 8, "frigo", "blanc_vif"],
    ["Albariño Rías Baixas", "Pazo de Señoráns", "Rías Baixas", "Galice", "blanc", 2023, 12, 40, 6, 3, 6, "frigo", "blanc_vif"],
    ["Vinho Verde Loureiro", "Quinta do Ameal", "Vinho Verde", "Portugal", "blanc", 2023, 8, 28, 7, 3, 8, "frigo", "blanc_vif"],
@@ -1414,9 +1583,9 @@ function semerDemo(s) {
    ["Saint-Véran", "Domaine des Deux Roches", "Saint-Véran", "Bourgogne", "blanc", 2022, 12, 40, 8, 3, 8, "frigo", "blanc_vif"],
    ["Mâcon-Villages", "Domaine Guillemot-Michel", "Mâcon-Villages", "Bourgogne", "blanc", 2023, 11, 36, 10, 4, 12, "reserve", "blanc_vif"],
    ["Bourgogne Aligoté", "Domaine Sylvain Pataille", "Bourgogne Aligoté", "Bourgogne", "blanc", 2022, 14, 42, 5, 2, 6, "frigo", "blanc_vif"],
-   ["Savennières Roche aux Moines", "Domaine aux Moines", "Savennières", "Loire", "blanc", 2020, 20, 60, 4, 2, 4, "cave", "blanc_vif"],
+   ["Savennières Roche aux Moines", "Domaine aux Moines", "Savennières", "Loire", "blanc", 2020, 20, 60, 4, 2, 4, "cave", null],
    ["Vouvray sec Le Haut-Lieu", "Domaine Huet", "Vouvray", "Loire", "blanc", 2022, 20, 55, 4, 2, 4, "frigo", "blanc_vif"],
-   ["Jurançon sec", "Domaine Cauhapé", "Jurançon", "Sud-Ouest", "blanc", 2022, 11, 36, 6, 2, 6, "frigo", "blanc_vif"],
+   ["Jurançon sec", "Domaine Cauhapé", "Jurançon", "Sud-Ouest", "blanc", 2022, 11, 36, 6, 2, 6, "frigo", null],
    ["Txakoli", "Ameztoi", "Getariako Txakolina", "Pays basque", "blanc", 2023, 11, 36, 5, 2, 6, "frigo", "blanc_vif"],
    ["Meursault Les Narvaux", "Domaine Lamy-Fontaine", "Meursault", "Bourgogne", "blanc", 2021, 48, 125, 3, 1, 3, "cave", "blanc_ample"],
    ["Meursault 1er cru Charmes", "Domaine Rémi Jobard", "Meursault", "Bourgogne", "blanc", 2020, 78, 190, 2, 1, 2, "cave", "blanc_ample"],
@@ -1442,9 +1611,9 @@ function semerDemo(s) {
    ["Rosé de Loire", "Domaine de la Noblaie", "Rosé de Loire", "Loire", "rose", 2024, 8, 28, 9, 4, 12, "frigo", "rose"],
    ["Coteaux d'Aix-en-Provence Rosé", "Château Vignelaure", "Coteaux d'Aix-en-Provence", "Provence", "rose", 2024, 10, 34, 8, 4, 12, "reserve", "rose"],
    ["Beaujolais-Villages", "Domaine Chermette", "Beaujolais-Villages", "Beaujolais", "rouge", 2023, 9, 30, 12, 4, 12, "cave", "rouge_leger"],
-   ["Morgon Côte du Py", "Jean Foillard", "Morgon", "Beaujolais", "rouge", 2022, 19, 54, 3, 3, 6, "cave", "rouge_leger"],
+   ["Morgon Côte du Py", "Jean Foillard", "Morgon", "Beaujolais", "rouge", 2022, 19, 54, 3, 3, 6, "cave", null],
    ["Fleurie", "Domaine Métrat", "Fleurie", "Beaujolais", "rouge", 2022, 14, 44, 6, 3, 6, "cave", "rouge_leger"],
-   ["Moulin-à-Vent", "Château du Moulin-à-Vent", "Moulin-à-Vent", "Beaujolais", "rouge", 2021, 18, 52, 5, 2, 6, "cave", "rouge_leger"],
+   ["Moulin-à-Vent", "Château du Moulin-à-Vent", "Moulin-à-Vent", "Beaujolais", "rouge", 2021, 18, 52, 5, 2, 6, "cave", null],
    ["Bourgogne Pinot Noir", "Domaine Bouchard", "Bourgogne", "Bourgogne", "rouge", 2022, 16, 48, 8, 3, 8, "cave", "rouge_leger"],
    ["Sancerre rouge", "Domaine Vacheron", "Sancerre", "Loire", "rouge", 2022, 24, 65, 3, 2, 4, "cave", "rouge_leger"],
    ["Alsace Pinot Noir", "Domaine Muré", "Alsace", "Alsace", "rouge", 2022, 15, 46, 5, 2, 6, "cave", "rouge_leger"],
@@ -1457,10 +1626,10 @@ function semerDemo(s) {
    ["Saumur-Champigny Terres Chaudes", "Domaine des Roches Neuves", "Saumur-Champigny", "Loire", "rouge", 2022, 17, 50, 7, 3, 8, "cave", "rouge_souple"],
    ["Bordeaux Supérieur", "Château Penin", "Bordeaux Supérieur", "Bordeaux", "rouge", 2021, 8, 28, 14, 4, 12, "reserve", "rouge_souple"],
    ["Côtes de Bourg", "Château Falfas", "Côtes de Bourg", "Bordeaux", "rouge", 2020, 12, 36, 6, 2, 6, "cave", "rouge_souple"],
-   ["Fronsac", "Château Dalem", "Fronsac", "Bordeaux", "rouge", 2019, 15, 44, 5, 2, 6, "cave", "rouge_souple"],
+   ["Fronsac", "Château Dalem", "Fronsac", "Bordeaux", "rouge", 2019, 15, 44, 5, 2, 6, "cave", null],
    ["Chianti Classico Riserva", "Fontodi", "Chianti Classico", "Toscane", "rouge", 2020, 24, 64, 4, 2, 6, "cave", "rouge_souple"],
    ["Rioja Crianza", "Bodegas Muga", "Rioja", "Espagne", "rouge", 2020, 13, 40, 8, 3, 8, "cave", "rouge_souple"],
-   ["Volnay", "Domaine Nicolas Rossignol", "Volnay", "Bourgogne", "rouge", 2020, 45, 115, 2, 1, 3, "cave", "rouge_souple"],
+   ["Volnay", "Domaine Nicolas Rossignol", "Volnay", "Bourgogne", "rouge", 2020, 45, 115, 2, 1, 3, "cave", null],
    ["Mercurey", "Domaine Faiveley", "Mercurey", "Bourgogne", "rouge", 2021, 22, 60, 4, 2, 4, "cave", "rouge_souple"],
    ["Crozes-Hermitage", "Domaine Alain Graillot", "Crozes-Hermitage", "Rhône", "rouge", 2021, 20, 56, 6, 2, 6, "cave", "rouge_souple"],
    ["Ventoux", "Domaine de Fondrèche", "Ventoux", "Rhône", "rouge", 2022, 9, 30, 11, 4, 12, "reserve", "rouge_souple"],
@@ -1483,8 +1652,8 @@ function semerDemo(s) {
    ["Gigondas", "Domaine Santa Duc", "Gigondas", "Rhône", "rouge", 2021, 22, 58, 7, 3, 6, "cave", "rouge_solaire"],
    ["Vacqueyras", "Domaine Le Sang des Cailloux", "Vacqueyras", "Rhône", "rouge", 2021, 18, 52, 6, 2, 6, "cave", "rouge_solaire"],
    ["Minervois La Livinière", "Château Coupe-Roses", "Minervois", "Languedoc", "rouge", 2021, 12, 36, 9, 3, 8, "reserve", "rouge_solaire"],
-   ["Corbières Boutenac", "Château Ollieux Romanis", "Corbières", "Languedoc", "rouge", 2020, 11, 34, 8, 3, 8, "reserve", "rouge_solaire"],
-   ["Pic Saint-Loup", "Domaine de l'Hortus", "Pic Saint-Loup", "Languedoc", "rouge", 2021, 15, 44, 6, 2, 6, "cave", "rouge_solaire"],
+   ["Corbières Boutenac", "Château Ollieux Romanis", "Corbières", "Languedoc", "rouge", 2020, 11, 34, 8, 3, 8, "reserve", null],
+   ["Pic Saint-Loup", "Domaine de l'Hortus", "Pic Saint-Loup", "Languedoc", "rouge", 2021, 15, 44, 6, 2, 6, "cave", null],
    ["Faugères Jadis", "Domaine Léon Barral", "Faugères", "Languedoc", "rouge", 2019, 26, 70, 3, 1, 4, "cave", "rouge_solaire"],
    ["Sauternes", "Château Laville", "Sauternes", "Bordeaux", "doux", 2018, 25, 62, 4, 2, 4, "frigo", "blanc_doux"],
    ["Sauternes 1er cru classé", "Château Guiraud", "Sauternes", "Bordeaux", "doux", 2016, 42, 105, 2, 1, 2, "cave", "blanc_doux"],
@@ -1526,11 +1695,11 @@ function migrerDemo(s) {
   const perso = s.refs.filter(r => !r.demo && new Date(r.createdAt || 0).getTime() - t0 > 60000);
   s.meta.demoVersion = DEMO_VERSION;
   if (perso.length) { s.meta.demoMaj = "manuel"; return; }
-  const ns = etatDefaut(); ns.settings = s.settings; semerDemo(ns);
+  const ns = etatDefaut(); ns.settings = s.settings; ns.souhaits = s.souhaits || []; ns.quiz = s.quiz || ns.quiz; ns.badges = s.badges || ns.badges; semerDemo(ns);
   if (s.team && s.team.length) { ns.team = s.team; ns.who = s.team.includes(s.who) ? s.who : s.team[0]; }
   Object.assign(s, ns); s.meta.demoMaj = "auto";
 }
-function viderCave() { const ns = etatDefaut(); ns.settings = S.settings; ns.team = S.team; ns.who = S.who; S = ns; save(); }
+function viderCave() { const ns = etatDefaut(); ns.settings = S.settings; ns.team = S.team; ns.who = S.who; ns.souhaits = S.souhaits || []; ns.quiz = S.quiz || ns.quiz; ns.badges = S.badges || ns.badges; S = ns; save(); }
 
 /* ---------- Petites briques d'interface ---------- */
 let toastT = null;
@@ -1614,6 +1783,7 @@ function renderCave() {
     <div class="chips scroll" style="margin-top:10px">${[["", "Toutes"]].concat(Object.entries(VIG.COULEURS)).map(([k, v]) => `<button class="chip ${F.couleur === k ? "on" : ""}" data-action="filt" data-f="couleur" data-v="${k}">${k ? `<i class="sw" style="background:var(--c-${k})"></i>` : ""}${v}</button>`).join("")}</div>
     <div class="chips scroll">${[["", "Partout"]].concat(VIG.ZONES).map(([k, v]) => `<button class="chip ${F.zone === k ? "on" : ""}" data-action="filt" data-f="zone" data-v="${k}">${v}</button>`).join("")}<button class="chip ${F.only === "acompter" ? "on" : ""}" data-action="filt" data-f="only" data-v="acompter">À compter · ${nbC}</button><button class="chip ${F.only === "alerte" ? "on" : ""}" data-action="filt" data-f="only" data-v="alerte">Alertes · ${nbA}</button></div></div>`;
   H += `<div class="row between section" style="margin-bottom:10px"><span class="tiny">${L.length === total ? plur(total, "référence") : `${L.length} sur ${total}`} · ${plur(L.reduce((s, r) => s + (Number(r.stock) || 0), 0), "bouteille")}</span><div class="row"><button class="btn xs ghost" data-action="count-start" ${nbC ? "" : "disabled"}>Mode comptage</button><button class="btn xs ghost" data-action="import-csv">Importer un CSV</button></div></div>`;
+  H += souhaitsHtml();
   if (!total) H += `<div class="empty"><b>La cave est vide</b>Ajoutez votre première référence avec le bouton +, ou importez un fichier CSV (nom ; appellation ; couleur ; millésime ; stock ; mini ; prix).</div>`;
   else if (!L.length) H += `<div class="empty"><b>Rien ne correspond</b>Essayez un autre mot, ou retirez un filtre.</div>`;
   else { let z = null; for (const r of L) { if (!F.zone && r.zone !== z) { z = r.zone; H += `<div class="section-h" style="margin-top:14px"><h2 style="font-size:17px">${h(VIG.ZONES_NOM[z] || "Sans zone")}</h2><span class="tiny">${plur(L.filter(x => x.zone === z).length, "référence")}</span></div>`; } H += bottleCard(r) + `<div style="height:8px"></div>`; } }
@@ -1677,7 +1847,8 @@ function ouvrirFiche(id) {
 function majHintFamille() {
   const f = $("#f-ref"); if (!f) return; const txt = f.nom.value + " " + f.appellation.value; const sel = f.famille;
   const g = VIG.suggestFamille(txt, f.couleur.value);
-  $("#fam-hint").textContent = sel.value ? "" : (g ? `Proposé : ${VIG.FAM[g].nom} (${VIG.FAM[g].long})` : "Choisissez une couleur pour une proposition");
+  const va = VIG.matchCatalogue(txt);
+  $("#fam-hint").textContent = (sel.value ? "" : (g ? `Proposé : ${VIG.FAM[g].nom} (${VIG.FAM[g].long})` : "Choisissez une couleur pour une proposition")) + (va ? ` · reconnu dans l'atlas : ${va.nom}` : "");
 }
 function lireFiche() {
   const f = $("#f-ref"); if (!f || !f.nom.value.trim()) { f && f.nom.classList.add("shake"); toast("Il manque le nom"); return null; }
@@ -1702,7 +1873,7 @@ function parsePlats(txt) {
   });
 }
 function renderAccords() {
-  const famGuide = VIG.FAMILLES.map(f => { const b = refsActives().filter(r => r.famille === f.k && VIG.enStock(r)); return `<details class="help"><summary><span class="row"><span class="sw ${f.couleur}" style="width:26px;height:26px;border-radius:8px;font-size:12px;display:grid;place-items:center">${f.glyph}</span>${h(f.nom)} <span class="tiny">· ${plur(b.length, "bouteille")}</span></span></summary><div class="body"><b>${h(f.long)}</b> · servir à ${h(f.temp)}<br><b>Idéal :</b> ${h(f.ideal)}<br><b>Éviter :</b> ${h(f.eviter)}${b.length ? `<br><b>En cave :</b> ${b.map(r => h(r.nom) + " (" + (Number(r.stock) || 0) + ")").join(", ")}` : "<br><i>Rien en stock dans cette famille.</i>"}</div></details>`; }).join("");
+  const famGuide = VIG.FAMILLES.map(f => { const b = refsActives().filter(r => r.famille === f.k && VIG.enStock(r)); return `<details class="help"><summary><span class="row"><span class="sw ${f.couleur}" style="width:26px;height:26px;border-radius:8px;font-size:12px;display:grid;place-items:center">${f.glyph}</span>${h(f.nom)} <span class="tiny">· ${plur(b.length, "bouteille")}</span></span></summary><div class="body"><b>${h(f.long)}</b> · servir à ${h(f.temp)}<br><b>Idéal :</b> ${h(f.ideal)}<br><b>Éviter :</b> ${h(f.eviter)}${b.length ? `<br><b>En cave :</b> ${b.map(r => h(r.nom) + " (" + (Number(r.stock) || 0) + ")").join(", ")}` : "<br><i>Rien en stock dans cette famille.</i>"}${VIG.catalogue().length ? `<div class="chips" style="margin-top:8px">${VIG.emblemes(f.k, 6).map(v => `<button class="chip sm" data-action="vin-open" data-id="${h(v.id)}">${h(v.nom)}</button>`).join("")}</div>` : ""}</div></details>`; }).join("");
   const carte = S.accords.slice().reverse().slice(0, 12).map(a => `<div class="task" data-action="acc-open" data-id="${a.id}"><div class="grow"><div class="t">${h(a.titre)}</div><div class="d">${h(a.resume)}</div></div><span class="tiny">${fmtCourt(a.at)}</span></div>`).join("");
   let H = `<div class="card wine section"><h1 style="font-size:24px">Trouver l'accord</h1><p style="opacity:.9;margin:6px 0 12px;font-size:14px">Photographiez l'assiette ou décrivez-la, temps par temps. Vignolo lit les aliments, note chaque famille de vins et choisit dans <b>votre</b> cave.</p>
     <div class="row"><button class="btn gold grow" data-action="scan-plat">${ICON("cam")} Photographier le plat</button><button class="btn grow" style="background:rgba(255,255,255,.14);color:#fff;border-color:rgba(255,255,255,.25)" data-action="focus-plats">Décrire</button></div></div>`;
@@ -1732,6 +1903,7 @@ function renderResultat() {
     if (m.picks.length) H += m.picks.map((q, k) => `<div class="pick ${k === 0 ? "best" : ""}" data-action="ref-open" data-id="${q.ref.id}"><div class="bar ${h(q.ref.couleur)}"></div><div><div class="nm">${k === 0 ? "★ " : ""}${h(q.ref.nom)}</div><div class="why">${h(refSub(q.ref))}${refSub(q.ref) ? " · " : ""}${h(q.raison)}</div></div><div class="q">${Number(q.ref.stock) || 0}<small>en stock</small></div></div>`).join("");
     else H += `<div class="card flat"><b>Rien d'ouvert dans les bonnes familles.</b> <span class="muted">La cave n'a pas de bouteille disponible qui colle à ce plat.</span></div>`;
     if (m.manques.length) H += `<div class="tiny" style="margin-top:8px">À commander pour ce plat : ${m.manques.map(f => `<b>${h(VIG.FAM[f.k].nom)}</b> (${f.pct} %)`).join(", ")}.</div>`;
+    H += ideauxHtml(p, m.ranked);
     H += `</div>`;
   });
   H += `<div class="row" style="margin-top:14px"><button class="btn primary grow" data-action="acc-save">Enregistrer dans la carte des accords</button><button class="btn ghost" data-action="acc-clear">Effacer</button></div>`;
@@ -1746,7 +1918,7 @@ function lancerAccords() {
 function sauverAccord() {
   if (!ACC.plats.length) return; const menu = VIG.composerMenu(ACC.plats, S.refs);
   const a = {id: uid(), at: nowIso(), titre: ACC.plats.map(p => p.nom).join(" · ").slice(0, 90), texte: ACC.texte || ACC.plats.map(p => `${VIG.TEMPS_NOM[p.temps]} : ${p.nom}`).join("\n"),
-    resume: menu.map(m => `${VIG.TEMPS_NOM[m.plat.temps]} → ${m.picks[0] ? m.picks[0].ref.nom : VIG.FAM[m.ranked[0].k].nom}`).join(" · "), plats: ACC.plats};
+    resume: menu.map(m => `${VIG.TEMPS_NOM[m.plat.temps]} : ${m.picks[0] ? m.picks[0].ref.nom : VIG.FAM[m.ranked[0].k].nom}`).join(" · "), plats: ACC.plats};
   S.accords.push(a); save(); toast("Accord enregistré"); majBadges(); renderAccords();
 }
 
@@ -1865,7 +2037,7 @@ function importerCSV(txt) {
    ACTIONS, ÉVÉNEMENTS, NAVIGATION, DÉMARRAGE
    ===================================================================== */
 let VUE = "today";
-function render(v) { v = v || VUE; if (v === "today") renderToday(); else if (v === "cave") renderCave(); else if (v === "accords") renderAccords(); else renderReglages(); majTete(); }
+function render(v) { v = v || VUE; if (v === "today") renderToday(); else if (v === "cave") renderCave(); else if (v === "accords") renderAccords(); else if (v === "atlas") renderAtlas(); else renderReglages(); majTete(); }
 function majTete() {
   $("#who-name").textContent = S.who; $("#who-av").textContent = initiales(S.who);
   const n = nbAlertes(); const d = $("#dot-today"); d.textContent = n; d.classList.toggle("hidden", !n);
@@ -1884,7 +2056,7 @@ const ACTIONS = {
   "who-set": el => { S.who = el.dataset.n; save(); closeSheet(); render(); toast(`${S.who} tient la cave`); },
   "close-sheet": () => closeSheet(),
   "demo-vider": () => { if (confirm("Supprimer la cave de démonstration (bouteilles, mouvements, tâches) pour commencer la vôtre ?")) { viderCave(); render(); toast("Cave vide. Ajoutez votre première bouteille avec +"); } },
-  "demo-reload": () => { if (confirm("Remplacer la cave actuelle par la démonstration ?")) { const s = etatDefaut(); s.settings = S.settings; semerDemo(s); S = s; save(); render(); toast("Démo rechargée"); } },
+  "demo-reload": () => { if (confirm("Remplacer la cave actuelle par la démonstration ?")) { const s = etatDefaut(); s.settings = S.settings; s.team = S.team; s.who = S.who; s.souhaits = S.souhaits || []; s.quiz = S.quiz || s.quiz; s.badges = S.badges || s.badges; semerDemo(s); if (S.team && S.team.length) { s.team = S.team; s.who = S.team.includes(S.who) ? S.who : S.team[0]; } S = s; save(); render(); toast("Démo rechargée"); } },
   "vider-cave": () => { if (confirm("Vider toute la cave ? Pensez à exporter un JSON avant.")) { viderCave(); render(); toast("Cave vidée"); } },
   "count-start": el => ouvrirComptage(el.dataset.zone || null),
   "count-one": el => ouvrirComptage(null, [el.dataset.id]),
@@ -1893,10 +2065,10 @@ const ACTIONS = {
   "cpt-ok": () => { const r = CPT.file[CPT.i]; const v = Math.max(0, Math.round(Number($("#cpt-input").value) || 0)); compter(r.id, v); CPT.faits++; CPT.i++; vibre(12); if (CPT) renderComptage(); },
   "task-toggle": el => { const k = el.dataset.k; if (el.dataset.manuel === "1") { const t = S.tasks.find(x => x.id === k); if (t) { t.done = !t.done; t.doneAt = t.done ? nowIso() : null; } } else { if (S.autoDone[k] === today()) delete S.autoDone[k]; else S.autoDone[k] = today(); } save(); vibre(8); render(); },
   filt: el => { const f = el.dataset.f, v = el.dataset.v; F[f] = (f === "only" && F.only === v) ? "" : v; renderCave(); },
-  mvt: el => { const r = refById(el.dataset.id); if (!r) return; const q = Number(el.dataset.qty); if (q < 0 && (Number(r.stock) || 0) <= 0) { toast("Déjà à zéro"); return; } mouvement(r.id, el.dataset.type, q); vibre(8); toast(`${TYPES_MVT[el.dataset.type][0]} · ${r.nom} → ${r.stock}`); if (sheetCtx === "ref") ouvrirRef(r.id); render(); animerStock(r.id); },
+  mvt: el => { const r = refById(el.dataset.id); if (!r) return; const q = Number(el.dataset.qty); if (q < 0 && (Number(r.stock) || 0) <= 0) { toast("Déjà à zéro"); return; } mouvement(r.id, el.dataset.type, q); vibre(8); toast(`${TYPES_MVT[el.dataset.type][0]} · ${r.nom}, reste ${r.stock}`); if (sheetCtx === "ref") ouvrirRef(r.id); render(); animerStock(r.id); },
   "mvt-qty": el => { const r = refById(el.dataset.id); const type = el.dataset.type; openSheet(`${TYPES_MVT[type][0]} · ${r.nom}`, `<div class="card flat" style="text-align:center"><div class="tiny">Combien de bouteilles ?</div><div class="stepper big" style="margin:12px auto"><button data-action="qty-step" data-d="-1" aria-label="Moins">−</button><span class="v" id="qty-val">6</span><button data-action="qty-step" data-d="1" aria-label="Plus">+</button></div><input class="input num" id="qty-input" type="number" inputmode="numeric" min="1" value="6" style="max-width:140px;margin:0 auto;text-align:center"></div>`, `<button class="btn ghost" data-action="ref-open" data-id="${r.id}">Annuler</button><button class="btn primary grow" data-action="qty-ok" data-id="${r.id}" data-type="${type}">Valider</button>`); },
   "qty-step": el => { const i = $("#qty-input"); i.value = Math.max(1, (Number(i.value) || 0) + Number(el.dataset.d)); $("#qty-val").textContent = i.value; },
-  "qty-ok": el => { const q = Math.max(1, Math.round(Number($("#qty-input").value) || 1)); const r = refById(el.dataset.id); mouvement(r.id, el.dataset.type, q); toast(`+${q} · ${r.nom} → ${r.stock}`); ouvrirRef(r.id); render(); },
+  "qty-ok": el => { const q = Math.max(1, Math.round(Number($("#qty-input").value) || 1)); const r = refById(el.dataset.id); mouvement(r.id, el.dataset.type, q); toast(`+${q} · ${r.nom}, reste ${r.stock}`); ouvrirRef(r.id); render(); },
   "ref-open": el => ouvrirRef(el.dataset.id),
   "ref-edit": el => ouvrirFiche(el.dataset.id),
   "add-ref": () => ouvrirFiche(null),
@@ -1922,6 +2094,337 @@ const ACTIONS = {
   "import-json": () => $("#f-json").click(),
   "export-csv": () => exporterCSV(),
   "import-csv": () => $("#f-csv").click(),
+};
+
+
+/* =====================================================================
+   ATLAS : la carte des vignobles, le catalogue mondial, la fiche d'un vin
+   (données : vins.js, fabriqué à part ; fond : Natural Earth 110 m en Mercator)
+   ===================================================================== */
+const ATLAS = {onglet: "carte", q: "", couleur: "", pays: "", fam: "", detail: false, max: 80};
+const CARTE_COL = {rouge: "#E2627F", blanc: "#EAD97A", rose: "#F3A5B5", bulles: "#F1D27F", doux: "#EA9C4C"};
+const merc = lat => Math.log(Math.tan(Math.PI / 4 + Math.max(-80, Math.min(84, lat)) * Math.PI / 360)) * 180 / Math.PI;
+const mercInv = y => (2 * Math.atan(Math.exp(y * Math.PI / 180)) - Math.PI / 2) * 180 / Math.PI;
+const proj = (lat, lon) => [lon, -merc(lat)];
+const VUES_CARTE = {monde: [-125, -50, 175, 60], europe: [-11, 35, 30, 54], france: [-5.5, 41.5, 9.8, 51.2]};
+const VB = {x: -125, y: -merc(60), w: 300, h: 150};
+let CARTE_EL = null;
+const VIN_NORM = new Map();
+const vinNorm = v => { let n = VIN_NORM.get(v.id); if (n == null) { n = VIG.norm(v.nom); VIN_NORM.set(v.id, n); } return n; };
+/* Quelle appellation de l'atlas porte chaque bouteille de la cave ? Le nom le plus long qui s'y trouve, en mot entier :
+   un Lalande-de-Pomerol n'est pas un Pomerol, un Puligny-Montrachet n'est pas un Montrachet. */
+function caveNoms() {
+  const out = new Map();
+  for (const r of refsActives()) { const v = VIG.matchCatalogue(r.nom + " " + (r.appellation || "")); if (v) out.set(r.id, v.id); }
+  return out;
+}
+function enCave(v, cave) { for (const id of cave.values()) if (id === v.id) return true; return false; }
+function refsDuVin(v) { const cave = caveNoms(); return refsActives().filter(r => cave.get(r.id) === v.id); }
+function vinsFiltres() {
+  const q = VIG.norm(ATLAS.q);
+  return VIG.catalogue().filter(v => (!ATLAS.couleur || VIG.variantesDe(v).some(x => x.couleur === ATLAS.couleur))
+    && (!ATLAS.pays || v.pays === ATLAS.pays) && (!ATLAS.fam || VIG.variantesDe(v).some(x => x.famille === ATLAS.fam))
+    && (!q || VIG.norm([v.nom, v.region, v.sousRegion, v.pays, (v.cepages || []).join(" "), v.style].join(" ")).includes(q)));
+}
+const prixTxt = p => "€".repeat(Math.max(1, Math.min(4, Number(p) || 2)));
+const NIVEAU_NOM = {incontournable: "Incontournable", classique: "Classique", decouverte: "À découvrir"};
+
+/* ---------- La carte : un SVG dont on déplace le cadre (viewBox) ---------- */
+function carteElement() {
+  if (CARTE_EL) return CARTE_EL;
+  const d = document.createElement("div"); d.className = "carte"; d.id = "carte";
+  d.innerHTML = `<svg class="schema" id="carte-svg" viewBox="${VB.x} ${VB.y} ${VB.w} ${VB.h}" preserveAspectRatio="none"><path class="terre" d="${window.VIGNOLO_MONDE || ""}"/><g id="carte-pts"></g></svg>
+    <div id="fond-leaflet"></div>
+    <div class="vues"><button data-action="carte-vue" data-v="monde">Monde</button><button data-action="carte-vue" data-v="europe">Europe</button><button data-action="carte-vue" data-v="france">France</button></div>
+    <div class="ctl"><button data-action="carte-zoom" data-d="1" aria-label="Zoomer">+</button><button data-action="carte-zoom" data-d="-1" aria-label="Dézoomer">−</button><button data-action="carte-detail" title="Fond détaillé, villes et routes (en ligne)" aria-label="Fond détaillé">${ICON("pin")}</button></div>
+    <div class="leg">${Object.entries(VIG.COULEURS).map(([k, n]) => `<span><i style="background:${CARTE_COL[k]}"></i>${n}</span>`).join("")}<span><i style="background:transparent;border:2px solid #fff;width:7px;height:7px"></i>en cave</span></div>
+    <div class="attrib" id="carte-attrib">Natural Earth</div>`;
+  const svg = d.querySelector("#carte-svg");
+  const PTR = new Map(); let dist0 = 0, bouge = false, last = null;
+  svg.addEventListener("pointerdown", e => { if (e.button) return; PTR.set(e.pointerId, {x: e.clientX, y: e.clientY}); bouge = false; last = {x: e.clientX, y: e.clientY}; if (PTR.size === 2) { const [a, b] = [...PTR.values()]; dist0 = Math.hypot(a.x - b.x, a.y - b.y); } else dist0 = 0; e.preventDefault(); });
+  svg.addEventListener("pointermove", e => {
+    if (!PTR.has(e.pointerId)) return;
+    const r = svg.getBoundingClientRect(); const u = VB.w / r.width;
+    if (PTR.size === 1) { const dx = e.clientX - last.x, dy = e.clientY - last.y; if (Math.abs(dx) + Math.abs(dy) > 3) bouge = true; last = {x: e.clientX, y: e.clientY}; vbSet(VB.x - dx * u, VB.y - dy * u, VB.w); }
+    else if (PTR.size === 2) { PTR.set(e.pointerId, {x: e.clientX, y: e.clientY}); const [a, b] = [...PTR.values()]; const dist = Math.hypot(a.x - b.x, a.y - b.y); if (dist0 > 0 && Math.abs(dist - dist0) > 2) { bouge = true; vbZoom(dist / dist0, (a.x + b.x) / 2, (a.y + b.y) / 2); } if (dist0 > 0) dist0 = dist; else dist0 = dist; }
+    else PTR.set(e.pointerId, {x: e.clientX, y: e.clientY});   /* trois doigts ou plus : on suit, sans zoomer */
+    e.preventDefault();
+  });
+  const fin = e => { if (!PTR.has(e.pointerId)) return; PTR.delete(e.pointerId); if (PTR.size === 1) { last = [...PTR.values()][0]; dist0 = 0; } else if (PTR.size === 2) { const [a, b] = [...PTR.values()]; dist0 = Math.hypot(a.x - b.x, a.y - b.y); }
+    if (!bouge && PTR.size === 0) { const pt = e.target.closest && e.target.closest(".pt, .reg"); if (pt && pt.dataset.id) ouvrirVin(pt.dataset.id); else if (pt && pt.dataset.reg) zoomRegion(pt.dataset.reg); } };
+  svg.addEventListener("pointerup", fin); svg.addEventListener("pointercancel", fin);
+  window.addEventListener("pointerup", e => { if (PTR.has(e.pointerId) && !svg.contains(e.target)) { PTR.delete(e.pointerId); dist0 = 0; } });   /* relâché hors de la carte : on lâche aussi */
+  window.addEventListener("blur", () => { PTR.clear(); dist0 = 0; });
+  svg.addEventListener("wheel", e => { e.preventDefault(); vbZoom(e.deltaY < 0 ? 1.25 : 0.8, e.clientX, e.clientY); }, {passive: false});
+  CARTE_EL = d; return d;
+}
+function vbSet(x, y, w) {
+  const el = $("#carte-svg"); if (!el) return;
+  const r = el.getBoundingClientRect(); const asp = r.width ? r.height / r.width : .5;
+  VB.w = Math.max(2.5, Math.min(360, w)); VB.h = VB.w * asp;
+  VB.x = Math.max(-200, Math.min(200 - VB.w, x)); VB.y = Math.max(-175, Math.min(175 - VB.h, y));
+  el.setAttribute("viewBox", `${VB.x} ${VB.y} ${VB.w} ${VB.h}`); planifierPoints();
+  if (ATLAS.detail && window.L && LEAF.map) LEAF.synchroDepuisSvg();
+}
+/* Pendant un glissement, le cadre bouge à chaque image mais les 500 points ne sont redessinés que si le zoom a
+   changé de plus de 8 % ou si le cadre est sorti de la marge déjà dessinée (80 px) : sinon le téléphone rame. */
+const RENDU = {k: 0, x: 0, y: 0, w: 0, h: 0, prevu: false};
+function planifierPoints() {
+  const el = $("#carte-svg"); if (!el) return; const r = el.getBoundingClientRect(); if (!r.width) return;
+  const k = r.width / VB.w, marge = 60 / k;
+  const aRefaire = !RENDU.k || Math.abs(k / RENDU.k - 1) > 0.08 || VB.x < RENDU.x - marge || VB.y < RENDU.y - marge || VB.x + VB.w > RENDU.x + RENDU.w + marge || VB.y + VB.h > RENDU.y + RENDU.h + marge;
+  if (!aRefaire || RENDU.prevu) return;
+  RENDU.prevu = true; requestAnimationFrame(() => { RENDU.prevu = false; majPointsCarte(); });
+}
+function vbVue(k) {
+  const [lo0, la0, lo1, la1] = VUES_CARTE[k] || VUES_CARTE.monde; const [x0, y0] = proj(la1, lo0), [x1, y1] = proj(la0, lo1);
+  const el = $("#carte-svg"); const r = el ? el.getBoundingClientRect() : {width: 2, height: 1}; const asp = r.height / r.width;
+  let w = x1 - x0; const h = y1 - y0; if (h / w > asp) w = h / asp;
+  vbSet(x0 - (w - (x1 - x0)) / 2, y0 - (w * asp - h) / 2, w);
+}
+function vbZoom(f, px, py) {
+  const el = $("#carte-svg"); if (!el) return; const r = el.getBoundingClientRect();
+  const ux = VB.x + (px - r.left) / r.width * VB.w, uy = VB.y + (py - r.top) / r.height * VB.h;
+  vbSet(ux - (ux - VB.x) / f, uy - (uy - VB.y) / f, VB.w / f);
+}
+function zoomRegion(cle) {
+  const pts = vinsFiltres().filter(v => v.pays + "|" + v.region === cle).map(v => proj(v.lat, v.lon)); if (!pts.length) return;
+  const xs = pts.map(p => p[0]), ys = pts.map(p => p[1]); const x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
+  const el = $("#carte-svg"); const r = el.getBoundingClientRect(); const asp = r.height / r.width;
+  let w = Math.max(x1 - x0, (y1 - y0) / asp, 1.2) * 1.5; vbSet((x0 + x1) / 2 - w / 2, (y0 + y1) / 2 - w * asp / 2, w);
+}
+function majPointsCarte() {
+  const el = $("#carte-svg"), g = $("#carte-pts"); if (!el || !g) return;
+  const r = el.getBoundingClientRect(); if (!r.width) return;
+  const k = r.width / VB.w, u = 1 / k;                      /* k = pixels par degré ; u = degrés par pixel */
+  Object.assign(RENDU, {k, x: VB.x, y: VB.y, w: VB.w, h: VB.h});
+  const liste = vinsFiltres(), noms = caveNoms();
+  const dedans = (x, y) => x > VB.x - 2 * u * 40 && x < VB.x + VB.w + 2 * u * 40 && y > VB.y - 2 * u * 40 && y < VB.y + VB.h + 2 * u * 40;
+  let H = "";
+  if (k < 14) {                                               /* vu de loin : une bulle par région */
+    const regs = new Map();
+    for (const v of liste) { const key = v.pays + "|" + v.region; const [x, y] = proj(v.lat, v.lon); let o = regs.get(key); if (!o) { o = {n: 0, x: 0, y: 0, imp: 0, nom: v.region, cave: 0}; regs.set(key, o); } o.n++; o.x += x; o.y += y; o.imp = Math.max(o.imp, v.importance || 1); if (enCave(v, noms)) o.cave++; }
+    const sw = (3 * u).toFixed(3);                            /* contour des étiquettes : 3 px d'écran, pas 3 degrés */
+    for (const [key, o] of regs) { const x = o.x / o.n, y = o.y / o.n; if (!dedans(x, y)) continue; const rp = (5 + 2.2 * Math.sqrt(o.n)) * u; const fs = 11 * u;
+      const lab = k >= 11 || o.n >= 12 || (k >= 6 && o.imp >= 5);
+      H += `<g class="reg" data-reg="${h(key)}"><circle cx="${x.toFixed(3)}" cy="${y.toFixed(3)}" r="${rp.toFixed(3)}"/>${lab ? `<text x="${(x + rp + 2 * u).toFixed(3)}" y="${(y + fs * .35).toFixed(3)}" font-size="${fs.toFixed(3)}" stroke-width="${sw}">${h(o.nom)} <tspan fill="#C9A84C">${o.n}</tspan></text>` : ""}</g>`; }
+    if (k < 11) {                                               /* de loin, le nom des pays suffit */
+      const pays = new Map();
+      for (const v of liste) { const [x, y] = proj(v.lat, v.lon); let o = pays.get(v.pays); if (!o) { o = {n: 0, x: 0, y: 0}; pays.set(v.pays, o); } o.n++; o.x += x; o.y += y; }
+      for (const [nom, o] of pays) { const x = o.x / o.n, y = o.y / o.n; if (!dedans(x, y) || o.n < (k < 3 ? 12 : 6)) continue; const fs = 12 * u; H += `<text class="pays" x="${x.toFixed(3)}" y="${(y - 14 * u).toFixed(3)}" font-size="${fs.toFixed(3)}" text-anchor="middle" stroke-width="${sw}">${h(nom)}</text>`; }
+    }
+  } else {
+    const sw = (3 * u).toFixed(3);
+    const tri = liste.slice().sort((a, b) => (a.importance || 0) - (b.importance || 0));   /* les importants dessinés en dernier, dessus */
+    for (const v of tri) { const [x, y] = proj(v.lat, v.lon); if (!dedans(x, y)) continue; const cave = enCave(v, noms); const rp = (2.6 + (v.importance || 2) * .85) * u; const fs = 11 * u;
+      const label = k >= 70 || ((v.importance || 0) >= 5 && k >= 18) || (k >= 32 && (v.importance || 0) >= 4) || (k >= 48 && (v.importance || 0) >= 3);
+      H += `<g class="pt ${cave ? "encave" : ""}" data-id="${h(v.id)}"><circle cx="${x.toFixed(3)}" cy="${y.toFixed(3)}" r="${rp.toFixed(3)}" fill="${CARTE_COL[v.couleur] || "#ccc"}"/>${label ? `<text x="${(x + rp + 1.5 * u).toFixed(3)}" y="${(y + fs * .35).toFixed(3)}" font-size="${fs.toFixed(3)}" stroke-width="${sw}">${h(v.nom)}</text>` : ""}</g>`; }
+  }
+  g.innerHTML = H;
+}
+
+/* ---------- Le fond détaillé (Leaflet + tuiles CARTO), seulement en ligne et sur demande ---------- */
+const LEAF = {map: null, couche: null, chargement: null,
+  js: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js", jsSri: "sha384-cxOPjt7s7Iz04uaHJceBmS+qpjv2JkIHNVcuOrM+YHwZOmJGBXI00mdUXEq65HTH",
+  css: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css", cssSri: "sha384-sHL9NAb7lN7rfvG5lfHpm643Xkcjzp4jFvuavGOndn6pjVqS6ny56CAt3nsEVT4H",
+  charger() {
+    if (window.L) return Promise.resolve();
+    if (!LEAF.chargement) LEAF.chargement = new Promise((ok, ko) => {
+      const css = document.createElement("link"); css.rel = "stylesheet"; css.href = LEAF.css; css.integrity = LEAF.cssSri; css.crossOrigin = "anonymous"; document.head.appendChild(css);
+      const js = document.createElement("script"); js.src = LEAF.js; js.integrity = LEAF.jsSri; js.crossOrigin = "anonymous"; js.onload = () => ok(); js.onerror = () => { LEAF.chargement = null; ko(new Error("Leaflet injoignable")); }; document.head.appendChild(js);
+    });
+    return LEAF.chargement;
+  },
+  centre() { const cx = VB.x + VB.w / 2, cy = VB.y + VB.h / 2; const el = $("#carte-svg"); const lw = el ? el.getBoundingClientRect().width : 0; const k = lw ? lw / VB.w : 3; return {lat: mercInv(-cy), lon: cx, zoom: Math.max(1, Math.min(17, Math.log2(k * 360 / 256)))}; },
+  synchroDepuisSvg() { const c = LEAF.centre(); LEAF.map.setView([c.lat, c.lon], c.zoom, {animate: false}); },
+  synchroVersSvg() { const c = LEAF.map.getCenter(), z = LEAF.map.getZoom(); const el = $("#carte-svg"); if (!el) return; const r = el.getBoundingClientRect(); if (!r.width || !r.height) return; const k = 256 * Math.pow(2, z) / 360; const w = r.width / k; const [x, y] = proj(c.lat, c.lng); VB.w = w; VB.h = w * r.height / r.width; VB.x = x - w / 2; VB.y = y - VB.h / 2; el.setAttribute("viewBox", `${VB.x} ${VB.y} ${VB.w} ${VB.h}`); },
+  async activer() {
+    if (!navigator.onLine) { toast("Fond détaillé : il faut être en ligne"); return; }
+    try { await LEAF.charger(); } catch (e) { toast("Fond détaillé indisponible (" + e.message + ")"); return; }
+    if (!CARTE_EL || !document.contains(CARTE_EL) || ATLAS.onglet !== "carte") return;   /* on a quitté la carte pendant le chargement */
+    const c = LEAF.centre(); $("#carte").classList.add("detail"); ATLAS.detail = true;
+    if (!LEAF.map) {
+      LEAF.map = L.map($("#fond-leaflet"), {zoomControl: false, attributionControl: false, worldCopyJump: true}).setView([c.lat, c.lon], c.zoom);
+      L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {maxZoom: 18, subdomains: "abcd"}).addTo(LEAF.map);
+      LEAF.couche = L.layerGroup().addTo(LEAF.map);
+      LEAF.map.on("moveend", () => { if (ATLAS.detail) LEAF.synchroVersSvg(); });
+    } else { LEAF.map.invalidateSize(); LEAF.map.setView([c.lat, c.lon], c.zoom, {animate: false}); }
+    $("#carte-attrib").innerHTML = `© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> · © <a href="https://carto.com/attributions" target="_blank" rel="noopener">CARTO</a>`;
+    LEAF.majPoints(); setTimeout(() => LEAF.map.invalidateSize(), 50);
+  },
+  desactiver() { ATLAS.detail = false; const c = $("#carte"); if (c) c.classList.remove("detail"); const a = $("#carte-attrib"); if (a) a.textContent = "Natural Earth"; majPointsCarte(); },
+  majPoints() {
+    if (!LEAF.map || !LEAF.couche) return; LEAF.couche.clearLayers(); const noms = caveNoms();
+    for (const v of vinsFiltres()) { const cave = enCave(v, noms); L.circleMarker([v.lat, v.lon], {radius: 3 + (v.importance || 2), color: cave ? "#fff" : "#0E1A24", weight: cave ? 2 : 1, fillColor: CARTE_COL[v.couleur] || "#ccc", fillOpacity: .9})
+      .bindPopup(`<b>${h(v.nom)}</b><br><span style="font-size:12px">${h(v.region)} · ${h(v.pays)}</span><br><button class="btn xs primary" style="margin-top:6px" data-action="vin-open" data-id="${h(v.id)}">Voir la fiche</button>`).addTo(LEAF.couche); }
+  }
+};
+
+/* ---------- Le catalogue en liste, groupé par pays puis région ---------- */
+function carteVin(v, noms) {
+  const cave = enCave(v, noms);
+  return `<button class="vin ${cave ? "encave" : ""}" data-action="vin-open" data-id="${h(v.id)}"><div class="bar ${h(v.couleur)}"></div><div><div class="nm">${h(v.nom)}</div><div class="meta">${h([v.region, v.sousRegion].filter(Boolean).join(" · "))} · ${h((v.cepages || []).slice(0, 2).join(", "))}</div></div><div class="niv">${cave ? "en cave" : h(NIVEAU_NOM[v.niveau] || "")}<b>${prixTxt(v.prix)}</b></div></button>`;
+}
+function renderListeVins() {
+  const el = $("#atlas-liste"); if (!el) return;
+  const liste = vinsFiltres().slice().sort((a, b) => a.pays.localeCompare(b.pays) || a.region.localeCompare(b.region) || (b.importance || 0) - (a.importance || 0) || vinNorm(a).localeCompare(vinNorm(b)));
+  const noms = caveNoms(); let H = "", pays = null, region = null, n = 0;
+  for (const v of liste) { if (n >= ATLAS.max) break;
+    if (v.pays !== pays) { pays = v.pays; region = null; H += `<div class="section-h" style="margin-top:16px"><h2 style="font-size:18px">${h(pays)}</h2><span class="tiny">${plur(liste.filter(x => x.pays === pays).length, "appellation")}</span></div>`; }
+    if (v.region !== region) { region = v.region; H += `<div class="tiny" style="margin:8px 2px 6px;font-weight:700;letter-spacing:.04em;text-transform:uppercase">${h(region)}</div>`; }
+    H += carteVin(v, noms); n++; }
+  if (!liste.length) H = `<div class="empty"><b>Rien ne correspond</b>Essayez un autre mot, une autre couleur ou un autre pays.</div>`;
+  else if (liste.length > ATLAS.max) H += `<button class="btn block" style="margin-top:12px" data-action="atlas-plus">Voir ${Math.min(80, liste.length - ATLAS.max)} de plus (${liste.length - ATLAS.max} restantes)</button>`;
+  el.innerHTML = H;
+}
+
+/* ---------- La fiche d'un vin : apprendre, retrouver dans la cave, mettre dans la liste d'achats ---------- */
+function ouvrirVin(id) {
+  const v = VIG.vinParId(id); if (!v) return; const vars = VIG.variantesDe(v); const souhaite = (S.souhaits || []).some(x => x.vinId === id); const cave = refsDuVin(v);
+  const famChipV = x => { const f = VIG.FAM[x.famille]; return `<span class="chip sm"><i class="sw" style="background:var(--c-${x.couleur})"></i>${h(VIG.COULEURS[x.couleur])} · ${h(f ? f.nom : x.famille)}</span>`; };
+  const corps = `<div class="muted" style="font-size:13px">${h([v.pays, v.region, v.sousRegion].filter(Boolean).join(" · "))}</div>
+    <div style="font-family:var(--serif);font-size:26px;line-height:1.15;margin-top:2px">${h(v.nom)}</div>
+    <div class="chips" style="margin-top:8px">${vars.map(famChipV).join("")}<span class="chip sm">${h(NIVEAU_NOM[v.niveau] || "")}</span><span class="chip sm">${prixTxt(v.prix)}</span></div>
+    <p style="margin-top:12px;font-size:14.5px">${h(v.style)}</p>
+    ${v.classique ? `<div class="banner" style="margin-top:12px"><div><b>L'accord emblématique.</b> ${h(v.classique)}</div></div>` : ""}
+    <dl class="kv" style="margin-top:14px"><dt>Cépages</dt><dd>${h((v.cepages || []).join(", ") || "–")}</dd><dt>Service</dt><dd>${h(v.temp || "–")}</dd><dt>Garde</dt><dd>${h(v.garde || "–")}</dd><dt>Prix</dt><dd>${prixTxt(v.prix)} <span class="tiny">${["", "moins de 12 €", "12 à 25 €", "25 à 60 €", "plus de 60 €"][Number(v.prix) || 2]} chez un caviste</span></dd></dl>
+    <div class="section-h" style="margin-top:14px"><h2 style="font-size:15px">Avec quoi le servir</h2></div><div class="chips">${(v.accords || []).map(t => VIG.TAGS[t] ? `<span class="alim main">${h(VIG.TAGS[t].l)}</span>` : "").join("")}</div>
+    ${(v.eviter || []).length ? `<div class="tiny" style="margin-top:8px">À éviter : ${h((v.eviter || []).map(t => VIG.TAGS[t] ? VIG.TAGS[t].l : t).join(", "))}</div>` : ""}
+    <div class="card flat" style="margin-top:14px;font-size:14px;line-height:1.5">${h(v.note || "")}</div>
+    ${vars.length > 1 ? `<div class="section-h" style="margin-top:14px"><h2 style="font-size:15px">Aussi en…</h2></div>${vars.slice(1).map(x => `<div class="tiny" style="margin-bottom:5px"><b>${h(VIG.COULEURS[x.couleur])}</b> · ${h(VIG.FAM[x.famille] ? VIG.FAM[x.famille].nom : "")}${x.note ? " · " + h(x.note) : ""}</div>`).join("")}` : ""}
+    <div class="card flat" style="margin-top:14px"><b>Dans votre cave :</b> ${cave.length ? cave.map(r => `${h(r.nom)} (${Number(r.stock) || 0})`).join(", ") : "aucune bouteille de cette appellation."}</div>`;
+  const pied = `<button class="btn ghost" data-action="vin-carte" data-id="${h(id)}" aria-label="Sur la carte" title="Sur la carte">${ICON("pin")}</button><button class="btn" data-action="vin-cave" data-id="${h(id)}">Ajouter à ma cave</button><button class="btn ${souhaite ? "" : "primary"} grow" data-action="vin-souhait" data-id="${h(id)}">${souhaite ? "Retirer" : "À acheter"}</button>`;
+  openSheet("Appellation", corps, pied); sheetCtx = "vin";
+}
+
+/* ---------- Apprendre : les onze règles du jeu ---------- */
+const LECONS = [
+ {t: "Le poids d'abord", p: "Un plat léger demande un vin léger, un plat puissant un vin puissant. C'est la règle qui évite neuf erreurs sur dix : le vin ne doit ni écraser l'assiette ni disparaître derrière elle.", ex: "Sole meunière et Muscadet ; civet de chevreuil et Barolo."},
+ {t: "L'acide appelle l'acide", p: "Citron, tomate, vinaigrette : un plat vif rend un vin mou encore plus mou. Il faut un vin au moins aussi vif, sinon il paraît plat et lourd.", ex: "Ceviche et Albariño ; salade de tomates et Picpoul de Pinet."},
+ {t: "Le gras adoucit les tanins", p: "Les protéines et le gras d'une viande rouge enrobent les tanins d'un rouge structuré, qui paraît alors soyeux. Le même vin sur un poisson devient métallique et âpre.", ex: "Entrecôte et Médoc ; côte de bœuf et Cahors."},
+ {t: "Les bulles tranchent le gras", p: "Beignets, frites, œufs : l'effervescence et l'acidité nettoient le palais entre deux bouchées grasses. Des bulles brutes sont un accord sûr avec ce qui est frit ; un blanc vif fait aussi l'affaire.", ex: "Frites et Champagne, l'accord de bistrot ; œufs brouillés et Crémant."},
+ {t: "Le sucre appelle le sucre", p: "Un vin plus sec que le dessert paraît maigre et acide. Le vin doit être au moins aussi sucré que l'assiette.", ex: "Tarte aux abricots et Jurançon moelleux ; chocolat noir et Banyuls."},
+ {t: "Le piment brûle les tanins", p: "Le piquant exalte l'amertume et l'alcool : un rouge tannique devient rêche. Un blanc aromatique, un rosé ou un vin légèrement doux calment le feu.", ex: "Curry et Gewurztraminer ; pad thaï et Riesling demi-sec."},
+ {t: "Le sel et le liquoreux", p: "Le sel d'un bleu ou d'une pâte lavée est apaisé par le sucre et le gras d'un liquoreux : un accord de contraste, pas de ressemblance.", ex: "Roquefort et Sauternes ; munster et Gewurztraminer vendanges tardives."},
+ {t: "Ce qui pousse ensemble va ensemble", p: "Les cuisines régionales se sont construites avec leurs vins : chèvre et Sancerre, munster et Gewurztraminer, huîtres et Muscadet. Un accord régional est rarement faux.", ex: "Huîtres de Marennes et Muscadet ; tajine d'agneau et rouge du Languedoc."},
+ {t: "L'ordre du repas", p: "Du léger au puissant, du blanc au rouge, du sec au doux, du jeune au vieux. Un vin puissant servi avant un vin léger efface le second.", ex: "Bulles, puis blanc vif, puis rouge souple, puis liquoreux."},
+ {t: "La température change tout", p: "Trop froid, un vin n'a plus d'arômes ; trop chaud, l'alcool domine. Repères : bulles 6 à 8 °C, blancs vifs 8 à 10, blancs amples 10 à 12, rouges légers 13 à 15, rouges puissants 16 à 18.", ex: "Un Beaujolais à 14 °C, jamais à 20."},
+ {t: "Les pièges", p: "Artichaut (il sucre le vin), asperge (goût métallique sur le boisé), œuf (tapisse le palais), chocolat noir (tue les blancs), glace (anesthésie) : rester simple et vif, ou passer au vin doux.", ex: "Asperges et Sauvignon ; glace et Moscato d'Asti."},
+];
+const QUIZ_PLATS = ["Huîtres creuses nature", "Entrecôte grillée, sauce au poivre", "Curry de poulet au lait de coco", "Tarte tatin", "Roquefort", "Munster", "Saumon fumé", "Risotto aux cèpes", "Gigot d'agneau rôti", "Fondant au chocolat", "Tempura de crevettes", "Choucroute garnie", "Bœuf bourguignon", "Sole meunière", "Chèvre chaud sur salade", "Magret de canard aux cerises", "Blanquette de veau", "Plateau de charcuterie", "Homard grillé au beurre", "Pizza margherita", "Pad thaï aux crevettes, piment", "Foie gras poêlé", "Civet de chevreuil", "Carpaccio de bœuf", "Tartare de thon, avocat", "Lasagnes bolognaise", "Poulet rôti", "Couscous royal", "Crème brûlée", "Salade de tomates, mozzarella, basilic", "Cassoulet", "Asperges vertes, sauce hollandaise", "Comté affiné 24 mois", "Moules marinières", "Ribs au barbecue", "Tajine d'agneau aux pruneaux", "Sushis et sashimis", "Brie de Meaux", "Tarte au citron meringuée", "Fish and chips", "Côte de bœuf au feu de bois", "Œufs brouillés à la truffe", "Paella", "Camembert rôti au four", "Ceviche de daurade", "Bar rôti au beurre blanc", "Pintade aux morilles, crème", "Tiramisu"];
+const melanger = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const QZ = {mode: "accord", q: null, repondu: false, choix: null};
+function quizNouveau() {
+  QZ.q = null; QZ.repondu = false; QZ.choix = null;
+  if (QZ.mode === "accord") {
+    for (let i = 0; i < 30 && !QZ.q; i++) {
+      const plat = QUIZ_PLATS[Math.floor(Math.random() * QUIZ_PLATS.length)]; const d = VIG.detecterAliments(plat); if (!d.tags.length) continue;
+      const temps = VIG.devinerTemps(d.tags, plat); const r = VIG.scoreFamilles(d.tags, temps); if (r[0].s - r[1].s < 0.45) continue;
+      QZ.q = {plat, temps, tags: d.tags, aliments: d.aliments, bonne: r[0].k, options: melanger([r[0].k].concat(melanger(r.slice(1, 8)).slice(0, 3).map(f => f.k))), ranked: r};
+    }
+  } else {
+    const cat = VIG.catalogue().filter(v => (v.importance || 0) >= 3 && !VIG.norm(v.nom).includes(VIG.norm(v.region)) && !VIG.norm(v.region).includes(VIG.norm(v.nom))); if (cat.length < 8) return;
+    const v = cat[Math.floor(Math.random() * cat.length)]; const regions = [...new Set(VIG.catalogue().map(x => x.region))].filter(x => x !== v.region);
+    QZ.q = {vin: v, bonne: v.region, options: melanger([v.region].concat(melanger(regions).slice(0, 3)))};
+  }
+}
+function quizRepondre(v) {
+  if (!QZ.q || QZ.repondu) return; QZ.repondu = true; QZ.choix = v; const ok = v === QZ.q.bonne;
+  S.quiz = S.quiz || {bonnes: 0, total: 0, serie: 0, meilleure: 0}; S.quiz.total++;
+  if (ok) { S.quiz.bonnes++; S.quiz.serie++; S.quiz.meilleure = Math.max(S.quiz.meilleure, S.quiz.serie); vibre([10, 30, 10]); } else { S.quiz.serie = 0; vibre(30); }
+  save(); majBadges(); renderAtlas();
+}
+function renderQuiz() {
+  const q = S.quiz || {bonnes: 0, total: 0, serie: 0, meilleure: 0}; if (!QZ.q) quizNouveau();
+  let H = `<div class="card"><div class="stat-row"><div><b>${q.bonnes}</b><span>bonnes réponses</span></div><div><b>${q.total}</b><span>questions</span></div><div><b>${q.serie}</b><span>d'affilée · record ${q.meilleure}</span></div></div></div>
+    <div class="seg" style="margin:12px 0">${[["accord", "Le bon accord"], ["origine", "D'où vient ce vin ?"]].map(([k, n]) => `<button class="${QZ.mode === k ? "on" : ""}" data-action="quiz-mode" data-v="${k}">${n}</button>`).join("")}</div>`;
+  const Q = QZ.q;
+  if (!Q) return H + `<div class="empty"><b>Pas de question</b>L'atlas doit être chargé pour ce mode.</div>`;
+  if (QZ.mode === "accord") {
+    H += `<div class="card"><div class="tiny">Quelle famille de vin pour ce plat ?</div><div class="quiz-q">${h(Q.plat)}</div><div class="chips">${Q.aliments.slice(0, 4).map(a => `<span class="alim">${h(a.nom)}</span>`).join("")}</div>`;
+    H += Q.options.map(k => { const f = VIG.FAM[k]; const cls = QZ.repondu ? (k === Q.bonne ? "good" : (k === QZ.choix ? "bad" : "")) : ""; return `<button class="quiz-opt ${cls}" data-action="quiz-rep" data-v="${k}" ${QZ.repondu ? "disabled" : ""}><span class="sw ${f.couleur}" style="display:inline-grid;width:22px;height:22px;border-radius:7px;font-size:11px;place-items:center;margin-right:8px;vertical-align:-5px">${f.glyph}</span>${h(f.nom)} <span class="tiny">· ${h(f.long)}</span></button>`; }).join("");
+    if (QZ.repondu) { const ex = VIG.expliquer(Q.ranked[0], Q.temps); const em = VIG.emblemes(Q.bonne, 3);
+      H += `<div class="card flat" style="margin-top:12px"><b>${QZ.choix === Q.bonne ? "Bien vu." : "Raté : c'était " + h(VIG.FAM[Q.bonne].nom) + "."}</b><div class="tiny" style="margin-top:6px">${ex.pour.map(x => "• " + h(x)).join("<br>")}</div>${em.length ? `<div class="tiny" style="margin-top:8px">Par exemple :</div><div class="chips" style="margin-top:4px">${em.map(v => `<button class="chip sm" data-action="vin-open" data-id="${h(v.id)}">${h(v.nom)}</button>`).join("")}</div>` : ""}</div><button class="btn primary block" style="margin-top:10px" data-action="quiz-suivant">Question suivante</button>`; }
+    H += `</div>`;
+  } else {
+    const v = Q.vin;
+    H += `<div class="card"><div class="tiny">Dans quelle région naît ce vin ?</div><div class="quiz-q">${h(v.nom)}</div><div class="tiny">Indice : ${h((v.cepages || []).slice(0, 2).join(", "))} · ${h(VIG.COULEURS[v.couleur])}</div>`;
+    H += Q.options.map(r => { const cls = QZ.repondu ? (r === Q.bonne ? "good" : (r === QZ.choix ? "bad" : "")) : ""; return `<button class="quiz-opt ${cls}" data-action="quiz-rep" data-v="${h(r)}" ${QZ.repondu ? "disabled" : ""}>${h(r)}</button>`; }).join("");
+    if (QZ.repondu) H += `<div class="card flat" style="margin-top:12px"><b>${QZ.choix === Q.bonne ? "Exact." : "Non : " + h(v.region) + ", " + h(v.pays) + "."}</b><div class="tiny" style="margin-top:6px">${h(v.note || "")}</div><div class="row" style="margin-top:8px"><button class="btn sm" data-action="vin-open" data-id="${h(v.id)}">Voir la fiche</button><button class="btn sm ghost" data-action="vin-carte" data-id="${h(v.id)}">Sur la carte</button></div></div><button class="btn primary block" style="margin-top:10px" data-action="quiz-suivant">Question suivante</button>`;
+    H += `</div>`;
+  }
+  return H;
+}
+
+/* ---------- La vue Atlas ---------- */
+function filtresAtlasHtml(pays) {
+  return `<div class="search"><svg><use href="#i-search"/></svg><input class="input" id="atlas-q" placeholder="Appellation, région, cépage, pays" value="${h(ATLAS.q)}" autocomplete="off"></div>
+    <div class="chips scroll" style="margin-top:8px">${[["", "Toutes"]].concat(Object.entries(VIG.COULEURS)).map(([k, v]) => `<button class="chip ${ATLAS.couleur === k ? "on" : ""}" data-action="atlas-filt" data-f="couleur" data-v="${k}">${k ? `<i class="sw" style="background:var(--c-${k})"></i>` : ""}${v}</button>`).join("")}</div>
+    <div class="grid-2 filtres-atlas" style="margin-top:6px"><select class="input" data-change="atlas-pays"><option value="">Tous les pays</option>${pays.map(p => `<option value="${h(p)}" ${ATLAS.pays === p ? "selected" : ""}>${h(p)}</option>`).join("")}</select><select class="input" data-change="atlas-fam"><option value="">Toutes les familles</option>${VIG.FAMILLES.map(f => `<option value="${f.k}" ${ATLAS.fam === f.k ? "selected" : ""}>${h(f.nom)}</option>`).join("")}</select></div>`;
+}
+function renderAtlas() {
+  const el = $("#view-atlas"); const cat = VIG.catalogue();
+  if (!cat.length) { el.innerHTML = `<div class="empty"><b>L'atlas n'est pas chargé</b>Le fichier vins.js manque à côté de l'app : la carte, le catalogue et le quiz arrivent avec lui.</div>`; return; }
+  const pays = [...new Set(cat.map(v => v.pays))].sort((a, b) => a.localeCompare(b)); const n = vinsFiltres().length;
+  let H = `<div class="card wine section"><h1 style="font-size:24px">L'atlas du vin</h1><p style="opacity:.9;margin:6px 0 10px;font-size:14px">${cat.length} appellations, ${pays.length} pays, 11 familles d'accords. Pour apprendre quel vin va où, et quoi commander quand la cave n'a pas l'accord.</p>
+    <div class="seg" style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.2)">${[["carte", "Carte"], ["catalogue", "Catalogue"], ["apprendre", "Apprendre"], ["quiz", "Quiz"]].map(([k, v]) => `<button class="${ATLAS.onglet === k ? "on" : ""}" style="${ATLAS.onglet === k ? "" : "color:#fff"}" data-action="atlas-onglet" data-v="${k}">${v}</button>`).join("")}</div></div>`;
+  if (ATLAS.onglet === "carte" || ATLAS.onglet === "catalogue") H += `<div class="section">${filtresAtlasHtml(pays)}<div class="tiny" style="margin:8px 2px 0" id="atlas-n">${plur(n, "appellation")}${ATLAS.q || ATLAS.couleur || ATLAS.pays || ATLAS.fam ? " dans ce filtre" : ""}</div></div>`;
+  if (ATLAS.onglet === "carte") H += `<div class="section"><div id="atlas-carte"></div><p class="tiny" style="margin-top:8px">Pincez ou molette pour zoomer, glissez pour déplacer. Une bulle dorée = une région : touchez-la pour y entrer. Un point = une appellation : touchez-le pour sa fiche. Un cercle blanc = vous l'avez en cave.</p></div>`;
+  else if (ATLAS.onglet === "catalogue") H += `<div class="section" id="atlas-liste"></div>`;
+  else if (ATLAS.onglet === "apprendre") {
+    H += `<div class="section"><div class="section-h"><h2>Les règles du jeu</h2><span class="tiny">${LECONS.length} leçons</span></div><div class="lecons stack">${LECONS.map(l => `<div class="card lecon"><h3>${h(l.t)}</h3><p>${h(l.p)}</p><div class="ex">${h(l.ex)}</div></div>`).join("")}</div></div>`;
+    H += `<div class="section"><div class="section-h"><h2>Les familles, dans le monde</h2><span class="tiny">les appellations emblématiques</span></div><div class="stack">${VIG.FAMILLES.map(f => { const em = VIG.emblemes(f.k, 6); return `<div class="card"><div class="fam"><span class="sw ${f.couleur}">${f.glyph}</span><div class="grow"><b>${h(f.nom)}</b> <span class="tiny">· ${h(f.long)} · ${h(f.temp)}</span><div class="tiny" style="margin-top:3px"><b>Idéal :</b> ${h(f.ideal)}</div><div class="chips" style="margin-top:8px">${em.map(v => `<button class="chip sm" data-action="vin-open" data-id="${h(v.id)}">${h(v.nom)}</button>`).join("")}</div></div></div></div>`; }).join("")}</div></div>`;
+    H += `<div class="section"><div class="section-h"><h2>Le temps du repas</h2></div><div class="card">${VIG.TEMPS.map(([k, n2]) => { const pri = VIG.PRIOR[k] || {}; const top = Object.entries(pri).filter(([, v]) => v > 0).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([f]) => VIG.FAM[f].nom); return `<div class="jl"><div class="grow"><b>${h(n2)}</b> <span class="tiny">· ${h(top.join(", ") || "selon le plat")}</span></div></div>`; }).join("")}</div></div>`;
+  } else H += `<div class="section">${renderQuiz()}</div>`;
+  el.innerHTML = H;
+  if (ATLAS.onglet === "carte") { $("#atlas-carte").appendChild(carteElement()); RENDU.k = 0; requestAnimationFrame(() => { if (!ATLAS.init) { ATLAS.init = true; vbVue("europe"); } else vbSet(VB.x, VB.y, VB.w); if (ATLAS.detail && LEAF.map) { LEAF.map.invalidateSize(); LEAF.majPoints(); } }); }
+  if (ATLAS.onglet === "catalogue") renderListeVins();
+}
+function majAtlasFiltre() {
+  $$('[data-action="atlas-filt"]').forEach(b => b.classList.toggle("on", ATLAS[b.dataset.f] === b.dataset.v));
+  const n = $("#atlas-n"); if (n) n.textContent = plur(vinsFiltres().length, "appellation") + (ATLAS.q || ATLAS.couleur || ATLAS.pays || ATLAS.fam ? " dans ce filtre" : "");
+  if (ATLAS.onglet === "carte") { majPointsCarte(); if (ATLAS.detail) LEAF.majPoints(); } else renderListeVins();
+}
+
+/* ---------- Les références idéales d'un plat (hors cave) et la liste d'achats ---------- */
+function ideauxHtml(p, ranked) {
+  const ideaux = VIG.catalogue().length && p.tags.length ? VIG.recommanderCatalogue(p.tags, p.temps, ranked, {n: 3}) : []; if (!ideaux.length) return "";
+  return `<div class="section-h" style="margin-top:12px"><h2 style="font-size:15px">Les références idéales, dans le monde</h2><span class="tiny">pour apprendre, à commander</span></div>` + ideaux.map(x => `<div class="pick ideal" data-action="vin-open" data-id="${h(x.vin.id)}"><div class="bar ${h(x.variante.couleur)}"></div><div><div class="nm">${h(x.vin.nom)}${x.variante.couleur !== x.vin.couleur ? ` <span class="tiny">(en ${h(VIG.COULEURS[x.variante.couleur].toLowerCase())})</span>` : ""} <span class="tiny">· ${h(x.vin.region)}, ${h(x.vin.pays)}</span></div><div class="why">${h(VIG.raisonCatalogue(x))}</div></div><div class="q">${prixTxt(x.vin.prix)}<small>${h(VIG.COULEURS[x.variante.couleur])}</small></div></div>`).join("");
+}
+function souhaitsHtml() {
+  const L = S.souhaits || []; if (!L.length) return "";
+  return `<details class="help section" open><summary>Liste d'achats · ${plur(L.length, "vin")}</summary><div class="body">${L.map(x => `<div class="jl"><div class="grow"><button class="chip sm" data-action="vin-open" data-id="${h(x.vinId)}">${h(x.nom)}</button></div><button class="btn xs ghost" data-action="souhait-del" data-id="${h(x.id)}">Retirer</button></div>`).join("")}<p class="tiny" style="margin-top:8px">Les vins mis de côté depuis un accord ou l'atlas. Une fois reçus : « Ajouter à ma cave » depuis leur fiche.</p></div></details>`;
+}
+
+Object.assign(ACTIONS, {
+  "atlas-onglet": el => { ATLAS.onglet = el.dataset.v; renderAtlas(); },
+  "atlas-filt": el => { const f = el.dataset.f, v = el.dataset.v; ATLAS[f] = ATLAS[f] === v ? "" : v; ATLAS.max = 80; majAtlasFiltre(); },
+  "atlas-plus": () => { ATLAS.max += 80; renderListeVins(); },
+  "carte-vue": el => vbVue(el.dataset.v),
+  "carte-zoom": el => { const r = $("#carte-svg").getBoundingClientRect(); vbZoom(el.dataset.d === "1" ? 1.6 : 0.625, r.left + r.width / 2, r.top + r.height / 2); },
+  "carte-detail": () => { if (ATLAS.detail) LEAF.desactiver(); else LEAF.activer(); },
+  "vin-open": el => ouvrirVin(el.dataset.id),
+  "vin-carte": el => { const v = VIG.vinParId(el.dataset.id); if (!v) return; closeSheet(); ATLAS.onglet = "carte"; ATLAS.init = true; ATLAS.q = ATLAS.couleur = ATLAS.pays = ATLAS.fam = ""; ATLAS.max = 80; go("atlas");
+    requestAnimationFrame(() => { const [x, y] = proj(v.lat, v.lon); const svg = $("#carte-svg"); const r = svg.getBoundingClientRect(); const w = 5; vbSet(x - w / 2, y - (w * r.height / r.width) / 2, w); }); },
+  "vin-cave": el => { const v = VIG.vinParId(el.dataset.id); if (!v) return; closeSheet(); ouvrirFiche(null); const f = $("#f-ref"); if (!f) return;
+    f.nom.value = v.nom; f.appellation.value = v.nom; f.region.value = v.region; f.couleur.value = v.couleur; $$("#seg-couleur button").forEach(b => b.classList.toggle("on", b.dataset.v === v.couleur)); f.famille.value = v.famille; majHintFamille(); toast("Fiche pré-remplie depuis l'atlas"); },
+  "vin-souhait": el => { const v = VIG.vinParId(el.dataset.id); if (!v) return; S.souhaits = S.souhaits || []; const i = S.souhaits.findIndex(x => x.vinId === v.id);
+    if (i >= 0) { S.souhaits.splice(i, 1); toast("Retiré de la liste d'achats"); } else { S.souhaits.push({id: uid(), vinId: v.id, nom: v.nom, at: nowIso()}); toast("Ajouté à la liste d'achats"); }
+    save(); ouvrirVin(v.id); if (VUE === "cave") render(); },
+  "souhait-del": el => { S.souhaits = (S.souhaits || []).filter(x => x.id !== el.dataset.id); save(); render(); },
+  "quiz-mode": el => { QZ.mode = el.dataset.v; quizNouveau(); renderAtlas(); },
+  "quiz-rep": el => quizRepondre(el.dataset.v),
+  "quiz-suivant": () => { quizNouveau(); renderAtlas(); $("#view-atlas").scrollIntoView({block: "start"}); },
+});
+document.addEventListener("input", e => { if (e.target.id === "atlas-q") { ATLAS.q = e.target.value; ATLAS.max = 80; majAtlasFiltre(); } });
+document.addEventListener("change", e => { const k = e.target.dataset.change; if (k === "atlas-pays") { ATLAS.pays = e.target.value; ATLAS.max = 80; majAtlasFiltre(); } else if (k === "atlas-fam") { ATLAS.fam = e.target.value; ATLAS.max = 80; majAtlasFiltre(); } });
+window.addEventListener("resize", () => { if (VUE === "atlas" && ATLAS.onglet === "carte") vbSet(VB.x, VB.y, VB.w); });
+/* Le catalogue (vins.js, 680 Ko) arrive APRÈS l'app : l'écran du jour ne l'attend pas. À son arrivée, les vues qui
+   s'en servent se redessinent si elles sont à l'écran ; s'il manque, l'app tourne sans atlas et le dit. */
+window.catalogueArrive = function () {
+  VIG.setCatalogue(window.VIGNOLO_VINS || []);
+  if (VUE === "atlas" || VUE === "accords") render();
+  else if (VUE === "cave" && $("#f-ref")) majHintFamille();
 };
 
 document.addEventListener("click", e => { const el = e.target.closest("[data-action]"); if (!el) return; const fn = ACTIONS[el.dataset.action]; if (fn) { e.preventDefault(); fn(el, e); } });
@@ -1954,5 +2457,9 @@ applyTheme(); go("today"); majBadges(); save();   /* la cave du premier lancemen
 if (S.meta.demoMaj) { const m = S.meta.demoMaj; delete S.meta.demoMaj; save(); setTimeout(() => toast(m === "auto" ? `Cave de démonstration mise à jour : ${S.refs.length} références` : "Nouvelle démo disponible : Réglages › Recharger la démo"), 600); }
 try { if (STOCKAGE_OK && "serviceWorker" in navigator && isSecureContext && location.protocol !== "file:") navigator.serviceWorker.register("./sw.js").catch(() => {}); } catch (e) {}
 </script>
+<!-- Le catalogue mondial (window.VIGNOLO_VINS) et le fond de carte (window.VIGNOLO_MONDE) : fabriqués à part (assembler.py),
+     chargés après l'app. ⚠️ Mis en cache par le service worker avec les autres fichiers : après toute modification de
+     vins.js, changer la version du cache dans sw.js (pwaify.py ne la change que si le gabarit du worker bouge). -->
+<script src="vins.js" onload="catalogueArrive()" onerror="catalogueArrive()"></script>
 </body>
 </html>

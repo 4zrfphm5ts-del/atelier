@@ -7,10 +7,14 @@
  * et si la copie gravee est mauvaise, l'app reste morte pour toujours. Le nom du cache
  * etant fixe, meme un redeploiement n'y change rien.
  * Le cache n'est donc qu'un FILET : il sert quand le reseau ne repond pas.
- * Toujours au reseau : api.anthropic.com */
-const C = "vignolo-v2";
-const ASSETS = ["./", "./index.html", "./manifest.webmanifest", "./icon-180.png", "./icon-192.png", "./icon-512.png", "./favicon-32.png"];
-const RESEAU = ["api.anthropic.com"];
+ * Toujours au reseau : api.anthropic.com, cartocdn.com, cdnjs.cloudflare.com */
+const C = "vignolo-v4";
+const ASSETS = ["./", "./index.html", "./manifest.webmanifest", "./icon-180.png", "./icon-192.png", "./icon-512.png", "./favicon-32.png", "./vins.js"];
+const RESEAU = ["api.anthropic.com", "cartocdn.com", "cdnjs.cloudflare.com"];
+/* Donnees vivantes de l'app (catalogue, base) : reseau d'abord, comme la page, sinon la
+   copie de l'installation resterait servie pour toujours (le precache ne se renouvelle
+   qu'avec le numero du worker). */
+const FRAIS = ["vins.js"];
 /* Soiree en cave, reseau a une barre : on n'attend pas la fin des temps. */
 const DELAI = 3000;
 
@@ -80,17 +84,23 @@ self.addEventListener("fetch", e => {
      qu'elle n'a pas pu la lire. */
   if (RESEAU.some(m => u.includes(m))) return;
 
-  if (req.mode === "navigate") {
+  const frais = FRAIS.some(f => u.endsWith("/" + f));
+  if (req.mode === "navigate" || frais) {
     /* On range la version fraiche sous ./index.html, que l'app ait ete ouverte par
-       « ./ » ou par « ./index.html ». */
+       « ./ » ou par « ./index.html » ; un fichier frais est range sous sa propre cle. */
+    const cle = req.mode === "navigate" ? "./index.html" : req;
     e.respondWith(reseau(req)
-      .then(r => { garder("./index.html", r); return r; })
+      .then(r => { garder(cle, r); return r; })
       /* `caches.match` peut REJETER (stockage evince en plein vol, quota) : sans ce
-         dernier catch, le repli ne rattrape que le cas « rend undefined ». */
-      .catch(() => caches.match(req)
-        .then(r => r || caches.match("./index.html"))
-        .then(r => r || horsService())
-        .catch(() => horsService())));
+         dernier catch, le repli ne rattrape que le cas « rend undefined ».
+         Pour un fichier frais, on s'arrete a sa copie en cache : servir la page
+         « hors service » sous un src de script casserait l'app (erreur de syntaxe). */
+      .catch(() => req.mode !== "navigate"
+        ? caches.match(req).then(r => r || Response.error()).catch(() => Response.error())
+        : caches.match(req)
+          .then(r => r || caches.match("./index.html"))
+          .then(r => r || horsService())
+          .catch(() => horsService())));
     return;
   }
 
