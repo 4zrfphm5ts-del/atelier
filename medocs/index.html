@@ -1,0 +1,812 @@
+<!doctype html>
+<html lang="fr">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23073F40'/%3E%3Ccircle cx='32' cy='32' r='19' fill='none' stroke='%23F2F7F6' stroke-width='9'/%3E%3Cpath d='M32 9v10M32 45v10M9 32h10M45 32h10' stroke='%238FC6C2' stroke-width='9' stroke-linecap='butt'/%3E%3Ccircle cx='32' cy='32' r='19' fill='none' stroke='%23073F40' stroke-width='1.5'/%3E%3C/svg%3E">
+<meta name="theme-color" content="#073F40">
+<meta name="robots" content="noindex">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Guide Médocs">
+<link rel="apple-touch-icon" href="icon-180.png">
+<title>Médicaments &amp; drogues — base prévention</title>
+<style>
+  :root{
+    --bg:#EDF1F3; --card:#FFFFFF; --ink:#16232C; --muted:#55666F; --line:#D8E0E5;
+    --accent:#0C5B5C; --accent-deep:#073F40; --accent-soft:#DFEBEA;
+    --s1:#8FA6B0; --s2:#DBA92C; --s3:#C0662B; --s4:#A93326; --s5:#7E2438;
+    --empty:#E4EAED;
+    --f-display:"Avenir Next Condensed","Arial Narrow","Helvetica Neue",Arial,sans-serif;
+    --f-body:"Avenir Next","Helvetica Neue","Segoe UI",system-ui,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5}
+  .wrap{max-width:1240px;margin:0 auto;padding:0 20px}
+
+  /* ---------- header ---------- */
+  header{background:var(--accent-deep);color:#F2F7F6;padding:44px 0 36px}
+  .eyebrow{font-family:var(--f-display);font-weight:600;letter-spacing:.14em;font-size:13px;text-transform:uppercase;color:#8FC6C2;margin:0 0 10px}
+  h1{font-family:var(--f-display);font-weight:700;font-size:clamp(34px,5vw,54px);line-height:1.02;margin:0 0 14px;text-wrap:balance}
+  .lede{max-width:640px;font-size:16px;color:#C9DDDB;margin:0}
+  .disclaimer{margin-top:22px;max-width:820px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.18);border-radius:6px;padding:12px 16px;font-size:13.5px;color:#D9E8E6}
+  .disclaimer strong{color:#fff}
+
+  /* ---------- toolbar ---------- */
+  .toolbar{position:sticky;top:0;z-index:50;background:var(--bg);border-bottom:1px solid var(--line);padding:12px 0}
+  .toolbar-inner{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+  #search{flex:1 1 240px;min-width:200px;padding:9px 14px;border:1px solid var(--line);border-radius:6px;font:inherit;font-size:14px;background:var(--card);color:var(--ink)}
+  #search:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
+  .chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;scrollbar-width:thin}
+  .chip{flex:0 0 auto;font-family:var(--f-display);font-weight:600;font-size:13px;letter-spacing:.04em;padding:7px 13px;border-radius:99px;border:1px solid var(--line);background:var(--card);color:var(--muted);cursor:pointer;white-space:nowrap}
+  .chip:hover{border-color:var(--accent);color:var(--accent)}
+  .chip:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+  .chip.on{background:var(--accent);border-color:var(--accent);color:#fff}
+  .count{font-size:13px;color:var(--muted);white-space:nowrap}
+
+  /* ---------- legend ---------- */
+  .legend{display:flex;flex-wrap:wrap;gap:18px 32px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:14px 18px;margin:22px 0 8px;font-size:13.5px;color:var(--muted)}
+  .legend b{color:var(--ink);font-weight:600}
+  .legend .seg-demo{display:inline-flex;gap:2px;vertical-align:-1px;margin-right:6px}
+  .legend .seg-demo i{width:9px;height:9px;border-radius:2px;background:var(--empty)}
+  .legend .seg-demo i.f{background:var(--s4)}
+
+  /* ---------- sections ---------- */
+  section.fam{margin:34px 0 8px}
+  .fam-head{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;border-bottom:3px solid var(--ink);padding-bottom:8px;margin-bottom:6px}
+  .fam-head h2{font-family:var(--f-display);font-weight:700;font-size:28px;margin:0;letter-spacing:.01em}
+  .fam-head .n{font-family:var(--f-display);font-weight:600;color:var(--accent);font-size:15px;letter-spacing:.06em}
+  .fam-desc{color:var(--muted);font-size:14px;max-width:820px;margin:6px 0 16px}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:14px}
+
+  /* ---------- card ---------- */
+  .card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:16px 18px;display:flex;flex-direction:column;gap:10px}
+  .card h3{font-family:var(--f-display);font-weight:700;font-size:21px;margin:0;line-height:1.1}
+  .card .brands{color:var(--muted);font-size:13px;margin-top:2px}
+  .badges{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+  .badge{font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;padding:3px 8px;border-radius:4px;border:1px solid transparent}
+  .b-otc{background:#E7F0E9;color:#2E5B3C;border-color:#CBDDD0}
+  .b-rx{background:#E4EDF4;color:#28536E;border-color:#C9DBE7}
+  .b-secu{background:#F5EAD0;color:#775312;border-color:#E6D3A8}
+  .b-restr{background:#EFE6F2;color:#5B3A6E;border-color:#DCC9E3}
+  .b-ill{background:#F6E3E0;color:#8A2A1D;border-color:#EACCC6}
+  .b-reg{background:#EAEDEF;color:#44555E;border-color:#D5DCE0}
+  .b-nofr{background:#EAEDEF;color:#44555E;border-color:#D5DCE0}
+  .b-warn{background:#fff;color:#A93326;border-color:#A93326}
+  .field{font-size:13.5px}
+  .field dt{font-family:var(--f-display);font-weight:600;font-size:11.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--accent);margin:0 0 2px}
+  .field dd{margin:0;color:var(--ink)}
+  .field.risk dd{color:#6E3028}
+  dl{margin:0;display:flex;flex-direction:column;gap:9px}
+
+  .meters{display:flex;flex-direction:column;gap:6px;margin-top:auto;padding-top:10px;border-top:1px solid var(--line)}
+  .meter{display:grid;grid-template-columns:92px 1fr 34px;align-items:center;gap:8px;font-size:12px}
+  .meter .lab{color:var(--muted);font-weight:600}
+  .meter .segs{display:flex;gap:3px}
+  .meter .segs i{flex:1;height:9px;border-radius:2px;background:var(--empty)}
+  .meter .val{font-variant-numeric:tabular-nums;text-align:right;color:var(--ink);font-weight:600}
+  .f1 .segs i.on{background:var(--s1)} .f2 .segs i.on{background:var(--s2)} .f3 .segs i.on{background:var(--s3)}
+  .f4 .segs i.on{background:var(--s4)} .f5 .segs i.on{background:var(--s5)}
+
+  .hook{background:var(--accent-soft);border-left:3px solid var(--accent);border-radius:0 6px 6px 0;padding:9px 12px;font-size:13px;color:var(--accent-deep);margin:0}
+  .prof{display:flex;flex-direction:column;gap:5px;padding-top:10px;border-top:1px solid var(--line)}
+  .prof .ttl{font-family:var(--f-display);font-weight:600;font-size:11.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--accent)}
+  .pm{display:grid;grid-template-columns:118px 1fr 30px;align-items:center;gap:8px;font-size:12px}
+  .pm .lab{color:var(--muted);font-weight:600}
+  .pm .segs{display:flex;gap:3px}
+  .pm .segs i{flex:1;height:8px;border-radius:2px;background:var(--empty)}
+  .pm .segs i.on{background:var(--accent)}
+  .pm .val{text-align:right;font-weight:600;font-variant-numeric:tabular-nums}
+  .prof .act{font-size:12px;color:var(--muted);margin:2px 0 0}
+  .use{display:inline-block;font-family:var(--f-display);font-weight:600;font-size:11px;letter-spacing:.06em;text-transform:uppercase;padding:2px 7px;border-radius:4px;background:var(--accent-soft);color:var(--accent-deep);margin-right:6px}
+  .hook b{font-family:var(--f-display);letter-spacing:.08em;font-size:11px;text-transform:uppercase;display:block;margin-bottom:2px}
+
+  /* ---------- static blocks ---------- */
+  .block{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:22px 24px;margin:34px 0}
+  .block h2{font-family:var(--f-display);font-weight:700;font-size:28px;margin:0 0 4px}
+  .block .sub{color:var(--muted);font-size:14px;margin:0 0 16px}
+  .tbl-wrap{overflow-x:auto}
+  table{border-collapse:collapse;width:100%;min-width:680px;font-size:13.5px}
+  th{font-family:var(--f-display);font-weight:600;font-size:12px;letter-spacing:.08em;text-transform:uppercase;text-align:left;color:var(--muted);border-bottom:2px solid var(--ink);padding:8px 12px 8px 0}
+  td{border-bottom:1px solid var(--line);padding:10px 12px 10px 0;vertical-align:top}
+  td:first-child{font-weight:600}
+  .lvl{display:inline-flex;align-items:center;gap:6px;font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .dot{width:10px;height:10px;border-radius:2px;display:inline-block}
+
+  .cols2{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px}
+  .cols2 h3{font-family:var(--f-display);font-size:18px;margin:0 0 8px}
+  ul{margin:0;padding-left:20px}
+  li{margin:4px 0}
+  .urg{border-left:4px solid var(--s5)}
+  .res-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+  .res{border:1px solid var(--line);border-radius:6px;padding:14px 16px}
+  .res .num{font-family:var(--f-display);font-weight:700;font-size:24px;color:var(--accent);font-variant-numeric:tabular-nums}
+  .res .who{font-weight:600;margin-top:2px}
+  .res .det{font-size:13px;color:var(--muted);margin-top:2px}
+
+  footer{color:var(--muted);font-size:13px;padding:10px 0 60px;max-width:860px}
+  .hidden{display:none!important}
+  @media (prefers-reduced-motion:no-preference){
+    .card{transition:border-color .15s}
+    .card:hover{border-color:var(--accent)}
+  }
+
+  /* ---------- 25/10/2026 : comparer, par motif, fiche officielle ---------- */
+  .tb{flex:0 0 auto;font-family:var(--f-display);font-weight:600;font-size:13px;letter-spacing:.04em;padding:8px 13px;border-radius:6px;border:1px solid var(--accent);background:var(--card);color:var(--accent);cursor:pointer;white-space:nowrap}
+  .tb.on,.tb:hover{background:var(--accent);color:#fff}
+  .tb:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:18px 20px;margin:18px 0 0}
+  .panel-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  .panel h2{font-family:var(--f-display);font-weight:700;font-size:24px;margin:0}
+  .panel .close{font:inherit;font-size:13px;color:var(--muted);background:none;border:1px solid var(--line);border-radius:6px;padding:5px 10px;cursor:pointer}
+  .cadre{background:var(--accent-soft);border-left:3px solid var(--accent);border-radius:0 6px 6px 0;padding:10px 12px;font-size:13.5px;color:var(--accent-deep);margin:12px 0}
+  .cadre b{font-family:var(--f-display);letter-spacing:.06em;font-size:11px;text-transform:uppercase;display:block;margin-bottom:2px}
+  .sel-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+  .sel-row label{font-family:var(--f-display);font-weight:600;font-size:11.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:4px}
+  .sel-row select,#indSel{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:6px;font:inherit;font-size:14px;background:var(--card);color:var(--ink)}
+  @media (max-width:560px){.sel-row{grid-template-columns:1fr}}
+  .motifs{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 4px}
+  .motif{font:inherit;font-size:13px;padding:6px 11px;border-radius:99px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
+  .motif.on,.motif:hover{border-color:var(--accent);color:var(--accent)}
+  .motif.on{background:var(--accent);color:#fff}
+  .ind-note{font-size:14px;color:var(--ink);margin:12px 0 6px}
+  .ind-fam{font-family:var(--f-display);font-weight:700;font-size:16px;margin:14px 0 6px;letter-spacing:.02em}
+  .ind-row{display:grid;grid-template-columns:1fr auto;gap:4px 14px;padding:10px 0;border-top:1px solid var(--line);font-size:13.5px}
+  .ind-row .n{font-family:var(--f-display);font-weight:700;font-size:17px;background:none;border:0;padding:0;color:var(--ink);cursor:pointer;text-align:left;font-size:17px}
+  .ind-row .n:hover{color:var(--accent);text-decoration:underline}
+  .ind-row .b{color:var(--muted);font-size:12.5px}
+  .ind-row .m{grid-column:1/-1;color:var(--ink)}
+  .ind-row .meter{width:190px;grid-template-columns:78px 1fr 30px}
+  .cmp-t{width:100%;border-collapse:collapse;font-size:13.5px;min-width:0;table-layout:fixed}
+  .cmp-t th{width:22%;font-family:var(--f-display);font-weight:600;font-size:11.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--accent);text-align:left;vertical-align:top;padding:10px 8px 10px 0;border-bottom:1px solid var(--line)}
+  .cmp-t td{width:39%;vertical-align:top;padding:10px 8px 10px 0;border-bottom:1px solid var(--line);color:var(--ink);overflow-wrap:anywhere}
+  .cmp-t tr.head td{font-family:var(--f-display);font-weight:700;font-size:20px;line-height:1.1}
+  .cmp-t tr.head .brands{font-family:var(--f-body);font-weight:400;font-size:12.5px;color:var(--muted);margin-top:3px}
+  .cmp-t td.risk{color:#6E3028}
+  .cmp-t .meter{grid-template-columns:78px 1fr 30px;font-size:11.5px}
+  .cmp-t .pm{grid-template-columns:96px 1fr 26px;font-size:11.5px}
+  .cmp-t .hook{margin:0}
+  .cmp-sum{margin:12px 0 0;padding:0;list-style:none;font-size:13.5px}
+  .cmp-sum li{padding:4px 0 4px 14px;position:relative}
+  .cmp-sum li::before{content:"";position:absolute;left:0;top:11px;width:6px;height:6px;border-radius:2px;background:var(--accent)}
+  @media (max-width:560px){.cmp-t th{width:26%;font-size:10.5px;padding-right:6px}.cmp-t td{font-size:12.5px;padding-right:6px}.cmp-t tr.head td{font-size:16px}}
+  .card-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;padding-top:10px;border-top:1px solid var(--line);font-size:12.5px}
+  .forme{display:inline-flex;align-items:center;gap:6px;color:var(--muted)}
+  .forme svg{width:16px;height:16px;flex:0 0 auto}
+  .off{color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent-soft)}
+  .off:hover{border-bottom-color:var(--accent)}
+  .cmp-add{font:inherit;font-size:12px;font-weight:600;letter-spacing:.03em;padding:5px 10px;border-radius:6px;border:1px solid var(--line);background:var(--card);color:var(--muted);cursor:pointer;margin-left:auto}
+  .cmp-add.on{background:var(--accent);border-color:var(--accent);color:#fff}
+  .card.flash{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+  .fam-sig{font-size:13.5px;color:var(--ink);max-width:820px;margin:-6px 0 16px;padding:9px 12px;border-left:3px solid var(--s3);background:#FBF4EE;border-radius:0 6px 6px 0}
+  .fam-sig b{font-family:var(--f-display);letter-spacing:.06em;font-size:11px;text-transform:uppercase;color:#8A4A1F;display:block;margin-bottom:2px}
+  #cmpbar{position:fixed;left:0;right:0;bottom:0;z-index:60;background:var(--accent-deep);color:#F2F7F6;padding:10px 16px calc(10px + env(safe-area-inset-bottom));box-shadow:0 -4px 18px rgba(0,0,0,.18)}
+  #cmpbar .in{max-width:1240px;margin:0 auto;display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:13.5px}
+  #cmpbar .pick{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:99px;padding:4px 10px;font-weight:600}
+  #cmpbar .pick.empty{opacity:.6;font-weight:400}
+  #cmpbar button{font:inherit;font-size:13px;font-weight:600;padding:7px 12px;border-radius:6px;border:1px solid rgba(255,255,255,.35);background:transparent;color:#fff;cursor:pointer}
+  #cmpbar button.go{background:#F2F7F6;color:var(--accent-deep);border-color:#F2F7F6}
+  #cmpbar button:disabled{opacity:.45;cursor:default}
+  body.has-cmpbar{padding-bottom:72px}
+</style>
+
+<header>
+  <div class="wrap">
+    <p class="eyebrow">Matériau source · Prévention &amp; réduction des risques</p>
+    <h1>Médicaments &amp; drogues :<br>ce qu'ils font, ce qu'ils coûtent</h1>
+    <p class="lede">Base de référence par famille : usage médical, effet recherché en mésusage, risques réels, mélanges qui tuent et réflexes qui sauvent. Par motif, comparaison de deux fiches, fiche officielle de chaque médicament. Conçue pour alimenter une page de prévention Insta / TikTok — chaque carte peut devenir un post.</p>
+    <div class="disclaimer"><strong>Support d'information — ne remplace ni un avis médical, ni un centre antipoison.</strong> Les doses citées sont les posologies médicales usuelles adultes (repère « ce qui est normal sur une ordonnance »). Aucune dose de mésusage n'est indiquée : il n'existe pas de dose récréative sûre. Repères à re-vérifier (ANSM, RCP, OFDT) avant toute publication. <strong>Dosages en pharmacie</strong> : spécialités commercialisées d'après la base de données publique des médicaments, extractions du 15/09 et du 25/10/2026. Délais, durées et profils d'effets : repères pharmacologiques indicatifs, qui varient selon la personne.</div>
+  </div>
+</header>
+
+<div class="toolbar">
+  <div class="wrap toolbar-inner">
+    <input id="search" type="search" placeholder="Chercher une molécule, une marque (Xanax, Lyrica, proto…)" aria-label="Rechercher une substance">
+    <div class="chips" id="chips" role="tablist"></div>
+    <span class="count" id="count"></span>
+    <button type="button" class="tb" id="btnInd">Par motif</button>
+    <button type="button" class="tb" id="btnCmp">Comparer</button>
+  </div>
+</div>
+
+<main class="wrap">
+  <div class="panel hidden" id="ind"></div>
+  <div class="panel hidden" id="cmp"></div>
+  <div class="legend">
+    <span><span class="seg-demo"><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i><i></i></span><b>3 jauges de risque</b> (0–5), jamais de « note plaisir » :</span>
+    <span><b>Dépendance</b> — vitesse et force d'installation</span>
+    <span><b>Surdose</b> — danger du produit seul à dose excessive</span>
+    <span><b>Mélanges</b> — dangerosité en association (alcool, dépresseurs…)</span>
+    <span><b>Profil d'effets</b> (0–3, médicaments) : sédation, anti-anxiété, somnolence, myorelaxant, anticonvulsivant. Des effets à dose médicale, pas une note.</span>
+    <span><b>Par motif</b> : les médicaments qui ont une indication officielle pour un symptôme, avec le repère des recommandations. <b>Comparer</b> : deux fiches côte à côte. <b>Fiche officielle</b> : la notice et le RCP dans la base publique des médicaments (pas de photo de boîte : la boîte change selon le laboratoire, la notice ne ment pas).</span>
+  </div>
+  <div id="content"></div>
+
+  <div class="block" id="melanges">
+    <h2>Mélanges — ce qui tue vraiment</h2>
+    <p class="sub">La majorité des décès ne viennent pas d'un produit seul, mais d'une association. Les treize croisements à connaître par cœur.</p>
+    <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Combinaison</th><th>Ce qui se passe</th><th>Alerte</th><th>Le point clé</th></tr></thead>
+      <tbody>
+        <tr><td>Opioïdes + benzos, alcool ou prégabaline</td><td>Dépression respiratoire, overdose</td><td><span class="lvl"><span class="dot" style="background:var(--s5)"></span>5/5</span></td><td>L'association qui tue le plus au monde</td></tr>
+        <tr><td>GHB / GBL + alcool</td><td>Coma rapide, même à « petite » dose</td><td><span class="lvl"><span class="dot" style="background:var(--s5)"></span>5/5</span></td><td>Jamais ensemble, sans exception</td></tr>
+        <tr><td>Cocaïne + héroïne / opioïdes (speedball)</td><td>Le stimulant masque la surdose d'opioïde</td><td><span class="lvl"><span class="dot" style="background:var(--s5)"></span>5/5</span></td><td>Quand la coke retombe, l'opioïde écrase seul la respiration</td></tr>
+        <tr><td>Poppers + viagra / cialis</td><td>Chute de tension massive</td><td><span class="lvl"><span class="dot" style="background:var(--s5)"></span>5/5</span></td><td>Deux vasodilatateurs qui s'additionnent</td></tr>
+        <tr><td>Alcool + benzos, z-drugs ou antihistaminiques</td><td>Blackout, chutes, coma, fausse route</td><td><span class="lvl"><span class="dot" style="background:var(--s4)"></span>4/5</span></td><td>L'ivresse et la sédation se multiplient, ne s'additionnent pas</td></tr>
+        <tr><td>Tramadol ou DXM + antidépresseurs / MDMA</td><td>Syndrome sérotoninergique, convulsions</td><td><span class="lvl"><span class="dot" style="background:var(--s4)"></span>4/5</span></td><td>Fièvre + agitation + tremblements = urgence</td></tr>
+        <tr><td>Cocaïne + alcool</td><td>Le foie fabrique du cocaéthylène</td><td><span class="lvl"><span class="dot" style="background:var(--s4)"></span>4/5</span></td><td>Un 3e produit, plus cardiotoxique et plus long que la coke</td></tr>
+        <tr><td>Stimulants (coke, MDMA, amphét) + alcool</td><td>Ivresse masquée, cœur en surchauffe</td><td><span class="lvl"><span class="dot" style="background:var(--s4)"></span>4/5</span></td><td>La sensation de contrôle est trompeuse</td></tr>
+        <tr><td>Kétamine + alcool</td><td>Vomissements + perte de conscience</td><td><span class="lvl"><span class="dot" style="background:var(--s4)"></span>4/5</span></td><td>Risque de fausse route mortelle (position latérale !)</td></tr>
+        <tr><td>Stimulants + cannabis</td><td>Anxiété, tachycardie, paranoïa</td><td><span class="lvl"><span class="dot" style="background:var(--s3)"></span>3/5</span></td><td>Réponse très variable selon les personnes</td></tr>
+        <tr><td>Neuroleptiques sédatifs + benzos, alcool, opioïdes</td><td>Sédation cumulée, chutes, dépression respiratoire ; clozapine + benzos : collapsus décrits</td><td><span class="lvl"><span class="dot" style="background:var(--s4)"></span>4/5</span></td><td>Deux freins sur le même système nerveux</td></tr>
+        <tr><td>Méthylphénidate ou amphétamines + alcool, MDMA, cocaïne</td><td>Cœur en surchauffe, ivresse masquée, hyperthermie</td><td><span class="lvl"><span class="dot" style="background:var(--s4)"></span>4/5</span></td><td>Le traitement du TDAH est déjà un stimulant</td></tr>
+        <tr><td>Lithium + ibuprofène, déshydratation, régime sans sel</td><td>Lithium qui grimpe jusqu'à l'intoxication</td><td><span class="lvl"><span class="dot" style="background:var(--s4)"></span>4/5</span></td><td>Une gastro ou une canicule suffisent</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+
+  <div class="block urg" id="urgence">
+    <h2>Les signes qui doivent faire appeler le 15</h2>
+    <p class="sub">On n'attend pas « que ça passe ». Appeler pour une intoxication n'expose à aucune poursuite — dire ce qui a été pris sauve des vies.</p>
+    <div class="cols2">
+      <div>
+        <h3>Dépresseurs (opioïdes, benzos, alcool, GHB)</h3>
+        <ul>
+          <li>Respiration lente (&lt; 8/min) ou ronflement inhabituel</li>
+          <li>Lèvres ou ongles bleutés</li>
+          <li>Ne réagit ni à la voix ni à la douleur</li>
+          <li>Pupilles en tête d'épingle (opioïdes)</li>
+        </ul>
+      </div>
+      <div>
+        <h3>Stimulants / syndrome sérotoninergique</h3>
+        <ul>
+          <li>Douleur thoracique, palpitations</li>
+          <li>Fièvre + agitation + tremblements</li>
+          <li>Convulsions</li>
+          <li>Confusion sévère, paranoïa aiguë</li>
+        </ul>
+      </div>
+      <div>
+        <h3>Les bons réflexes</h3>
+        <ul>
+          <li>Appeler le <b>15</b> (ou 112), ne jamais laisser la personne seule</li>
+          <li>Position latérale de sécurité si inconsciente</li>
+          <li>Dire précisément ce qui a été pris, quand, combien</li>
+          <li>Opioïdes : la <b>naloxone</b> (kit nasal ou injectable) annule l'overdose — gratuite en CAARUD, disponible en pharmacie</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="block" id="ressources">
+    <h2>Ressources — gratuites, anonymes</h2>
+    <p class="sub">Les numéros et lieux à mettre en description de chaque post.</p>
+    <div class="res-grid">
+      <div class="res"><div class="num">15 / 112</div><div class="who">SAMU — urgence vitale</div><div class="det">Intoxication, overdose, perte de conscience.</div></div>
+      <div class="res"><div class="num">0 800 23 13 13</div><div class="who">Drogues Info Service</div><div class="det">7j/7, 8h–2h. Anonyme et gratuit. drogues-info-service.fr</div></div>
+      <div class="res"><div class="num">0 800 235 236</div><div class="who">Fil Santé Jeunes</div><div class="det">12–25 ans, tous sujets santé, 7j/7.</div></div>
+      <div class="res"><div class="num">Centres antipoison</div><div class="who">24h/24 par région</div><div class="det">Doute sur une dose ou un mélange : appeler avant que ça tourne mal.</div></div>
+      <div class="res"><div class="num">CJC</div><div class="who">Consultations Jeunes Consommateurs</div><div class="det">Gratuit, anonyme, sans jugement — aussi pour l'entourage.</div></div>
+      <div class="res"><div class="num">CAARUD</div><div class="who">Réduction des risques</div><div class="det">Matériel stérile, naloxone, accueil sans condition.</div></div>
+    </div>
+  </div>
+
+  <div class="block" id="posts">
+    <h2>Transformer une carte en post</h2>
+    <p class="sub">Format qui marche en prévention sans se faire modérer :</p>
+    <div class="cols2">
+      <div><h3>1 · L'accroche</h3><p>Le « Le savais-tu ? » de la carte, seul, en grand. Une info vérifiable qui surprend — jamais d'image de produit ni de geste de consommation (motif de ban).</p></div>
+      <div><h3>2 · Le corps</h3><p>Les 3 risques clés + les jauges. Ton factuel, pas moralisateur : on informe la personne, on ne la juge pas.</p></div>
+      <div><h3>3 · La sortie</h3><p>Un réflexe concret + un numéro (Drogues Info Service, 15). Toujours finir sur « quoi faire », jamais sur la peur seule.</p></div>
+    </div>
+  </div>
+
+  <footer>
+    Base construite à partir des posologies usuelles des RCP (ANSM), des données OFDT et des repères de Drogues Info Service. Échelles de risque simplifiées, indicatives, à visée pédagogique — les effets varient selon la personne, la dose, la tolérance et les associations. À faire relire par un professionnel de santé avant publication. Dosages et spécialités : base de données publique des médicaments, relevés du 15/09 et du 25/10/2026 ; 30 fiches ajoutées le 25/10/2026 (neuroleptiques, antidépresseurs, soins des addictions, antidote, récréatives).
+  </footer>
+</main>
+<div id="cmpbar" class="hidden" role="region" aria-label="Sélection pour la comparaison"></div>
+
+<script>
+const CATS=[
+ {id:"benzo",t:"Benzodiazépines",d:"Les anxiolytiques les plus prescrits de France. Efficaces en 30 minutes — et c'est le piège : dépendance en quelques semaines, prescription limitée à 12 semaines en théorie. Toute la famille partage le même profil : surdose rarement mortelle seule, redoutable en mélange."},
+ {id:"hypno",t:"Somnifères & z-drugs",d:"Zolpidem et zopiclone agissent sur les mêmes récepteurs que les benzos — mêmes bénéfices, mêmes pièges. Durée de prescription théorique : 4 semaines."},
+ {id:"antihist",t:"Antihistaminiques sédatifs",d:"La sédation « douce » en apparence, parfois sans ordonnance. Le vrai danger est la toxicité anticholinergique en surdose : délire, hyperthermie, troubles du rythme."},
+ {id:"neuro",t:"Neuroleptiques sédatifs",d:"Utilisés pour l'apaisement et les troubles psychiatriques. Peu addictifs — mais hypotension, somnolence massive et effets cardiaques, avec des formes en gouttes faciles à surdoser."},
+ {id:"antidep",t:"Antidépresseurs",d:"Traitements de fond : pas de « défonce » possible pour l'essentiel. Les vrais sujets : syndrome d'arrêt, interactions sérotoninergiques, une surdose cardiotoxique (tricycliques) et une exception détournée (tianeptine)."},
+ {id:"thymo",t:"Thymorégulateurs & antiépileptiques",d:"Traitements de fond de la bipolarité et de l'épilepsie. Aucun effet recherché, mais des pièges majeurs : une marge étroite (lithium), un risque grave pendant la grossesse (valproate), une réaction cutanée grave si l'on va trop vite (lamotrigine)."},
+ {id:"opio",t:"Opioïdes & antidouleurs",d:"La classe la plus meurtrière au monde en cas de mésusage. Le mécanisme est toujours le même : la dépression respiratoire tue en silence, pendant le sommeil, et le mélange avec un autre dépresseur multiplie le risque."},
+ {id:"gaba",t:"Gabapentinoïdes",d:"Prégabaline et gabapentine : douleurs neuropathiques et anxiété — devenues en dix ans des drogues de rue majeures en Europe et au Maghreb."},
+ {id:"stim",t:"Stimulants TDAH & éveil",d:"Traitements efficaces du TDAH dans le cadre médical. Détournés pour réviser, faire la fête ou couper la faim — avec le cœur, le sommeil et la santé mentale en première ligne."},
+ {id:"autres",t:"Autres médicaments à connaître",d:"Molécules variées qui reviennent dans les questions : certaines sans aucun potentiel d'abus (utile à dire !), d'autres dangereuses en surdose alors qu'elles paraissent banales."},
+ {id:"addic",t:"Soins des addictions & antidotes",d:"Les médicaments qui aident à arrêter ou à réduire : anti-craving de l'alcool, aide à l'arrêt du tabac, antidote des overdoses d'opioïdes (la substitution, méthadone et buprénorphine, reste dans la famille des opioïdes). Aucun potentiel d'abus, mais des règles précises (délai après le dernier opioïde, foie à surveiller) et un message : ils existent, et ils se demandent."},
+ {id:"recre",t:"Drogues récréatives",d:"Aucune posologie ici — uniquement les effets, les risques documentés et les réflexes de réduction des risques. Légal ne veut pas dire sûr (alcool, proto), illégal ne veut pas dire uniformément mortel : les risques réels, produit par produit."}
+];
+const BADGES={otc:["b-otc","Sans ordonnance"],rx:["b-rx","Ordonnance"],secu:["b-secu","Ordonnance sécurisée"],restr:["b-restr","Prescription restreinte"],ill:["b-ill","Illicite"],reg:["b-reg","Légal réglementé"],nofr:["b-nofr","Non commercialisé en France"],warn:["b-warn","⚠ Détournement fréquent"]};
+const DATA=[
+// ---- BENZODIAZÉPINES ----
+{c:"benzo",n:"Alprazolam",b:"Xanax",st:["rx","warn"],med:"Anxiété sévère, trouble panique. Usuel : 0,25–0,5 mg par prise.",mis:"Apaisement quasi immédiat, désinhibition, potentialisation de l'alcool. Image « récréative » entretenue par le rap US.",ris:"Dépendance en quelques semaines, amnésie, rebond d'anxiété entre les prises, sevrage brutal = risque de convulsions.",dep:5,od:2,mix:5,hook:"La majorité des « Xanax » vendus via les réseaux sont des contrefaçons, parfois dosées avec des benzos de synthèse bien plus puissantes (bromazolam, flualprazolam)."},
+{c:"benzo",n:"Diazépam",b:"Valium",st:["rx"],med:"Anxiété, sevrage alcoolique, convulsions, contractures. Usuel : 2–10 mg, 1 à 3×/j.",mis:"Détente prolongée, « atterrissage » après stimulants.",ris:"Très longue durée d'action : accumulation, somnolence persistante, chutes, conduite dangereuse le lendemain.",dep:5,od:2,mix:5},
+{c:"benzo",n:"Bromazépam",b:"Lexomil",st:["rx"],med:"Anxiété. Usuel : 1,5–6 mg/j (la « barrette » = 6 mg).",mis:"Anxiolyse du quotidien qui glisse vers l'automédication chronique.",ris:"Dépendance insidieuse « de monsieur tout le monde », troubles de la mémoire, conduite.",dep:5,od:2,mix:5,hook:"Le réflexe « un quart de Lexo » est l'une des portes d'entrée les plus banales vers la dépendance aux benzodiazépines en France."},
+{c:"benzo",n:"Lorazépam",b:"Témesta",st:["rx"],med:"Anxiété, prémédication. Usuel : 1–4 mg/j.",mis:"Sédation fiable et prévisible.",ris:"Parmi les benzos dont le sevrage est le plus difficile ; amnésie marquée.",dep:5,od:2,mix:5},
+{c:"benzo",n:"Clonazépam",b:"Rivotril",st:["restr","warn"],med:"Épilepsie uniquement (en France). Départ : 0,5–2 mg/j.",mis:"Effet puissant et long ; très détourné seul ou pour potentialiser les opioïdes.",ris:"Puissance élevée = tolérance rapide, sevrage sévère, amnésie profonde.",dep:5,od:2,mix:5,hook:"Tellement détourné qu'en France sa prescription initiale est réservée aux neurologues et pédiatres depuis 2012, sur ordonnance sécurisée."},
+{c:"benzo",n:"Oxazépam",b:"Seresta",st:["rx"],med:"Anxiété, sevrage alcoolique (privilégié chez la personne âgée ou au foie fragile). Usuel : 10–50 mg/j.",mis:"Réputé « moins fort » — d'où une fausse impression de sécurité.",ris:"Dépendance identique aux autres benzos malgré sa réputation douce.",dep:4,od:2,mix:5},
+{c:"benzo",n:"Clorazépate",b:"Tranxène",st:["rx"],med:"Anxiété, sevrage alcoolique. Usuel : 5–30 mg/j.",mis:"Sédation longue.",ris:"Accumulation, confusion et chutes chez la personne âgée.",dep:5,od:2,mix:5},
+{c:"benzo",n:"Prazépam",b:"Lysanxia",st:["rx"],med:"Anxiété. Usuel : 10–30 mg/j.",mis:"Anxiolyse de fond.",ris:"Même famille, mêmes règles : 12 semaines maximum en théorie, arrêt toujours progressif.",dep:4,od:2,mix:5},
+// ---- SOMNIFÈRES ----
+{c:"hypno",n:"Zolpidem",b:"Stilnox",st:["secu","warn"],med:"Insomnie ponctuelle. 10 mg au coucher (5 mg si âgé), 4 semaines max.",mis:"À forte dose ou en résistant au sommeil : euphorie, hallucinations.",ris:"Amnésie, comportements automatiques sans souvenir (conduite, messages, achats), dépendance rapide.",dep:4,od:2,mix:5,hook:"Ordonnance sécurisée obligatoire depuis 2017 en France, tant le détournement était massif."},
+{c:"hypno",n:"Zopiclone",b:"Imovane",st:["rx"],med:"Insomnie. 7,5 mg au coucher, 4 semaines max.",mis:"Sommeil « forcé » ; goût métallique signature au réveil.",ris:"Somnolence résiduelle le matin, dépendance, insomnie rebond à l'arrêt.",dep:4,od:2,mix:5},
+{c:"hypno",n:"Lormétazépam",b:"Noctamide (plus commercialisé) · génériques",st:["rx"],med:"Insomnie. 1–2 mg au coucher.",mis:"Hypnotique benzo classique.",ris:"Parmi les plus addictifs des somnifères ; mémoire, chutes nocturnes.",dep:5,od:2,mix:5},
+{c:"hypno",n:"Loprazolam",b:"Havlane",st:["rx"],med:"Insomnie. 0,5–1 mg au coucher.",mis:"Sommeil « garanti », d'où la dérive vers l'usage chronique.",ris:"Dépendance, somnolence diurne, chutes.",dep:4,od:2,mix:5},
+{c:"hypno",n:"Mélatonine",b:"Circadin, compléments",st:["otc"],med:"Resynchronisation du sommeil (décalage, rythme). 1–2 mg le soir. Circadin et Slenyto sur ordonnance ; compléments alimentaires en vente libre (≤ 2 mg).",mis:"Aucun effet récréatif — ce n'est pas un sédatif de soirée.",ris:"Somnolence, interactions rares. Le vrai risque : retarder une vraie prise en charge de l'insomnie.",dep:0,od:0,mix:1},
+// ---- ANTIHISTAMINIQUES ----
+{c:"antihist",n:"Doxylamine",b:"Donormyl",st:["otc"],med:"Insomnie occasionnelle. 15–30 mg le soir.",mis:"Sédatif accessible sans ordonnance — souvent le premier somnifère des jeunes.",ris:"Bouche sèche, confusion, rétention urinaire ; surdose = délire anticholinergique, convulsions.",dep:1,od:3,mix:4},
+{c:"antihist",n:"Hydroxyzine",b:"Atarax",st:["rx"],med:"Anxiété légère, urticaire, prémédication. 25–100 mg/j.",mis:"« L'anxiolytique sans dépendance » — vrai, mais la sédation est lourde.",ris:"Allongement du QT (cœur), somnolence diurne, effets anticholinergiques.",dep:1,od:3,mix:4},
+{c:"antihist",n:"Alimémazine",b:"Théralène",st:["rx"],med:"Insomnie, allergies. 5–20 mg le soir (forme buvable disponible).",mis:"Gouttes sédatives faciles à surdoser.",ris:"Somnolence le lendemain, hypotension, erreurs de comptage de gouttes.",dep:1,od:3,mix:4},
+{c:"antihist",n:"Diphénhydramine",b:"Nautamine · Benadryl (US)",st:["otc","warn"],med:"Mal des transports, allergies. 25–50 mg par prise.",mis:"Le « Benadryl challenge » TikTok : hallucinations à très forte dose.",ris:"Ce « trip » est un empoisonnement anticholinergique : délire, hyperthermie, convulsions, troubles du rythme. Des adolescents en sont morts.",dep:1,od:4,mix:4,hook:"Les hallucinations à forte dose ne sont pas un high : c'est le tableau clinique d'un empoisonnement qui peut arrêter le cœur."},
+{c:"antihist",n:"Prométhazine",b:"Phénergan · sirops Fluisedal, Tussisedal",st:["rx","warn"],med:"Allergies, insomnie. 25–50 mg.",mis:"Ingrédient du « lean / purple drank » avec la codéine, esthétisé par le rap.",ris:"Additionne sa sédation à celle de la codéine : double frein sur la respiration.",dep:1,od:3,mix:5},
+{c:"antihist",n:"Cétirizine, loratadine, fexofénadine",b:"Zyrtec · Clarityne · Telfast",st:["otc"],med:"Allergies. 1 comprimé/j.",mis:"Aucun potentiel d'abus — le contre-exemple utile.",ris:"Peu sédatifs, peu de risques : toute la famille antihistaminique ne se ressemble pas.",dep:0,od:1,mix:1},
+// ---- NEUROLEPTIQUES ----
+{c:"neuro",n:"Cyamémazine",b:"Tercian",st:["rx"],med:"Anxiété sévère, agitation, psychoses. 25–100 mg/j (max 600). Buvable : 1 goutte = 1 mg.",mis:"Effet « assommoir » recherché pour dormir ou redescendre.",ris:"Hypotension, somnolence massive le lendemain, QT, erreurs de gouttes.",dep:1,od:4,mix:4},
+{c:"neuro",n:"Lévomépromazine",b:"Nozinan",st:["rx"],med:"Psychoses, anxiété majeure. 25–200 mg/j (max 400).",mis:"Sédation parmi les plus puissantes de la pharmacopée.",ris:"Hypotension sévère, chutes, QT, somnolence prolongée.",dep:1,od:4,mix:4},
+{c:"neuro",n:"Chlorpromazine",b:"Largactil",st:["rx"],med:"Psychoses, agitation. 25–300 mg/j (max 600).",mis:"Peu détournée — historiquement le premier neuroleptique (1952).",ris:"Photosensibilité, hypotension, sédation, effets anticholinergiques.",dep:1,od:4,mix:4},
+{c:"neuro",n:"Propériciazine",b:"Neuleptil",st:["rx"],med:"Troubles du comportement. 30–100 mg/j (max 200). Sol. 4 % : 1 goutte = 1 mg.",mis:"Gouttes sédatives.",ris:"Somnolence, hypotension, effets anticholinergiques, erreurs de dose.",dep:1,od:3,mix:4},
+{c:"neuro",n:"Quétiapine",b:"Xeroquel",st:["rx","warn"],med:"Troubles bipolaires, dépression (en ajout), schizophrénie. 150–800 mg/j selon l'indication.",mis:"Très détournée comme somnifère (« quetia »), y compris en détention.",ris:"Prise de poids, diabète, QT ; surdose = coma.",dep:2,od:4,mix:4,hook:"Dans plusieurs pays, c'est l'un des médicaments les plus trafiqués en prison — pas pour planer : pour dormir."},
+{c:"neuro",n:"Sulpiride",b:"Dogmatil",st:["rx"],med:"Anxiété de l'adulte quand les traitements habituels ont échoué : 50–150 mg/j, 4 semaines max. Psychoses : 200–1000 mg/j. Troubles graves du comportement de l'enfant de plus de 6 ans.",mis:"Peu détourné : ni euphorie ni effet « assommoir », il est peu sédatif. Le piège est plutôt la cure courte qui dure des mois, ou la boîte d'un proche prise contre l'angoisse.",ris:"Hormones : lait qui coule des seins, seins qui gonflent (aussi chez l'homme), règles qui s'arrêtent, impuissance, prise de poids. Tremblements, mouvements anormaux parfois durables, QT allongé ; rare mais grave : fièvre avec raideur (urgence).",dep:1,od:3,mix:4,hook:"Contre l'angoisse, la dose (50 à 150 mg par jour) est bien plus faible qu'en psychiatrie (jusqu'à 1000 mg), mais c'est le même neuroleptique, avec ses effets hormonaux. Et sa notice interdit de l'associer au citalopram, à l'escitalopram ou à l'hydroxyzine (Atarax) : risque de trouble grave du rythme cardiaque."},
+// ---- ANTIDÉPRESSEURS ----
+{c:"antidep",n:"Escitalopram",b:"Seroplex",st:["rx"],med:"Dépression, anxiété généralisée. 5–20 mg/j.",mis:"Aucun effet immédiat recherché — ce n'est pas une drogue.",ris:"Syndrome d'arrêt si stop brutal, nausées au début, QT à forte dose ; éviter tout mélange sérotoninergique (tramadol, MDMA).",dep:1,od:2,mix:3},
+{c:"antidep",n:"Sertraline",b:"Zoloft",st:["rx"],med:"Dépression, TOC, stress post-traumatique. 50–200 mg/j.",mis:"Pas de mésusage notable.",ris:"Mêmes règles ISRS : arrêt progressif, vigilance sur les mélanges sérotoninergiques.",dep:1,od:2,mix:3},
+{c:"antidep",n:"Fluoxétine",b:"Prozac (plus commercialisé) · génériques",st:["rx"],med:"Dépression, boulimie. 20–60 mg/j.",mis:"Pas de mésusage notable — action très progressive.",ris:"Nombreuses interactions (inhibiteur enzymatique) ; persiste des semaines dans l'organisme après l'arrêt.",dep:1,od:2,mix:3},
+{c:"antidep",n:"Paroxétine",b:"Deroxat",st:["rx"],med:"Dépression, anxiété. 20–50 mg/j.",mis:"Pas de mésusage — mais l'un des arrêts les plus difficiles.",ris:"Syndrome d'arrêt marqué (vertiges, sensations de « décharges ») : ne jamais stopper seul du jour au lendemain.",dep:2,od:2,mix:3},
+{c:"antidep",n:"Venlafaxine",b:"Effexor",st:["rx"],med:"Dépression, anxiété. 75–225 mg/j.",mis:"Léger effet stimulant à forte dose, rarement recherché.",ris:"Tension artérielle, syndrome d'arrêt sévère, plus dangereuse en surdose que les ISRS.",dep:2,od:3,mix:3},
+{c:"antidep",n:"Mirtazapine",b:"Norset",st:["rx"],med:"Dépression avec insomnie. 15–45 mg le soir.",mis:"Sédation et appétit.",ris:"Prise de poids, somnolence ; paradoxe : plus sédative à petite dose qu'à forte.",dep:1,od:2,mix:3},
+{c:"antidep",n:"Amitriptyline",b:"Laroxyl",st:["rx"],med:"Dépression, douleurs neuropathiques, migraine. 25–150 mg/j (gouttes disponibles).",mis:"Gouttes parfois détournées pour dormir.",ris:"Surdose cardiotoxique : quelques grammes peuvent tuer. L'un des médicaments les plus dangereux de l'armoire à pharmacie.",dep:1,od:5,mix:4},
+{c:"antidep",n:"Tianeptine",b:"Stablon",st:["secu","warn"],med:"Dépression. 12,5 mg × 3/j.",mis:"À très forte dose : effet opioïde réel — détournement lourd et documenté.",ris:"Dépendance de type opioïde, sevrage pénible ; ordonnance sécurisée en France depuis 2012.",dep:4,od:3,mix:4,hook:"Surnommée « gas station heroin » aux États-Unis, où elle se vend légalement… dans des stations-service."},
+// ---- OPIOÏDES ----
+{c:"opio",n:"Codéine",b:"Codoliprane · Dafalgan codéiné · sirops",st:["secu","warn"],med:"Douleur modérée, toux. 15–60 mg par prise, max 240 mg/j — presque toujours associée au paracétamol. Ordonnance sécurisée et 12 semaines max depuis le 1er mars 2025.",mis:"Le « lean » : sirop codéiné + soda ± prométhazine. Euphorie douce, somnolence planante.",ris:"Dépression respiratoire, dépendance ; le paracétamol associé détruit le foie avant même la surdose d'opioïde.",dep:4,od:4,mix:5,hook:"En France, la codéine est passée sur ordonnance du jour au lendemain en 2017, après des décès d'adolescents liés au purple drank."},
+{c:"opio",n:"Tramadol",b:"Topalgic · Ixprim",st:["secu","warn"],med:"Douleur modérée à sévère. 50–100 mg par prise, max 400 mg/j.",mis:"Euphorie + « énergie » : double mécanisme opioïde et sérotoninergique.",ris:"Convulsions (même à dose normale), syndrome sérotoninergique avec les antidépresseurs, dépendance largement sous-estimée.",dep:4,od:4,mix:5,hook:"L'antidouleur opioïde le plus consommé de France — et depuis 2025, ordonnance sécurisée obligatoire, comme la morphine."},
+{c:"opio",n:"Poudre d'opium",b:"Lamaline · Izalgi",st:["rx"],med:"Douleur modérée. 1–2 gélules jusqu'à 3×/j (avec paracétamol).",mis:"Opioïde « discret », perçu à tort comme anodin.",ris:"Vrai opioïde : mêmes règles, mêmes risques — plus le plafond de paracétamol.",dep:3,od:4,mix:5},
+{c:"opio",n:"Morphine",b:"Skenan · Actiskenan · Oramorph",st:["secu"],med:"Douleur intense. Libération immédiate : 10–20 mg par prise ; dose individualisée, pas de plafond fixe.",mis:"La référence des opioïdes ; sniffée ou injectée en mésusage.",ris:"Dépression respiratoire, dépendance majeure ; la tolérance qui fluctue rend la surdose facile.",dep:5,od:5,mix:5},
+{c:"opio",n:"Oxycodone",b:"Oxycontin · Oxynorm",st:["secu","warn"],med:"Douleur sévère. Départ : 5–10 mg toutes les 12 h.",mis:"Euphorie franche — la molécule qui a déclenché la crise des opioïdes américaine.",ris:"Potentiel addictif majeur, escalade rapide des doses, surdose respiratoire.",dep:5,od:5,mix:5,hook:"Plus de 500 000 morts aux États-Unis en 20 ans : la crise a commencé avec des ordonnances banales, pas dans la rue."},
+{c:"opio",n:"Fentanyl",b:"Durogesic (patchs)",st:["secu","warn"],med:"Douleurs sévères stables (cancer). Patchs 12–100 µg/h sur 72 h, réservés aux patients déjà sous opioïdes.",mis:"Patchs mâchés ou extraits — et surtout fentanyl illicite coupant héroïne et faux comprimés.",ris:"≈ 100 fois la puissance de la morphine : quelques milligrammes tuent. Première cause de mort par overdose aux États-Unis.",dep:5,od:5,mix:5,hook:"2 mg suffisent à tuer un adulte non tolérant — une quantité invisible à l'œil nu dans un comprimé contrefait."},
+{c:"opio",n:"Méthadone",b:"—",st:["secu","restr"],med:"Traitement de substitution aux opioïdes (TSO). Dose individualisée, initiation en CSAPA ou à l'hôpital.",mis:"Effet opioïde long ; parfois revendue hors cadre.",ris:"Demi-vie très longue : la surdose peut survenir 12 h après la prise. QT. Mortelle chez le non-tolérant — y compris un enfant qui boit un flacon.",dep:5,od:5,mix:5,hook:"Elle sauve des milliers de vies en substitution — et peut tuer en une seule dose quelqu'un qui n'est pas tolérant aux opioïdes."},
+{c:"opio",n:"Buprénorphine",b:"Subutex · Suboxone",st:["secu"],med:"TSO. 2–16 mg/j en sublingual.",mis:"Sniffée ou injectée (mésusage historique du Subutex).",ris:"Effet plafond respiratoire seule — mais des décès surviennent en mélange avec benzos ou alcool. Injection : abcès, œdèmes des mains.",dep:4,od:3,mix:5},
+{c:"opio",n:"Néfopam",b:"Acupan",st:["rx"],med:"Douleur aiguë. 20 mg par prise, max 120 mg/j.",mis:"Effet stimulant/euphorisant ; ampoules bues sur un sucre (hors AMM).",ris:"Convulsions, tachycardie, effets anticholinergiques — ce n'est pas un opioïde, mais ce n'est pas anodin.",dep:2,od:4,mix:3},
+{c:"opio",n:"Paracétamol",b:"Doliprane · Dafalgan · Efferalgan",st:["otc"],med:"Douleur, fièvre. 500 mg–1 g par prise, max 3–4 g/j.",mis:"Aucun effet psychoactif — mais présent dans presque tous les médicaments codéinés, d'où les surdoses involontaires.",ris:"Surdose = destruction du foie, silencieuse pendant 24 h. Première cause d'hépatite fulminante médicamenteuse.",dep:0,od:5,mix:2,hook:"8 à 10 g (16 à 20 comprimés) peuvent détruire un foie — et pendant les premières 24 h, on ne sent presque rien. Toute prise massive = urgences immédiatement, même sans symptôme."},
+// ---- GABAPENTINOÏDES ----
+{c:"gaba",n:"Prégabaline",b:"Lyrica",st:["secu","warn"],med:"Douleurs neuropathiques, épilepsie, anxiété généralisée. 150–600 mg/j.",mis:"« Ivresse » cotonneuse, désinhibition, potentialise opioïdes et alcool. Très détournée chez les 15–25 ans.",ris:"Dépendance réelle, sevrage pénible, dépression respiratoire en mélange. Ordonnance sécurisée en France depuis 2021.",dep:4,od:3,mix:5,hook:"Devenue en quelques années l'un des médicaments les plus détournés d'Europe — surnommée « saroukh » (la fusée) au Maghreb."},
+{c:"gaba",n:"Gabapentine",b:"Neurontin",st:["rx"],med:"Douleurs neuropathiques, épilepsie. 900–3600 mg/j.",mis:"Effets proches de la prégabaline, en moins intense.",ris:"Mêmes vigilances : sédation, mélanges avec dépresseurs, sevrage progressif.",dep:3,od:3,mix:4},
+// ---- STIMULANTS ----
+{c:"stim",n:"Méthylphénidate LI",b:"Ritaline",st:["secu","warn"],med:"TDAH, narcolepsie. 10–60 mg/j en 2–3 prises.",mis:"« Study drug » pour réviser, coupe-faim, stimulation festive (sniffé).",ris:"Tachycardie, anxiété, insomnie, décompensation psychiatrique ; sniffé, son potentiel addictif change de catégorie.",dep:3,od:3,mix:4},
+{c:"stim",n:"Méthylphénidate LP",b:"Ritaline LP · Concerta · Quasym · Medikinet",st:["secu"],med:"TDAH. 10–60 mg le matin selon la forme.",mis:"Moins détournable (libération prolongée) — c'est voulu.",ris:"Mêmes vigilances : cœur, sommeil, appétit, humeur.",dep:2,od:3,mix:3},
+{c:"stim",n:"Lisdexamfétamine",b:"Xurta (France) · Elvanse (autres pays)",st:["secu"],med:"TDAH. 30–70 mg le matin.",mis:"Prodrogue inactive tant qu'elle n'est pas digérée : la sniffer ne sert à rien — conception anti-abus.",ris:"Amphétamine au long cours : cœur, sommeil, appétit, humeur.",dep:2,od:3,mix:3},
+{c:"stim",n:"Amfétamines mixtes",b:"Adderall",st:["nofr","warn"],med:"TDAH aux États-Unis. Non commercialisé en France.",mis:"Mythifié par la pop culture US comme dopant de productivité.",ris:"Vraie amphétamine : dépendance, paranoïa, risques cardiaques.",dep:3,od:3,mix:4,hook:"Il n'y a pas d'Adderall légal en France : ce qui circule sous ce nom vient du marché noir — souvent de la méthamphétamine ou des cathinones pressées en comprimé."},
+{c:"stim",n:"Atomoxétine",b:"Strattera",st:["nofr"],med:"TDAH (non stimulant). 40–80 mg/j. Jamais commercialisé en France : accessible seulement par autorisation d'accès compassionnel (ANSM).",mis:"Aucun potentiel d'abus : n'agit pas sur le circuit de la récompense.",ris:"Effet en plusieurs semaines ; tension, humeur à surveiller au début.",dep:0,od:2,mix:2},
+{c:"stim",n:"Modafinil",b:"Modiodal",st:["restr"],med:"Narcolepsie. 100–400 mg/j, initiation hospitalière.",mis:"La « smart drug » des étudiants et des traders.",ris:"Insomnie, céphalées, rares réactions cutanées graves ; rend la pilule contraceptive moins efficace.",dep:1,od:2,mix:2},
+// ---- AUTRES ----
+{c:"autres",n:"Buspirone",b:"—",st:["rx"],med:"Anxiété généralisée. 15–30 mg/j.",mis:"Aucun effet immédiat — inintéressante à détourner, et c'est sa force.",ris:"Efficacité en 2–4 semaines seulement ; vertiges, nausées.",dep:0,od:1,mix:2},
+{c:"autres",n:"Étifoxine",b:"Stresam",st:["rx"],med:"Anxiété légère. 150–200 mg/j.",mis:"Pas de mésusage notable.",ris:"Rares atteintes hépatiques et cutanées graves.",dep:1,od:2,mix:2},
+{c:"autres",n:"Propranolol",b:"Avlocardyl (plus commercialisé) · génériques · Hemangiol (nourrisson)",st:["rx"],med:"Trac, migraine, hypertension. 40–160 mg/j (trac : prise ponctuelle).",mis:"Le « bêta-bloquant du trac » avant un examen ou une scène — il coupe les symptômes physiques, pas d'euphorie.",ris:"Pas de dépendance, mais surdose dangereuse (bradycardie, hypotension) ; asthme = contre-indication ; arrêt brutal risqué chez le cardiaque.",dep:0,od:4,mix:3},
+{c:"autres",n:"Baclofène",b:"Baclocur · Liorésal",st:["rx"],med:"Spasticité ; alcoolodépendance (titration lente, max 80 mg/j).",mis:"À forte dose : sédation, coupe-craving auto-administré hors cadre.",ris:"Surdose = coma profond parfois trompeur (réveil très retardé) ; sevrage brutal dangereux.",dep:2,od:4,mix:4},
+{c:"autres",n:"Dextrométhorphane (DXM)",b:"sirops toux sèche",st:["rx","warn"],med:"Toux sèche. Doses de la notice uniquement — sur ordonnance en France depuis 2017.",mis:"« Robotripping » adolescent : dissociation à très forte dose.",ris:"Syndrome sérotoninergique (surtout avec antidépresseurs), vomissements, tachycardie, dissociation angoissante.",dep:2,od:3,mix:4},
+{c:"autres",n:"Eskétamine médicale",b:"Spravato",st:["restr"],med:"Dépression résistante : spray nasal administré à l'hôpital, surveillance 2 h. (Kétamine : anesthésie.)",mis:"Même molécule que la kétamine de rue — cadre radicalement différent : dose connue, surveillance, pas d'auto-administration.",ris:"Dissociation, poussée tensionnelle — encadrées en milieu médical. Le contraste médical/rue est le message.",dep:2,od:2,mix:3},
+// ---- RÉCRÉATIVES ----
+{c:"recre",n:"Alcool",b:"—",st:["reg"],med:"Aucun usage médical. Vente interdite aux mineurs.",mis:"Désinhibition, euphorie — la drogue sociale par excellence.",ris:"41 000 morts/an en France, accidents, violences, cancers ; dépendance massive ; sevrage brutal potentiellement mortel (delirium tremens).",dep:4,od:4,mix:5,hook:"Avec les benzos et le GHB, c'est l'une des seules drogues dont le sevrage brutal peut tuer. L'héroïne, elle, rend le sevrage atroce — mais pas mortel."},
+{c:"recre",n:"Cannabis (THC)",b:"herbe · résine",st:["ill"],med:"Usage médical très encadré (expérimentation française). Illicite sinon.",mis:"Détente, euphorie, modification des perceptions.",ris:"Pas de surdose mortelle, mais : dépendance réelle (≈ 1 usager régulier sur 10), anxiété, troubles de la mémoire et de la motivation, risque psychotique accru si usage précoce et quotidien.",dep:3,od:1,mix:3,hook:"Le paradoxe cannabis : la drogue illégale la moins mortelle en aigu — et l'une des premières causes de consultations jeunes en addictologie."},
+{c:"recre",n:"Cannabinoïdes de synthèse / HHC",b:"« PTC » · sprays · e-liquides",st:["ill"],med:"Aucun. HHC interdit en France depuis juin 2023.",mis:"Effet cannabis « légal » supposé, achat en ligne.",ris:"Puissance et composition imprévisibles : convulsions, psychoses, atteintes rénales. Sans aucun rapport de force avec le THC naturel.",dep:3,od:3,mix:4},
+{c:"recre",n:"MDMA / ecstasy",b:"taz · XTC",st:["ill"],med:"Aucun (essais cliniques en cours dans le stress post-traumatique).",mis:"Empathie, euphorie, énergie — la drogue des festivals.",ris:"Hyperthermie (chaleur + danse + déshydratation), hyponatrémie si excès d'eau, descente dépressive, comprimés de plus en plus dosés.",dep:2,od:4,mix:4,hook:"Le danger n°1 n'est pas la pureté : c'est la chaleur. Pauses régulières, eau par petites gorgées (~50 cl/h max), jamais de redose rapprochée."},
+{c:"recre",n:"Cocaïne / crack",b:"CC · caillou",st:["ill"],med:"Aucun (hors anesthésie ORL historique).",mis:"Euphorie, confiance, énergie — 20 à 30 minutes.",ris:"Infarctus et AVC même jeune, dépendance psychique majeure (crack ++), cloison nasale, produit coupé (lévamisole).",dep:4,od:4,mix:5,hook:"Cocaïne + alcool = le foie fabrique du cocaéthylène, un troisième produit plus cardiotoxique et plus durable que la cocaïne elle-même."},
+{c:"recre",n:"Amphétamine / speed",b:"—",st:["ill"],med:"Aucun en France.",mis:"Énergie longue, éveil, appétit coupé.",ris:"Descente brutale, paranoïa, bruxisme, risques cardiaques ; pureté très variable.",dep:4,od:4,mix:4},
+{c:"recre",n:"3-MMC & cathinones",b:"3-MMC · 4-MMC…",st:["ill"],med:"Aucun.",mis:"Euphorie stimulante proche MDMA/cocaïne ; très présente en chemsex.",ris:"Redoses compulsives (craving fort), paranoïa, cœur ; en injection (slam) : risques infectieux majeurs.",dep:4,od:3,mix:4},
+{c:"recre",n:"Kétamine",b:"ké · special K",st:["ill"],med:"Anesthésique hospitalier ; dérivé encadré dans la dépression résistante.",mis:"Dissociation, flottement, anesthésie festive.",ris:"« K-hole » (incapacité totale, fausse route), cystite kétaminique pouvant détruire la vessie, dépendance psychique, chutes.",dep:3,od:3,mix:4,hook:"L'usage régulier peut détruire la vessie de façon irréversible — des usagers de 25 ans se retrouvent avec des douleurs et des mictions toutes les 20 minutes, à vie."},
+{c:"recre",n:"GHB / GBL",b:"« G »",st:["ill"],med:"Usage anesthésique très marginal ; GBL = solvant industriel détourné.",mis:"Euphorie désinhibée, « alcool sans gueule de bois » supposé.",ris:"Marge minuscule entre dose d'effet et coma (« G-hole ») ; dépendance physique rapide en usage répété, sevrage dangereux.",dep:3,od:5,mix:5,hook:"1 ml de trop peut faire la différence entre la fête et le coma — et la même dose devient une surdose si on a bu. Jamais avec l'alcool, jamais de redose avant 2 h."},
+{c:"recre",n:"LSD",b:"buvard · goutte",st:["ill"],med:"Aucun (recherche en cours).",mis:"Voyage psychédélique de 8–12 h, distorsions sensorielles.",ris:"Bad trip (le contexte et l'entourage font tout), réactivations (HPPD), décompensation chez les personnes vulnérables psychiatriquement ; pas de dépendance physique.",dep:1,od:2,mix:3},
+{c:"recre",n:"Psilocybine",b:"champignons",st:["ill"],med:"Aucun en pratique courante — essais cliniques avancés dans la dépression résistante.",mis:"Psychédélique plus court (4–6 h).",ris:"Mêmes règles que le LSD : contexte, entourage, vulnérabilité psy ; confusion possible avec des champignons toxiques.",dep:1,od:2,mix:3},
+{c:"recre",n:"Protoxyde d'azote",b:"proto · ballons",st:["reg","warn"],med:"Gaz anesthésiant médical (MEOPA). Vente interdite aux mineurs depuis 2021.",mis:"Euphorie et distorsions de 2–3 minutes.",ris:"Usage répété = destruction de la vitamine B12 → atteintes de la moelle épinière (fourmillements, troubles de la marche, paralysies), parfois irréversibles ; syncopes, brûlures froides.",dep:2,od:3,mix:3,hook:"Des jeunes de 20 ans arrivent aux urgences avec des lésions de moelle épinière qu'on ne voyait avant que chez des personnes âgées carencées. Le ballon « inoffensif » est un mythe."},
+{c:"recre",n:"Poppers",b:"nitrites d'alkyle",st:["reg"],med:"Aucun (dérivé d'un ancien médicament de l'angine de poitrine). Vente légale encadrée en France.",mis:"Flash de 1–2 minutes, chaleur, désinhibition, usage sexuel.",ris:"Chute de tension, maux de tête violents, méthémoglobinémie si avalé.",dep:1,od:3,mix:5,hook:"Jamais avec le viagra ou le cialis : les deux font chuter la tension, et l'addition peut être fatale."},
+{c:"recre",n:"Héroïne",b:"rabla · came",st:["ill"],med:"Aucun (la diamorphine médicale existe dans quelques pays).",mis:"Vague d'euphorie et d'apaisement total.",ris:"Dépendance parmi les plus fortes qui existent ; surdose respiratoire — surtout à la reprise après une pause, quand la tolérance a chuté ; injection (VIH, VHC, abcès) ; coupes au fentanyl.",dep:5,od:5,mix:5,hook:"La naloxone annule une overdose d'opioïdes en quelques minutes. Kits gratuits en CAARUD, disponibles en pharmacie — l'avoir sur soi sauve des vies."},
+{c:"recre",n:"Nicotine",b:"cigarettes · puffs · vapes",st:["reg"],med:"Substituts nicotiniques (patchs, gommes) pour le sevrage tabagique.",mis:"Micro-shoot de concentration et de détente, geste social.",ris:"La dépendance la plus rapide à s'installer de toutes les drogues légales ; tabac fumé = 75 000 morts/an en France. Les puffs sont la porte d'entrée nicotinique des mineurs.",dep:5,od:1,mix:1,hook:"Une puff de 2 ml dosée à 20 mg/ml contient autant de nicotine qu'un paquet de cigarettes — et se finit en une soirée."}
+];
+
+const NEW=[{"c": "benzo", "n": "Clobazam", "b": "Urbanyl · Likozam", "st": ["rx"], "med": "Épilepsie (en association), anxiété. Usuel : 10–30 mg/j selon l'indication.", "mis": "Moins sédatif que les autres benzos, donc peu recherché, mais même mécanisme.", "ris": "Dépendance, sevrage à risque de convulsions (surtout chez la personne épileptique), somnolence, mélanges dangereux.", "dep": 4, "od": 2, "mix": 5}, {"c": "neuro", "n": "Olanzapine", "b": "Zyprexa · Zypadhera (injection retard)", "st": ["rx"], "med": "Schizophrénie, trouble bipolaire. 5–20 mg/j.", "mis": "Parfois détournée pour dormir ou « redescendre ».", "ris": "Prise de poids et diabète marqués, sédation, hypotension ; injection retard : rare syndrome de sédation brutale dans les heures qui suivent, d'où 3 h de surveillance.", "dep": 1, "od": 3, "mix": 4}, {"c": "neuro", "n": "Loxapine", "b": "Loxapac", "st": ["rx"], "med": "Agitation, psychoses. Dose très variable selon la situation (souvent 75–200 mg/j).", "mis": "Peu détournée.", "ris": "Sédation, hypotension, raideurs et tremblements (effets extrapyramidaux), convulsions à forte dose.", "dep": 1, "od": 4, "mix": 4}, {"c": "antidep", "n": "Miansérine", "b": "Athymil (plus commercialisé) · génériques", "st": ["rx"], "med": "Dépression, notamment avec insomnie. 30–90 mg/j, souvent le soir.", "mis": "Sédation recherchée pour dormir.", "ris": "Somnolence, prise de poids ; rare chute des globules blancs : fièvre ou angine = prise de sang.", "dep": 1, "od": 2, "mix": 3}, {"c": "thymo", "n": "Lithium", "b": "Téralithe", "st": ["rx"], "med": "Trouble bipolaire (prévention des rechutes). Dose ajustée sur la lithémie, contrôlée par prise de sang.", "mis": "Aucun effet recherché.", "ris": "Marge étroite entre dose utile et dose toxique : déshydratation, fièvre, régime sans sel ou anti-inflammatoires suffisent à l'intoxication (tremblements, confusion, diarrhée). Rein et thyroïde à surveiller.", "dep": 0, "od": 5, "mix": 3, "hook": "Quelques jours d'ibuprofène ou une gastro peuvent faire grimper le lithium jusqu'à l'intoxication : tout nouveau médicament se signale au prescripteur ou au pharmacien."}, {"c": "thymo", "n": "Valproate", "b": "Dépakine · Dépakote · Dépamide", "st": ["restr"], "med": "Épilepsie ; trouble bipolaire (Dépakote, Dépamide). Dose selon le poids et le taux sanguin.", "mis": "Aucun effet recherché.", "ris": "Tératogène majeur : environ 1 enfant exposé sur 10 avec une malformation, et jusqu'à 4 sur 10 avec des troubles du neurodéveloppement. Foie, pancréas, prise de poids.", "dep": 0, "od": 3, "mix": 2, "hook": "Après le scandale de la Dépakine, sa prescription chez les filles et les femmes en âge d'avoir des enfants est très encadrée, avec un accord de soins signé chaque année."}, {"c": "thymo", "n": "Lamotrigine", "b": "Lamictal", "st": ["rx"], "med": "Épilepsie ; prévention des épisodes dépressifs du trouble bipolaire. Montée de dose très progressive sur plusieurs semaines.", "mis": "Aucun effet recherché.", "ris": "Éruption cutanée grave (syndromes de Lyell et de Stevens-Johnson) si la dose monte trop vite ou si l'on reprend à pleine dose après une pause ; interaction majeure avec le valproate.", "dep": 0, "od": 3, "mix": 2, "hook": "Après plusieurs jours d'oubli, on ne reprend jamais à la dose d'avant : la montée progressive repart du début, sinon risque de réaction cutanée grave."}, {"c": "opio", "n": "Lopéramide", "b": "Imodium · génériques", "st": ["otc", "warn"], "med": "Diarrhée aiguë, 2 jours maximum en automédication. Doses de la notice uniquement.", "mis": "À doses massives, pour calmer un manque d'opioïdes ou chercher un effet.", "ris": "À très forte dose : troubles du rythme cardiaque graves et arrêts cardiaques ; constipation sévère.", "dep": 2, "od": 4, "mix": 3, "hook": "À dose normale, il ne passe pas dans le cerveau. À doses massives, c'est le cœur qui trinque : les décès rapportés sont des arrêts cardiaques."}, {"c": "stim", "n": "Caféine", "b": "café · boissons énergisantes · comprimés", "st": ["otc"], "med": "Dans le café (≈ 80–100 mg la tasse) et les boissons énergisantes (≈ 80 mg la canette de 25 cl) ; associée à certains antalgiques.", "mis": "Tenir éveillé, réviser, faire la fête, souvent avec de l'alcool.", "ris": "Palpitations, anxiété, insomnie ; mélangée à l'alcool, elle masque l'ivresse ; poudres et comprimés concentrés : surdoses graves.", "dep": 2, "od": 2, "mix": 3, "hook": "Une cuillère à café de caféine pure en poudre contient l'équivalent de plusieurs dizaines de tasses de café : des décès ont été rapportés."}, {"c": "autres", "n": "Pseudoéphédrine", "b": "Actifed Rhume · Dolirhume · Humex Rhume · Nurofen Rhume", "st": ["rx", "warn"], "med": "Nez bouché du rhume, en association (paracétamol, ibuprofène, antihistaminique). Ordonnance obligatoire depuis le 11 décembre 2024.", "mis": "Effet stimulant et coupe-faim ; précurseur chimique de la méthamphétamine.", "ris": "Rares mais graves, même chez des personnes jeunes : AVC, infarctus, poussée d'hypertension, vasoconstriction des artères du cerveau.", "dep": 1, "od": 3, "mix": 3, "hook": "Depuis décembre 2024, plus aucun médicament du rhume à la pseudoéphédrine ne se vend sans ordonnance en France : l'ANSM a jugé le risque d'AVC et d'infarctus trop grand pour soigner un simple rhume."}, {"c": "autres", "n": "Thiocolchicoside", "b": "Miorel · génériques (Coltramyl plus commercialisé)", "st": ["rx"], "med": "Contractures musculaires douloureuses. 7 jours maximum par voie orale.", "mis": "Aucun effet recherché.", "ris": "Risque de toxicité pour les chromosomes : contre-indiqué pendant la grossesse et l'allaitement, contraception chez la femme en âge de procréer ; convulsions possibles.", "dep": 0, "od": 2, "mix": 2}, {"c": "recre", "n": "Méthamphétamine", "b": "crystal · tina · ice", "st": ["ill"], "med": "Aucun usage médical en France.", "mis": "Stimulation intense et prolongée, euphorie, désinhibition ; très présente en chemsex.", "ris": "Dépendance majeure, psychoses et paranoïa, cœur et AVC, dents détruites ; nuits blanches à répétition, descente très lourde.", "dep": 5, "od": 4, "mix": 4, "hook": "Ses effets durent jusqu'à 24 heures : enchaîner plusieurs nuits sans dormir suffit à déclencher une psychose, même sans antécédent."}, {"c": "recre", "n": "Benzodiazépines de synthèse", "b": "bromazolam · étizolam · faux Xanax", "st": ["ill", "warn"], "med": "Aucun usage médical en France : molécules de laboratoire vendues en ligne ou pressées en faux comprimés.", "mis": "Effet benzo recherché sans ordonnance, ou avalé sans le savoir dans un faux « Xanax ».", "ris": "Puissance et dose inconnues, amnésie profonde, surdose en mélange avec l'alcool ou les opioïdes ; parfois associées à des opioïdes de synthèse.", "dep": 5, "od": 3, "mix": 5, "hook": "Un faux Xanax peut contenir une benzo de synthèse bien plus puissante, voire un opioïde de synthèse. La naloxone agit sur les opioïdes, pas sur les benzos : on appelle le 15 dans tous les cas."}, {"c": "recre", "n": "Nitazènes", "b": "opioïdes de synthèse · faux comprimés", "st": ["ill", "warn"], "med": "Aucun usage médical.", "mis": "Rarement pris en connaissance de cause : retrouvés dans de l'héroïne et des faux comprimés d'opioïdes ou de benzos.", "ris": "Certains sont plus puissants que le fentanyl : arrêt respiratoire en quelques minutes ; plusieurs doses de naloxone peuvent être nécessaires.", "dep": 5, "od": 5, "mix": 5, "hook": "Déjà détectés en Europe dans des faux comprimés et de l'héroïne : ne jamais consommer seul, faire analyser le produit en CAARUD, garder de la naloxone à portée."}];
+DATA.push(...NEW);
+const EXTRA={"Alprazolam": {"ons": "30–60 min", "dur": "4–6 h", "use": "deux", "why": "Ponctuel pour une crise d'angoisse ou de panique, parce qu'il agit vite ; au long cours seulement en cure courte (quelques semaines) dans un trouble anxieux sévère, à cause de la dépendance.", "pro": [2, 3, 2, 1, 1]}, "Diazépam": {"ons": "30–60 min (quelques minutes par voie rectale)", "dur": "8–12 h, mais s'accumule sur plusieurs jours (demi-vie de 1 à 2 jours, métabolite actif encore plus long)", "use": "deux", "why": "Au long cours pour un sevrage alcoolique ou une anxiété sévère, sa longue durée évitant les creux ; ponctuel pour une crise convulsive ou une contracture.", "pro": [2, 3, 2, 3, 3]}, "Bromazépam": {"ons": "30–60 min", "dur": "6–8 h (demi-vie ≈ 20 h)", "use": "deux", "why": "Ponctuel (un quart ou une demi-barrette) pour un pic d'anxiété ; au long cours en cure courte. C'est justement ce double usage qui installe la dépendance.", "pro": [2, 3, 2, 2, 1]}, "Lorazépam": {"ons": "30–60 min", "dur": "6–8 h (demi-vie 10–20 h)", "use": "deux", "why": "Ponctuel avant un geste médical ou pour une crise ; au long cours en cure courte dans l'anxiété.", "pro": [3, 3, 2, 2, 3]}, "Clonazépam": {"ons": "≈ 1 h", "dur": "8–12 h (demi-vie 30–40 h)", "use": "fond", "why": "Traitement de l'épilepsie : sa longue durée stabilise le taux dans le sang. Pas un traitement ponctuel de l'anxiété en France.", "pro": [2, 2, 2, 2, 3]}, "Oxazépam": {"ons": "1–2 h (absorption lente)", "dur": "4–6 h (demi-vie ≈ 8 h)", "use": "deux", "why": "Au long cours pour un sevrage alcoolique ou une anxiété, surtout chez la personne âgée car il ne s'accumule pas ; ponctuel possible, mais son délai le rend moins adapté aux crises.", "pro": [2, 2, 2, 1, 1]}, "Clorazépate": {"ons": "30–60 min", "dur": "Longue, avec accumulation sur plusieurs jours (même métabolite que le diazépam)", "use": "fond", "why": "Anxiété ou sevrage alcoolique au long cours : sa durée très longue ne convient pas à une prise ponctuelle.", "pro": [2, 3, 2, 2, 2]}, "Prazépam": {"ons": "2–6 h (se transforme d'abord dans le foie)", "dur": "Très longue (métabolite actif de plusieurs jours)", "use": "fond", "why": "Effet lent et prolongé : pensé pour une anxiété de fond, inadapté aux crises.", "pro": [2, 2, 1, 1, 1]}, "Clobazam": {"ons": "30 min–2 h", "dur": "Longue (demi-vie ≈ 18 h, métabolite actif ≈ 2 jours)", "use": "deux", "why": "Au long cours dans l'épilepsie, en plus d'un autre traitement ; ponctuel sur quelques jours pour prévenir des crises groupées ou une anxiété passagère.", "pro": [1, 2, 1, 1, 3]}, "Zolpidem": {"ons": "15–30 min", "dur": "6–8 h de sommeil (demi-vie ≈ 2,5 h)", "use": "ponctuel", "why": "Insomnie occasionnelle ou passagère, 4 semaines maximum : l'usage de fond crée tolérance et dépendance.", "pro": [3, 1, 3, 0, 0]}, "Zopiclone": {"ons": "≈ 30 min", "dur": "6–8 h (demi-vie ≈ 5 h), somnolence possible au réveil", "use": "ponctuel", "why": "Même logique que le zolpidem : insomnie ponctuelle, 4 semaines maximum.", "pro": [3, 1, 3, 1, 1]}, "Lormétazépam": {"ons": "30–60 min", "dur": "6–8 h (demi-vie ≈ 10 h)", "use": "ponctuel", "why": "Somnifère réservé aux insomnies passagères.", "pro": [3, 2, 3, 1, 1]}, "Loprazolam": {"ons": "≈ 1 h", "dur": "6–8 h (demi-vie ≈ 8 h)", "use": "ponctuel", "why": "Insomnie passagère ; en prise quotidienne prolongée, l'effet s'émousse et la dépendance s'installe.", "pro": [3, 2, 3, 1, 1]}, "Mélatonine": {"ons": "1–2 h avant le coucher", "dur": "Quelques heures ; l'effet sur le rythme se construit en jours ou semaines", "use": "deux", "why": "Ponctuelle pour un décalage horaire ; au long cours sur quelques semaines pour recaler un rythme de sommeil (Circadin : cure de 3 semaines, prolongeable jusqu'à 13).", "pro": [1, 0, 1, 0, 0]}, "Doxylamine": {"ons": "30–60 min", "dur": "Longue (demi-vie ≈ 10 h) : somnolence possible le matin", "use": "ponctuel", "why": "Insomnie occasionnelle, 2 à 5 jours : au-delà, avis médical.", "pro": [2, 0, 3, 0, 0]}, "Hydroxyzine": {"ons": "15–60 min", "dur": "4–6 h pour l'effet calmant, somnolence parfois plus longue (demi-vie 14–20 h)", "use": "deux", "why": "Ponctuelle pour un pic d'anxiété, parce qu'elle agit vite sans dépendance ; au long cours dans l'anxiété ou les démangeaisons chroniques.", "pro": [3, 2, 2, 0, 0]}, "Alimémazine": {"ons": "30–60 min", "dur": "6–8 h", "use": "ponctuel", "why": "Insomnie ou allergie passagère ; la somnolence du lendemain limite l'usage prolongé.", "pro": [3, 1, 3, 0, 0]}, "Diphénhydramine": {"ons": "30–60 min", "dur": "4–6 h", "use": "ponctuel", "why": "Mal des transports ou allergie : une prise avant le trajet ou pendant la crise.", "pro": [2, 0, 2, 0, 0]}, "Prométhazine": {"ons": "20–30 min", "dur": "4–6 h, parfois jusqu'à 12 h", "use": "ponctuel", "why": "Allergie ou insomnie passagère : pas de traitement de fond.", "pro": [3, 1, 3, 0, 0]}, "Cétirizine, loratadine, fexofénadine": {"ons": "≈ 1 h", "dur": "≈ 24 h", "use": "deux", "why": "Ponctuels pendant une crise d'allergie, ou au long cours toute la saison des pollens : une prise par jour suffit.", "pro": [0, 0, 1, 0, 0]}, "Cyamémazine": {"ons": "30–60 min", "dur": "≈ 8–12 h", "use": "deux", "why": "Au long cours dans les psychoses ; ponctuel en gouttes pour une anxiété aiguë ou une agitation, parce qu'il apaise vite sans la dépendance des benzos.", "pro": [3, 3, 2, 0, 0], "pnote": "Abaisse le seuil de convulsion : c'est l'inverse d'un anticonvulsivant."}, "Lévomépromazine": {"ons": "30–60 min", "dur": "12–24 h (demi-vie 15–30 h)", "use": "deux", "why": "Au long cours dans les psychoses ; ponctuel pour une agitation ou une anxiété majeure, avec une sédation très puissante.", "pro": [3, 2, 3, 0, 0], "pnote": "Abaisse le seuil de convulsion : c'est l'inverse d'un anticonvulsivant."}, "Chlorpromazine": {"ons": "30–60 min", "dur": "6–12 h", "use": "deux", "why": "Au long cours dans les psychoses ; ponctuel pour une agitation aiguë.", "pro": [3, 2, 2, 0, 0], "pnote": "Abaisse le seuil de convulsion : c'est l'inverse d'un anticonvulsivant."}, "Propériciazine": {"ons": "≈ 1 h", "dur": "≈ 12 h", "use": "fond", "why": "Troubles du comportement au long cours : l'effet s'évalue sur la durée.", "pro": [2, 2, 2, 0, 0], "pnote": "Abaisse le seuil de convulsion : c'est l'inverse d'un anticonvulsivant."}, "Quétiapine": {"ons": "Sédation en 30–60 min ; effet sur l'humeur en 1 à 2 semaines", "dur": "LP : ≈ 24 h, une prise par jour", "use": "fond", "why": "Traitement de fond (bipolarité, schizophrénie, dépression en ajout). La prise « ponctuelle pour dormir » n'est pas une indication : c'est son détournement le plus fréquent.", "pro": [3, 2, 3, 0, 0]}, "Olanzapine": {"ons": "Sédation en quelques heures ; effet sur les symptômes en jours ou semaines (injection : 15–45 min)", "dur": "≈ 24 h (demi-vie ≈ 30 h)", "use": "deux", "why": "Au long cours dans la schizophrénie et la bipolarité ; ponctuelle en injection pour une agitation aiguë à l'hôpital.", "pro": [3, 2, 3, 0, 0]}, "Loxapine": {"ons": "≈ 1 h par la bouche, 15–30 min en injection", "dur": "≈ 12 h", "use": "deux", "why": "Ponctuelle pour une agitation aiguë (gouttes ou injection), au long cours dans les psychoses.", "pro": [3, 2, 2, 0, 0], "pnote": "Abaisse le seuil de convulsion : c'est l'inverse d'un anticonvulsivant."}, "Escitalopram": {"ons": "2–4 semaines (anxiété : 4–6)", "dur": "Traitement continu (demi-vie ≈ 30 h)", "use": "fond", "why": "Il agit par adaptation du cerveau sur des semaines : aucun effet en prise ponctuelle, et plusieurs mois de traitement pour éviter la rechute.", "pro": [0, 2, 0, 0, 0], "pnote": "Anti-anxiété de fond : après plusieurs semaines, jamais immédiat."}, "Sertraline": {"ons": "2–4 semaines (anxiété : 4–6)", "dur": "Traitement continu (demi-vie ≈ 26 h)", "use": "fond", "why": "Il agit par adaptation du cerveau sur des semaines : aucun effet en prise ponctuelle, et plusieurs mois de traitement pour éviter la rechute.", "pro": [0, 2, 0, 0, 0], "pnote": "Anti-anxiété de fond : après plusieurs semaines, jamais immédiat."}, "Fluoxétine": {"ons": "2–4 semaines", "dur": "Très longue : demi-vie de plusieurs jours, métabolite actif jusqu'à 2 semaines", "use": "fond", "why": "Il agit par adaptation du cerveau sur des semaines : aucun effet en prise ponctuelle, et plusieurs mois de traitement pour éviter la rechute.", "pro": [0, 1, 0, 0, 0], "pnote": "Anti-anxiété de fond : après plusieurs semaines, jamais immédiat."}, "Paroxétine": {"ons": "2–4 semaines (anxiété : 4–6)", "dur": "Traitement continu (demi-vie ≈ 24 h)", "use": "fond", "why": "Il agit par adaptation du cerveau sur des semaines : aucun effet en prise ponctuelle, et plusieurs mois de traitement pour éviter la rechute.", "pro": [1, 2, 1, 0, 0], "pnote": "Anti-anxiété de fond : après plusieurs semaines, jamais immédiat."}, "Venlafaxine": {"ons": "2–4 semaines", "dur": "LP : une prise par jour ; demi-vie courte, d'où des symptômes d'arrêt dès un oubli", "use": "fond", "why": "Il agit par adaptation du cerveau sur des semaines : aucun effet en prise ponctuelle, et plusieurs mois de traitement pour éviter la rechute.", "pro": [0, 2, 0, 0, 0], "pnote": "Anti-anxiété de fond : après plusieurs semaines, jamais immédiat."}, "Mirtazapine": {"ons": "Sommeil dès les premiers soirs ; humeur en 2–4 semaines", "dur": "Traitement continu (demi-vie 20–40 h)", "use": "fond", "why": "Il agit par adaptation du cerveau sur des semaines : aucun effet en prise ponctuelle, et plusieurs mois de traitement pour éviter la rechute.", "pro": [3, 2, 3, 0, 0]}, "Amitriptyline": {"ons": "Sommeil et douleur : quelques jours ; humeur : 2–4 semaines", "dur": "Traitement continu (demi-vie ≈ 1 jour)", "use": "fond", "why": "Au long cours pour la dépression, les douleurs neuropathiques ou la prévention des migraines ; jamais en prise ponctuelle.", "pro": [3, 1, 3, 0, 0], "pnote": "Abaisse le seuil de convulsion : c'est l'inverse d'un anticonvulsivant."}, "Tianeptine": {"ons": "2–3 semaines", "dur": "Courte (demi-vie ≈ 3 h), d'où 3 prises par jour", "use": "fond", "why": "Traitement de fond de la dépression ; des prises répétées « à la demande » sont le signe du détournement.", "pro": [0, 1, 0, 0, 0]}, "Miansérine": {"ons": "Sommeil dès les premiers soirs ; humeur en 2–4 semaines", "dur": "Traitement continu (demi-vie ≈ 20 h)", "use": "fond", "why": "Il agit par adaptation du cerveau sur des semaines : aucun effet en prise ponctuelle, et plusieurs mois de traitement pour éviter la rechute.", "pro": [3, 2, 3, 0, 0]}, "Lithium": {"ons": "1 à 3 semaines sur une phase maniaque ; des mois pour la prévention", "dur": "Traitement continu (LP : une prise par jour)", "use": "fond", "why": "Il ne sert qu'au long cours, à taux sanguin stable : c'est ce qui prévient les rechutes. Aucune utilité en prise ponctuelle.", "pro": [1, 0, 1, 0, 0]}, "Valproate": {"ons": "Épilepsie : quelques jours ; humeur : 1–2 semaines", "dur": "Traitement continu (LP ou 2 prises par jour)", "use": "fond", "why": "Il protège des crises et des rechutes à condition d'être pris tous les jours ; un arrêt brutal peut déclencher des crises.", "pro": [1, 0, 1, 0, 3]}, "Lamotrigine": {"ons": "6 à 8 semaines, le temps de la montée de dose obligatoire", "dur": "Traitement continu (demi-vie ≈ 30 h)", "use": "fond", "why": "Traitement de fond uniquement : la montée lente est la protection contre la réaction cutanée grave.", "pro": [0, 0, 0, 0, 3]}, "Codéine": {"ons": "30–60 min", "dur": "4–6 h", "use": "ponctuel", "why": "Douleur aiguë ou toux, sur quelques jours : au-delà, tolérance et dépendance.", "pro": [2, 0, 2, 0, 0], "pnote": "Pas des anxiolytiques : sédation et somnolence sont le premier signe d'alerte d'une surdose."}, "Tramadol": {"ons": "30–60 min (LP : 1–2 h)", "dur": "4–6 h (LP : 12 à 24 h)", "use": "deux", "why": "Forme immédiate ponctuelle pour une douleur aiguë ; forme LP au long cours pour une douleur qui dure.", "pro": [1, 0, 1, 0, 0], "pnote": "Abaisse le seuil de convulsion : c'est l'inverse d'un anticonvulsivant."}, "Poudre d'opium": {"ons": "30–60 min", "dur": "4–6 h", "use": "ponctuel", "why": "Douleur aiguë de courte durée.", "pro": [2, 0, 2, 0, 0], "pnote": "Pas des anxiolytiques : sédation et somnolence sont le premier signe d'alerte d'une surdose."}, "Morphine": {"ons": "LI : 20–30 min · LP : 1–2 h", "dur": "LI : ≈ 4 h · LP : 12 h", "use": "deux", "why": "LP au long cours pour la douleur continue, plus des prises ponctuelles de LI pour les pics de douleur : c'est le schéma standard des douleurs sévères.", "pro": [3, 0, 3, 0, 0], "pnote": "Pas des anxiolytiques : sédation et somnolence sont le premier signe d'alerte d'une surdose."}, "Oxycodone": {"ons": "LI : 20–30 min · LP : ≈ 1 h", "dur": "LI : 4–6 h · LP : 12 h", "use": "deux", "why": "Même schéma que la morphine : LP au long cours, LI ponctuelle pour les pics.", "pro": [2, 0, 2, 0, 0], "pnote": "Pas des anxiolytiques : sédation et somnolence sont le premier signe d'alerte d'une surdose."}, "Fentanyl": {"ons": "Patch : 12–24 h pour le premier · formes buccales ou nasales : 5–15 min", "dur": "Patch : 72 h, et encore ≈ 17 h après le retrait · formes rapides : 1–2 h", "use": "deux", "why": "Patch au long cours pour une douleur cancéreuse stable ; formes rapides ponctuelles pour les accès douloureux, chez des patients déjà sous opioïdes.", "pro": [3, 0, 3, 0, 0], "pnote": "Pas des anxiolytiques : sédation et somnolence sont le premier signe d'alerte d'une surdose."}, "Méthadone": {"ons": "30–60 min", "dur": "24–36 h d'effet anti-manque, mais s'accumule sur 3 à 5 jours", "use": "fond", "why": "Substitution quotidienne : sa durée évite le manque. L'accumulation des premiers jours est la période la plus dangereuse.", "pro": [2, 0, 2, 0, 0], "pnote": "Pas des anxiolytiques : sédation et somnolence sont le premier signe d'alerte d'une surdose."}, "Buprénorphine": {"ons": "30–60 min sous la langue", "dur": "24–48 h selon la dose", "use": "fond", "why": "Substitution quotidienne sous la langue, ou injection à libération prolongée hebdomadaire ou mensuelle (Buvidal).", "pro": [2, 0, 2, 0, 0], "pnote": "Pas des anxiolytiques : sédation et somnolence sont le premier signe d'alerte d'une surdose."}, "Néfopam": {"ons": "15–30 min", "dur": "4–6 h", "use": "ponctuel", "why": "Douleur aiguë, souvent après une opération.", "pro": [0, 0, 0, 0, 0], "pnote": "Abaisse le seuil de convulsion : c'est l'inverse d'un anticonvulsivant."}, "Paracétamol": {"ons": "30–60 min", "dur": "4–6 h", "use": "deux", "why": "Ponctuel pour une douleur ou une fièvre ; au long cours possible dans une douleur chronique, sans jamais dépasser le plafond quotidien.", "pro": [0, 0, 0, 0, 0]}, "Lopéramide": {"ons": "1–3 h", "dur": "Jusqu'à 1–2 jours", "use": "ponctuel", "why": "Diarrhée aiguë, 2 jours maximum sans avis médical.", "pro": [0, 0, 0, 0, 0]}, "Prégabaline": {"ons": "Anxiété : dès la 1re semaine · douleur : quelques jours", "dur": "≈ 8–12 h par prise (2 prises par jour)", "use": "fond", "why": "Traitement de fond (douleur neuropathique, anxiété généralisée, épilepsie). La prise ponctuelle « pour l'effet » est le schéma du détournement.", "pro": [2, 3, 2, 0, 2]}, "Gabapentine": {"ons": "Quelques jours, le temps de monter la dose", "dur": "≈ 6–8 h (3 prises par jour)", "use": "fond", "why": "Douleur neuropathique ou épilepsie, en prises régulières.", "pro": [2, 1, 2, 0, 2]}, "Méthylphénidate LI": {"ons": "20–30 min", "dur": "3–4 h", "use": "deux", "why": "Au long cours quand il est pris chaque jour ; ajustable prise par prise (matin, demi-journée, fin d'après-midi) parce que son effet court couvre un moment précis.", "pro": [0, 0, 0, 0, 0], "pnote": "Activant : c'est l'inverse d'un sédatif. Anxiété et insomnie possibles."}, "Méthylphénidate LP": {"ons": "30–60 min (Concerta : 1–2 h)", "dur": "≈ 8 h (Ritaline LP, Quasym, Medikinet) · ≈ 12 h (Concerta)", "use": "fond", "why": "Une prise le matin couvre la journée : moins de creux, moins de rebond, moins détournable.", "pro": [0, 0, 0, 0, 0], "pnote": "Activant : c'est l'inverse d'un sédatif. Anxiété et insomnie possibles."}, "Lisdexamfétamine": {"ons": "1–2 h", "dur": "10–14 h", "use": "fond", "why": "Une prise le matin couvre la journée.", "pro": [0, 0, 0, 0, 0], "pnote": "Activant : c'est l'inverse d'un sédatif. Anxiété et insomnie possibles."}, "Amfétamines mixtes": {"ons": "30–60 min", "dur": "4–6 h (formes LP aux États-Unis : 10–12 h)", "use": "fond", "why": "Traitement quotidien du TDAH là où il est autorisé.", "pro": [0, 0, 0, 0, 0], "pnote": "Activant : c'est l'inverse d'un sédatif. Anxiété et insomnie possibles."}, "Atomoxétine": {"ons": "2–4 semaines (effet complet en 6 à 12)", "dur": "Traitement continu", "use": "fond", "why": "N'agit qu'en prise quotidienne : inutile en ponctuel.", "pro": [0, 0, 1, 0, 0]}, "Modafinil": {"ons": "1–2 h", "dur": "10–12 h", "use": "fond", "why": "Narcolepsie : une prise quotidienne le matin. La prise ponctuelle « pour tenir » est l'usage détourné.", "pro": [0, 0, 0, 0, 0], "pnote": "Activant : c'est l'inverse d'un sédatif. Anxiété et insomnie possibles."}, "Caféine": {"ons": "15–45 min", "dur": "3–6 h (demi-vie ≈ 5 h)", "use": "ponctuel", "why": "Consommée à la demande ; tolérance et maux de tête de manque quand l'usage devient quotidien.", "pro": [0, 0, 0, 0, 0], "pnote": "Activant : c'est l'inverse d'un sédatif. Anxiété et insomnie possibles."}, "Buspirone": {"ons": "2–4 semaines", "dur": "Traitement continu", "use": "fond", "why": "Aucun effet immédiat : en ponctuel elle ne sert à rien, c'est un anxiolytique de fond.", "pro": [0, 2, 0, 0, 0], "pnote": "Anti-anxiété de fond : après plusieurs semaines, jamais immédiat."}, "Étifoxine": {"ons": "Premiers jours", "dur": "≈ 6 h par prise", "use": "fond", "why": "Cure courte (quelques jours à 12 semaines) dans une anxiété légère.", "pro": [1, 2, 1, 0, 0]}, "Propranolol": {"ons": "1–2 h", "dur": "6–12 h (LP : 24 h)", "use": "deux", "why": "Ponctuel 1 h avant une situation de trac, parce qu'il coupe tremblements et palpitations ; au long cours pour prévenir les migraines ou traiter l'hypertension.", "pro": [0, 1, 0, 0, 0], "pnote": "Anti-anxiété « physique » : calme tremblements et palpitations, pas les pensées."}, "Baclofène": {"ons": "1–2 h", "dur": "4–8 h (3 prises par jour)", "use": "fond", "why": "Spasticité ou alcoolodépendance : doses montées lentement et prises régulières.", "pro": [2, 0, 2, 3, 0]}, "Dextrométhorphane (DXM)": {"ons": "30–60 min", "dur": "4–6 h", "use": "ponctuel", "why": "Toux sèche passagère, quelques jours.", "pro": [1, 0, 1, 0, 0]}, "Eskétamine médicale": {"ons": "Minutes pour la dissociation ; humeur dès 24 h", "dur": "Dissociation ≈ 1–2 h ; séances 1 à 2 fois par semaine", "use": "deux", "why": "Des séances ponctuelles à l'hôpital, organisées en un traitement de fond de plusieurs mois.", "pro": [2, 0, 1, 0, 0]}, "Pseudoéphédrine": {"ons": "≈ 30 min", "dur": "4–6 h", "use": "ponctuel", "why": "Rhume, 5 jours maximum, sur ordonnance.", "pro": [0, 0, 0, 0, 0], "pnote": "Activant : c'est l'inverse d'un sédatif. Anxiété et insomnie possibles."}, "Thiocolchicoside": {"ons": "≈ 1 h", "dur": "≈ 12 h (2 prises par jour)", "use": "ponctuel", "why": "Contracture aiguë, 7 jours maximum par voie orale.", "pro": [0, 0, 0, 3, 0], "pnote": "Abaisse le seuil de convulsion : c'est l'inverse d'un anticonvulsivant."}, "Alcool": {"ons": "10–30 min", "dur": "Selon la quantité : le corps élimine ≈ 0,10 à 0,15 g/l par heure"}, "Cannabis (THC)": {"ons": "Fumé : quelques minutes · ingéré : 30 min–2 h", "dur": "Fumé : 2–4 h · ingéré : 6–8 h, parfois plus"}, "Cannabinoïdes de synthèse / HHC": {"ons": "Quelques minutes (fumé ou vapoté)", "dur": "Imprévisible, souvent plus court et plus intense"}, "MDMA / ecstasy": {"ons": "30–60 min", "dur": "3–6 h, puis descente sur 1 à 3 jours"}, "Cocaïne / crack": {"ons": "Sniffée : 2–5 min · crack fumé : quelques secondes", "dur": "Sniffée : 20–45 min · crack : 5–15 min"}, "Amphétamine / speed": {"ons": "≈ 30 min (plus vite sniffée)", "dur": "4–8 h"}, "3-MMC & cathinones": {"ons": "15–30 min", "dur": "2–4 h, d'où les redoses"}, "Kétamine": {"ons": "Sniffée : 5–15 min", "dur": "45 min–2 h"}, "GHB / GBL": {"ons": "15–30 min", "dur": "1–3 h"}, "LSD": {"ons": "30–90 min", "dur": "8–12 h"}, "Psilocybine": {"ons": "20–60 min", "dur": "4–6 h"}, "Protoxyde d'azote": {"ons": "Quelques secondes", "dur": "2–3 min"}, "Poppers": {"ons": "Quelques secondes", "dur": "1–2 min"}, "Héroïne": {"ons": "Injectée : secondes · sniffée ou fumée : minutes", "dur": "3–5 h"}, "Nicotine": {"ons": "≈ 10 secondes jusqu'au cerveau (fumée ou vapotée)", "dur": "30–60 min avant l'envie suivante"}, "Méthamphétamine": {"ons": "Fumée : minutes · avalée : ≈ 30 min", "dur": "8–24 h"}, "Benzodiazépines de synthèse": {"ons": "Variable, souvent 15–60 min", "dur": "Imprévisible : de quelques heures à plus d'une journée"}, "Nitazènes": {"ons": "Quelques minutes", "dur": "Variable, parfois plus long que l'effet d'une dose de naloxone"}, "Sulpiride": {"ons": "Pic sanguin en 3–6 h par la bouche", "dur": "Demi-vie ≈ 7 h ; éliminé par les reins (dose réduite si les reins fonctionnent mal)", "use": "fond", "why": "Cure courte pour l'anxiété (4 semaines au plus selon la notice), traitement de fond dans les psychoses : il se prend chaque jour sur une durée définie, pas à la demande.", "pro": [1, 2, 1, 0, 0], "pnote": "Peu sédatif pour un neuroleptique. Abaisse le seuil de convulsion : c'est l'inverse d'un anticonvulsivant."}};
+const DOS={"Alprazolam": "Comprimé 0,25 · 0,5 mg", "Diazépam": "Comprimé 2 · 5 · 10 mg ; Buvable 1 %", "Bromazépam": "Comprimé 1,5 · 6 mg", "Lorazépam": "Comprimé 0,5 · 1 · 2,5 mg", "Clonazépam": "Comprimé 2 mg ; Buvable 2,5 mg/ml", "Oxazépam": "Comprimé 5 · 10 · 25 · 50 mg", "Clorazépate": "Gélule 5 · 10 · 20 mg", "Prazépam": "Comprimé 10 · 40 mg ; Buvable 15 mg/ml", "Clobazam": "Comprimé 10 · 20 mg ; Gélule 5 mg ; Buvable 1 mg/ml", "Zolpidem": "Comprimé 10 mg", "Zopiclone": "Comprimé 3,75 · 7,5 mg", "Lormétazépam": "Comprimé 1 · 2 mg", "Loprazolam": "Comprimé 1 mg", "Mélatonine": "Comprimé 1 · 2 · 5 mg ; Comprimé LP 1 · 2 · 5 mg ; Buvable 1 mg/ml", "Doxylamine": "Comprimé 15 mg ; avec vitamine B6 : 10 · 20 mg (nausées de la grossesse : Cariban, Xonvea)", "Hydroxyzine": "Comprimé 25 mg ; Buvable 2 mg/ml", "Alimémazine": "Comprimé 5 mg ; Buvable 4 %", "Diphénhydramine": "Comprimé 90 mg", "Prométhazine": "Comprimé 25 mg", "Cétirizine, loratadine, fexofénadine": "Comprimé 10 · 120 · 180 mg ; Buvable 10 mg/ml", "Cyamémazine": "Comprimé 25 · 100 mg ; Buvable 40 mg/ml", "Lévomépromazine": "Comprimé 25 · 100 mg ; Buvable 40 mg/ml", "Chlorpromazine": "Comprimé 25 · 100 mg ; Buvable 4 %", "Propériciazine": "Gélule 10 mg ; Buvable 1 % · 4 %", "Quétiapine": "Comprimé LP 50 · 300 · 400 mg", "Olanzapine": "Comprimé 5 · 7,5 · 10 · 15 · 20 mg", "Loxapine": "Comprimé 25 · 50 · 100 mg ; Buvable 2,5 g/100 ml", "Escitalopram": "Comprimé 5 · 10 · 15 · 20 mg ; Buvable 20 mg/ml", "Sertraline": "Gélule 25 · 50 mg", "Fluoxétine": "Comprimé 20 mg ; Gélule 20 mg ; Buvable 20 mg/5 ml", "Paroxétine": "Comprimé 20 mg", "Venlafaxine": "Comprimé 50 mg ; Comprimé LP 150 · 225 mg ; Gélule LP 37,5 · 75 · 150 mg", "Mirtazapine": "Comprimé 15 mg", "Amitriptyline": "Comprimé 25 · 50 mg ; Buvable 40 mg/ml", "Tianeptine": "Comprimé 12,5 mg", "Miansérine": "Comprimé 10 · 30 · 60 mg", "Lithium": "Comprimé 250 mg ; Comprimé LP 400 mg", "Valproate": "Comprimé 200 · 250 · 300 · 500 mg ; Comprimé LP 500 mg ; Buvable 57,64 mg/ml · 200 mg/ml ; Sachet LP 100 mg · 250 mg · 500 mg · 750 mg · 1 g", "Lamotrigine": "Comprimé 2 · 5 · 25 · 50 · 100 · 200 mg", "Codéine": "Toujours associée, en comprimé ou gélule : 20 · 25 · 30 · 50 · 60 mg de codéine (avec paracétamol, ibuprofène ou caféine) ; sirops contre la toux", "Tramadol": "Comprimé 50 · 100 mg ; Comprimé LP 50 · 100 · 150 · 200 mg ; Gélule 50 mg ; Gélule LP 50 · 100 · 150 · 200 mg ; Buvable 100 mg/ml ; en association : 37,5 mg (avec paracétamol) · 75 mg (avec dexkétoprofène)", "Poudre d'opium": "Comprimé 12,5 mg ; Gélule 10 · 25 mg ; Suppositoire 15 mg", "Morphine": "Comprimé 1 · 2,5 · 5 · 10 · 20 · 30 mg ; Comprimé LP 10 · 30 · 60 · 100 · 200 mg ; Gélule 5 · 10 · 20 · 30 mg ; Buvable 10 mg/ml · 10 mg/5 ml · 20 mg/ml · 30 mg/5 ml · 100 mg/5 ml ; Sachet LP 10 · 30 · 60 · 100 · 200 mg", "Oxycodone": "Comprimé 5 · 10 · 20 mg ; Comprimé LP 5 · 10 · 15 · 20 · 30 · 40 · 60 · 80 mg … ; Gélule 5 · 10 · 20 mg ; Buvable 10 mg/ml", "Fentanyl": "Comprimé 100 µg · 133 µg · 200 µg · 267 µg · 300 µg · 400 µg · 533 µg · 600 µg … ; Film orodispersible 200 µg · 400 µg ; Patch 12 µg/h · 25 µg/h · 50 µg/h · 75 µg/h · 100 µg/h ; Spray nasal 50 µg/dose · 100 µg/dose · 200 µg/dose · 400 µg/dose", "Méthadone": "Gélule 1 · 5 · 10 · 20 · 40 mg ; Buvable 1,33 mg/ml · 5 mg/3,75 ml · 10 mg/7,5 ml · 20 mg/15 ml · 40 mg/15 ml · 60 mg/15 ml", "Buprénorphine": "Comprimé 0,2 · 0,4 · 1 · 2 · 4 · 6 · 8 mg ; Lyophilisat 2 · 8 mg ; Injectable LP 8 · 16 · 24 · 32 · 64 · 96 · 128 · 160 mg", "Néfopam": "Comprimé 30 mg", "Paracétamol": "Comprimé 250 mg · 500 mg · 1 g ; Gélule 500 mg · 1 g ; Lyophilisat 250 · 500 mg ; Buvable 2,4 % · 30 mg/ml · 200 mg · 300 mg · 500 mg · 1 g ; Sachet 80 mg · 150 mg · 200 mg · 250 mg · 300 mg · 500 mg · 1 g ; Suppositoire 80 mg · 100 mg · 150 mg · 200 mg · 300 mg · 600 mg · 1 g", "Lopéramide": "Comprimé 2 mg ; Gélule 2 mg ; Lyophilisat 2 mg", "Prégabaline": "Gélule 25 · 50 · 75 · 100 · 150 · 200 · 300 mg ; Buvable 20 mg/ml", "Gabapentine": "Comprimé 600 · 800 mg ; Gélule 100 · 300 · 400 mg", "Méthylphénidate LI": "Comprimé 10 mg", "Méthylphénidate LP": "Comprimé LP 18 · 36 · 54 mg ; Gélule LP 5 · 10 · 20 · 30 · 40 mg", "Lisdexamfétamine": "Gélule 20 · 30 · 40 · 50 · 60 · 70 mg", "Modafinil": "Comprimé 100 mg", "Buspirone": "Comprimé 10 mg", "Étifoxine": "Gélule 50 mg", "Propranolol": "Comprimé 40 mg ; Gélule LP 80 · 160 mg ; Buvable 3,75 mg/ml", "Baclofène": "Comprimé 10 · 20 · 30 · 40 mg", "Dextrométhorphane (DXM)": "Comprimé 30 mg ; Buvable 1,5 mg/ml · 300 mg/100 ml", "Eskétamine médicale": "Spray nasal 28 mg", "Thiocolchicoside": "Comprimé 4 mg ; Gélule 4 mg", "Atomoxétine": "Aucune spécialité commercialisée en France d'après la base publique des médicaments (15/09/2026)", "Pseudoéphédrine": "Plus aucune spécialité commercialisée d'après la base publique des médicaments (15/09/2026) : restent les boîtes des armoires à pharmacie", "Sulpiride": "Gélule 50 mg ; Comprimé 200 mg ; Buvable 0,5 g/100 ml"};
+// Fiches ajoutées le 25/10/2026 (lot A : neuroleptiques, antidépresseurs). Sources : RCP (base publique des
+// médicaments), ANSM, HAS ; dosages = relevé BDPM du 25/10/2026. Même règle que le reste : aucune dose de mésusage.
+const NEW2A=[
+{c:"neuro",n:"Rispéridone",b:"Risperdal · Risperdaloro · Risperdal Consta (injection) · génériques",st:["rx"],med:"Schizophrénie ; épisodes maniaques du trouble bipolaire ; agressivité persistante (maladie d'Alzheimer, 6 semaines max ; trouble des conduites de l'enfant, cadre spécialisé). Usuel adulte : 2–6 mg/j (départ 2 mg), max 16 mg. Injection retard toutes les 2 semaines.",mis:"Peu détournée : ni euphorie ni effet « assommoir » marqué. On la croise surtout prise « en plus » d'un autre traitement, ou arrêtée seul parce que les effets secondaires pèsent.",ris:"Mouvements anormaux (raideur, tremblements, impatience des jambes, dyskinésies parfois durables), prolactine (seins, lait, règles, libido), prise de poids, hypotension au lever, QT allongé (ECG si autre allongeur du QT). Sédation additionnée avec l'alcool, les benzodiazépines, le cannabis, la kétamine. Avec le méthylphénidate : symptômes extrapyramidaux possibles au moment où l'on change la dose de l'un ou de l'autre.",dep:1,od:3,mix:4,hook:"Rispéridone et méthylphénidate se prescrivent parfois ensemble (TDAH avec troubles du comportement). Sa notice le dit : c'est quand on modifie la dose de l'un des deux que raideurs et tremblements apparaissent. Tout changement se fait avec le prescripteur, jamais seul."},
+{c:"neuro",n:"Aripiprazole",b:"Abilify · Abilify Maintena (injection mensuelle) · génériques",st:["rx"],med:"Schizophrénie (dès 15 ans), épisodes maniaques et leur prévention (dès 13 ans). Usuel : 10–15 mg/j en une prise, max 30 mg. Injection mensuelle 400 mg.",mis:"Pas d'effet recherché : ni sédatif ni euphorisant. Détournement quasi inexistant.",ris:"Akathisie (impossibilité de rester en place, souvent prise pour de l'angoisse), insomnie, nausées ; moins de prise de poids et de prolactine que les autres. Rare mais à connaître : jeu pathologique, achats ou sexualité compulsifs apparus sous traitement (signalés par l'ANSM). Alcool et dépresseurs s'additionnent malgré sa faible sédation.",dep:0,od:2,mix:3,hook:"Sous aripiprazole, des personnes sans antécédent se sont mises à jouer ou à dépenser de façon compulsive. Un comportement nouveau de ce type se signale au prescripteur : il cesse à l'arrêt du traitement."},
+{c:"neuro",n:"Halopéridol",b:"Haldol · Haldol Decanoas (injection retard)",st:["rx"],med:"Schizophrénie, états délirants, agitation aiguë, tics sévères (Gilles de la Tourette), nausées réfractaires. Usuel : 2–10 mg/j par la bouche, max 20 mg ; injection retard mensuelle.",mis:"Aucun effet recherché : le neuroleptique « historique » (1958), vécu comme désagréable.",ris:"Effets extrapyramidaux fréquents (raideur, tremblements, torticolis aigu, akathisie), dyskinésies tardives, QT allongé marqué (ECG, jamais avec un autre allongeur du QT), syndrome malin rare (fièvre + raideur = urgence). Sédation additionnée avec l'alcool et les dépresseurs.",dep:0,od:4,mix:4},
+{c:"neuro",n:"Amisulpride",b:"Solian · génériques",st:["rx"],med:"Schizophrénie. Petites doses (50–300 mg/j) sur les symptômes de retrait ; fortes doses (400–800 mg/j, max 1 200) sur les délires.",mis:"Pas d'effet recherché. À petite dose il est plutôt « activant », ce qui surprend ceux qui attendent un sédatif.",ris:"Prolactine très élevée (seins, lait, règles arrêtées, libido), prise de poids, QT allongé dose-dépendant, mouvements anormaux à forte dose ; éliminé par les reins (dose réduite si insuffisance rénale).",dep:0,od:3,mix:3},
+{c:"neuro",n:"Tiapride",b:"Tiapridal · génériques",st:["rx"],med:"Agitation et agressivité (personne âgée, sevrage alcoolique), chorées et tics sévères, douleurs rebelles. Usuel : 200–400 mg/j, max 800 (sevrage alcoolique : 300–400 mg/j quelques jours).",mis:"Peu détourné : sédation modérée, sans euphorie. Parfois pris « pour se calmer » hors cadre pendant un sevrage d'alcool fait seul.",ris:"Somnolence, mouvements anormaux, prolactine, QT allongé ; sédation additionnée avec l'alcool et les benzodiazépines. Un sevrage d'alcool sans suivi reste dangereux, tiapride ou pas.",dep:0,od:3,mix:4},
+{c:"neuro",n:"Clozapine",b:"Leponex · génériques",st:["restr"],med:"Schizophrénie résistante (échec d'au moins deux autres antipsychotiques) ; psychose de la maladie de Parkinson. Montée très lente : 12,5 mg le premier jour, usuel 200–450 mg/j, max 900.",mis:"Aucun effet recherché : sédation lourde, hypersalivation, pas d'euphorie.",ris:"Agranulocytose (chute des globules blancs) : prise de sang chaque semaine pendant 18 semaines puis chaque mois ; fièvre ou angine = analyse en urgence. Myocardite dans les premières semaines, convulsions à forte dose, constipation sévère (occlusions mortelles), hypotension, diabète. Avec les benzodiazépines : collapsus et arrêts respiratoires décrits ; alcool et dépresseurs additionnent la sédation.",dep:0,od:5,mix:5,hook:"La clozapine marche souvent quand tout le reste a échoué, et c'est l'un des rares médicaments dont la prise de sang conditionne la délivrance : sans numération récente, pas de boîte."},
+{c:"antidep",n:"Citalopram",b:"Seropram · génériques",st:["rx"],med:"Dépression ; trouble panique. 20 mg/j, max 40 mg (20 mg après 65 ans).",mis:"Aucun effet immédiat recherché — ce n'est pas une drogue.",ris:"QT allongé dose-dépendant (d'où le plafond de 40 mg fixé en 2011) : contre-indiqué avec les autres allongeurs du QT, dont le sulpiride, l'hydroxyzine, la méthadone ; syndrome d'arrêt, nausées au début ; mélanges sérotoninergiques (tramadol, MDMA) à éviter.",dep:1,od:3,mix:3},
+{c:"antidep",n:"Duloxétine",b:"Cymbalta (plus commercialisé) · génériques",st:["rx"],med:"Dépression, anxiété généralisée, douleur neuropathique du diabète. 60 mg/j (30 mg la première semaine), max 120.",mis:"Pas de mésusage notable.",ris:"Nausées au début, tension artérielle, foie (contre-indiquée en cas d'atteinte hépatique ou d'alcoolisation importante), syndrome d'arrêt net (vertiges, « décharges », irritabilité) : arrêt progressif ; mélanges sérotoninergiques à éviter.",dep:2,od:3,mix:3},
+{c:"antidep",n:"Clomipramine",b:"Anafranil",st:["rx"],med:"Dépression, TOC, trouble panique, douleurs neuropathiques. 75–150 mg/j, max 250.",mis:"Pas de mésusage ; sédation et effets anticholinergiques dissuasifs.",ris:"Surdose cardiotoxique comme tous les tricycliques (troubles du rythme, convulsions, coma : quelques grammes suffisent), bouche sèche, constipation, rétention urinaire, prise de poids, sueurs ; syndrome sérotoninergique avec tramadol, DXM ou MDMA.",dep:1,od:5,mix:4},
+{c:"antidep",n:"Vortioxétine",b:"Brintellix",st:["rx"],med:"Dépression. 10 mg/j (5–20 mg).",mis:"Aucun effet recherché.",ris:"Nausées fréquentes (jusqu'à 1 personne sur 3) et durables, démangeaisons, rêves intenses ; moins de syndrome d'arrêt et moins d'effets sexuels que les ISRS ; mélanges sérotoninergiques à éviter.",dep:0,od:2,mix:2},
+{c:"antidep",n:"Agomélatine",b:"Valdoxan · génériques",st:["rx"],med:"Dépression. 25 mg le soir, 50 mg si besoin.",mis:"Aucun effet recherché : pas de sédation immédiate marquée, pas d'euphorie.",ris:"Atteintes du foie parfois graves : bilan hépatique avant, puis à 3, 6, 12 et 24 semaines, et à chaque augmentation ; contre-indiquée si le foie est malade ou avec la fluvoxamine. Pas de syndrome d'arrêt, pas d'effet sur la libido.",dep:0,od:2,mix:2,hook:"L'un des rares antidépresseurs qu'on arrête sans sevrage, mais le seul dont la prise de sang pour le foie est obligatoire à dates fixes."},
+{c:"antidep",n:"Bupropion (amfébutamone)",b:"Zyban LP · Wellbutrin (hors France)",st:["rx","warn"],med:"Aide à l'arrêt du tabac (Zyban LP 150 mg : 1 puis 2 prises par jour, 7 à 9 semaines). Antidépresseur dans d'autres pays (Wellbutrin).",mis:"Effet stimulant léger (dopamine, noradrénaline) ; comprimés écrasés et sniffés ou pris à forte dose : détournement documenté en prison et chez les usagers de stimulants.",ris:"Convulsions, surtout à forte dose, en sniff, avec l'alcool ou pendant un sevrage d'alcool ou de benzos ; insomnie, agitation, hypertension ; contre-indiqué en cas d'antécédent de convulsions ou de troubles alimentaires ; nombreuses interactions (inhibiteur du CYP2D6).",dep:2,od:3,mix:3,hook:"Sniffé, le bupropion donne surtout des crises convulsives : le « stimulant » est un antiépileptique à l'envers."}
+];
+// Fiches ajoutées le 25/10/2026 (lot B : antiépileptiques, benzos et somnifères, opioïdes, autres, soins des
+// addictions, récréatives). Mêmes sources et même règle (aucune dose de mésusage).
+const NEW2B=[
+{c:"thymo",n:"Carbamazépine",b:"Tégrétol · génériques",st:["rx"],med:"Épilepsie ; névralgie du trijumeau ; trouble bipolaire (prévention). 400–1 200 mg/j par paliers, dose ajustée sur le taux sanguin.",mis:"Aucun effet recherché.",ris:"Vertiges, vision double, somnolence au début ; sodium bas ; éruption cutanée grave (Stevens-Johnson, Lyell, surtout avec le gène HLA-B*1502 fréquent en Asie du Sud-Est) ; chute des globules blancs ; inducteur enzymatique majeur : il affaiblit la pilule, les anticoagulants, beaucoup d'antiviraux et de psychotropes ; tératogène (spina bifida).",dep:0,od:4,mix:3,hook:"La carbamazépine accélère le foie au point de rendre la pilule inefficace : une grossesse « sous contraception » pendant un traitement par Tégrétol n'est pas une rareté."},
+{c:"thymo",n:"Phénobarbital",b:"Gardénal · Alepsal (avec caféine) · génériques",st:["rx"],med:"Épilepsie (ancien traitement, encore prescrit) ; certains sevrages compliqués à l'hôpital. 2–3 mg/kg/j chez l'adulte en une prise le soir, dose ajustée sur le taux sanguin.",mis:"Le barbiturique sédatif par excellence, détourné dans les années 1960-80 pour dormir ou « s'éteindre » ; rare aujourd'hui, encore présent dans des intoxications volontaires.",ris:"Marge étroite : à quelques fois la dose, coma profond et arrêt respiratoire, sans antidote ; dépendance physique, sevrage avec convulsions ; somnolence, mémoire, fragilité osseuse au long cours ; inducteur enzymatique (pilule, anticoagulants) ; tératogène.",dep:4,od:5,mix:5,hook:"Les barbituriques ont été remplacés par les benzodiazépines pour une raison simple : avec eux, la surdose tue. La naloxone n'y fait rien, et il n'existe aucun antidote."},
+{c:"benzo",n:"Loflazépate",b:"Victan",st:["rx"],med:"Anxiété. 1–3 mg/j (comprimé de 2 mg), 12 semaines max.",mis:"Benzodiazépine « discrète », moins connue que le Lexomil, mêmes effets.",ris:"Demi-vie très longue (≈ 77 h) : accumulation, somnolence le lendemain, chutes ; dépendance et sevrage comme toute la famille.",dep:4,od:2,mix:5},
+{c:"hypno",n:"Nitrazépam",b:"Mogadon",st:["rx"],med:"Insomnie. 5 mg au coucher (2,5 mg après 65 ans), 4 semaines max.",mis:"Somnifère benzo de longue durée, prescrit depuis les années 1960 ; détourné comme les autres hypnotiques.",ris:"Demi-vie ≈ 24 h : somnolence et troubles de l'équilibre le lendemain, surtout chez la personne âgée ; dépendance, amnésie, dépression respiratoire en mélange.",dep:5,od:2,mix:5},
+{c:"hypno",n:"Estazolam",b:"Nuctalon",st:["rx"],med:"Insomnie. 1–2 mg au coucher, 4 semaines max.",mis:"Hypnotique benzo classique, pas plus « doux » que les autres.",ris:"Demi-vie ≈ 17 h : effets résiduels le matin ; dépendance, amnésie, chutes ; mélanges dangereux avec l'alcool et les opioïdes.",dep:5,od:2,mix:5},
+{c:"hypno",n:"Daridorexant",b:"Quviviq",st:["rx"],med:"Insomnie chronique de l'adulte (plus de 3 mois, retentissement dans la journée), en seconde intention après les mesures non médicamenteuses (thérapie cognitive et comportementale). 25–50 mg au coucher. Commercialisé en France depuis mars 2024.",mis:"Nouveau mécanisme (il bloque l'orexine, le signal d'éveil) : pas d'ivresse ni d'euphorie, un effet « extinction progressive de l'éveil ».",ris:"Somnolence le lendemain, fatigue, maux de tête, cauchemars ; paralysies du sommeil et hallucinations à l'endormissement rapportées ; recul limité au long cours ; alcool et dépresseurs additionnent la sédation. Moins de tolérance et de dépendance que les benzos dans les essais, mais l'ANSM a déjà examiné un cas de troubles du sommeil persistants après un arrêt brutal (juin 2025).",dep:1,od:2,mix:3,hook:"Premier somnifère qui n'agit pas sur le GABA : il ne force pas le sommeil, il coupe le signal d'éveil. Il n'est pas pour autant « à vie » : l'indication reste l'insomnie chronique, après la thérapie comportementale."},
+{c:"opio",n:"Dihydrocodéine",b:"Dicodin LP",st:["secu"],med:"Douleur modérée à intense. 60 mg LP toutes les 12 h, max 120 mg/j. Ordonnance sécurisée et 12 semaines max depuis le 1er mars 2025.",mis:"Opioïde faible, détourné comme la codéine (même famille, un peu plus puissant, forme LP moins « rapide »).",ris:"Dépression respiratoire en mélange (alcool, benzos, prégabaline), constipation, dépendance ; comprimé LP écrasé = libération brutale.",dep:3,od:4,mix:5},
+{c:"opio",n:"Naloxone (antidote)",b:"Nyxoid · Ventizolve (sprays nasaux) · Prenoxad (kit injectable)",st:["otc"],med:"Antidote des surdoses d'opioïdes (héroïne, méthadone, morphine, fentanyl, codéine, tramadol…) : 1 pulvérisation dans une narine ou 1 injection dans la cuisse, à répéter après 2–3 min sans réponse. Sans ordonnance en pharmacie, gratuite en CAARUD et dans beaucoup de CSAPA.",mis:"Aucun effet recherché : sans opioïde dans le sang, il ne se passe rien. Chez une personne dépendante, il déclenche un manque brutal, jamais un effet.",ris:"Son seul risque est de ne pas en avoir. Limites : elle dure 30 à 90 min alors que l'opioïde peut durer bien plus (méthadone, patchs, nitazènes), d'où l'appel au 15 même si la personne se réveille ; elle n'agit ni sur les benzos, ni sur l'alcool, ni sur le GHB ; plusieurs doses sont parfois nécessaires avec le fentanyl et les nitazènes.",dep:0,od:0,mix:0,hook:"Depuis 2016, n'importe qui peut avoir de la naloxone sur lui en France. En avoir n'est pas « prévoir de se droguer » : c'est la logique de l'extincteur."},
+{c:"autres",n:"Trihexyphénidyle",b:"Artane · Parkinane LP · génériques",st:["rx","warn"],med:"Maladie de Parkinson ; surtout, correction des raideurs et tremblements provoqués par les neuroleptiques. 4–15 mg/j (départ 2 mg).",mis:"Détourné pour un effet euphorisant et « désinhibant », parfois des hallucinations recherchées à forte dose, surtout chez des personnes déjà sous neuroleptiques et en détention ; marché parallèle documenté en France et au Maghreb (surveillance d'addictovigilance).",ris:"Intoxication anticholinergique : bouche sèche, pupilles dilatées, confusion, délire, hyperthermie, tachycardie, rétention d'urine, convulsions ; chez la personne âgée, troubles cognitifs durables ; dépendance psychique réelle ; avec l'alcool ou les benzos, confusion et chutes.",dep:3,od:4,mix:4,hook:"L'Artane est l'un des rares médicaments dont la demande vient surtout du mésusage : les enquêtes d'addictovigilance le placent parmi les psychotropes les plus détournés en milieu carcéral."},
+{c:"addic",n:"Naltrexone",b:"génériques (ex-Revia)",st:["rx"],med:"Maintien de l'abstinence après sevrage d'alcool ; prévention de la rechute après sevrage d'opioïdes (50 mg/j), à distance de toute prise d'opioïde (7–10 jours).",mis:"Aucun : elle bloque les récepteurs opioïdes, l'inverse d'un effet recherché.",ris:"Nausées, maux de tête, insomnie ; foie à surveiller. Danger spécifique : après des semaines sous naltrexone, la tolérance aux opioïdes a disparu, une reprise à l'ancienne dose devient une surdose ; prise alors qu'un opioïde est encore présent, elle déclenche un manque brutal.",dep:0,od:2,mix:3},
+{c:"addic",n:"Nalméfène",b:"Selincro",st:["rx"],med:"Réduction de la consommation d'alcool chez l'adulte dépendant à consommation élevée, sans signes de sevrage physique : 1 comprimé (18 mg) les jours à risque, 1 à 2 h avant de boire, max 1 par jour, avec un suivi psychosocial.",mis:"Aucun effet recherché.",ris:"Nausées, vertiges, insomnie, confusion au début ; contre-indiqué avec les opioïdes (il les bloque et peut déclencher un manque) ; peu efficace sans accompagnement.",dep:0,od:2,mix:3,hook:"Le seul médicament de l'alcool conçu pour être pris « le jour où on sait qu'on va boire », sans viser l'abstinence totale : réduire compte déjà."},
+{c:"addic",n:"Acamprosate",b:"Aotal · génériques",st:["rx"],med:"Maintien de l'abstinence après sevrage d'alcool. 2 comprimés × 3/j (4 à 6 comprimés par jour selon le poids), jusqu'à 1 an.",mis:"Aucun effet psychotrope.",ris:"Diarrhée, démangeaisons ; aucune interaction avec l'alcool (boire sous acamprosate n'est pas dangereux, juste inefficace) ; reins à surveiller.",dep:0,od:1,mix:1},
+{c:"addic",n:"Disulfirame",b:"Espéral",st:["rx"],med:"Aide au maintien de l'abstinence par « effet antabuse » : 500 mg/j puis 250 mg/j, débuté au moins 24 h après le dernier verre.",mis:"Aucun : boire sous disulfirame rend malade (rougeur, palpitations, vomissements, chute de tension).",ris:"Réaction à l'alcool parfois sévère (collapsus, troubles du rythme), y compris avec l'alcool caché (sauces, sirops médicamenteux, parfum) ; hépatite médicamenteuse rare mais grave ; neuropathies, confusion ; interactions (anticoagulants, phénytoïne, métronidazole).",dep:0,od:4,mix:5,hook:"L'effet antabuse persiste jusqu'à deux semaines après la dernière prise : la « pause » pour un verre reste une mauvaise idée."},
+{c:"addic",n:"Varénicline",b:"Champix · génériques",st:["rx"],med:"Aide à l'arrêt du tabac : 0,5 mg puis 1 mg × 2/j pendant 12 semaines, débutée 1 à 2 semaines avant l'arrêt. Retirée en 2021 (impureté), de nouveau disponible.",mis:"Aucun effet recherché : agoniste partiel de la nicotine, elle rend la cigarette moins satisfaisante.",ris:"Nausées (1 personne sur 3), rêves anormaux, insomnie ; effets sur l'humeur surveillés mais non confirmés par les grandes études ; l'alcool est moins bien toléré sous traitement.",dep:0,od:1,mix:2},
+{c:"recre",n:"CBD (cannabidiol)",b:"huiles · fleurs · e-liquides · Epidyolex (médicament)",st:["reg"],med:"Médicament (Epidyolex) dans des épilepsies rares de l'enfant. Hors médicament : produits en vente libre en France si le THC reste sous 0,3 %.",mis:"Détente sans ivresse ; souvent pris pour dormir ou contre l'anxiété, avec des effets modestes et variables selon les produits.",ris:"Somnolence, diarrhée, foie à forte dose ; interactions réelles (il freine les enzymes du foie : clobazam, valproate, anticoagulants, certains antidépresseurs) ; produits mal étiquetés, parfois avec du THC ou des cannabinoïdes de synthèse ; test salivaire positif possible avec des fleurs ; fumées, les fleurs restent de la fumée.",dep:1,od:1,mix:2,hook:"« Sans THC » ne veut pas dire sans effet sur les médicaments : le CBD bloque une partie des enzymes qui éliminent les psychotropes et peut en faire monter le taux sanguin."},
+{c:"recre",n:"Kratom",b:"Mitragyna speciosa · poudre · gélules · extraits « 7-OH »",st:["ill"],med:"Aucun usage médical en France. Inscrit sur la liste des psychotropes (arrêté du 23 décembre 2019) : achat, détention et importation interdits, même si des sites étrangers continuent d'en vendre.",mis:"Feuille d'Asie du Sud-Est aux alcaloïdes opioïdes (mitragynine) : stimulante à petite dose, sédative et opioïde à forte dose ; souvent prise pour gérer seul un sevrage d'opioïdes ou une douleur.",ris:"Dépendance et sevrage de type opioïde (douleurs, insomnie, irritabilité), nausées, constipation, atteintes du foie, convulsions ; dépression respiratoire en mélange avec opioïdes, benzos ou alcool ; les extraits concentrés en 7-hydroxymitragynine (« kratom renforcé ») sont bien plus puissants et impliqués dans des décès aux États-Unis ; la naloxone n'agit que partiellement.",dep:4,od:3,mix:5,hook:"Vendu comme une « plante », le kratom agit sur les mêmes récepteurs que la codéine ou l'héroïne : le sevrage y ressemble aussi."},
+{c:"recre",n:"Solvants & gaz inhalés",b:"colles · déodorants · gaz de briquet · essence · bombes dépoussiérantes",st:["reg"],med:"Aucun. Produits ménagers ou industriels légaux, détournés par inhalation, surtout avant 16 ans.",mis:"Ivresse courte, vertiges, hallucinations ; l'attrait du produit gratuit et accessible.",ris:"Mort subite par trouble du rythme dès la première fois (« sudden sniffing death »), asphyxie (sac sur la tête, gaz en espace clos), brûlures froides ; en usage répété, atteintes du cerveau, des nerfs, du foie et des reins, parfois irréversibles ; avec l'alcool, perte de conscience et fausse route.",dep:2,od:5,mix:4,hook:"Dans les séries de décès par inhalation de solvants, environ une personne sur cinq en était à sa première fois : le cœur peut s'arrêter sans aucune « surdose »."},
+{c:"recre",n:"Xylazine (« tranq »)",b:"coupe de l'héroïne et de faux comprimés",st:["ill","warn"],med:"Sédatif vétérinaire (chevaux, bovins), jamais autorisé chez l'humain.",mis:"Rarement prise en connaissance de cause : produit de coupe de l'héroïne et des faux comprimés, d'abord aux États-Unis (Philadelphie), détectée en Europe depuis 2022.",ris:"Sédation profonde de plusieurs heures, pouls et tension effondrés, plaies cutanées nécrotiques caractéristiques (même loin des points d'injection) ; non opioïde, donc la naloxone ne la lève pas (on la donne quand même pour l'opioïde associé) ; aggrave toute overdose d'opioïde.",dep:2,od:4,mix:5,hook:"La naloxone réveille l'overdose d'opioïde, pas la sédation à la xylazine : si la personne ne se réveille pas, on continue à l'aider à respirer et on appelle le 15."}
+];
+DATA.push(...NEW2A,...NEW2B);
+// Compléments du 25/10/2026 : délais/durées/profils des nouvelles fiches, dosages (relevé BDPM du 25/10/2026),
+// spécialité de référence pour le lien officiel, et « quand s'inquiéter » par famille.
+const A_CONV="Abaisse le seuil de convulsion : c'est l'inverse d'un anticonvulsivant.";
+const A_FOND="Anti-anxiété de fond : après plusieurs semaines, jamais immédiat.";
+const A_OPIO="Pas des anxiolytiques : sédation et somnolence sont le premier signe d'alerte d'une surdose.";
+const W_ISRS="Il agit par adaptation du cerveau sur des semaines : aucun effet en prise ponctuelle, et plusieurs mois de traitement pour éviter la rechute.";
+const EXTRA2={
+"Rispéridone":{ons:"1–2 h pour la sédation ; effet antipsychotique en 1 à 2 semaines",dur:"≈ 24 h (molécule + métabolite actif) ; injection retard : 2 semaines",use:"fond",why:"Traitement de fond, dose montée par paliers ; jamais à la demande.",pro:[2,1,2,0,0],pnote:A_CONV},
+"Aripiprazole":{ons:"Quelques jours à 2 semaines (demi-vie ≈ 75 h : le taux stable met deux semaines)",dur:"≈ 24 h par prise, mais s'accumule ; injection : 1 mois",use:"fond",why:"Traitement de fond ; sa très longue demi-vie fait qu'un oubli pèse peu, mais qu'un changement de dose met deux semaines à se voir.",pro:[1,0,1,0,0],pnote:"Peu sédatif ; peut au contraire agiter au début (akathisie)."},
+"Halopéridol":{ons:"30–60 min (sédation) ; antipsychotique en quelques jours",dur:"≈ 24 h (demi-vie ≈ 20 h) ; injection retard : 4 semaines",use:"deux",why:"Ponctuel en urgence (agitation, injection à l'hôpital) ; au long cours dans les psychoses.",pro:[2,1,2,0,0],pnote:A_CONV},
+"Amisulpride":{ons:"Pic en 3–4 h ; effet en 1 à 2 semaines",dur:"≈ 12 h (2 prises par jour au-delà de 300 mg)",use:"fond",why:"Traitement de fond ; la dose dépend du tableau (retrait ou délire), pas de prise ponctuelle.",pro:[1,1,1,0,0],pnote:"Peu sédatif, plutôt activant à petite dose. "+A_CONV},
+"Tiapride":{ons:"≈ 1 h",dur:"≈ 6–8 h (demi-vie ≈ 3–4 h, prises réparties)",use:"deux",why:"Cure de quelques jours dans l'agitation ou le sevrage ; au long cours dans les mouvements anormaux.",pro:[2,2,2,0,0],pnote:A_CONV},
+"Clozapine":{ons:"Sédation dès la première prise ; effet antipsychotique en semaines, parfois en mois",dur:"≈ 12–24 h (demi-vie ≈ 12 h)",use:"fond",why:"Traitement de fond ; après plus de 2 jours d'arrêt, on recommence à 12,5 mg, sinon hypotension et convulsions.",pro:[3,2,3,0,0],pnote:"Très sédative ; abaisse nettement le seuil de convulsion."},
+"Citalopram":{ons:"2–4 semaines",dur:"Traitement continu (demi-vie ≈ 35 h)",use:"fond",why:W_ISRS,pro:[0,2,0,0,0],pnote:A_FOND},
+"Duloxétine":{ons:"2–4 semaines (douleur : 1–2 semaines)",dur:"Traitement continu (demi-vie ≈ 12 h, d'où un syndrome d'arrêt rapide)",use:"fond",why:"Traitement de fond ; sa demi-vie courte rend l'oubli et l'arrêt brutal désagréables.",pro:[0,2,0,0,0],pnote:A_FOND},
+"Clomipramine":{ons:"Sommeil et douleur : quelques jours ; humeur et TOC : 2–6 semaines",dur:"Traitement continu (demi-vie ≈ 20–30 h)",use:"fond",why:"Au long cours uniquement, jamais en prise ponctuelle.",pro:[2,1,2,0,0],pnote:A_CONV},
+"Vortioxétine":{ons:"2–4 semaines",dur:"Traitement continu (demi-vie ≈ 66 h)",use:"fond",why:"Traitement de fond ; sa longue demi-vie adoucit l'arrêt.",pro:[0,1,0,0,0],pnote:A_FOND},
+"Agomélatine":{ons:"1–2 semaines sur le sommeil, 2–4 sur l'humeur",dur:"Prise le soir ; demi-vie courte (1–2 h), action par les récepteurs de la mélatonine",use:"fond",why:"Traitement de fond, le soir, avec les bilans hépatiques à dates fixes.",pro:[1,1,1,0,0]},
+"Bupropion (amfébutamone)":{ons:"1–2 semaines sur l'envie de fumer",dur:"LP : ≈ 12 h par prise (2 prises espacées d'au moins 8 h)",use:"fond",why:"Cure de 7 à 9 semaines pour l'arrêt du tabac, débutée une à deux semaines avant la date d'arrêt.",pro:[0,0,0,0,0],pnote:"Activant : c'est l'inverse d'un sédatif. Insomnie possible, à prendre loin du coucher."},
+"Carbamazépine":{ons:"Quelques jours (épilepsie) ; 1–2 semaines (humeur)",dur:"Traitement continu, 2 prises par jour (LP) ; elle accélère sa propre élimination en quelques semaines",use:"fond",why:"Traitement de fond, jamais arrêté brutalement (crises de rebond).",pro:[1,1,1,0,3]},
+"Phénobarbital":{ons:"30–60 min",dur:"Très longue (demi-vie 2 à 6 jours) : s'accumule",use:"fond",why:"Traitement de fond de l'épilepsie, à taux sanguin stable ; aucune place en prise ponctuelle.",pro:[3,2,3,1,3]},
+"Loflazépate":{ons:"1–2 h",dur:"Très longue (demi-vie ≈ 77 h, accumulation sur une à deux semaines)",use:"fond",why:"Anxiété de fond en cure courte ; effet lent et prolongé, inadapté aux crises.",pro:[2,3,2,2,2]},
+"Nitrazépam":{ons:"30–60 min",dur:"6–8 h de sommeil ; somnolence résiduelle possible (demi-vie ≈ 24 h)",use:"ponctuel",why:"Insomnie passagère, 4 semaines maximum.",pro:[3,2,3,2,2]},
+"Estazolam":{ons:"30–60 min",dur:"6–8 h (demi-vie ≈ 17 h)",use:"ponctuel",why:"Insomnie passagère, 4 semaines maximum.",pro:[3,2,3,1,1]},
+"Daridorexant":{ons:"≈ 30 min",dur:"≈ 8 h (demi-vie ≈ 8 h)",use:"fond",why:"Traitement de l'insomnie chronique, réévalué à 3 mois ; pas pensé pour une nuit de temps en temps.",pro:[2,0,3,0,0],pnote:"Sédation par blocage de l'éveil, sans effet myorelaxant ni anticonvulsivant."},
+"Dihydrocodéine":{ons:"1–2 h (LP)",dur:"≈ 12 h",use:"deux",why:"Douleur de quelques jours ; au long cours seulement dans un cadre suivi.",pro:[2,0,2,0,0],pnote:A_OPIO},
+"Naloxone (antidote)":{ons:"2–3 min",dur:"30–90 min : plus court que la plupart des opioïdes",use:"ponctuel",why:"Geste d'urgence, à répéter si besoin ; la personne doit ensuite être surveillée à l'hôpital.",pro:[0,0,0,0,0],pnote:"Aucun effet propre : elle annule celui des opioïdes."},
+"Trihexyphénidyle":{ons:"≈ 1 h",dur:"6–12 h (LP : 24 h)",use:"fond",why:"Correcteur pris chaque jour avec un neuroleptique, réévalué régulièrement : la dose se baisse dès que possible.",pro:[1,0,1,1,0],pnote:"Pas un sédatif : à forte dose il excite et fait délirer (toxicité anticholinergique)."},
+"Naltrexone":{ons:"≈ 1 h de blocage ; effet sur l'envie en quelques jours",dur:"24–72 h de blocage des récepteurs",use:"fond",why:"Traitement de maintien, chaque jour ou 3 fois par semaine, dans un suivi.",pro:[0,0,0,0,0]},
+"Nalméfène":{ons:"1–2 h",dur:"≈ 12 h",use:"ponctuel",why:"À la demande, les jours à risque, dans une démarche de réduction.",pro:[0,0,0,0,0]},
+"Acamprosate":{ons:"Quelques jours à 1 semaine",dur:"Prises réparties dans la journée (demi-vie ≈ 30 h)",use:"fond",why:"Traitement de maintien sur des mois, commencé dès le sevrage.",pro:[0,0,0,0,0]},
+"Disulfirame":{ons:"12 h pour l'effet antabuse",dur:"Jusqu'à 1–2 semaines après l'arrêt",use:"fond",why:"Traitement de dissuasion pris chaque jour, avec un suivi, chez une personne qui l'a choisi.",pro:[0,0,0,0,0]},
+"Varénicline":{ons:"1 semaine (montée de dose)",dur:"≈ 24 h (demi-vie ≈ 24 h), 2 prises par jour",use:"fond",why:"Cure de 12 semaines, parfois prolongée de 12.",pro:[0,0,0,0,0]},
+"CBD (cannabidiol)":{ons:"Huile : 30 min–2 h · fumé ou vapoté : minutes",dur:"4–8 h"},
+"Kratom":{ons:"15–45 min",dur:"2–5 h"},
+"Solvants & gaz inhalés":{ons:"Secondes à minutes",dur:"15–45 min"},
+"Xylazine (« tranq »)":{ons:"Quelques minutes",dur:"Plusieurs heures"}
+};
+const DOS2={
+"Rispéridone":"Comprimé 0,5 · 1 · 2 · 3 · 4 mg ; Comprimé orodispersible 0,5 · 1 · 2 · 3 · 4 mg ; Buvable 1 mg/ml ; Injectable LP 25 · 37,5 · 50 mg (toutes les 2 semaines)",
+"Aripiprazole":"Comprimé 5 · 10 · 15 mg ; Comprimé orodispersible 10 · 15 mg ; Buvable 1 mg/ml ; Injectable LP 300 · 400 mg (mensuel)",
+"Halopéridol":"Comprimé 1 · 5 mg ; Buvable 2 mg/ml ; Injectable (hôpital) et injection retard",
+"Amisulpride":"Comprimé 100 · 200 · 400 mg ; Buvable 100 mg/ml",
+"Tiapride":"Comprimé 100 mg ; Buvable en gouttes (1 goutte = 5 mg)",
+"Clozapine":"Comprimé 25 · 100 mg",
+"Citalopram":"Comprimé 20 mg ; Buvable 40 mg/ml",
+"Duloxétine":"Gélule 30 · 60 mg",
+"Clomipramine":"Comprimé 10 · 25 · 75 mg",
+"Vortioxétine":"Comprimé 5 · 10 · 15 · 20 mg",
+"Agomélatine":"Comprimé 25 mg",
+"Bupropion (amfébutamone)":"Comprimé LP 150 mg",
+"Carbamazépine":"Comprimé 200 mg ; Comprimé LP 200 · 400 mg ; Buvable 20 mg/ml",
+"Phénobarbital":"Comprimé 10 · 15 · 50 · 100 mg ; Sachet 40 · 200 mg (enfant) ; Alepsal (avec caféine) 15 · 50 · 100 · 150 mg",
+"Loflazépate":"Comprimé 2 mg","Nitrazépam":"Comprimé 5 mg","Estazolam":"Comprimé 2 mg","Daridorexant":"Comprimé 25 · 50 mg",
+"Dihydrocodéine":"Comprimé LP 60 mg",
+"Naloxone (antidote)":"Spray nasal 1,8 mg (Nyxoid) · 1,26 mg (Ventizolve) ; Kit injectable 0,91 mg/ml, seringue de 2 ml (Prenoxad)",
+"Trihexyphénidyle":"Comprimé 2 · 5 mg ; Gélule LP 2 · 5 mg ; Buvable 0,4 %",
+"Naltrexone":"Comprimé 50 mg","Nalméfène":"Comprimé 18 mg","Acamprosate":"Comprimé 333 mg","Disulfirame":"Comprimé 500 mg","Varénicline":"Comprimé 0,5 · 1 mg",
+"CBD (cannabidiol)":"Médicament : Buvable 100 mg/ml (Epidyolex, épilepsies rares). Hors médicament : huiles, fleurs, e-liquides, teneur très variable"
+};
+/* Spécialité de référence (code CIS de la base publique des médicaments) : la marque la plus citée, sinon un
+   générique. Le lien ouvre la fiche officielle (RCP, notice), jamais une photo de boîte. */
+const CIS={"Alprazolam":[60647049,"Xanax 0,50 mg"],"Diazépam":[60290800,"Valium 10 mg"],"Bromazépam":[66796142,"Lexomil 6 mg"],"Lorazépam":[67177709,"Témesta 2,5 mg"],"Clonazépam":[61496251,"Rivotril 2,5 mg/ml"],"Oxazépam":[60351986,"Seresta 50 mg"],"Clorazépate":[67956742,"Tranxène 10 mg"],"Prazépam":[60534076,"Lysanxia 15 mg/ml"],"Clobazam":[62905911,"Urbanyl 10 mg"],"Loflazépate":[68104411,"Victan 2 mg"],"Zolpidem":[63179285,"Stilnox 10 mg"],"Zopiclone":[68508795,"Imovane 7,5 mg"],"Lormétazépam":[60186584,"Lormétazépam Arrow 2 mg"],"Loprazolam":[69071035,"Havlane"],"Nitrazépam":[66205536,"Mogadon 5 mg"],"Estazolam":[69888457,"Nuctalon 2 mg"],"Mélatonine":[68578854,"Circadin 2 mg"],"Daridorexant":[67801165,"Quviviq 25 mg"],"Doxylamine":[62382724,"Donormyl 15 mg"],"Hydroxyzine":[61519586,"Atarax 25 mg"],"Alimémazine":[66801066,"Théralène 5 mg"],"Diphénhydramine":[62444574,"Nautamine"],"Prométhazine":[69764032,"Phénergan 25 mg"],"Cétirizine, loratadine, fexofénadine":[62636293,"Zyrtecset 10 mg"],"Cyamémazine":[60271248,"Tercian 100 mg"],"Lévomépromazine":[60548802,"Nozinan 25 mg"],"Chlorpromazine":[62816804,"Largactil 100 mg"],"Propériciazine":[64676824,"Neuleptil 10 mg"],"Quétiapine":[61489673,"Xeroquel LP 50 mg"],"Sulpiride":[62344129,"Dogmatil 50 mg"],"Olanzapine":[60456154,"Zyprexa 5 mg"],"Loxapine":[64162292,"Loxapac 25 mg"],"Rispéridone":[60260497,"Risperdal 2 mg"],"Aripiprazole":[65198099,"Abilify 10 mg"],"Halopéridol":[61697400,"Haldol 5 mg"],"Amisulpride":[64726693,"Solian 200 mg"],"Tiapride":[67890598,"Tiapridal 100 mg"],"Clozapine":[62552920,"Leponex 100 mg"],"Escitalopram":[60474889,"Seroplex 15 mg"],"Citalopram":[69388669,"Seropram 20 mg"],"Sertraline":[60155788,"Zoloft 25 mg"],"Fluoxétine":[60338857,"Fluoxétine Biogaran 20 mg"],"Paroxétine":[60160707,"Deroxat 20 mg"],"Venlafaxine":[61403425,"Effexor LP 75 mg"],"Duloxétine":[60287277,"Duloxétine Zentiva 60 mg"],"Mirtazapine":[65124914,"Norset 15 mg"],"Miansérine":[60854845,"Miansérine Arrow 30 mg"],"Amitriptyline":[62633436,"Laroxyl 50 mg"],"Clomipramine":[69235342,"Anafranil 25 mg"],"Tianeptine":[65411280,"Stablon 12,5 mg"],"Vortioxétine":[60316362,"Brintellix 20 mg"],"Agomélatine":[67218369,"Valdoxan 25 mg"],"Bupropion (amfébutamone)":[64556383,"Zyban LP 150 mg"],"Lithium":[62124478,"Téralithe 250 mg"],"Valproate":[60184188,"Dépakine 500 mg"],"Lamotrigine":[69658075,"Lamictal 100 mg"],"Carbamazépine":[61009918,"Tégrétol 200 mg"],"Phénobarbital":[61475588,"Gardénal 100 mg"],"Codéine":[60904643,"Codoliprane 500 mg/30 mg"],"Dihydrocodéine":[67482372,"Dicodin LP 60 mg"],"Tramadol":[63435884,"Topalgic 50 mg"],"Poudre d'opium":[62689634,"Lamaline gélule"],"Morphine":[60328261,"Actiskenan 5 mg"],"Oxycodone":[61200108,"Oxycontin LP 10 mg"],"Fentanyl":[60914025,"Durogesic 25 µg/h"],"Méthadone":[60998856,"Méthadone AP-HP 10 mg"],"Buprénorphine":[68945058,"Subutex 8 mg"],"Naloxone (antidote)":[63868145,"Nyxoid 1,8 mg"],"Néfopam":[68943687,"Acupan comprimé"],"Paracétamol":[60234100,"Doliprane 1000 mg"],"Lopéramide":[65272215,"Imodiumlingual 2 mg"],"Prégabaline":[60018088,"Lyrica 300 mg"],"Gabapentine":[61022591,"Neurontin 400 mg"],"Méthylphénidate LI":[60059081,"Ritaline 10 mg"],"Méthylphénidate LP":[63930084,"Concerta LP 36 mg"],"Lisdexamfétamine":[65874289,"Xurta 30 mg"],"Modafinil":[64841560,"Modiodal 100 mg"],"Buspirone":[61964472,"Buspirone Viatris 10 mg"],"Étifoxine":[63136857,"Stresam"],"Propranolol":[65135519,"Propranolol Accord 40 mg"],"Baclofène":[66009893,"Baclocur 10 mg"],"Dextrométhorphane (DXM)":[60133432,"Tussidane 30 mg"],"Eskétamine médicale":[67355371,"Spravato 28 mg"],"Thiocolchicoside":[65617572,"Miorel 4 mg"],"Trihexyphénidyle":[60379544,"Artane 2 mg"],"Naltrexone":[60370919,"Naltrexone Viatris 50 mg"],"Nalméfène":[63957761,"Selincro 18 mg"],"Acamprosate":[63759295,"Aotal 333 mg"],"Disulfirame":[61500746,"Espéral 500 mg"],"Varénicline":[60442838,"Champix 1 mg"],"CBD (cannabidiol)":[61680130,"Epidyolex 100 mg/ml"],"Nicotine":[60295320,"Nicorette gomme 2 mg"]};
+/* « Quand s'inquiéter » : les signes d'un usage qui dérape, famille par famille. Orienté réflexe, pas recette. */
+const SIGNAUX={
+benzo:"La dose qui monte ou la boîte qui finit avant la date ; la prise « pour tenir » en journée, pas seulement en crise ; l'achat hors ordonnance ou dans l'armoire d'un proche ; l'angoisse qui revient plus forte entre deux prises ; les trous de mémoire.",
+hypno:"Impossible de dormir sans ; le comprimé pris de plus en plus tôt dans la soirée ; des actes la nuit sans souvenir (messages, nourriture, conduite) ; plus de 4 semaines d'affilée.",
+antihist:"Le somnifère « sans ordonnance » pris tous les soirs ; des doses au-delà de la notice « pour que ça marche » ; confusion, bouche sèche, rétention d'urine.",
+neuro:"Un traitement arrêté ou modifié seul ; des gouttes comptées au jugé ; une somnolence qui déborde sur la journée ; des tremblements ou raideurs nouveaux ; fièvre avec raideur (urgence).",
+antidep:"Un arrêt brutal (vertiges, « décharges électriques », irritabilité) ; des prises « à la demande » de tianeptine ou de bupropion ; un mélange avec tramadol, DXM ou MDMA (fièvre, agitation, tremblements = urgence).",
+thymo:"Tremblements, diarrhée, confusion sous lithium (surtout après une gastro, une canicule, de l'ibuprofène) ; éruption cutanée sous lamotrigine ou carbamazépine ; grossesse envisagée sous valproate.",
+opio:"La dose qui ne suffit plus ; des ordonnances chez plusieurs médecins ; la boîte prise « pour dormir » ou « pour se calmer » et non pour la douleur ; une somnolence ou des ronflements inhabituels ; un comprimé LP écrasé.",
+gaba:"Des prises « pour l'effet » et non pour la douleur ; une augmentation rapide des doses ; l'association avec l'alcool ou un opioïde ; un manque à l'arrêt (anxiété, insomnie, sueurs).",
+stim:"Un comprimé sniffé ou pris pour réviser, faire la fête ou maigrir ; le cœur qui s'emballe, les nuits blanches ; l'humeur qui se dégrade ou des idées de persécution ; des achats hors pharmacie (contrefaçons).",
+autres:"Une automédication qui s'installe (Artane, baclofène, sirops) ; des effets « bizarres » recherchés plutôt qu'un symptôme traité ; des quantités hors notice.",
+addic:"Ces traitements ne se détournent pas ; le signal à guetter est l'inverse : les arrêter seul, sans prévenir, et reprendre le produit à l'ancienne dose alors que la tolérance a chuté (opioïdes surtout).",
+recre:"Consommer seul ; redoser avant que l'effet soit retombé ; mélanger avec l'alcool ou un médicament sédatif ; un produit qui ne vient pas d'une source connue (faux comprimés) ; le lendemain qui coûte de plus en plus."
+};
+Object.assign(EXTRA,EXTRA2);Object.assign(DOS,DOS2);
+/* « Par motif » (25/10/2026) : pour un symptôme, les médicaments de la base qui ont une INDICATION OFFICIELLE
+   (RCP) pour ce motif, avec le repère des recommandations (HAS, ANSM, OMS). Ce n'est ni un conseil ni un
+   classement : la liste suit l'ordre des familles, pas un ordre de préférence, et chaque motif commence par ce
+   que les recommandations placent avant le médicament. */
+const INDIC=[
+{id:"insomnie",t:"Je dors mal",note:"Repères : d'abord les règles de sommeil et la thérapie cognitive et comportementale de l'insomnie ; un somnifère (z-drug, benzodiazépine, antihistaminique) se prescrit en cure courte, 4 semaines au plus ; le daridorexant est réservé à l'insomnie chronique après ces mesures. La mélatonine recale un rythme, elle n'assomme pas.",meds:["Zolpidem","Zopiclone","Lormétazépam","Loprazolam","Nitrazépam","Estazolam","Daridorexant","Mélatonine","Doxylamine","Alimémazine"]},
+{id:"panique",t:"Crise d'angoisse, panique",note:"Repères : une crise passe en 20 à 30 minutes, respiration lente et présence d'un proche d'abord ; un anxiolytique d'action rapide peut être prescrit ponctuellement (benzodiazépine, hydroxyzine) ; des crises répétées se traitent par un antidépresseur de fond (ISRS) et une psychothérapie, pas par des benzodiazépines au long cours.",meds:["Alprazolam","Bromazépam","Lorazépam","Diazépam","Oxazépam","Hydroxyzine","Escitalopram","Citalopram","Paroxétine","Sertraline","Venlafaxine","Clomipramine"]},
+{id:"anxiete",t:"Anxiété de fond, stress permanent",note:"Repères (HAS) : psychothérapie en première intention ; médicament de fond = antidépresseur (ISRS, venlafaxine, duloxétine) ou prégabaline dans l'anxiété généralisée, effet en 2 à 6 semaines ; buspirone, hydroxyzine, étifoxine en alternative ; benzodiazépines 12 semaines maximum, sevrage compris, à cause de la dépendance.",meds:["Escitalopram","Paroxétine","Sertraline","Venlafaxine","Duloxétine","Prégabaline","Buspirone","Hydroxyzine","Étifoxine","Bromazépam","Alprazolam","Lorazépam","Prazépam","Clorazépate","Loflazépate","Oxazépam","Diazépam","Clobazam","Sulpiride","Cyamémazine"]},
+{id:"trac",t:"Trac, palpitations avant une situation",note:"Repères : le propranolol a une indication pour les palpitations et tremblements des situations émotionnelles passagères ; il n'agit pas sur les pensées anxieuses et se discute avec un médecin (asthme, cœur, tension).",meds:["Propranolol"]},
+{id:"depression",t:"Déprime qui dure, perte d'élan",note:"Repères (HAS) : un épisode dépressif caractérisé se traite par psychothérapie et, s'il est modéré à sévère, par un antidépresseur pris plusieurs mois, avec un effet en 2 à 4 semaines. Des idées de mort ou de suicide = appel immédiat au 3114 (numéro national de prévention du suicide) ou au 15.",meds:["Escitalopram","Citalopram","Sertraline","Fluoxétine","Paroxétine","Venlafaxine","Duloxétine","Mirtazapine","Miansérine","Vortioxétine","Agomélatine","Amitriptyline","Clomipramine","Tianeptine","Quétiapine","Eskétamine médicale"]},
+{id:"bipolaire",t:"Troubles bipolaires",note:"Repères : traitement de fond au long cours (lithium en référence, valproate, lamotrigine pour les phases dépressives, antipsychotiques), suivi des taux sanguins ; jamais arrêté seul.",meds:["Lithium","Valproate","Lamotrigine","Carbamazépine","Quétiapine","Olanzapine","Aripiprazole","Rispéridone"]},
+{id:"psychose",t:"Idées délirantes, agitation sévère",note:"Repères : urgence si danger pour soi ou pour autrui (15 ou 112) ; les antipsychotiques se prescrivent et s'ajustent en psychiatrie, avec surveillance (poids, glycémie, ECG, mouvements anormaux).",meds:["Rispéridone","Aripiprazole","Olanzapine","Quétiapine","Halopéridol","Amisulpride","Clozapine","Cyamémazine","Lévomépromazine","Chlorpromazine","Loxapine","Propériciazine","Tiapride","Sulpiride"]},
+{id:"tdah",t:"TDAH, concentration, impulsivité",note:"Repères : diagnostic spécialisé obligatoire ; méthylphénidate en première intention (initiation par un spécialiste, ordonnance sécurisée de 28 jours), lisdexamfétamine en seconde ; atomoxétine seulement par accès compassionnel en France. Les « study drugs » hors prescription exposent le cœur et le sommeil pour un gain non démontré.",meds:["Méthylphénidate LI","Méthylphénidate LP","Lisdexamfétamine","Atomoxétine"]},
+{id:"douleur",t:"Douleur (aiguë, dentaire, règles, dos)",note:"Repères (OMS) : paracétamol et anti-inflammatoires d'abord ; un opioïde faible (codéine, tramadol, opium) seulement si c'est insuffisant, à la dose la plus faible et pour la durée la plus courte, sur ordonnance sécurisée depuis mars 2025 ; les opioïdes forts relèvent de douleurs sévères suivies.",meds:["Paracétamol","Néfopam","Codéine","Dihydrocodéine","Tramadol","Poudre d'opium","Morphine","Oxycodone","Fentanyl"]},
+{id:"neuropathique",t:"Douleur neuropathique (brûlures, décharges)",note:"Repères : antidépresseurs (duloxétine, amitriptyline) et gabapentinoïdes en première ligne, effet en 1 à 2 semaines ; les opioïdes ne sont pas un traitement de première intention.",meds:["Duloxétine","Amitriptyline","Clomipramine","Prégabaline","Gabapentine","Carbamazépine","Tramadol"]},
+{id:"contractures",t:"Contractures, dos bloqué",note:"Repères : chaleur, mouvement, antalgiques simples ; le thiocolchicoside 7 jours maximum ; le diazépam parfois en cure très courte ; le baclofène sert à la spasticité neurologique, pas à un lumbago.",meds:["Thiocolchicoside","Diazépam","Baclofène"]},
+{id:"migraine",t:"Migraines fréquentes",note:"Repères : au-delà de 2 à 3 crises par mois, un traitement de fond se discute (propranolol en première intention, amitriptyline) ; des antalgiques pris plus de 10 jours par mois entretiennent les maux de tête.",meds:["Propranolol","Amitriptyline"]},
+{id:"epilepsie",t:"Épilepsie",note:"Repères : traitement de fond quotidien choisi par le neurologue, jamais arrêté brutalement ; le clonazépam et le diazépam servent à stopper une crise qui dure.",meds:["Valproate","Lamotrigine","Carbamazépine","Phénobarbital","Clobazam","Clonazépam","Prégabaline","Gabapentine","Diazépam"]},
+{id:"alcool",t:"Réduire ou arrêter l'alcool",note:"Repères : un sevrage physique (tremblements au réveil, sueurs) se fait avec un médecin, les benzodiazépines couvrent les premiers jours ; ensuite acamprosate, naltrexone, nalméfène ou baclofène aident à tenir, le disulfirame dissuade ; consultation gratuite en CSAPA.",meds:["Diazépam","Oxazépam","Acamprosate","Naltrexone","Nalméfène","Baclofène","Disulfirame","Tiapride"]},
+{id:"tabac",t:"Arrêter de fumer",note:"Repères : substituts nicotiniques (patch + forme orale, remboursés sur ordonnance), varénicline, bupropion ; l'accompagnement double les chances ; Tabac Info Service 39 89.",meds:["Nicotine","Varénicline","Bupropion (amfébutamone)"]},
+{id:"opioides",t:"Dépendance aux opioïdes (héroïne, codéine, tramadol, oxycodone)",note:"Repères : traitement de substitution (méthadone ou buprénorphine) prescrit en CSAPA, à l'hôpital ou par un médecin de ville (buprénorphine), avec un suivi ; la naltrexone après sevrage ; la naloxone à portée de main dans tous les cas.",meds:["Méthadone","Buprénorphine","Naltrexone","Naloxone (antidote)"]},
+{id:"overdose",t:"Quelqu'un ne se réveille pas, respire mal",note:"Appeler le 15 ou le 112, position latérale de sécurité, dire ce qui a été pris. Si un opioïde est possible : naloxone, à répéter après 2–3 minutes. Voir la section « Signes d'urgence ».",meds:["Naloxone (antidote)"]},
+{id:"allergie",t:"Allergie, urticaire, rhinite",note:"Repères : antihistaminiques non sédatifs en première intention ; les sédatifs (hydroxyzine, prométhazine, alimémazine) gardent une place limitée.",meds:["Cétirizine, loratadine, fexofénadine","Hydroxyzine","Prométhazine","Alimémazine","Diphénhydramine"]},
+{id:"toux",t:"Toux sèche",note:"Repères : une toux de moins de 3 semaines guérit le plus souvent seule ; les antitussifs opioïdes (codéine, DXM) sont sur ordonnance, jamais avant 12 ans.",meds:["Dextrométhorphane (DXM)","Codéine"]},
+{id:"rhume",t:"Nez bouché, rhume",note:"Repères : lavage de nez, paracétamol ; les vasoconstricteurs (pseudoéphédrine) ne sont plus en vente libre depuis décembre 2024 (AVC, infarctus) et plus aucune boîte n'est commercialisée.",meds:["Paracétamol","Pseudoéphédrine"]},
+{id:"diarrhee",t:"Diarrhée",note:"Repères : réhydratation d'abord ; lopéramide 2 jours maximum en automédication, jamais en cas de fièvre ou de sang.",meds:["Lopéramide"]},
+{id:"somnolence",t:"Somnolence dans la journée, narcolepsie",note:"Repères : la narcolepsie est un diagnostic de centre du sommeil ; modafinil et méthylphénidate s'y prescrivent par un spécialiste ; la caféine n'est pas un traitement.",meds:["Modafinil","Méthylphénidate LI","Caféine"]},
+{id:"mouvements",t:"Raideurs ou tremblements sous neuroleptique",note:"Repères : le signaler au prescripteur, baisse de dose ou changement de molécule d'abord ; le trihexyphénidyle corrige, à la dose la plus faible, et se réévalue.",meds:["Trihexyphénidyle"]}
+];
+DATA.forEach(d=>{Object.assign(d,EXTRA[d.n]||{});if(DOS[d.n])d.dos=DOS[d.n];});
+const USE={fond:"Au long cours",ponctuel:"Ponctuel",deux:"Au long cours et ponctuel"};
+const PROF=["Sédation","Anti-anxiété","Somnolence","Myorelaxant","Anticonvulsivant"];
+const $=s=>document.querySelector(s);
+const norm=s=>s.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
+const esc=s=>s.replace(/&/g,"&amp;").replace(/</g,"&lt;");
+
+function meter(lab,v){
+  let segs="";for(let i=1;i<=5;i++)segs+='<i class="'+(i<=v?"on":"")+'"></i>';
+  return '<div class="meter f'+Math.max(v,1)+'"><span class="lab">'+lab+'</span><span class="segs" aria-hidden="true">'+segs+'</span><span class="val">'+v+'/5</span></div>';
+}
+function prof(d){
+  const rows=d.pro.map((v,i)=>{let g="";for(let k=1;k<=3;k++)g+='<i class="'+(k<=v?"on":"")+'"></i>';return '<div class="pm"><span class="lab">'+PROF[i]+'</span><span class="segs" aria-hidden="true">'+g+'</span><span class="val">'+v+'/3</span></div>';}).join("");
+  return '<div class="prof"><span class="ttl">Profil d\'effets</span>'+rows+(d.pnote?'<p class="act">'+esc(d.pnote)+'</p>':'')+'</div>';
+}
+function card(d){
+  const misLab=d.c==="recre"?"Effet recherché":"Effet recherché en mésusage";
+  const medLab=d.c==="recre"?"Statut / usage médical":"Usage médical · dose usuelle";
+  return '<article class="card" id="'+fid(d.n)+'" data-cat="'+d.c+'" data-q="'+esc(norm(d.n+" "+d.b))+'">'
+   +'<div><h3>'+esc(d.n)+'</h3><div class="brands">'+esc(d.b)+'</div>'
+   +'<div class="badges">'+d.st.map(k=>'<span class="badge '+BADGES[k][0]+'">'+BADGES[k][1]+'</span>').join("")+'</div></div>'
+   +'<dl>'
+   +'<div class="field"><dt>'+medLab+'</dt><dd>'+esc(d.med)+'</dd></div>'
+   +(d.dos?'<div class="field"><dt>Dosages en pharmacie</dt><dd>'+esc(d.dos)+'</dd></div>':'')
+   +(d.ons?'<div class="field"><dt>Délai d\'action · durée d\'effet</dt><dd>'+esc(d.ons)+' · '+esc(d.dur)+'</dd></div>':'')
+   +(d.use?'<div class="field"><dt>Au long cours ou ponctuel</dt><dd><span class="use">'+USE[d.use]+'</span>'+esc(d.why)+'</dd></div>':'')
+   +'<div class="field"><dt>'+misLab+'</dt><dd>'+esc(d.mis)+'</dd></div>'
+   +'<div class="field risk"><dt>Risques clés</dt><dd>'+esc(d.ris)+'</dd></div>'
+   +'</dl>'
+   +(d.hook?'<p class="hook"><b>Le savais-tu ?</b>'+esc(d.hook)+'</p>':'')
+   +(d.pro?prof(d):'')
+   +'<div class="meters">'+meter("Dépendance",d.dep)+meter("Surdose",d.od)+meter("Mélanges",d.mix)+'</div>'
+   +'<div class="card-foot">'+forme(d)+officiel(d)+'<button type="button" class="cmp-add" data-n="'+esc(d.n)+'">Comparer</button></div>'
+   +'</article>';
+}
+function render(){
+  $("#content").innerHTML=CATS.map(cat=>{
+    const items=DATA.filter(d=>d.c===cat.id);
+    return '<section class="fam" data-cat="'+cat.id+'"><div class="fam-head"><h2>'+cat.t+'</h2><span class="n">'+items.length+' fiches</span></div><p class="fam-desc">'+cat.d+'</p>'+(SIGNAUX[cat.id]?'<p class="fam-sig"><b>Quand s\'inquiéter</b>'+SIGNAUX[cat.id]+'</p>':'')+'<div class="grid">'+items.map(card).join("")+'</div></section>';
+  }).join("");
+  $("#chips").innerHTML='<button class="chip on" data-cat="all">Tout</button>'+CATS.map(c=>'<button class="chip" data-cat="'+c.id+'">'+c.t+'</button>').join("");
+}
+let activeCat="all";
+function applyFilters(){
+  const q=norm($("#search").value.trim());
+  let shown=0;
+  document.querySelectorAll("section.fam").forEach(sec=>{
+    const catOk=activeCat==="all"||sec.dataset.cat===activeCat;
+    let vis=0;
+    sec.querySelectorAll(".card").forEach(c=>{
+      const ok=catOk&&(!q||c.dataset.q.includes(q)||norm(c.textContent).includes(q));
+      c.classList.toggle("hidden",!ok);if(ok)vis++;
+    });
+    sec.classList.toggle("hidden",vis===0);shown+=vis;
+  });
+  $("#count").textContent=shown+" / "+DATA.length+" substances";
+}
+/* ══ 25/10/2026 — comparer deux fiches, « par motif », fiche officielle, quand s'inquiéter ═══════════════
+   Tout est défensif : la version partagée est rendue dans Node avec un DOM factice (rendu-partage.mjs) où
+   querySelectorAll rend [] et où location, history et scrollIntoView n'existent pas. */
+const OFF="https://base-donnees-publique.medicaments.gouv.fr/medicament/";
+const PICTO={
+  "Comprimé":'<svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M3.5 8h9" stroke="currentColor" stroke-width="1.2"/></svg>',
+  "Gélule":'<svg viewBox="0 0 16 16" aria-hidden="true"><rect x="1.8" y="5" width="12.4" height="6" rx="3" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M8 5v6" stroke="currentColor" stroke-width="1.2"/></svg>',
+  "Buvable":'<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.8c2.4 3.2 4 5.4 4 7.6a4 4 0 0 1-8 0c0-2.2 1.6-4.4 4-7.6z" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>',
+  "Patch":'<svg viewBox="0 0 16 16" aria-hidden="true"><rect x="2" y="2" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.4"/><rect x="5" y="5" width="6" height="6" rx="1" fill="currentColor" opacity=".5"/></svg>',
+  "Spray":'<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6 6h4v8H6z M7 6V3.5h2V6 M9 3.5h3" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>',
+  "Sachet":'<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 3h10l-1 11H4z" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M3 5.5h10" stroke="currentColor" stroke-width="1.1"/></svg>',
+  "Injectable":'<svg viewBox="0 0 16 16" aria-hidden="true"><rect x="5" y="3" width="6" height="11" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M6.5 1.8h3" stroke="currentColor" stroke-width="1.4"/></svg>',
+  "Lyophilisat":'<svg viewBox="0 0 16 16" aria-hidden="true"><rect x="2.5" y="4.5" width="11" height="7" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>'
+};
+function forme(d){
+  if(!d.dos||d.c==="recre")return "";
+  const m=d.dos.match(/^(Comprimé|Gélule|Buvable|Patch|Spray|Sachet|Injectable|Lyophilisat|Kit|Toujours|Médicament|Aucune|Plus)/);
+  let k=m?m[1]:"";
+  if(k==="Kit")k="Injectable";
+  if(k==="Toujours")k="Comprimé";
+  if(k==="Médicament")k="Buvable";
+  if(!PICTO[k])return "";
+  return '<span class="forme">'+PICTO[k]+k+'</span>';
+}
+function officiel(d){
+  const c=CIS[d.n];
+  if(!c)return "";
+  return '<a class="off" href="'+OFF+c[0]+'/extrait" target="_blank" rel="noopener">Fiche officielle · '+esc(c[1])+'</a>';
+}
+const fid=n=>"f-"+norm(n).replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
+const byName=n=>DATA.find(d=>d.n===n);
+const catOf=d=>(CATS.find(c=>c.id===d.c)||{}).t||"";
+
+/* ---- comparer ---- */
+let cmpSel=[];
+function cmpToggle(n){
+  const i=cmpSel.indexOf(n);
+  if(i>=0)cmpSel.splice(i,1);else{if(cmpSel.length>=2)cmpSel.shift();cmpSel.push(n);}
+  cmpBar();
+}
+function cmpBar(){
+  document.querySelectorAll(".cmp-add").forEach(b=>b.classList.toggle("on",cmpSel.includes(b.dataset.n)));
+  const bar=$("#cmpbar");
+  if(!cmpSel.length){bar.classList.add("hidden");try{document.body.classList.remove("has-cmpbar");}catch(e){}return;}
+  bar.classList.remove("hidden");try{document.body.classList.add("has-cmpbar");}catch(e){}
+  bar.innerHTML='<div class="in"><span>Comparer :</span>'
+    +'<span class="pick">'+esc(cmpSel[0])+'</span>'
+    +(cmpSel[1]?'<span class="pick">'+esc(cmpSel[1])+'</span>':'<span class="pick empty">choisis une 2e fiche</span>')
+    +'<button type="button" class="go" data-act="voir"'+(cmpSel.length<2?' disabled':'')+'>Voir la comparaison</button>'
+    +'<button type="button" data-act="vider">Effacer</button></div>';
+}
+function optionsHTML(sel){
+  return '<option value="">—</option>'+CATS.map(c=>'<optgroup label="'+esc(c.t)+'">'+DATA.filter(d=>d.c===c.id).map(d=>'<option value="'+esc(d.n)+'"'+(d.n===sel?' selected':'')+'>'+esc(d.n)+'</option>').join("")+'</optgroup>').join("");
+}
+function miniProf(d){
+  if(!d.pro)return '<span class="brands">Pas de profil : famille récréative (jamais de note d\'effet).</span>';
+  return d.pro.map((v,i)=>{let g="";for(let k=1;k<=3;k++)g+='<i class="'+(k<=v?"on":"")+'"></i>';return '<div class="pm"><span class="lab">'+PROF[i]+'</span><span class="segs" aria-hidden="true">'+g+'</span><span class="val">'+v+'/3</span></div>';}).join("")+(d.pnote?'<p class="act">'+esc(d.pnote)+'</p>':'');
+}
+function melangesPour(d){
+  const cles={benzo:["benzos"],hypno:["z-drugs"],antihist:["antihistaminiques"],neuro:["neuroleptiques"],opio:["opioïdes"],gaba:["prégabaline"],stim:["stimulants","méthylphénidate"],antidep:["antidépresseurs"],thymo:["lithium"],addic:[]}[d.c]||[norm(d.n).split(/[ \/(]/)[0]];
+  if(d.n==="Clozapine")cles.push("clozapine");
+  if(d.n==="Tramadol"||d.n==="Dextrométhorphane (DXM)")cles.push("tramadol");
+  const out=[];
+  document.querySelectorAll("#melanges tbody tr").forEach(tr=>{
+    const t=norm(tr.textContent||"");
+    if(cles.some(k=>k&&t.includes(norm(k))))out.push('<li>'+esc((tr.querySelector("td")||{}).textContent||"")+' <span class="brands">· '+esc(((tr.querySelectorAll("td")[1])||{}).textContent||"")+'</span></li>');
+  });
+  return out.length?'<ul class="cmp-sum">'+out.join("")+'</ul>':'<span class="brands">Aucune ligne de la table des mélanges ne vise cette famille.</span>';
+}
+function resume(a,b){
+  const L=[];
+  const g=(k,lab)=>{if(a[k]===b[k])L.push(lab+" : même niveau ("+a[k]+"/5).");else L.push(lab+" : plus élevée pour "+(a[k]>b[k]?a.n:b.n)+" ("+Math.max(a[k],b[k])+"/5 contre "+Math.min(a[k],b[k])+"/5).");};
+  g("dep","Dépendance");g("od","Surdose");g("mix","Mélanges");
+  if(a.use&&b.use){L.push(a.use===b.use?"Tous deux : "+USE[a.use].toLowerCase()+".":a.n+" : "+USE[a.use].toLowerCase()+" · "+b.n+" : "+USE[b.use].toLowerCase()+".");}
+  if(a.c!==b.c)L.push("Deux familles différentes ("+catOf(a)+" · "+catOf(b)+") : les risques ne s'additionnent pas, ils se cumulent en mélange.");
+  const sec=x=>x.st.includes("secu")?"ordonnance sécurisée":x.st.includes("restr")?"prescription restreinte":x.st.includes("rx")?"ordonnance":x.st.includes("otc")?"sans ordonnance":x.st.includes("ill")?"illicite":"légal réglementé";
+  L.push("Cadre : "+a.n+" ("+sec(a)+") · "+b.n+" ("+sec(b)+").");
+  return '<ul class="cmp-sum">'+L.map(x=>'<li>'+esc(x)+'</li>').join("")+'</ul>';
+}
+function voirCmp(na,nb,silencieux){
+  const a=byName(na),b=byName(nb),p=$("#cmp");
+  p.classList.remove("hidden");
+  const row=(lab,fa,fb,cls)=>'<tr><th scope="row">'+lab+'</th><td class="'+(cls||"")+'">'+fa+'</td><td class="'+(cls||"")+'">'+fb+'</td></tr>';
+  let t='<div class="panel-head"><h2>Comparer deux fiches</h2><button type="button" class="close" data-act="fermer-cmp">Fermer</button></div>'
+   +'<p class="cadre"><b>Lecture</b>Deux fiches côte à côte, de la même famille ou non : usage médical, cadre, délais, risques et jauges. Les jauges disent le danger, jamais l\'intérêt ; un médicament « moins risqué » reste un médicament à discuter avec un médecin ou un pharmacien.</p>'
+   +'<div class="sel-row"><div><label for="cmpA">Fiche A</label><select id="cmpA">'+optionsHTML(a&&a.n)+'</select></div><div><label for="cmpB">Fiche B</label><select id="cmpB">'+optionsHTML(b&&b.n)+'</select></div></div>';
+  if(a&&b){
+    const bad=x=>x.st.map(k=>'<span class="badge '+BADGES[k][0]+'">'+BADGES[k][1]+'</span>').join(" ");
+    const F=(x,k)=>x[k]?esc(x[k]):'<span class="brands">—</span>';
+    t+='<div class="tbl-wrap"><table class="cmp-t">'
+     +'<tr class="head"><th scope="row"></th><td>'+esc(a.n)+'<div class="brands">'+esc(a.b)+'</div></td><td>'+esc(b.n)+'<div class="brands">'+esc(b.b)+'</div></td></tr>'
+     +row("Famille",esc(catOf(a)),esc(catOf(b)))
+     +row("Cadre",bad(a),bad(b))
+     +row("Usage médical · dose usuelle",F(a,"med"),F(b,"med"))
+     +row("Dosages en pharmacie",F(a,"dos"),F(b,"dos"))
+     +row("Délai d'action · durée",(a.ons?esc(a.ons)+" · "+esc(a.dur):"—"),(b.ons?esc(b.ons)+" · "+esc(b.dur):"—"))
+     +row("Au long cours ou ponctuel",(a.use?'<span class="use">'+USE[a.use]+'</span>'+esc(a.why):"—"),(b.use?'<span class="use">'+USE[b.use]+'</span>'+esc(b.why):"—"))
+     +row("Effet recherché en mésusage",F(a,"mis"),F(b,"mis"))
+     +row("Risques clés",F(a,"ris"),F(b,"ris"),"risk")
+     +row("Profil d'effets (dose médicale)",miniProf(a),miniProf(b))
+     +row("Jauges de risque",meter("Dépendance",a.dep)+meter("Surdose",a.od)+meter("Mélanges",a.mix),meter("Dépendance",b.dep)+meter("Surdose",b.od)+meter("Mélanges",b.mix))
+     +row("Mélanges à connaître",melangesPour(a),melangesPour(b))
+     +row("Le savais-tu ?",(a.hook?'<p class="hook">'+esc(a.hook)+'</p>':"—"),(b.hook?'<p class="hook">'+esc(b.hook)+'</p>':"—"))
+     +row("Fiche officielle",officiel(a)||"—",officiel(b)||"—")
+     +'</table></div><h3 class="ind-fam">En un coup d\'œil</h3>'+resume(a,b);
+    try{history.replaceState(null,"","#cmp="+encodeURIComponent(a.n)+"|"+encodeURIComponent(b.n));}catch(e){}
+  }else{
+    t+='<p class="brands">Choisis deux fiches ci-dessus, ou touche « Comparer » sur deux cartes.</p>';
+  }
+  p.innerHTML=t;
+  if(!silencieux)try{p.scrollIntoView({behavior:"smooth",block:"start"});}catch(e){}
+}
+
+/* ---- par motif ---- */
+let motifActif="";
+function voirInd(id,silencieux){
+  const p=$("#ind");p.classList.remove("hidden");
+  const m=INDIC.find(x=>x.id===id);motifActif=m?m.id:"";
+  let t='<div class="panel-head"><h2>Par motif : ce que la médecine utilise</h2><button type="button" class="close" data-act="fermer-ind">Fermer</button></div>'
+   +'<p class="cadre"><b>Ce que c\'est, ce que ce n\'est pas</b>Pour un motif, les médicaments de cette base qui ont une indication officielle (notice, RCP), dans l\'ordre des familles, avec le repère des recommandations. Ce n\'est ni un conseil, ni un classement, ni une ordonnance : le bon choix dépend d\'un examen, des autres traitements et des antécédents, et se décide avec un médecin ou un pharmacien. Urgence : le 15.</p>'
+   +'<label for="indSel" class="brands">Motif</label><select id="indSel">'+'<option value="">—</option>'+INDIC.map(x=>'<option value="'+x.id+'"'+(x.id===motifActif?' selected':'')+'>'+esc(x.t)+'</option>').join("")+'</select>'
+   +'<div class="motifs">'+INDIC.map(x=>'<button type="button" class="motif'+(x.id===motifActif?' on':'')+'" data-ind="'+x.id+'">'+esc(x.t)+'</button>').join("")+'</div>';
+  if(m){
+    t+='<p class="ind-note"><b>'+esc(m.t)+'.</b> '+esc(m.note)+'</p>';
+    const fiches=m.meds.map(byName).filter(Boolean);
+    CATS.forEach(c=>{
+      const items=fiches.filter(d=>d.c===c.id);if(!items.length)return;
+      t+='<h3 class="ind-fam">'+esc(c.t)+'</h3>'+items.map(d=>'<div class="ind-row"><div><button type="button" class="n" data-fiche="'+esc(d.n)+'">'+esc(d.n)+'</button><div class="b">'+esc(d.b)+' · '+d.st.map(k=>BADGES[k][1]).join(" · ")+(d.use?' · '+USE[d.use]:'')+'</div></div>'+meter("Dépendance",d.dep)+'<div class="m">'+esc(d.med)+'</div></div>').join("");
+    });
+    try{history.replaceState(null,"","#ind="+m.id);}catch(e){}
+  }
+  p.innerHTML=t;
+  if(!silencieux)try{p.scrollIntoView({behavior:"smooth",block:"start"});}catch(e){}
+}
+function allerFiche(n){
+  activeCat="all";document.querySelectorAll(".chip").forEach(x=>x.classList.toggle("on",x.dataset.cat==="all"));
+  $("#search").value="";applyFilters();
+  const el=document.querySelector("#"+fid(n));
+  if(!el)return;
+  try{el.scrollIntoView({behavior:"smooth",block:"center"});}catch(e){}
+  el.classList.add("flash");setTimeout(()=>el.classList.remove("flash"),2200);
+}
+/* ---- branchements (délégation : les panneaux sont re-rendus) ---- */
+document.addEventListener("click",e=>{
+  const t=e.target.closest?e.target.closest("[data-act],[data-ind],[data-fiche],.cmp-add"):null;if(!t)return;
+  if(t.classList.contains("cmp-add")){cmpToggle(t.dataset.n);return;}
+  if(t.dataset.fiche){allerFiche(t.dataset.fiche);return;}
+  if(t.dataset.ind){voirInd(t.dataset.ind);return;}
+  const act=t.dataset.act;
+  if(act==="voir")voirCmp(cmpSel[0],cmpSel[1]);
+  else if(act==="vider"){cmpSel=[];cmpBar();}
+  else if(act==="fermer-cmp"){$("#cmp").classList.add("hidden");try{history.replaceState(null,""," ");}catch(e){}}
+  else if(act==="fermer-ind"){$("#ind").classList.add("hidden");try{history.replaceState(null,""," ");}catch(e){}}
+});
+document.addEventListener("change",e=>{
+  const t=e.target;if(!t||!t.id)return;
+  if(t.id==="cmpA"||t.id==="cmpB"){const A=$("#cmpA").value,B=$("#cmpB").value;cmpSel=[A,B].filter(Boolean);cmpBar();voirCmp(A,B,true);}
+  if(t.id==="indSel")voirInd(t.value);
+});
+$("#btnCmp").addEventListener("click",()=>{const p=$("#cmp");if(p.classList.contains("hidden"))voirCmp(cmpSel[0],cmpSel[1]);else p.classList.add("hidden");});
+$("#btnInd").addEventListener("click",()=>{const p=$("#ind");if(p.classList.contains("hidden"))voirInd(motifActif);else p.classList.add("hidden");});
+render();applyFilters();
+$("#chips").addEventListener("click",e=>{
+  const b=e.target.closest(".chip");if(!b)return;
+  activeCat=b.dataset.cat;
+  document.querySelectorAll(".chip").forEach(x=>x.classList.toggle("on",x===b));
+  applyFilters();window.scrollTo({top:document.querySelector(".toolbar").offsetTop,behavior:"smooth"});
+});
+$("#search").addEventListener("input",applyFilters);
+/* 02/10/2026 — ouverte depuis un lien : « #q=<texte> » pré-remplit la recherche, « #cat=<famille> »
+   choisit le filtre ; 25/10 : « #cmp=A|B » ouvre la comparaison, « #ind=<motif> » le panneau par motif ; « #melanges », « #urgence » restent de simples ancres. Défensif : sans
+   location ni hashchange (rendu Node de la version partagée), rien ne se passe. */
+function lireAncre(){
+  try{
+    const h=decodeURIComponent(String(location.hash||"").slice(1));
+    const q=h.match(/^q=([\s\S]{1,80})$/),c=h.match(/^cat=([a-z]+)$/),k=h.match(/^cmp=([^|]{1,60})\|([^|]{1,60})$/),mo=h.match(/^ind=([a-z_]+)$/);
+    if(q){$("#search").value=q[1];applyFilters();window.scrollTo({top:document.querySelector(".toolbar").offsetTop});}
+    else if(c){const b=document.querySelector('.chip[data-cat="'+c[1]+'"]');if(b)b.click();}
+    else if(k){cmpSel=[k[1],k[2]].filter(byName);cmpBar();voirCmp(k[1],k[2]);}
+    else if(mo){voirInd(mo[1]);}
+  }catch(e){}
+}
+try{lireAncre();window.addEventListener("hashchange",lireAncre);}catch(e){}
+</script>
+<script>
+try {
+  if ('serviceWorker' in navigator && isSecureContext && location.protocol !== 'file:')
+    addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));
+} catch (e) { /* cadre isole (CSP sandbox) : pas de worker ici, et ce n'est pas une panne */ }
+</script>

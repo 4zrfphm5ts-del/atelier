@@ -1,0 +1,32 @@
+{
+  "name": "Guide Médocs",
+  "short_name": "Médocs",
+  "orientation": "any",
+  "lang": "fr",
+  "background_color": "#073F40",
+  "theme_color": "#073F40",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "description": "Médicaments et drogues : usage médical, risques, mélanges dangereux, signes d'urgence ; par motif, comparaison de deux fiches, fiche officielle. Prévention et réduction des risques, sans aucune donnée personnelle."
+}
