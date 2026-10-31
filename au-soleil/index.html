@@ -26,13 +26,13 @@
 <meta property="og:type" content="website">
 <meta property="og:locale" content="fr_FR">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23ffd166'/%3E%3Ccircle cx='32' cy='32' r='12' fill='%23ff9f1c'/%3E%3Cg stroke='%23ff9f1c' stroke-width='4' stroke-linecap='round'%3E%3Cpath d='M32 8v6M32 50v6M8 32h6M50 32h6M15 15l4 4M45 45l4 4M49 15l-4 4M19 45l-4 4'/%3E%3C/g%3E%3C/svg%3E">
-<!-- Chargée sans retenir le premier rendu : si unpkg ne répond pas, la page
-     s'affiche quand même au lieu de rester blanche le temps du délai réseau. -->
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""
-      media="print" onload="this.media='all'"/>
-<noscript><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/></noscript>
+<!-- 31/10/2026 : Leaflet 1.9.4 vit à côté de la page (leaflet.css, leaflet.js), copie exacte de celle
+     d'unpkg (empreintes SRI d'origine vérifiées : css sha256-p4NxAoJB…, js sha256-20nQCchB…). Venu
+     d'unpkg, le service hors ligne ne pouvait pas le garder (réponse d'une autre origine) : sans
+     réseau, plus de carte du tout. Ici il est précaché avec la page.
+     Ni integrity ni crossorigin : ouverte dans la visionneuse de VIGIE (origine opaque), la page
+     demande ses fichiers hors CORS, et une empreinte SRI y bloquerait le fichier. -->
+<link rel="stylesheet" href="leaflet.css">
 <style>
   :root{
     --bg:#0f1419; --panel:#171f29; --panel2:#1d2733; --line:#26313d;
@@ -106,6 +106,9 @@
   body.sans-carte #map{display:none}
   body.sans-carte aside{width:100%; max-width:none; height:100%; flex:1;
     border-left:none; border-top:none}
+  #carte-avis{position:absolute; z-index:600; left:56px; right:12px; top:12px; background:rgba(42,35,16,.95); color:#ffe9ad;
+    border:1px solid var(--line); border-radius:10px; padding:8px 12px; font-size:12.5px; line-height:1.4}
+  #carte-avis[hidden]{display:none}
   .avis-carte{display:none; padding:9px 14px; background:#2a2310; color:#ffe9ad;
     border-bottom:1px solid var(--line); font-size:13px}
   body.sans-carte .avis-carte{display:block}
@@ -126,6 +129,7 @@
 </header>
 <main>
   <div id="map">
+    <div id="carte-avis" role="status" hidden></div>
     <div class="legend">
       <div class="row"><span class="pip sun"></span> Plein soleil</div>
       <div class="row"><span class="pip partial"></span> Soleil rasant / bientôt</div>
@@ -134,7 +138,7 @@
     </div>
   </div>
   <aside>
-    <div class="avis-carte">🗺️ Carte indisponible (le service de cartographie ne répond pas).
+    <div class="avis-carte">🗺️ Carte indisponible (la bibliothèque de cartographie n'a pas pu se charger).
       La liste des terrasses et le calcul du soleil fonctionnent normalement.</div>
     <div class="filters">
       <div class="chips" id="typechips"></div>
@@ -155,8 +159,7 @@
   </aside>
 </main>
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script src="leaflet.js"></script>
 <script src="data.js"></script>
 <script>
 /* ---------- SunCalc (getPosition only, MIT, inline) ---------- */
@@ -232,8 +235,8 @@ function osmOpen(spec,date){
 }
 
 /* ---------- Carte ---------- */
-/* Leaflet vient d'un CDN tiers (unpkg). S'il ne répond pas — réseau coupé,
-   CDN en panne, empreinte SRI qui ne colle plus — `L` n'existe pas et la ligne
+/* Leaflet venait d'un CDN tiers (unpkg) ; depuis le 31/10/2026, de leaflet.js à côté de la page.
+   S'il manque quand même (fichier absent, cache évincé), `L` n'existe pas et la ligne
    suivante levait un ReferenceError qui emportait TOUT le reste du script :
    plus de liste, plus de filtres, plus d'heure. Une carte factice absorbe les
    appels : on perd la carte, on garde l'app. */
@@ -259,7 +262,17 @@ if (typeof L === "undefined") {
 }
 
 var map=L.map("map",{zoomControl:true,preferCanvas:true});
-L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"&copy; OpenStreetMap"}).addTo(map);
+var fond=L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"&copy; OpenStreetMap"}).addTo(map);
+/* 31/10/2026 : sans réseau, le service hors ligne rend les tuiles déjà vues (il les garde, bornées) ;
+   une zone jamais vue reste vide, et on le dit au lieu de laisser un fond noir sans explication. */
+var erreursFond=0, avisFond=document.getElementById("carte-avis");
+fond.on("loading",function(){erreursFond=0;});
+fond.on("tileerror",function(){erreursFond++; if(!avisFond)return;
+  avisFond.textContent=navigator.onLine===false
+    ?"Hors connexion : le fond de carte ne s'affiche que pour les zones déjà vues en ligne. Les terrasses et le soleil restent exacts."
+    :"Fond de carte injoignable : seules les zones déjà vues s'affichent. Les terrasses et le soleil restent exacts.";
+  avisFond.hidden=false;});
+fond.on("load",function(){if(!erreursFond&&avisFond)avisFond.hidden=true;});
 var COL={sun:"#ffc233",partial:"#e08a3c",shade:"#5b6b7a",night:"#3a4654"};
 var layer=L.layerGroup().addTo(map);
 var current=null, filterType="all", sunOnly=false, openOnly=false;
@@ -385,7 +398,7 @@ if(!Object.keys(CITIES).length){
 </script>
 <script>
 if ('serviceWorker' in navigator && isSecureContext && location.protocol !== 'file:')
-  addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));
+  addEventListener('load', () => { try { navigator.serviceWorker.register('./sw.js').catch(() => {}); } catch (e) {} });   /* 21/10 : lève dans un cadre isolé */
 </script>
 </body>
 </html>

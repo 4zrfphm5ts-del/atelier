@@ -8,7 +8,7 @@
  * etant fixe, meme un redeploiement n'y change rien.
  * Le cache n'est donc qu'un FILET : il sert quand le reseau ne repond pas.
  * Aucune dependance reseau : l'app tient entierement en cache. */
-const C = "medocs-v1";
+const C = "medocs-v2";
 const ASSETS = ["./", "./index.html", "./manifest.webmanifest", "./icon-180.png", "./icon-192.png", "./icon-512.png", "./favicon-32.png"];
 const RESEAU = [];
 /* Donnees vivantes de l'app (catalogue, base) : reseau d'abord, comme la page, sinon la
@@ -53,10 +53,18 @@ function garder(cle, res) {
   caches.open(C).then(c => c.put(cle, cp)).catch(() => {});
 }
 
+/* 30/10/2026 (KAYAKAK, iPad loin du Mac endormi derriere Tailscale) : quand le serveur ne REPOND
+   PAS (la connexion pend au lieu d'echouer), chaque fichier frais attendait son propre DELAI :
+   3 s pour la page, puis 3 s de plus pour les scripts, soit plus de 6 s d'ecran vide. Apres un
+   premier delai depasse ou une erreur, le reseau est donc tenu pour MORT pendant 30 s : le
+   reste part du cache tout de suite. Le premier succes le ranime. */
+let mortJusqua = 0;
 function reseau(req) {
+  if (Date.now() < mortJusqua) return Promise.reject(new Error("reseau tenu pour mort"));
   return new Promise((ok, ko) => {
-    const t = setTimeout(() => ko(new Error("delai")), DELAI);
-    fetch(req).then(r => { clearTimeout(t); ok(r); }, e => { clearTimeout(t); ko(e); });
+    const t = setTimeout(() => { mortJusqua = Date.now() + 30000; ko(new Error("delai")); }, DELAI);
+    fetch(req).then(r => { clearTimeout(t); mortJusqua = 0; ok(r); },
+                    e => { clearTimeout(t); mortJusqua = Date.now() + 30000; ko(e); });
   });
 }
 
@@ -90,7 +98,11 @@ self.addEventListener("fetch", e => {
        « ./ » ou par « ./index.html » ; un fichier frais est range sous sa propre cle. */
     const cle = req.mode === "navigate" ? "./index.html" : req;
     e.respondWith(reseau(req)
-      .then(r => { garder(cle, r); return r; })
+      /* 31/10/2026 : une ERREUR du serveur (5xx) n'est pas une page. Tailscale Serve repond 502 des que
+         le serveur du Mac est arrete (KAYAKAK sur l'iPad, Mac allume), GitHub Pages 503 pendant un
+         incident : l'app affichait « 502 Bad Gateway » au lieu de sa copie. Le cache sert, comme sans
+         reseau ; un fichier frais en 5xx servi tel quel cassait aussi la page (erreur de syntaxe). */
+      .then(r => { if (r.status >= 500) throw new Error("serveur en erreur " + r.status); garder(cle, r); return r; })
       /* `caches.match` peut REJETER (stockage evince en plein vol, quota) : sans ce
          dernier catch, le repli ne rattrape que le cas « rend undefined ».
          Pour un fichier frais, on s'arrete a sa copie en cache : servir la page
@@ -105,8 +117,10 @@ self.addEventListener("fetch", e => {
   }
 
   /* Le reste (icones, manifeste, donnees figees, bibliotheques tierces) ne bouge pas :
-     cache d'abord, c'est ce qui rend l'ouverture instantanee et le hors ligne possible. */
+     cache d'abord, c'est ce qui rend l'ouverture instantanee et le hors ligne possible.
+     31/10/2026 : sans reseau ni copie, une ERREUR, plus la page : servie sous un src de script ou
+     de feuille de style, la page HTML cassait l'app (erreur de syntaxe), sans rien reparer. */
   e.respondWith(caches.match(req)
     .then(r => r || reseau(req).then(res => { garder(req, res); return res; }))
-    .catch(() => caches.match("./index.html").then(r => r || Response.error())));
+    .catch(() => Response.error()));
 });

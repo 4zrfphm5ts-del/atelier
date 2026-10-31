@@ -514,7 +514,9 @@ function confirmDlg(txt){return new Promise(res=>{
 })}
 
 /* ---------- IndexedDB ---------- */
-let db;
+/* 21/10/2026 (VIGIE 8.5.2) : MEM = repli en mémoire quand IndexedDB est refusé (cadre isolé de la visionneuse de
+   VIGIE, origine opaque) : l'app démarre en aperçu, vide, et le dit, au lieu de « n'a pas pu démarrer ». */
+let db, MEM=null;
 function idb(){
   return new Promise((res,rej)=>{
     const rq=indexedDB.open('penderie',1);
@@ -530,10 +532,19 @@ const tx=(store,mode,fn)=>new Promise((res,rej)=>{
   const t=db.transaction(store,mode), s=t.objectStore(store), out=fn(s);
   t.oncomplete=()=>res(out&&out.result!==undefined?out.result:out); t.onerror=()=>rej(t.error);
 });
-const dbAll=s=>tx(s,'readonly',st=>{const r=st.getAll();return r}).then(r=>r.result||r);
-const dbPut=(s,v)=>tx(s,'readwrite',st=>st.put(v));
-const dbDel=(s,k)=>tx(s,'readwrite',st=>st.delete(k));
-const kvGet=async k=>{const r=await tx('kv','readonly',st=>st.get(k));return (r.result||r)?.v};
+const CLES={items:'id',looks:'id',kv:'k'};
+const memSt=s=>MEM[s]||(MEM[s]=new Map());
+const dbAll=s=>MEM?Promise.resolve([...memSt(s).values()]):tx(s,'readonly',st=>{const r=st.getAll();return r}).then(r=>r.result||r);
+const dbPut=(s,v)=>MEM?Promise.resolve(void memSt(s).set(v[CLES[s]],v)):tx(s,'readwrite',st=>st.put(v));
+const dbDel=(s,k)=>MEM?Promise.resolve(void memSt(s).delete(k)):tx(s,'readwrite',st=>st.delete(k));
+const dbClear=s=>MEM?Promise.resolve(void memSt(s).clear()):tx(s,'readwrite',st=>st.clear());
+const kvGet=async k=>{if(MEM)return memSt('kv').get(k)?.v;const r=await tx('kv','readonly',st=>st.get(k));return (r.result||r)?.v};
+function apercuSansEnregistrement(){
+  const b=document.createElement('div'); b.setAttribute('role','status');
+  b.style.cssText='position:sticky;top:0;z-index:9999;padding:8px 12px;font:13px/1.35 system-ui,sans-serif;background:#7a2e2e;color:#fff;text-align:center';
+  b.innerHTML='<b>Aperçu sans enregistrement.</b> Ouverte dans un cadre isolé (la visionneuse de VIGIE, par exemple), Penderie ne garde rien. Ta vraie penderie vit dans l’app installée.';
+  document.body.prepend(b);
+}
 const kvSet=(k,v)=>dbPut('kv',{k,v});
 // localStorage peut lever (stockage bloqué, capture) : jamais d'accès direct
 const lsGet=k=>{try{return localStorage.getItem(k)}catch(e){return null}};
@@ -606,31 +617,55 @@ function detectColors(cv){
 
 /* ---------- météo ---------- */
 const WMO={0:'Ciel dégagé',1:'Plutôt clair',2:'Éclaircies',3:'Couvert',45:'Brouillard',48:'Brouillard',51:'Bruine',53:'Bruine',55:'Bruine',61:'Pluie',63:'Pluie',65:'Pluie forte',66:'Pluie verglaçante',67:'Pluie verglaçante',71:'Neige',73:'Neige',75:'Neige',77:'Neige',80:'Averses',81:'Averses',82:'Averses fortes',85:'Neige',86:'Neige',95:'Orage',96:'Orage',99:'Orage'};
+/* 31/10/2026 (avant le vol du 09/11) : la météo ne retient plus la tenue du jour. Un Wi-Fi d'avion ou d'hôtel à portail captif
+   laisse la requête PENDRE au lieu d'échouer : la tenue restait un squelette, et l'accueil sur « Un instant… », pour toujours.
+   Au-delà de METEO_DELAI, ou sans réseau, le DERNIER RELEVÉ sert, dit comme tel (« relevé d'hier ») ; la réponse tardive est
+   gardée pour la tenue suivante. Le relevé garde aussi les jours à venir (forecast_days=7, l'affichage ne lit que le jour même) :
+   ouvert sans réseau le lendemain, il donne la vraie prévision du jour. Rien ne change en ligne : Open-Meteo répond bien avant. */
+const METEO_DELAI=2000;
+const avecDelai=(p,ms)=>Promise.race([p,new Promise((_,ko)=>setTimeout(()=>ko(new Error('delai')),ms))]);
+const jourLocal=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 async function geocode(name){
-  const r=await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(name)}&count=1&language=fr&format=json`);
+  const r=await avecDelai(fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(name)}&count=1&language=fr&format=json`),METEO_DELAI*2);
   const j=await r.json();
   if(!j.results?.length)return null;
   const g=j.results[0];
   return {name:g.name, lat:g.latitude, lon:g.longitude};
 }
+function dernierReleve(){
+  const c=lsGet('penderie-weather'); if(!c)return null;
+  let w; try{w=JSON.parse(c)}catch(e){return null}
+  const jour=(w.jours||[]).find(d=>d.date===jourLocal(new Date()));
+  return {...w, ...(jour||{}), offline:true, releve:w.t};
+}
 async function fetchWeather(){
   if(!S.city)return null;
-  try{
-    const r=await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${S.city.lat}&longitude=${S.city.lon}&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max,wind_speed_10m_max&timezone=auto&forecast_days=2`);
+  const frais=(async()=>{
+    const r=await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${S.city.lat}&longitude=${S.city.lon}&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max,wind_speed_10m_max&timezone=auto&forecast_days=7`);
     const j=await r.json();
-    const w={
-      tmax:Math.round(j.daily.temperature_2m_max[0]), tmin:Math.round(j.daily.temperature_2m_min[0]),
-      rain:(j.daily.precipitation_probability_max[0]??0)>50 || (j.daily.precipitation_sum[0]??0)>1,
-      wind:Math.round(j.daily.wind_speed_10m_max[0]??0),
-      code:j.daily.weather_code[0], t:Date.now(), offline:false,
-    };
+    const jour=i=>({
+      date:(j.daily.time||[])[i]||null,
+      tmax:Math.round(j.daily.temperature_2m_max[i]), tmin:Math.round(j.daily.temperature_2m_min[i]),
+      rain:(j.daily.precipitation_probability_max[i]??0)>50 || (j.daily.precipitation_sum[i]??0)>1,
+      wind:Math.round(j.daily.wind_speed_10m_max[i]??0),
+      code:j.daily.weather_code[i],
+    });
+    const w={...jour(0), t:Date.now(), offline:false, jours:(j.daily.time||[]).map((_,i)=>jour(i))};
     lsSet('penderie-weather', JSON.stringify(w));
     return w;
-  }catch(e){
-    const c=lsGet('penderie-weather');
-    if(c){const w=JSON.parse(c); w.offline=true; return w}
-    return null;
+  })();
+  try{ return await avecDelai(frais,METEO_DELAI); }
+  catch(e){
+    // réponse tardive : gardée (déjà écrite par `frais`) pour la tenue suivante ; une tenue faite sans aucun relevé est refaite
+    frais.then(w=>{const sans=!S.weather; S.weather=w; if(sans&&!S.manualWeather&&S.view==='today')regenerate();}).catch(()=>{});
+    return dernierReleve();
   }
+}
+function releveTxt(w){
+  if(!w||!w.releve)return 'dernier relevé';
+  const d=new Date(w.releve), j=Math.round((new Date(jourLocal(new Date())+'T12:00')-new Date(jourLocal(d)+'T12:00'))/864e5);
+  const quand=j<=0?`relevé de ${String(d.getHours()).padStart(2,'0')} h ${String(d.getMinutes()).padStart(2,'0')}`:j===1?'relevé d’hier':`relevé du ${frDate(d)}`;
+  return (navigator.onLine===false?'hors ligne, ':'')+quand;
 }
 function weatherCtx(){
   if(S.manualWeather)return S.manualWeather;
@@ -909,7 +944,7 @@ function renderToday(){
   const wname=S.manualWeather?'Réglée à la main':(WMO[ctx.code]||'');
   const wtxt=ctx.fallback
     ? `Météo indisponible — <button data-action="manual-weather">régler à la main</button>`
-    : `${ctx.tmin}° → ${ctx.tmax}° · ${wname}${ctx.rain?' · pluie probable':''}${S.city?' · '+esc(S.city.name):''}${ctx.offline?' · hors ligne':''} <button data-action="manual-weather">ajuster</button>`;
+    : `${ctx.tmin}° → ${ctx.tmax}° · ${wname}${ctx.rain?' · pluie probable':''}${S.city?' · '+esc(S.city.name):''}${ctx.offline?' · '+releveTxt(ctx):''} <button data-action="manual-weather">ajuster</button>`;
   const occChips=OCCASIONS.map(([id,label])=>`<button class="chip ${S.occasion===id?'on':''}" data-action="occ" data-occ="${id}">${label}</button>`).join('');
 
   let cards='';
@@ -1321,7 +1356,7 @@ async function doImport(file){
     const ok=await confirmDlg(`Remplacer les données actuelles par cette sauvegarde (${j.items.length} pièces) ?`);
     if(!ok)return;
     // purge
-    await tx('items','readwrite',s=>s.clear()); await tx('looks','readwrite',s=>s.clear());
+    await dbClear('items'); await dbClear('looks');
     for(const i of j.items){i.photo=i.photo?dataURLToBlob(i.photo):null;i.thumb=i.thumb?dataURLToBlob(i.thumb):null;await dbPut('items',i)}
     for(const l of j.looks)await dbPut('looks',l);
     for(const [k,p] of Object.entries(j.profiles||{}))if(p.photo)p.photo=dataURLToBlob(p.photo);
@@ -1443,9 +1478,9 @@ document.addEventListener('click', async e=>{
     }
     case 'change-city': {
       const name=prompt('Ville pour la météo :',S.city?.name||'');
-      if(name){toast('Recherche…'); const g=await geocode(name).catch(()=>null);
-        if(g){S.city=g; await kvSet('city',g); S.weather=await fetchWeather(); toast(`Météo réglée sur ${g.name}`); render(); if(S.view==='today')await regenerate()}
-        else toast('Ville introuvable');
+      if(name){toast('Recherche…'); const g=await geocode(name).catch(e=>({horsLigne:true}));
+        if(g&&!g.horsLigne){S.city=g; await kvSet('city',g); S.weather=await fetchWeather(); toast(`Météo réglée sur ${g.name}`); render(); if(S.view==='today')await regenerate()}
+        else toast(g&&g.horsLigne?'Pas de réseau : la ville se cherche en ligne. En attendant, règle la météo à la main.':'Ville introuvable');
       } break;
     }
     case 'export': await doExport(); break;
@@ -1506,7 +1541,7 @@ $$('#pswitch button').forEach(b=>b.addEventListener('click',async ()=>{
    ===================================================== */
 (async function boot(){
   try{
-    db=await idb();
+    try{ db=await idb(); }catch(e){ MEM={}; apercuSansEnregistrement(); }
     navigator.storage?.persist?.().catch(()=>{});
     S.items=await dbAll('items')||[];
     S.looks=await dbAll('looks')||[];
@@ -1524,8 +1559,10 @@ $$('#pswitch button').forEach(b=>b.addEventListener('click',async ()=>{
       S.weather=await fetchWeather();
       if(S.view==='today')await regenerate();
     }
+    /* 21/10 : dans un cadre isolé, LIRE navigator.serviceWorker lève (SecurityError) ; ici, dans le try du démarrage,
+       l'erreur remplaçait toute l'app par « n'a pas pu démarrer » */
     if('serviceWorker' in navigator && isSecureContext && location.protocol!=='file:')
-      navigator.serviceWorker.register('./sw.js').catch(()=>{});
+      try{ navigator.serviceWorker.register('./sw.js').catch(()=>{}); }catch(e){}
   }catch(err){
     document.body.innerHTML=`<div style="padding:40px;font-family:system-ui"><b>Penderie n’a pas pu démarrer.</b><br><small>${esc(err?.message||err)}</small></div>`;
   }

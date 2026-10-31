@@ -807,6 +807,8 @@ try{lireAncre();window.addEventListener("hashchange",lireAncre);}catch(e){}
 <script>
 try {
   if ('serviceWorker' in navigator && isSecureContext && location.protocol !== 'file:')
-    addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));
+    /* 31/10/2026 : la lecture de navigator.serviceWorker a lieu au chargement, donc HORS du try extérieur ; dans le cadre
+       isolé de VIGIE (Santé › Prévention) elle levait SecurityError, non rattrapée. D'où ce second try. */
+    addEventListener('load', () => { try { navigator.serviceWorker.register('./sw.js').catch(() => {}); } catch (e) { /* cadre isolé */ } });
 } catch (e) { /* cadre isole (CSP sandbox) : pas de worker ici, et ce n'est pas une panne */ }
 </script>

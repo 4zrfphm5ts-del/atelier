@@ -331,6 +331,8 @@ details.help .body{padding:0 0 14px;font-size:13.5px;color:var(--ink-2);line-hei
 .carte .attrib{position:absolute;right:8px;bottom:6px;font-size:10px;color:#93A6B2;z-index:5;background:rgba(14,26,36,.7);padding:2px 6px;border-radius:6px}
 .carte .attrib a{color:#C9D5DD}
 #fond-leaflet{position:absolute;inset:0;z-index:1;display:none}
+.carte .avis-fond{position:absolute;left:10px;right:56px;top:52px;z-index:6;background:rgba(14,26,36,.92);color:#E8F0F5;border:1px solid rgba(255,255,255,.16);border-radius:10px;padding:7px 10px;font-size:12px;line-height:1.35}
+.carte .avis-fond[hidden]{display:none}
 .carte.detail #fond-leaflet{display:block}
 .carte.detail svg.schema{visibility:hidden}.carte.detail .leg{display:none}   /* le svg garde sa boîte : vbSet, centre() et synchroVersSvg le mesurent encore */
 .carte .vide{position:absolute;inset:0;display:grid;place-items:center;color:#C9D5DD;font-size:14px;text-align:center;padding:24px}
@@ -1934,15 +1936,35 @@ const SCHEMA_ETIQ = {type: "object", additionalProperties: false, required: ["no
 const VOCAB = () => VIG.TAG_KEYS.map(k => `${k} = ${VIG.TAGS[k].l}`).join(" ; ");
 const SYS_PLAT = () => `Tu es le sommelier d'un restaurant français. On te montre la photo d'une ou plusieurs assiettes. Pour chaque plat : nomme-le en français, devine le temps du repas, puis liste chaque aliment visible ou très probable (protéine principale d'abord, puis garnitures, sauce, assaisonnements) avec son rôle et ses étiquettes prises UNIQUEMENT dans ce vocabulaire : ${VOCAB()}. Les étiquettes de cuisson (cru, grille, roti, mijote, frit, vapeur, fume) et de sauce (creme, beurre_citron, tomate, epice_douce, piquant, sucre_sale, acide, asiatique, mediterraneen, sauce_vin_rouge, curry, vinaigre) comptent autant que la protéine : mets-les quand tu les reconnais. Le champ notes : une phrase courte en français sur ce qui pèse dans l'accord. Si l'image n'est pas une assiette, confiance = basse et notes l'explique.`;
 const SYS_ETIQ = () => `Tu lis l'étiquette d'une bouteille de vin pour l'inventaire d'un restaurant. Donne le nom tel qu'on l'écrirait sur une carte (cuvée comprise), le domaine ou producteur, l'appellation, la région, la couleur (bulles pour un effervescent, doux pour un moelleux, liquoreux, porto ou vin muté) et le millésime (null si absent). lisible = false si l'étiquette n'est pas exploitable. Champs inconnus : chaîne vide.`;
+/* 31/10/2026 (avant le vol du 09/11) : sans réseau, l'IA ne peut rien ; on le dit en clair au lieu de « Failed to fetch »
+   (Chrome) ou « Load failed » (Safari), et un réseau qui ne répond pas (Wi-Fi d'avion ou d'hôtel à portail captif) n'immobilise
+   plus la lecture pour toujours : au-delà de DELAI_IA, on abandonne avec la même franchise. 120 s laissent passer un vrai appel
+   lent (effort élevé, photo chargée) ; le banc hors ligne raccourcit ce délai pour ne pas attendre deux minutes. */
+let DELAI_IA = 120000;
+function messageReseau(e, pour) {
+  const m = e && e.message, quoi = pour === "plat" ? "la lecture de la photo" : "la lecture de l'étiquette";
+  const sinon = pour === "plat" ? "Décrivez le plat par écrit : l'accord se calcule sur le téléphone, sans réseau." : "Remplissez la fiche à la main : la cave fonctionne sans réseau.";
+  if (m === "NOKEY") return "Aucune clé API enregistrée.";
+  if (m === "HORS_LIGNE" || m === "RESEAU") return `Pas de connexion à internet : ${quoi} passe par l'API Claude, en ligne. ${sinon}`;
+  if (m === "RESEAU_MUET") return `Le réseau ne répond pas (un Wi-Fi d'avion ou d'hôtel qui attend une connexion ?) : ${quoi} passe par l'API Claude, en ligne. ${sinon}`;
+  return m;
+}
 async function appelClaude(system, content, schema) {
   const key = (S.settings.apiKey || "").trim(); if (!key) throw new Error("NOKEY");
+  if (navigator.onLine === false) throw new Error("HORS_LIGNE");
   const model = S.settings.model || "claude-opus-5-5";
   const body = {model, max_tokens: 8000, system, messages: [{role: "user", content}], output_config: {effort: S.settings.effort || "medium", format: {type: "json_schema", schema}}};
   const headers = {"content-type": "application/json", "x-api-key": key, "anthropic-version": "2023-06-01", "anthropic-dangerous-direct-browser-access": "true"};
   if (/opus|sonnet|fable/.test(model)) { body.fallbacks = "default"; headers["anthropic-beta"] = "server-side-fallback-2026-07-01"; }
-  const res = await fetch("https://api.anthropic.com/v1/messages", {method: "POST", headers, body: JSON.stringify(body)});
-  if (!res.ok) { let msg = "HTTP " + res.status; try { const j = await res.json(); if (j.error && j.error.message) msg += " · " + j.error.message; } catch (e) {} throw new Error(msg); }
-  const j = await res.json();
+  const ac = typeof AbortController === "function" ? new AbortController() : null;
+  const minuteur = ac ? setTimeout(() => ac.abort(), DELAI_IA) : 0;
+  let res, j;
+  try {
+    try { res = await fetch("https://api.anthropic.com/v1/messages", {method: "POST", headers, body: JSON.stringify(body), signal: ac ? ac.signal : undefined}); }
+    catch (e) { throw new Error(ac && ac.signal.aborted ? "RESEAU_MUET" : "RESEAU"); }
+    if (!res.ok) { let msg = "HTTP " + res.status; try { const k = await res.json(); if (k.error && k.error.message) msg += " · " + k.error.message; } catch (e) {} throw new Error(msg); }
+    try { j = await res.json(); } catch (e) { throw new Error(ac && ac.signal.aborted ? "RESEAU_MUET" : "RESEAU"); }
+  } finally { clearTimeout(minuteur); }
   if (j.stop_reason === "refusal") throw new Error("La demande a été refusée par le modèle.");
   if (j.stop_reason === "max_tokens") throw new Error("Réponse trop longue, réessayez.");
   return JSON.parse((j.content || []).filter(b => b.type === "text").map(b => b.text).join(""));
@@ -1954,7 +1976,7 @@ function redimensionner(file, max) {
     im.onerror = () => { URL.revokeObjectURL(url); ko(new Error("Image illisible")); }; im.src = url; });
 }
 let imgPour = "plat";
-function demanderImage(pour) { imgPour = pour; if (!(S.settings.apiKey || "").trim()) { toast("Ajoutez d'abord une clé API dans Réglages"); go("reglages"); return; }
+function demanderImage(pour) { imgPour = pour; if (navigator.onLine === false) { toast(pour === "plat" ? "Hors connexion : décrivez le plat par écrit, l'accord se calcule sans réseau" : "Hors connexion : remplissez la fiche à la main"); return; } if (!(S.settings.apiKey || "").trim()) { toast("Ajoutez d'abord une clé API dans Réglages"); go("reglages"); return; }
   openSheet(pour === "plat" ? "Photographier le plat" : "Photographier l'étiquette", `<div class="stack"><button class="btn primary block" data-action="img-cam">${ICON("cam")} Prendre une photo</button><button class="btn block" data-action="img-lib">Choisir dans la galerie</button><p class="tiny">La photo est réduite (1 280 px) puis envoyée à l'API Claude avec votre clé. Rien n'est stocké en ligne par Vignolo.</p></div>`); }
 async function traiterImage(file) {
   if (!file) return; closeSheet();
@@ -1978,7 +2000,7 @@ async function traiterImage(file) {
       f.nom.value = j.nom || f.nom.value; f.domaine.value = j.domaine || ""; f.appellation.value = j.appellation || ""; f.region.value = j.region || ""; if (j.millesime) f.millesime.value = j.millesime;
       const c = j.couleur && j.couleur !== "inconnue" ? j.couleur : (VIG.suggestCouleur(j.nom + " " + j.appellation) || f.couleur.value); f.couleur.value = c; $$("#seg-couleur button").forEach(b => b.classList.toggle("on", b.dataset.v === c)); majHintFamille(); toast("Fiche remplie, vérifiez avant d'enregistrer");
     }
-  } catch (e) { ACC.enCours = false; const msg = e.message === "NOKEY" ? "Aucune clé API enregistrée." : e.message; if (imgPour === "plat") { ACC.erreur = msg; const el = $("#acc-result"); if (el) el.innerHTML = renderResultat(); } else toast("Lecture impossible : " + msg); }
+  } catch (e) { ACC.enCours = false; const msg = messageReseau(e, imgPour); if (imgPour === "plat") { ACC.erreur = msg; const el = $("#acc-result"); if (el) el.innerHTML = renderResultat(); } else toast(/^(RESEAU|RESEAU_MUET|HORS_LIGNE)$/.test(e && e.message) ? msg : "Lecture impossible : " + msg); }
 }
 
 /* =====================================================================
@@ -2135,6 +2157,7 @@ function carteElement() {
   const d = document.createElement("div"); d.className = "carte"; d.id = "carte";
   d.innerHTML = `<svg class="schema" id="carte-svg" viewBox="${VB.x} ${VB.y} ${VB.w} ${VB.h}" preserveAspectRatio="none"><path class="terre" d="${window.VIGNOLO_MONDE || ""}"/><g id="carte-pts"></g></svg>
     <div id="fond-leaflet"></div>
+    <div class="avis-fond" id="carte-avis" role="status" hidden></div>
     <div class="vues"><button data-action="carte-vue" data-v="monde">Monde</button><button data-action="carte-vue" data-v="europe">Europe</button><button data-action="carte-vue" data-v="france">France</button></div>
     <div class="ctl"><button data-action="carte-zoom" data-d="1" aria-label="Zoomer">+</button><button data-action="carte-zoom" data-d="-1" aria-label="Dézoomer">−</button><button data-action="carte-detail" title="Fond détaillé, villes et routes (en ligne)" aria-label="Fond détaillé">${ICON("pin")}</button></div>
     <div class="leg">${Object.entries(VIG.COULEURS).map(([k, n]) => `<span><i style="background:${CARTE_COL[k]}"></i>${n}</span>`).join("")}<span><i style="background:transparent;border:2px solid #fff;width:7px;height:7px"></i>en cave</span></div>
@@ -2223,36 +2246,45 @@ function majPointsCarte() {
   g.innerHTML = H;
 }
 
-/* ---------- Le fond détaillé (Leaflet + tuiles CARTO), seulement en ligne et sur demande ---------- */
+/* ---------- Le fond détaillé (Leaflet + tuiles CARTO), sur demande ----------
+   31/10/2026 (avant le vol du 09/11) : Leaflet 1.9.4 vit à côté de la page (leaflet.js, leaflet.css), copie exacte de celle de
+   cdnjs (empreintes SRI d'origine vérifiées : js sha384-cxOPjt7s…, css sha384-sHL9NAb7…), précachée par le worker, qui garde
+   aussi les tuiles déjà vues (bornées) : le fond détaillé s'ouvre sans réseau sur les zones vues en ligne, et le dit pour les
+   autres. Ni integrity ni crossorigin : dans la visionneuse de VIGIE (origine opaque), la page demande ses fichiers hors CORS,
+   et une empreinte SRI y bloquerait le fichier. */
 const LEAF = {map: null, couche: null, chargement: null,
-  js: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js", jsSri: "sha384-cxOPjt7s7Iz04uaHJceBmS+qpjv2JkIHNVcuOrM+YHwZOmJGBXI00mdUXEq65HTH",
-  css: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css", cssSri: "sha384-sHL9NAb7lN7rfvG5lfHpm643Xkcjzp4jFvuavGOndn6pjVqS6ny56CAt3nsEVT4H",
+  js: "leaflet.js", css: "leaflet.css",
   charger() {
     if (window.L) return Promise.resolve();
     if (!LEAF.chargement) LEAF.chargement = new Promise((ok, ko) => {
-      const css = document.createElement("link"); css.rel = "stylesheet"; css.href = LEAF.css; css.integrity = LEAF.cssSri; css.crossOrigin = "anonymous"; document.head.appendChild(css);
-      const js = document.createElement("script"); js.src = LEAF.js; js.integrity = LEAF.jsSri; js.crossOrigin = "anonymous"; js.onload = () => ok(); js.onerror = () => { LEAF.chargement = null; ko(new Error("Leaflet injoignable")); }; document.head.appendChild(js);
+      const css = document.createElement("link"); css.rel = "stylesheet"; css.href = LEAF.css; document.head.appendChild(css);
+      const js = document.createElement("script"); js.src = LEAF.js; js.onload = () => ok(); js.onerror = () => { LEAF.chargement = null; ko(new Error("Leaflet injoignable")); }; document.head.appendChild(js);
     });
     return LEAF.chargement;
+  },
+  avis(montrer) {
+    const a = $("#carte-avis"); if (!a) return; a.hidden = !montrer;
+    if (montrer) a.textContent = navigator.onLine === false ? "Hors connexion : le fond détaillé ne montre que les zones déjà vues en ligne." : "Fond détaillé injoignable : seules les zones déjà vues s'affichent.";
   },
   centre() { const cx = VB.x + VB.w / 2, cy = VB.y + VB.h / 2; const el = $("#carte-svg"); const lw = el ? el.getBoundingClientRect().width : 0; const k = lw ? lw / VB.w : 3; return {lat: mercInv(-cy), lon: cx, zoom: Math.max(1, Math.min(17, Math.log2(k * 360 / 256)))}; },
   synchroDepuisSvg() { const c = LEAF.centre(); LEAF.map.setView([c.lat, c.lon], c.zoom, {animate: false}); },
   synchroVersSvg() { const c = LEAF.map.getCenter(), z = LEAF.map.getZoom(); const el = $("#carte-svg"); if (!el) return; const r = el.getBoundingClientRect(); if (!r.width || !r.height) return; const k = 256 * Math.pow(2, z) / 360; const w = r.width / k; const [x, y] = proj(c.lat, c.lng); VB.w = w; VB.h = w * r.height / r.width; VB.x = x - w / 2; VB.y = y - VB.h / 2; el.setAttribute("viewBox", `${VB.x} ${VB.y} ${VB.w} ${VB.h}`); },
   async activer() {
-    if (!navigator.onLine) { toast("Fond détaillé : il faut être en ligne"); return; }
     try { await LEAF.charger(); } catch (e) { toast("Fond détaillé indisponible (" + e.message + ")"); return; }
     if (!CARTE_EL || !document.contains(CARTE_EL) || ATLAS.onglet !== "carte") return;   /* on a quitté la carte pendant le chargement */
     const c = LEAF.centre(); $("#carte").classList.add("detail"); ATLAS.detail = true;
     if (!LEAF.map) {
       LEAF.map = L.map($("#fond-leaflet"), {zoomControl: false, attributionControl: false, worldCopyJump: true}).setView([c.lat, c.lon], c.zoom);
-      L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {maxZoom: 18, subdomains: "abcd"}).addTo(LEAF.map);
+      const fond = L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {maxZoom: 18, subdomains: "abcd"}).addTo(LEAF.map);
+      let erreurs = 0;
+      fond.on("loading", () => { erreurs = 0; }); fond.on("tileerror", () => { erreurs++; if (ATLAS.detail) LEAF.avis(true); }); fond.on("load", () => { if (!erreurs) LEAF.avis(false); });
       LEAF.couche = L.layerGroup().addTo(LEAF.map);
       LEAF.map.on("moveend", () => { if (ATLAS.detail) LEAF.synchroVersSvg(); });
     } else { LEAF.map.invalidateSize(); LEAF.map.setView([c.lat, c.lon], c.zoom, {animate: false}); }
     $("#carte-attrib").innerHTML = `© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> · © <a href="https://carto.com/attributions" target="_blank" rel="noopener">CARTO</a>`;
     LEAF.majPoints(); setTimeout(() => LEAF.map.invalidateSize(), 50);
   },
-  desactiver() { ATLAS.detail = false; const c = $("#carte"); if (c) c.classList.remove("detail"); const a = $("#carte-attrib"); if (a) a.textContent = "Natural Earth"; majPointsCarte(); },
+  desactiver() { ATLAS.detail = false; LEAF.avis(false); const c = $("#carte"); if (c) c.classList.remove("detail"); const a = $("#carte-attrib"); if (a) a.textContent = "Natural Earth"; majPointsCarte(); },
   majPoints() {
     if (!LEAF.map || !LEAF.couche) return; LEAF.couche.clearLayers(); const noms = caveNoms();
     for (const v of vinsFiltres()) { const cave = enCave(v, noms); L.circleMarker([v.lat, v.lon], {radius: 3 + (v.importance || 2), color: cave ? "#fff" : "#0E1A24", weight: cave ? 2 : 1, fillColor: CARTE_COL[v.couleur] || "#ccc", fillOpacity: .9})

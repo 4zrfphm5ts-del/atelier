@@ -925,7 +925,7 @@ refillSeeds();
 </script>
 <script>
 if ('serviceWorker' in navigator && isSecureContext && location.protocol !== 'file:')
-  addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));
+  addEventListener('load', () => { try { navigator.serviceWorker.register('./sw.js').catch(() => {}); } catch (e) {} });   /* 21/10 : lève dans un cadre isolé */
 </script>
 </body>
 </html>

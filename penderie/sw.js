@@ -8,9 +8,13 @@
  * etant fixe, meme un redeploiement n'y change rien.
  * Le cache n'est donc qu'un FILET : il sert quand le reseau ne repond pas.
  * Toujours au reseau : api.open-meteo, geocoding-api.open-meteo */
-const C = "penderie-v2";
+const C = "penderie-v3";
 const ASSETS = ["./", "./index.html", "./manifest.webmanifest", "./icon-180.png", "./icon-192.png", "./icon-512.png", "./favicon-32.png"];
 const RESEAU = ["api.open-meteo", "geocoding-api.open-meteo"];
+/* Donnees vivantes de l'app (catalogue, base) : reseau d'abord, comme la page, sinon la
+   copie de l'installation resterait servie pour toujours (le precache ne se renouvelle
+   qu'avec le numero du worker). */
+const FRAIS = [];
 /* Soiree en cave, reseau a une barre : on n'attend pas la fin des temps. */
 const DELAI = 3000;
 
@@ -26,8 +30,12 @@ self.addEventListener("activate", e => {
   e.waitUntil((async () => {
     const pret = await caches.open(C).then(c => c.match("./index.html")).catch(() => null);
     if (pret) {
+      /* 🔴 20/10/2026 : les apps de l'atelier partagent UNE origine (4zrfphm5ts-del.github.io) et
+         CacheStorage est commun a l'origine, pas au worker. L'ancien filtre (`k !== C`) effacait
+         donc le hors ligne de TOUTES les apps voisines a chaque activation. On ne purge plus que
+         nos propres anciennes versions. */
       const ks = await caches.keys();
-      await Promise.all(ks.filter(k => k !== C).map(k => caches.delete(k)));
+      await Promise.all(ks.filter(k => k !== C && k.startsWith("penderie-v")).map(k => caches.delete(k)));
     }
     await self.clients.claim();
   })());
@@ -45,10 +53,18 @@ function garder(cle, res) {
   caches.open(C).then(c => c.put(cle, cp)).catch(() => {});
 }
 
+/* 30/10/2026 (KAYAKAK, iPad loin du Mac endormi derriere Tailscale) : quand le serveur ne REPOND
+   PAS (la connexion pend au lieu d'echouer), chaque fichier frais attendait son propre DELAI :
+   3 s pour la page, puis 3 s de plus pour les scripts, soit plus de 6 s d'ecran vide. Apres un
+   premier delai depasse ou une erreur, le reseau est donc tenu pour MORT pendant 30 s : le
+   reste part du cache tout de suite. Le premier succes le ranime. */
+let mortJusqua = 0;
 function reseau(req) {
+  if (Date.now() < mortJusqua) return Promise.reject(new Error("reseau tenu pour mort"));
   return new Promise((ok, ko) => {
-    const t = setTimeout(() => ko(new Error("delai")), DELAI);
-    fetch(req).then(r => { clearTimeout(t); ok(r); }, e => { clearTimeout(t); ko(e); });
+    const t = setTimeout(() => { mortJusqua = Date.now() + 30000; ko(new Error("delai")); }, DELAI);
+    fetch(req).then(r => { clearTimeout(t); mortJusqua = 0; ok(r); },
+                    e => { clearTimeout(t); mortJusqua = Date.now() + 30000; ko(e); });
   });
 }
 
@@ -76,23 +92,35 @@ self.addEventListener("fetch", e => {
      qu'elle n'a pas pu la lire. */
   if (RESEAU.some(m => u.includes(m))) return;
 
-  if (req.mode === "navigate") {
+  const frais = FRAIS.some(f => u.endsWith("/" + f));
+  if (req.mode === "navigate" || frais) {
     /* On range la version fraiche sous ./index.html, que l'app ait ete ouverte par
-       « ./ » ou par « ./index.html ». */
+       « ./ » ou par « ./index.html » ; un fichier frais est range sous sa propre cle. */
+    const cle = req.mode === "navigate" ? "./index.html" : req;
     e.respondWith(reseau(req)
-      .then(r => { garder("./index.html", r); return r; })
+      /* 31/10/2026 : une ERREUR du serveur (5xx) n'est pas une page. Tailscale Serve repond 502 des que
+         le serveur du Mac est arrete (KAYAKAK sur l'iPad, Mac allume), GitHub Pages 503 pendant un
+         incident : l'app affichait « 502 Bad Gateway » au lieu de sa copie. Le cache sert, comme sans
+         reseau ; un fichier frais en 5xx servi tel quel cassait aussi la page (erreur de syntaxe). */
+      .then(r => { if (r.status >= 500) throw new Error("serveur en erreur " + r.status); garder(cle, r); return r; })
       /* `caches.match` peut REJETER (stockage evince en plein vol, quota) : sans ce
-         dernier catch, le repli ne rattrape que le cas « rend undefined ». */
-      .catch(() => caches.match(req)
-        .then(r => r || caches.match("./index.html"))
-        .then(r => r || horsService())
-        .catch(() => horsService())));
+         dernier catch, le repli ne rattrape que le cas « rend undefined ».
+         Pour un fichier frais, on s'arrete a sa copie en cache : servir la page
+         « hors service » sous un src de script casserait l'app (erreur de syntaxe). */
+      .catch(() => req.mode !== "navigate"
+        ? caches.match(req).then(r => r || Response.error()).catch(() => Response.error())
+        : caches.match(req)
+          .then(r => r || caches.match("./index.html"))
+          .then(r => r || horsService())
+          .catch(() => horsService())));
     return;
   }
 
   /* Le reste (icones, manifeste, donnees figees, bibliotheques tierces) ne bouge pas :
-     cache d'abord, c'est ce qui rend l'ouverture instantanee et le hors ligne possible. */
+     cache d'abord, c'est ce qui rend l'ouverture instantanee et le hors ligne possible.
+     31/10/2026 : sans reseau ni copie, une ERREUR, plus la page : servie sous un src de script ou
+     de feuille de style, la page HTML cassait l'app (erreur de syntaxe), sans rien reparer. */
   e.respondWith(caches.match(req)
     .then(r => r || reseau(req).then(res => { garder(req, res); return res; }))
-    .catch(() => caches.match("./index.html").then(r => r || Response.error())));
+    .catch(() => Response.error()));
 });

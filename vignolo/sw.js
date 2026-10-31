@@ -7,14 +7,18 @@
  * et si la copie gravee est mauvaise, l'app reste morte pour toujours. Le nom du cache
  * etant fixe, meme un redeploiement n'y change rien.
  * Le cache n'est donc qu'un FILET : il sert quand le reseau ne repond pas.
- * Toujours au reseau : api.anthropic.com, cartocdn.com, cdnjs.cloudflare.com */
-const C = "vignolo-v4";
-const ASSETS = ["./", "./index.html", "./manifest.webmanifest", "./icon-180.png", "./icon-192.png", "./icon-512.png", "./favicon-32.png", "./vins.js"];
+ * Toujours au reseau : api.anthropic.com, cartocdn.com, cdnjs.cloudflare.com Tuiles de carte gardees (800 au plus) : basemaps.cartocdn.com. */
+const C = "vignolo-v5";
+const ASSETS = ["./", "./index.html", "./manifest.webmanifest", "./icon-180.png", "./icon-192.png", "./icon-512.png", "./favicon-32.png", "./leaflet.js", "./vins.js", "./leaflet.css"];
 const RESEAU = ["api.anthropic.com", "cartocdn.com", "cdnjs.cloudflare.com"];
 /* Donnees vivantes de l'app (catalogue, base) : reseau d'abord, comme la page, sinon la
    copie de l'installation resterait servie pour toujours (le precache ne se renouvelle
    qu'avec le numero du worker). */
 const FRAIS = ["vins.js"];
+/* Tuiles de fond de carte : gardees a part (voir tuile()), bornees a TUILES_MAX. */
+const TUILES = ["basemaps.cartocdn.com"];
+const TUILES_CACHE = "vignolo-tuiles";
+const TUILES_MAX = 800;
 /* Soiree en cave, reseau a une barre : on n'attend pas la fin des temps. */
 const DELAI = 3000;
 
@@ -53,10 +57,53 @@ function garder(cle, res) {
   caches.open(C).then(c => c.put(cle, cp)).catch(() => {});
 }
 
+/* 30/10/2026 (KAYAKAK, iPad loin du Mac endormi derriere Tailscale) : quand le serveur ne REPOND
+   PAS (la connexion pend au lieu d'echouer), chaque fichier frais attendait son propre DELAI :
+   3 s pour la page, puis 3 s de plus pour les scripts, soit plus de 6 s d'ecran vide. Apres un
+   premier delai depasse ou une erreur, le reseau est donc tenu pour MORT pendant 30 s : le
+   reste part du cache tout de suite. Le premier succes le ranime. */
+let mortJusqua = 0;
 function reseau(req) {
+  if (Date.now() < mortJusqua) return Promise.reject(new Error("reseau tenu pour mort"));
   return new Promise((ok, ko) => {
-    const t = setTimeout(() => ko(new Error("delai")), DELAI);
-    fetch(req).then(r => { clearTimeout(t); ok(r); }, e => { clearTimeout(t); ko(e); });
+    const t = setTimeout(() => { mortJusqua = Date.now() + 30000; ko(new Error("delai")); }, DELAI);
+    fetch(req).then(r => { clearTimeout(t); mortJusqua = 0; ok(r); },
+                    e => { clearTimeout(t); mortJusqua = Date.now() + 30000; ko(e); });
+  });
+}
+
+/* 31/10/2026 (avant le vol du 09/11) : les tuiles de carte passent par le reseau d'abord, comme
+   avant, mais chaque tuile recue est gardee dans un cache A PART, borne a TUILES_MAX tuiles (les plus
+   anciennes partent d'abord). Sans reseau, une zone deja vue revient du cache ; une zone jamais vue
+   rend une erreur, et l'app dit que son fond de carte manque. La tuile est redemandee en CORS (OSM
+   et CARTO l'acceptent) : lisible, on ne garde qu'une vraie image (200) et sa taille reelle compte
+   au quota, pas le forfait qu'une reponse opaque y pese. Refusee en CORS, la tuile part telle que la
+   page l'a demandee, sans etre gardee, et sans faire passer le reseau pour mort. */
+let posees = 0;
+function rogner() {
+  caches.open(TUILES_CACHE).then(c => c.keys().then(ks =>
+    Promise.all(ks.slice(0, Math.max(0, ks.length - TUILES_MAX)).map(k => c.delete(k))))).catch(() => {});
+}
+function garderTuile(url, res) {
+  caches.open(TUILES_CACHE).then(c => c.put(url, res)).then(() => { if (++posees % 25 === 0) rogner(); }).catch(() => {});
+}
+function tuile(req) {
+  const depuisCache = () => caches.open(TUILES_CACHE).then(c => c.match(req.url)).catch(() => undefined);
+  if (Date.now() < mortJusqua) return depuisCache().then(r => r || Response.error());
+  return new Promise(ok => {
+    let fini = false;
+    const t = setTimeout(() => {
+      if (fini) return; fini = true; mortJusqua = Date.now() + 30000;
+      depuisCache().then(r => ok(r || Response.error()));
+    }, DELAI);
+    fetch(new Request(req.url, {mode: "cors", credentials: "omit"})).then(r => {
+      if (r.ok) garderTuile(req.url, r.clone());
+      if (fini) return; fini = true; clearTimeout(t); mortJusqua = 0;
+      if (r.ok) ok(r); else depuisCache().then(c => ok(c || r));   /* serveur de tuiles en erreur : la copie deja vue */
+    }, () => {
+      if (fini) return; fini = true; clearTimeout(t);
+      fetch(req).then(ok, () => { mortJusqua = Date.now() + 30000; depuisCache().then(r => ok(r || Response.error())); });
+    });
   });
 }
 
@@ -79,6 +126,8 @@ self.addEventListener("fetch", e => {
   const req = e.request;
   if (req.method !== "GET") return;
   const u = req.url;
+  /* Tuiles de carte : avant RESEAU, qui peut nommer le meme serveur (voir tuile()). */
+  if (TUILES.some(m => u.includes(m))) { e.respondWith(tuile(req)); return; }
   /* Ce qui doit rester vivant (meteo, tuiles de carte...) ne passe jamais par le cache :
      une donnee du monde reel servie depuis hier est un mensonge, et l'app sait deja dire
      qu'elle n'a pas pu la lire. */
@@ -90,7 +139,11 @@ self.addEventListener("fetch", e => {
        « ./ » ou par « ./index.html » ; un fichier frais est range sous sa propre cle. */
     const cle = req.mode === "navigate" ? "./index.html" : req;
     e.respondWith(reseau(req)
-      .then(r => { garder(cle, r); return r; })
+      /* 31/10/2026 : une ERREUR du serveur (5xx) n'est pas une page. Tailscale Serve repond 502 des que
+         le serveur du Mac est arrete (KAYAKAK sur l'iPad, Mac allume), GitHub Pages 503 pendant un
+         incident : l'app affichait « 502 Bad Gateway » au lieu de sa copie. Le cache sert, comme sans
+         reseau ; un fichier frais en 5xx servi tel quel cassait aussi la page (erreur de syntaxe). */
+      .then(r => { if (r.status >= 500) throw new Error("serveur en erreur " + r.status); garder(cle, r); return r; })
       /* `caches.match` peut REJETER (stockage evince en plein vol, quota) : sans ce
          dernier catch, le repli ne rattrape que le cas « rend undefined ».
          Pour un fichier frais, on s'arrete a sa copie en cache : servir la page
@@ -105,8 +158,10 @@ self.addEventListener("fetch", e => {
   }
 
   /* Le reste (icones, manifeste, donnees figees, bibliotheques tierces) ne bouge pas :
-     cache d'abord, c'est ce qui rend l'ouverture instantanee et le hors ligne possible. */
+     cache d'abord, c'est ce qui rend l'ouverture instantanee et le hors ligne possible.
+     31/10/2026 : sans reseau ni copie, une ERREUR, plus la page : servie sous un src de script ou
+     de feuille de style, la page HTML cassait l'app (erreur de syntaxe), sans rien reparer. */
   e.respondWith(caches.match(req)
     .then(r => r || reseau(req).then(res => { garder(req, res); return res; }))
-    .catch(() => caches.match("./index.html").then(r => r || Response.error())));
+    .catch(() => Response.error()));
 });
